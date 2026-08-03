@@ -1,0 +1,9 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'Reading variables from JavaScript') %>
+  <p class="<%= framework_section_description_classes %>">
+    <code class="<%= framework_section_code_classes %>">cssVar(name, { el })</code> reads any variable on this page
+    back from the live cascade, theme and mode overrides included. The CSS stays the source of truth; nothing is
+    duplicated in JavaScript. See <%= render DocsRef.new(page: :paint_api) %> for the full paint surface.
+  </p>
+  <%= render CodeExampleComponent.new(demo_code: 'var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascript') %>
+</div>

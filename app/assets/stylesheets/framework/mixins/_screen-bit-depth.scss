@@ -1,0 +1,92 @@
+// ============================================
+// TRMNL Framework - Screen Bit Depth Mixins
+// ============================================
+
+@use 'selector-helpers' as helpers;
+@use 'sass:list';
+@use 'sass:meta';
+
+// Function to format bit-depth prefixes (without "bit" suffix)
+@function bit-depth-prefix-only-fn($bit-depth) {
+    @return $bit-depth;
+}
+
+// Core mixin for generating bit-depth specific selectors
+// This is the main building block for all bit-depth utilities
+@mixin for-bit-depth($bit-depth, $class-name) {
+    @include helpers.for-screen-variant("#{$bit-depth}bit", "#{$bit-depth}bit", $class-name) {
+        @content;
+    }
+}
+
+
+// Generate bit-depth-specific variants for classes
+// This creates classes like: 1bit:gap--none, 4bit:gap--large, etc.
+@mixin generate-bit-depth-variants($class-name: null) {
+    // Create modifiers list (already includes the "bit" suffix for screen modifiers)
+    $modifiers: ();
+    @each $bit-depth in helpers.$bit-depths {
+        $modifiers: list.append($modifiers, "#{$bit-depth}bit");
+    }
+
+    // Use identity prefix function to avoid double-appending "bit"
+    @include helpers.generate-screen-utilities($modifiers, meta.get-function('bit-depth-prefix-only-fn'), $class-name) {
+        @content;
+    }
+}
+
+// Note: legacy helpers (generate-bit-depth-class, with-bit-depth-variants, each-with-bit-depth-variants,
+// with-compound-bit-depth-variants) were removed to reduce API surface.
+
+// Simplified mixin for generating a single bit-depth variant
+// Usage: @include bit-depth-variant(1, 'bg--black') { ... }
+@mixin bit-depth-variant($bit-depth, $class-name) {
+    @include for-bit-depth($bit-depth, $class-name) {
+        @content;
+    }
+}
+
+// ============================================
+// Simple Bit-Depth Targeting Mixins
+// ============================================
+// These mixins target components based on screen bit-depth
+// They generate selectors like: .trmnl .screen--1bit .component
+
+// Target 1-bit displays
+@mixin for-1bit {
+    @include helpers.for-screen-modifier('1bit') {
+        @content;
+    }
+}
+
+// Target 2-bit displays  
+@mixin for-2bit {
+    @include helpers.for-screen-modifier('2bit') {
+        @content;
+    }
+}
+
+// Target 4-bit displays
+@mixin for-4bit {
+    @include helpers.for-screen-modifier('4bit') {
+        @content;
+    }
+}
+
+// ============================================
+// Color Palette Targeting Mixins
+// ============================================
+
+// Target a specific limited color palette (e.g. color-7a, color-3bwr)
+@mixin for-color-palette($id) {
+    @include helpers.for-screen-modifier('color-#{$id}') {
+        @content;
+    }
+}
+
+// Target full-spectrum color displays (12-bit and 24-bit)
+@mixin for-color-full {
+    @include helpers.for-screen-modifier('color-full') {
+        @content;
+    }
+}

@@ -1,0 +1,151 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :background %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:background) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Color Palette') %>
+          <p class="<%= framework_section_description_classes %>">
+            The complete range of background shades available in the framework, from pure black to pure white.
+          </p>
+        </div>
+
+        <div class="trmnl framework-inline-demo">
+          <div class="screen p-0 bg-transparent h--auto w--auto">
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4">
+              <% %w[black gray-10 gray-15 gray-20 gray-25 gray-30 gray-35 gray-40 gray-45 gray-50 gray-55 gray-60 gray-65 gray-70 gray-75 white].each do |shade| %>
+                <div class="flex flex-col gap-2">
+                  <div class="relative w-full pb-[100%]">
+                    <div class="absolute inset-0 rounded-lg bg--<%= shade %>"></div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-sm font-medium text-gray-600 dark:text-gray-500"><%= shade.gsub('gray-', '') %></div>
+                    <div class="text-xs text-gray-500 dark:text-gray-600">bg--<%= shade %></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="dark-mode-notice hidden <%= message_sage_classes %>">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/info' %>
+            </div>
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm font-medium">
+                <strong>Dark Mode Notice:</strong> The color palette appears inverted because TRMNL's dark mode inverts the entire screen, except the images.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the <code class="<%= framework_section_code_classes %>">bg--{shade}</code> utility
+            classes to apply these background patterns to any element. Choose from sixteen values: black, gray-10 through gray-75,
+            and white.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--space-between">
+                    <div class="grid grid--cols-16 h-full py-16">
+                      <% %w[black gray-10 gray-15 gray-20 gray-25 gray-30 gray-35 gray-40 gray-45 gray-50 gray-55 gray-60 gray-65 gray-70 gray-75 white].each do |shade| %>
+                        <div class="flex flex--col flex--center-x">
+                          <div class="w--full h--full rounded flex-1 bg--<%= shade %>"></div>
+                          <span class="label label--small"><%= shade.gsub('gray-', '') %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Background shades</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="bg--black">Black</div>
+<div class="bg--gray-10">Gray 10</div>
+<div class="bg--gray-15">Gray 15</div>
+<div class="bg--gray-20">Gray 20</div>
+<div class="bg--gray-25">Gray 25</div>
+<div class="bg--gray-30">Gray 30</div>
+<div class="bg--gray-35">Gray 35</div>
+<div class="bg--gray-40">Gray 40</div>
+<div class="bg--gray-45">Gray 45</div>
+<div class="bg--gray-50">Gray 50</div>
+<div class="bg--gray-55">Gray 55</div>
+<div class="bg--gray-60">Gray 60</div>
+<div class="bg--gray-65">Gray 65</div>
+<div class="bg--gray-70">Gray 70</div>
+<div class="bg--gray-75">Gray 75</div>
+<div class="bg--white">White</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Backward Compatibility') %>
+          <p class="<%= framework_section_description_classes %>">
+            For backward compatibility, the original shade names (<code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code>) are still supported but deprecated. These map to equivalent extended shades:
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %> trmnl framework-inline-demo">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="screen p-0 bg-transparent h--auto w--auto">
+              <div class="grid grid-cols-7 gap-4">
+                <% (1..7).each do |n| %>
+                  <div class="flex flex-col gap-2">
+                    <div class="relative w-full pb-[100%]">
+                      <div class="absolute inset-0 rounded-lg bg--gray-<%= n %>"></div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-sm font-medium text-gray-600 dark:text-gray-500">gray-<%= n %> (deprecated)</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-600">bg--gray-<%= n %></div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Deprecated (but still works) -->
+<div class="bg--gray-1">Gray 1</div>
+<div class="bg--gray-2">Gray 2</div>
+
+<!-- Preferred (new naming) -->
+<div class="bg--gray-10">Gray 10</div>
+<div class="bg--gray-20">Gray 20</div>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

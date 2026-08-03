@@ -1,0 +1,120 @@
+<%# Plugin identity comes from the manifest; previews/code come from captured fixtures. %>
+<% plugin_info = example_plugins_by_keyname[@plugin_keyname] || {} %>
+<% plugin_name = plugin_info['name'] || @plugin_keyname.titleize %>
+<% meta title: "#{plugin_name} - Layout Examples" %>
+
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+          <%= image_tag plugin_info['image_url'], alt: plugin_name, class: 'dark:hidden w-8 h-8 object-contain' if plugin_info['image_url'].present? %>
+          <%= image_tag plugin_info['image_dark_url'], alt: plugin_name, class: 'hidden dark:block w-8 h-8 object-contain' if plugin_info['image_dark_url'].present? %>
+        </div>
+        <h1 class="font-heading tracking-tight font-medium text-gray-900 dark:text-white text-2xl md:text-3xl mb-0.5">
+          <%= plugin_name %>
+        </h1>
+      </div>
+
+      <%= render 'framework/copy_page_button' %>
+    </div>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+
+    <!-- Mashup Views Grid -->
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Layout Variations') %>
+          <p class="<%= framework_section_description_classes %>">
+            See how this plugin adapts across different mashup views. Each view shows a single instance to demonstrate how the layout responds to available space.
+          </p>
+        </div>
+
+        <div class="space-y-16">
+          <% view_configs = {
+            full: { label: 'Full View', mashup_class: nil },
+            half_horizontal: { label: 'Half Horizontal', mashup_class: 'mashup--1Tx1B' },
+            half_vertical: { label: 'Half Vertical', mashup_class: 'mashup--1Lx1R' },
+            quadrant: { label: 'Quadrant', mashup_class: 'mashup--2x2' }
+          } %>
+
+          <% @available_views.each do |view_type| %>
+            <% config = view_configs[view_type] %>
+            <% next unless config %>
+            <% is_example = config[:mashup_class].present? %>
+
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <%= framework_heading(4, config[:label]) %>
+                <% layout_description = layout_examples_config[@plugin_keyname]&.dig(:layouts, view_type) %>
+                <% if layout_description.present? %>
+                  <p class="<%= framework_section_description_classes %>">
+                    <%= layout_description %>
+                  </p>
+                <% end %>
+              </div>
+
+              <!-- Preview -->
+              <div class="<%= framework_example_classes %>">
+                <div class="<%= framework_example_inner_classes %>">
+                  <div class="<%= framework_example_wrapper_classes %>"<%= " data-example-view-type=\"#{view_type}\"" if is_example %>>
+                    <div class="screen screen--preview">
+                      <%# In core this renders the live plugin template; here it's the captured fixture. %>
+                      <% preview_path = example_fixture_path(@plugin_keyname, "#{view_type}.preview") %>
+                      <% plugin_content = if preview_path.exist?
+                           preview_path.read.html_safe
+                         else
+                           tag.div(class: "view view--#{view_type}") do
+                             tag.div(class: 'layout') { tag.span("#{config[:label]} view not available", class: 'label') }
+                           end
+                         end %>
+                      <% if is_example %>
+                        <div class="mashup <%= config[:mashup_class] %>"><%= plugin_content %></div>
+                      <% else %>
+                        <%= plugin_content %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Code Snippet -->
+              <div class="mt-4">
+                <% rendered_html = render_plugin_html_for_code(@plugin_keyname, view_type, @demo_data, @framework_locals) %>
+                <%= render CodeExampleComponent.new(demo_code: rendered_html) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    </div>
+
+    <!-- Shared Files Section -->
+    <% if plugin_common_file_exists?(@plugin_keyname) %>
+      <div class="space-y-16">
+        <section class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Shared') %>
+            <p class="<%= framework_section_description_classes %>">
+              This plugin uses a shared file that contains shared CSS styles and/or JavaScript logic used across all layout variations.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <!-- Code Snippets -->
+            <% common_sections = render_plugin_common_for_code(@plugin_keyname) %>
+            <% common_sections.each do |section| %>
+              <div class="mt-4">
+                <%= render CodeExampleComponent.new(demo_code: section[:content], language: section[:language]) %>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      </div>
+    <% end %>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

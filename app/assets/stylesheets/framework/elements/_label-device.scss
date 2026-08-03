@@ -1,0 +1,101 @@
+// ============================================
+// TRMNL Framework - Label Component Device Overrides
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+
+// The underline art per depth. Both sets go on the unprefixed modifier and on
+// every prefixed gate the modifier publishes, or md:label--underline draws the
+// element layer's level-4 art beside the level-5 rail the unprefixed one draws.
+@mixin _underline-2bit {
+    @include mixins.border-level-vars(5, h, $slot: 'label-underline');
+    background-repeat: repeat;
+}
+
+@mixin _underline-4bit {
+    // Level-5 theme chain with the solid fallback; the full mixin's 4-bit
+    // 100% 1px gradient would underfill this 1.5px-high bar. The rail's own
+    // flat stroke sits in front of the literal, so the underline darkens with
+    // the rest of the level-5 art on a dark screen instead of staying gray-50.
+    background-color: var(--framework-slot-label-underline-border-color, var(--theme-border-5-h-color, var(--border-5-h-render-stroke, var(--gray-50))));
+    background-image: var(--framework-slot-label-underline-border-image, var(--theme-border-5-h-image, none));
+    background-repeat: repeat;
+    background-size: var(--framework-slot-label-underline-border-size, var(--theme-border-5-h-size, auto));
+    height: 1.5px;
+}
+
+@include mixins.trmnl-namespace {
+    .label {
+        // Bare `label` carries no responsive variants of its own, so it takes the
+        // unprefixed override alone. The size classes below take the full ladder.
+        @include mixins.for-4bit {
+            font-variation-settings: 'wght' var(--label-font-weight);
+        }
+
+        @include mixins.for-2bit {
+            &--underline::after {
+                @include _underline-2bit;
+            }
+        }
+        @include mixins.for-4bit {
+            &--underline::after {
+                @include _underline-4bit;
+            }
+        }
+
+        &--gray,
+        &--gray-out {
+            @include mixins.for-4bit {
+                background: none;
+                color: var(--framework-slot-label-gray-text-color, var(--gray-40));
+                -webkit-background-clip: initial;
+                background-clip: initial;
+                image-rendering: auto;
+            }
+        }
+    }
+}
+
+// Map of size class names to their font-weight CSS variables.
+$label-sizes: (
+    'label--base': '--label-font-weight',
+    'label--small': '--label-small-font-weight',
+    'label--large': '--label-large-font-weight',
+    'label--xlarge': '--label-xlarge-font-weight',
+    'label--xxlarge': '--label-xxlarge-font-weight'
+);
+
+// 4-bit only. Nothing pins the wght axis on the other depths, so the size
+// classes there already reach their weight through font-weight.
+$label-bit-depths: (4);
+
+@each $class-name, $weight-var in $label-sizes {
+    @each $bit-depth in $label-bit-depths {
+        // Base bit-depth styles
+        .trmnl .screen--#{$bit-depth}bit .#{helpers.escape-class-token($class-name)} {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+
+        // Every prefixed gate the class itself is published under. Without them
+        // md:label--large renders at the size of a large label and the weight of
+        // a plain one, since the rule above pins the axis for the whole element.
+        @include responsive.device-variants-for-bit-depth($class-name, $bit-depth) {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}
+
+// The underline modifier's own gates, on both depths that override it.
+@include responsive.device-variants-for-bit-depth('label--underline', 2) {
+    &::after {
+        @include _underline-2bit;
+    }
+}
+
+@include responsive.device-variants-for-bit-depth('label--underline', 4) {
+    &::after {
+        @include _underline-4bit;
+    }
+}

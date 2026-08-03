@@ -1,0 +1,64 @@
+<%#
+  Command Palette Item Component
+  
+  Required locals:
+  - title_text: string - visible title
+  - html_data: hash - data-* attributes
+  
+  Optional locals:
+  - hidden: boolean (default: false)
+  - icon_partial: string - render path for icon
+  - icon_locals: hash - locals for icon partial
+  - icon_html: string - pre-rendered HTML for icon
+  - description_text: string - subtitle text
+  - extra_inner_html: string - additional HTML content
+  - href: string - link URL (default: '#')
+%>
+<%
+  # Extract locals with defaults
+  hidden = local_assigns.fetch(:hidden, false)
+  icon_partial = local_assigns.fetch(:icon_partial, nil)
+  icon_locals = local_assigns.fetch(:icon_locals, {})
+  icon_html = local_assigns.fetch(:icon_html, nil)
+  extra_inner_html = local_assigns.fetch(:extra_inner_html, nil)
+  title_text = local_assigns.fetch(:title_text)
+  description_text = local_assigns.fetch(:description_text, nil)
+  html_data = local_assigns.fetch(:html_data, {})
+  href = local_assigns.fetch(:href, '#')
+  has_icon = icon_html.present? || icon_partial.present?
+
+  # Build attributes
+  item_attrs = {
+    class: command_palette_item_classes(hidden: hidden),
+    role: 'option',
+    'aria-selected': 'false',
+    'data-command-palette-target': 'item',
+    'data-action': 'mouseenter->command-palette#onItemMouseEnter click->command-palette#onItemClick'
+  }.merge(html_data.transform_keys { |k| "data-#{k}" })
+%>
+
+<%= content_tag(:div, item_attrs) do %>
+  <%= link_to href, class: 'flex items-center gap-3 no-underline focus:outline-none w-full' do %>
+    <% if has_icon %>
+      <span class="js-cmdp-icon flex-none text-gray-500 dark:text-gray-600 w-10 h-10 [&>svg]:w-full [&>svg]:h-full group-aria-selected:text-sage-500 dark:group-aria-selected:text-sage-500">
+        <% if icon_html.present? %>
+          <%= icon_html.try(:html_safe) %>
+        <% elsif icon_partial %>
+          <%= render_command_icon(icon_partial, icon_locals) %>
+        <% end %>
+      </span>
+    <% end %>
+      <span class="flex-auto truncate">
+        <span class="block truncate font-medium text-gray-900 dark:text-gray-550 group-aria-selected:text-sage-700 dark:group-aria-selected:text-sage-100"><%= title_text %></span>
+        <% if description_text.present? %>
+          <span class="block truncate text-xs text-gray-400 dark:text-gray-600 dark:group-aria-selected:text-sage-400"><%= description_text %></span>
+        <% end %>
+        <%= extra_inner_html.try(:html_safe) if extra_inner_html.present? %>
+      </span>
+      <%# Right-side action hints %>
+      <span class="ml-3 hidden group-aria-selected:inline text-sm leading-tight text-sage-400 dark:text-sage-500 whitespace-nowrap"
+            data-command-palette-action-hint>
+        <%= command_item_action_hints(html_data) %>
+      </span>
+  <% end %>
+<% end %>

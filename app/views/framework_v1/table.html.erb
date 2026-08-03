@@ -1,0 +1,185 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :table %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Table system provides structured data presentation with consistent styling and various size options.
+      It's designed to display information in a clear, scannable format while maintaining visual hierarchy.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            Tables are built using standard HTML table elements with additional classes for styling.
+            The base structure includes headers and data cells with consistent spacing and typography.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default Table') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">table</code> class provides
+              the standard table styling with comfortable spacing and clear visual hierarchy.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th><span class="title">Header 1</span></th>
+                          <th><span class="title">Header 2</span></th>
+                          <th><span class="title">Header 3</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="label">Row 1, Cell 1</span></td>
+                          <td><span class="label">Row 1, Cell 2</span></td>
+                          <td><span class="label">Row 1, Cell 3</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label">Row 2, Cell 1</span></td>
+                          <td><span class="label">Row 2, Cell 2</span></td>
+                          <td><span class="label">Row 2, Cell 3</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label">Row 3, Cell 1</span></td>
+                          <td><span class="label">Row 3, Cell 2</span></td>
+                          <td><span class="label">Row 3, Cell 3</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Table</span>
+                    <span class="instance">Default</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<table class="table">
+  <thead>
+    <tr>
+      <th><span class="title">Header 1</span></th>
+      <th><span class="title">Header 2</span></th>
+      <th><span class="title">Header 3</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="label">Row 1, Cell 1</span></td>
+      <td><span class="label">Row 1, Cell 2</span></td>
+      <td><span class="label">Row 1, Cell 3</span></td>
+    </tr>
+  </tbody>
+</table>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            Tables can be rendered in different sizes to accommodate various use cases and space constraints.
+            Size variants maintain the same structure while adjusting spacing and typography.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Condensed Table') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add <code class="<%= framework_section_code_classes %>">table--condensed</code> for a more
+              compact table with reduced padding and smaller text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <table class="table table--condensed">
+                      <thead>
+                        <tr>
+                          <th><span class="title title--small">Header 1</span></th>
+                          <th><span class="title title--small">Header 2</span></th>
+                          <th><span class="title title--small">Header 3</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="label label--small">Row 1, Cell 1</span></td>
+                          <td><span class="label label--small">Row 1, Cell 2</span></td>
+                          <td><span class="label label--small">Row 1, Cell 3</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label label--small">Row 2, Cell 1</span></td>
+                          <td><span class="label label--small">Row 2, Cell 2</span></td>
+                          <td><span class="label label--small">Row 2, Cell 3</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label label--small">Row 3, Cell 1</span></td>
+                          <td><span class="label label--small">Row 3, Cell 2</span></td>
+                          <td><span class="label label--small">Row 3, Cell 3</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Table</span>
+                    <span class="instance">Condensed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<table class="table table--condensed">
+  <thead>
+    <tr>
+      <th><span class="title title--small">Header 1</span></th>
+      <th><span class="title title--small">Header 2</span></th>
+      <th><span class="title title--small">Header 3</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="label label--small">Row 1, Cell 1</span></td>
+      <td><span class="label label--small">Row 1, Cell 2</span></td>
+      <td><span class="label label--small">Row 1, Cell 3</span></td>
+    </tr>
+  </tbody>
+</table>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

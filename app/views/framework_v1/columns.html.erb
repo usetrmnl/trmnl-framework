@@ -1,0 +1,75 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :columns %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Columns system provides a simple way to create balanced column layouts that look great on the device. For more complex layouts, check out our <%= link_to "Grid system", framework_page_path(:grid, version: '1.2'), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200" %>. You can use both systems together - the Columns system for your overall layout, and the Grid system within columns when you need more layout control - or use either system independently.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Column Layout') %>
+          <p class="<%= framework_section_description_classes %>">
+            The basic column layout is flexible - you can add as many columns as needed depending on your content needs.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+              <div class="view view--full">
+                <div class="layout">
+                  <div class="columns">
+                    <div class="column rounded-2xl p-4 rounded-md border border-gray-300 border-dashed border-2  items-center">
+                      <span class="label">1</span>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                    </div>
+                    <div class="column flex rounded-2xl p-4 rounded-md border border-gray-300 border-dashed border-2  items-center">
+                      <span class="label">2</span>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                    </div>
+                    <div class="column flex rounded-2xl p-4 rounded-md border border-gray-300 border-dashed border-2  items-center">
+                      <span class="label">3</span>
+                      <div class="p-4 rounded-md bg-gray-100 justify-center items-center w-full"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="title_bar">
+                  <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                  <span class="title">Columns</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="columns">
+  <div class="column">
+    {{ Content for column 1 }}
+  </div>
+  <div class="column">
+    {{ Content for column 2 }}
+  </div>
+  <div class="column">
+    {{ Content for column 3 }}
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

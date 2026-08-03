@@ -1,0 +1,48 @@
+// ============================================
+// TRMNL Framework - Visibility Utilities
+// ============================================
+
+@use 'sass:string';
+@use 'sass:map';
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../mixins/screen' as screen;
+
+// Define display variants for visibility utilities.
+// 'hidden' MUST stay LAST. Each entry emits `.trmnl .X { display: … }` at equal
+// specificity with no !important, so CSS last-wins decides same-element combos like
+// `class="flex hidden"`. Because `hidden` and every layout display share one variant
+// generator (with-dark-all-variants), emitting `hidden` after the layout displays makes
+// `.hidden` (and each of its dark/bit-depth/size/orientation variants) beat the matching
+// display variant. Do not reorder or alphabetize this map.
+$display-variants: (
+    'visible': block,
+    'block': block,
+    'inline': inline,
+    'inline-block': inline-block,
+    'flex': flex,
+    'inline-flex': inline-flex,
+    'grid': grid,
+    'inline-grid': inline-grid,
+    'table': table,
+    'table-row': table-row,
+    'table-cell': table-cell,
+    'hidden': none,
+);
+
+// flex, inline-flex and grid are layout containers, and a container is more
+// than its display value. They stay in the map so `hidden` keeps outranking
+// them at every gate, and _flexbox.scss and _grid.scss publish the same gate set
+// with the rest of the container body on it. That is the file to add to, not
+// this one: a second base-gate rule here would land after `.grid--cols-2` and
+// take its template away.
+@include mixins.trmnl-namespace {
+    // Generate visibility utilities with bit-depth and responsive variants
+    @each $modifier, $value in $display-variants {
+        .#{$modifier} {
+            @include responsive.with-dark-all-variants {
+                display: $value;
+            }
+        }
+    }
+}

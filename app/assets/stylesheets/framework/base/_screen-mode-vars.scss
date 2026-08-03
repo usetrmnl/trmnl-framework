@@ -1,0 +1,1234 @@
+// ============================================
+// TRMNL Framework - Screen Mode CSS Variables
+// ============================================
+// Defines --bg-{token}-color and --bg-{token}-image CSS custom properties
+// on the .screen element for each mode combination (bit-depth × dark-mode × palette).
+// Utility classes in _background.scss, _text.scss, etc. reference these variables,
+// eliminating the combinatorial explosion of mode-specific selector rules.
+//
+// IMPORTANT (v3): themes must not override --bg-*, --text-*, or --border-* vars
+// declared here. These are framework-owned paint vars that encode device capability
+// behavior (dither patterns, palette images, and solid-color paths).
+
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:math';
+@use '../config/tokens' as vars;
+@use '../mixins/background-patterns' as bg;
+@use '../mixins/border-levels' as border-levels;
+@use '../mixins/namespace';
+@use '../mixins/selector-helpers' as helpers;
+@use '../mixins/theme-slots' as theme-slots;
+
+// Register renderer tile lengths so getComputedStyle() serializes calc()/var()
+// expressions as concrete pixel lengths. SVG width/height attributes then receive
+// ordinary values such as `2px`, which is interoperable across rendering engines.
+@property --framework-border-render-width {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+@property --framework-border-render-height {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+// ============================================
+// Helper mixins for setting bg variables
+// ============================================
+
+// ============================================
+// Ink-tile paint (generated $dither-tile-assets / $bg-tile-specs)
+// ============================================
+// Dither art as ink-cell SVG data URIs: the dark/accent pixels are baked into
+// the asset, the light tone rides the color longhand: one background layer,
+// zero image fetches, and preview/dark recolor shared geometry. Assets are
+// defined once on the default .screen block; mode blocks only point at them.
+
+@mixin _tile-asset-definitions {
+    @each $name, $uri in vars.$dither-tile-assets {
+        // Double quotes are load-bearing: the URIs carry raw single quotes, and
+        // Dart Sass 1.94+ splices custom-property text verbatim instead of re-quoting.
+        --tile-#{$name}: url("#{$uri}");
+    }
+}
+
+// --bg-*-solid preserves what the slot border token chains' color position
+// historically saw: transparent in pattern-family blocks, because the PNG
+// tiles carried their light tone in the image, and the real color for solid
+// inks. Lone-color border readers resolve through the stroke chain instead
+// (see theme-slots.semantic-border): a border longhand cannot paint a tile.
+// Every branch must declare it, because the base .screen block's value
+// cascades onto the same element, so leaving it unset can't fall through.
+@mixin _bg-tile($token, $spec) {
+    $kind: list.nth($spec, 1);
+    @if $kind == 'solid' {
+        --bg-#{$token}-image: none;
+        --bg-#{$token}-color: #{list.nth($spec, 2)};
+        --bg-#{$token}-solid: #{list.nth($spec, 2)};
+    } @else if $kind == 'baked' {
+        --bg-#{$token}-image: var(--tile-#{list.nth($spec, 2)});
+        --bg-#{$token}-color: transparent;
+        --bg-#{$token}-solid: transparent;
+    } @else {
+        --bg-#{$token}-image: var(--tile-#{list.nth($spec, 2)});
+        --bg-#{$token}-color: #{list.nth($spec, 3)};
+        --bg-#{$token}-solid: transparent;
+    }
+}
+
+// Text fills clip the same tiles to glyphs; the field paints from
+// --text-*-under (a background-color clipped by the same text clip), so ink
+// tiles stay one background layer and clip:text keeps working. Every branch
+// sets -under, because a stale field under a border-box clip would flood the box.
+@mixin _text-tile($token, $spec) {
+    $kind: list.nth($spec, 1);
+    @if $kind == 'solid' {
+        --text-#{$token}-image: none;
+        --text-#{$token}-color: #{list.nth($spec, 2)};
+        --text-#{$token}-clip: border-box;
+        --text-#{$token}-under: transparent;
+    } @else {
+        --text-#{$token}-image: var(--tile-#{list.nth($spec, 2)});
+        --text-#{$token}-color: transparent;
+        --text-#{$token}-clip: text;
+        --text-#{$token}-under: #{if(list.nth($spec, 1) == 'baked', transparent, list.nth($spec, 3))};
+    }
+}
+
+@mixin _bg-solid($token, $css-var) {
+    --bg-#{$token}-image: none;
+    --bg-#{$token}-color: var(--#{$css-var});
+    --bg-#{$token}-solid: var(--#{$css-var});
+}
+
+@mixin _bg-hex($token, $hex) {
+    --bg-#{$token}-image: none;
+    --bg-#{$token}-color: #{$hex};
+    --bg-#{$token}-solid: #{$hex};
+}
+
+// ============================================
+// Text mode variable helpers
+// ============================================
+
+@mixin _text-solid($token, $css-var) {
+    --text-#{$token}-image: none;
+    --text-#{$token}-color: var(--#{$css-var});
+    --text-#{$token}-clip: border-box;
+}
+
+@mixin _text-hex($token, $hex) {
+    --text-#{$token}-image: none;
+    --text-#{$token}-color: #{$hex};
+    --text-#{$token}-clip: border-box;
+}
+
+// ============================================
+// Stroke variable helpers
+// ============================================
+
+@mixin _stroke-color($token, $css-var) {
+    --stroke-#{$token}-color: var(--#{$css-var});
+}
+
+@mixin _stroke-hex($token, $hex) {
+    --stroke-#{$token}-color: #{$hex};
+}
+
+// ============================================
+// Border-level variable helpers
+// ============================================
+
+// The same border gradient strings repeat across every mode block (~13.5k
+// declarations, ~1k distinct values), so emissions register each distinct
+// value here and reference it as var(--bline-N); the definitions flush once
+// into a trailing .screen rule. Custom properties merge across equal-
+// specificity rules, so late definitions serve every earlier reference.
+$_border-line-defs: ();
+
+@mixin _border-line-ref($property, $gradient, $second-gradient: null) {
+    $first: _border-line-name($gradient);
+    $_border-line-defs: map.set($_border-line-defs, $gradient, $first) !global;
+    @if $second-gradient {
+        $second: _border-line-name($second-gradient);
+        $_border-line-defs: map.set($_border-line-defs, $second-gradient, $second) !global;
+        #{$property}: var(--#{$first}), var(--#{$second});
+    } @else {
+        #{$property}: var(--#{$first});
+    }
+}
+
+@function _border-line-name($gradient) {
+    $existing: map.get($_border-line-defs, $gradient);
+    @return if($existing, $existing, 'bline-#{list.length(map.keys($_border-line-defs))}');
+}
+
+@mixin _flush-border-line-defs {
+    @each $gradient, $name in $_border-line-defs {
+        --#{$name}: #{$gradient};
+    }
+}
+
+// The hand-crafted level art as CSS: two gradient layers per pattern, row 2
+// being row 1 shifted by the stagger via background-position; stop lists use
+// percentages so the ratio-divided size does all scaling. Solid levels ride
+// the color longhand. The 1-bit family's dark/light pixels resolve through
+// --theme-border-line-{dark,light} so themes recolor the patterns without
+// changing their geometry. Gotcha: consumers must keep repeat-x/-y on
+// elements taller than 1px, because plain `repeat` would tile row 1 over row 2.
+// The rail-wide hook takes a per-level, per-direction hook in front of it, so a
+// theme can state one level's polarity without moving the rest of the rail. The
+// self-mirroring level needs exactly that: the reversible scale maps level 4 to
+// itself, so a rail-wide swap of the two segment colors leaves its 50% checker
+// one device pixel out of phase with the level it is supposed to be. Both hooks
+// fall through to the family's own literal, so an unthemed screen resolves the
+// same value it always did.
+@function _border-line-stop-color($token, $light-fallback, $level: null, $dir: null) {
+    $scoped: if($level == null, '', '--theme-border-#{$level}-#{$dir}-line-');
+    @if $token == 'dark' {
+        $base: "var(--theme-border-line-dark, #000000)";
+        @return if($scoped == '', $base, "var(#{$scoped}dark, #{$base})");
+    } @else if $token == 'light' {
+        $base: "var(--theme-border-line-light, #{$light-fallback})";
+        @return if($scoped == '', $base, "var(#{$scoped}light, #{$base})");
+    }
+    @return "#{$token}";
+}
+
+// Renderer data is emitted beside the CSS background data from the same source
+// segments. Consumers copy this SVG-ready program verbatim; they never parse a
+// gradient, infer theme polarity, or recreate the stagger geometry.
+@function _border-line-tokens($segments) {
+    $tokens: ();
+    @each $segment in $segments {
+        $token: list.nth($segment, 1);
+        @if $token != transparent and not list.index($tokens, $token) {
+            $tokens: list.append($tokens, $token);
+        }
+    }
+    @return $tokens;
+}
+
+@function _border-line-path($segments, $w, $stagger, $token, $dir) {
+    $path: '';
+    @each $segment in $segments {
+        @if list.nth($segment, 1) == $token {
+            $from: list.nth($segment, 2);
+            $to: list.nth($segment, 3);
+            $path: $path + if($dir == 'h', 'M#{$from} 0H#{$to}V1H#{$from}Z', 'M0 #{$from}V#{$to}H1V#{$from}Z');
+        }
+    }
+    @each $segment in $segments {
+        @if list.nth($segment, 1) == $token {
+            $from: list.nth($segment, 2) - $stagger;
+            $to: list.nth($segment, 3) - $stagger;
+            @if $from < 0 {
+                $wrapped: $from + $w;
+                $path: $path + if($dir == 'h', 'M#{$wrapped} 1H#{$w}V2H#{$wrapped}Z', 'M1 #{$wrapped}V#{$w}H2V#{$wrapped}Z');
+                @if $to > 0 {
+                    $path: $path + if($dir == 'h', 'M0 1H#{$to}V2H0Z', 'M1 0V#{$to}H2V0Z');
+                }
+            } @else {
+                $path: $path + if($dir == 'h', 'M#{$from} 1H#{$to}V2H#{$from}Z', 'M1 #{$from}V#{$to}H2V#{$from}Z');
+            }
+        }
+    }
+    @return $path;
+}
+
+@mixin _border-render-solid($prefix, $color) {
+    @include border-levels.border-render-solid($prefix, $color);
+}
+
+@mixin _border-render-pattern($prefix, $segments, $w, $stagger, $dir, $light-fallback, $level: null) {
+    $tokens: _border-line-tokens($segments);
+    $first: list.nth($tokens, 1);
+    $second: if(list.length($tokens) > 1, list.nth($tokens, 2), null);
+    $tile-width: if($dir == 'h', $w, 2);
+    $tile-height: if($dir == 'h', 2, $w);
+    --#{$prefix}-render-stroke: #{_border-line-stop-color($first, $light-fallback, $level, $dir)};
+    --#{$prefix}-render-width: calc(#{$tile-width}px / var(--dither-ratio));
+    --#{$prefix}-render-height: calc(#{$tile-height}px / var(--dither-ratio));
+    --#{$prefix}-render-view-box: 0 0 #{$tile-width} #{$tile-height};
+    --#{$prefix}-render-path-1: #{_border-line-path($segments, $w, $stagger, $first, $dir)};
+    --#{$prefix}-render-color-1: #{_border-line-stop-color($first, $light-fallback, $level, $dir)};
+    --#{$prefix}-render-path-2: #{if($second, _border-line-path($segments, $w, $stagger, $second, $dir), none)};
+    --#{$prefix}-render-color-2: #{if($second, _border-line-stop-color($second, $light-fallback, $level, $dir), none)};
+}
+
+@mixin _border-level-line-vars($level, $spec, $dir, $light-fallback) {
+    $prefix: 'border-#{$level}-#{$dir}';
+    @if list.nth($spec, 1) == 'solid' {
+        --border-#{$level}-#{$dir}-image: none;
+        --border-#{$level}-#{$dir}-size: auto;
+        --border-#{$level}-#{$dir}-position: 0 0;
+        --border-#{$level}-#{$dir}-color: #{_border-line-stop-color(list.nth($spec, 2), $light-fallback, $level, $dir)};
+        @include _border-render-solid($prefix, _border-line-stop-color(list.nth($spec, 2), $light-fallback, $level, $dir));
+    } @else {
+        $w: list.nth($spec, 2);
+        $stagger: list.nth($spec, 3);
+        $stops: '';
+        @each $segment in list.nth($spec, 4) {
+            $color: _border-line-stop-color(list.nth($segment, 1), $light-fallback, $level, $dir);
+            $from: math.percentage(math.div(list.nth($segment, 2), $w));
+            $to: math.percentage(math.div(list.nth($segment, 3), $w));
+            $stops: $stops + if($stops == '', '', ', ') + '#{$color} #{$from} #{$to}';
+        }
+        $line: "linear-gradient(#{if($dir == "h", "to right", "to bottom")}, #{$stops})";
+        $tile: "calc(#{$w}px / var(--dither-ratio))";
+        $row: "calc(1px / var(--dither-ratio))";
+        $shift: "calc(#{$w - $stagger}px / var(--dither-ratio))";
+        @include _border-line-ref('--border-#{$level}-#{$dir}-image', $line, $second-gradient: $line);
+        @if $dir == "h" {
+            --border-#{$level}-#{$dir}-size: #{$tile} #{$row}, #{$tile} #{$row};
+            --border-#{$level}-#{$dir}-position: 0 0, #{$shift} #{$row};
+        } @else {
+            --border-#{$level}-#{$dir}-size: #{$row} #{$tile}, #{$row} #{$tile};
+            --border-#{$level}-#{$dir}-position: 0 0, #{$row} #{$shift};
+        }
+        --border-#{$level}-#{$dir}-color: transparent;
+        @include _border-render-pattern($prefix, list.nth($spec, 4), $w, $stagger, $dir, $light-fallback, $level);
+    }
+}
+
+@mixin _border-level-pattern-vars($family, $dark: false) {
+    $two-bit: $family == 'borders--2bit';
+    $lines: if($two-bit, vars.$border-level-lines-2bit, vars.$border-level-lines-1bit);
+    $light-fallback: if($family == 'borders--1bit-preview', vars.$preview-limited-palette-white-hex, #FFFFFF);
+
+    // The family's own two tones, published so a theme can name this rail's
+    // polarity without restating a hex: the preview family's canvas is the muted
+    // white, not #FFFFFF. Only the dark/light family has roles to name; the 2-bit
+    // lines carry their four tones literally.
+    @if not $two-bit {
+        --border-line-dark: #000000;
+        --border-line-light: #{$light-fallback};
+    }
+
+    @each $level, $_ in $lines {
+        $mapped-level: if($dark, border-levels.dark-remap-border-level($level), $level);
+        @each $dir in (h, v) {
+            @include _border-level-line-vars($level, map.get($lines, $mapped-level), $dir, $light-fallback);
+        }
+    }
+}
+
+@mixin _border-level-4bit-vars($dark: false) {
+    @each $level, $token in border-levels.$border-level-token-map {
+        $css-var: if($dark, bg.dark-remap-token($token), $token);
+        $paint: var(--theme-bg-#{$css-var}-color, var(--#{$css-var}));
+        @each $dir in (h, v) {
+            --border-#{$level}-#{$dir}-image: linear-gradient(#{$paint}, #{$paint});
+            --border-#{$level}-#{$dir}-color: transparent;
+            --border-#{$level}-#{$dir}-size: 100% 1px;
+            @include _border-render-solid('border-#{$level}-#{$dir}', $paint);
+        }
+    }
+}
+
+// Modes that can render every gray solid give each step its own shade instead
+// of the two-steps-per-level collapse (parity with the bg--gray-* utilities).
+@mixin _border-step-4bit-vars($dark: false) {
+    @each $step, $_ in border-levels.$border-step-level-map {
+        $css-var: if($dark, bg.dark-remap-token('gray-#{$step}'), 'gray-#{$step}');
+        $paint: var(--theme-bg-#{$css-var}-color, var(--#{$css-var}));
+        @each $dir in (h, v) {
+            --border-step-#{$step}-#{$dir}-image: linear-gradient(#{$paint}, #{$paint});
+            --border-step-#{$step}-#{$dir}-color: transparent;
+            --border-step-#{$step}-#{$dir}-size: 100% 1px;
+            // One layer, so the position tier has to say so: without it the step
+            // reads the two-layer position the 1-bit level art left behind.
+            --border-step-#{$step}-#{$dir}-position: 0 0;
+            @include _border-render-solid('border-step-#{$step}-#{$dir}', $paint);
+        }
+    }
+}
+
+// One border-token line as CSS paint: solids ride the color longhand, dash
+// sequences render as repeating gradients, geometry generated from the same
+// specs as the (legacy-release) PNG art, no pattern files fetched.
+@mixin _border-token-line-vars($token, $spec, $dir) {
+    @if list.nth($spec, 1) == 'solid' {
+        --border-token-#{$token}-#{$dir}-image: none;
+        --border-token-#{$token}-#{$dir}-size: auto;
+        --border-token-#{$token}-#{$dir}-color: #{list.nth($spec, 2)};
+    } @else {
+        $accent: list.nth($spec, 2);
+        $fill: list.nth($spec, 3);
+        $period: list.nth($spec, 4) + 1;
+        $axis: if($dir == "h", right, bottom);
+        @include _border-line-ref('--border-token-#{$token}-#{$dir}-image', 'repeating-linear-gradient(to #{$axis}, #{$accent} 0 1px, #{$fill} 1px #{$period}px)');
+        --border-token-#{$token}-#{$dir}-size: #{if($dir == "h", "#{$period}px 1px", "1px #{$period}px")};
+        --border-token-#{$token}-#{$dir}-color: transparent;
+    }
+}
+
+// Families: the base 1-bit rail, its preview twin with the white tone muted, and
+// the 2-bit rail, whose tokens dither between the same four tones the 2-bit level
+// art uses instead of dashing black on white.
+@mixin _border-token-pattern-vars($family, $dark: false, $chromatic: true) {
+    $lines: vars.$border-token-lines;
+    @if $family == 'borders-token-preview' {
+        $lines: vars.$border-token-lines-preview;
+    } @else if $family == 'borders-token--2bit' {
+        $lines: vars.$border-token-lines-2bit;
+    }
+
+    // Grayscale token rail (semantic black/white classes handled separately in utilities).
+    @each $token in vars.$one-bit-shades {
+        $line-token: if($dark, bg.dark-remap-token($token), $token);
+        @each $dir in (h, v) {
+            @include _border-token-line-vars($token, map.get($lines, $line-token), $dir);
+        }
+    }
+
+    @if $chromatic {
+        // Chromatic base hues and chromatic step rail.
+        @each $hue in vars.$color-hues {
+            $hue-str: '' + $hue;
+            $hue-token: if($dark, bg.dark-remap-token($hue-str), $hue-str);
+            @each $dir in (h, v) {
+                @include _border-token-line-vars($hue-str, map.get($lines, $hue-token), $dir);
+            }
+
+            @each $step in vars.$color-shade-steps {
+                $token: '#{$hue-str}-#{$step}';
+                $line-token: if($dark, bg.dark-remap-token($token), $token);
+                @each $dir in (h, v) {
+                    @include _border-token-line-vars($token, map.get($lines, $line-token), $dir);
+                }
+            }
+        }
+    }
+}
+
+// Limited-palette chromatic border tokens: rows/cols 0-1 of the palette Bayer
+// tiles as two gradient layers (row 1 positioned one ratio-pixel down). Tokens
+// without palette art keep the bg-var indirection, matching the PNG pipeline.
+@mixin _border-token-tile-line-vars($token, $spec, $dir) {
+    @if list.nth($spec, 1) == 'solid' {
+        --border-token-#{$token}-#{$dir}-image: none;
+        --border-token-#{$token}-#{$dir}-size: auto;
+        --border-token-#{$token}-#{$dir}-position: 0 0;
+        --border-token-#{$token}-#{$dir}-color: #{list.nth($spec, 2)};
+    } @else {
+        $first: if($dir == "h", list.nth($spec, 2), list.nth($spec, 4));
+        $second: if($dir == "h", list.nth($spec, 3), list.nth($spec, 5));
+        $axis: if($dir == "h", "to right", "to bottom");
+        $tile: "calc(16px / var(--dither-ratio))";
+        $one: "calc(1px / var(--dither-ratio))";
+        @include _border-line-ref('--border-token-#{$token}-#{$dir}-image', 'linear-gradient(#{$axis}, #{$first})', $second-gradient: 'linear-gradient(#{$axis}, #{$second})');
+        @if $dir == "h" {
+            --border-token-#{$token}-#{$dir}-size: #{$tile} #{$one}, #{$tile} #{$one};
+            --border-token-#{$token}-#{$dir}-position: 0 0, 0 #{$one};
+        } @else {
+            --border-token-#{$token}-#{$dir}-size: #{$one} #{$tile}, #{$one} #{$tile};
+            --border-token-#{$token}-#{$dir}-position: 0 0, #{$one} 0;
+        }
+        --border-token-#{$token}-#{$dir}-color: transparent;
+    }
+}
+
+// The generator emits every chromatic token for every palette and preview twin,
+// so the lookup is total: a missing entry is a generator bug and should fail the
+// build here rather than resolve to a bg-var stand-in nothing else paints with.
+@mixin _border-token-palette-vars($palette-id, $preview: false, $dark: false) {
+    $lines: map.get(vars.$border-palette-lines, 'color-#{$palette-id}#{if($preview, "-preview", "")}');
+    @each $token, $_ in vars.$color-palette-framework {
+        $line-token: if($dark, bg.dark-remap-token($token), $token);
+        @each $dir in (h, v) {
+            @include _border-token-tile-line-vars($token, map.get($lines, $line-token), $dir);
+        }
+    }
+}
+
+// ============================================
+// Grayscale bg vars for a given family + dark-mode flag
+// ============================================
+
+// The 1-bit rails carry their own gray-1..gray-7 entries (the generator aliases
+// each legacy name onto its tens anchor), so the deprecated rail resolves
+// through the legacy token; the 2-bit rails have no legacy keys and resolve
+// through the enhanced one. A preview family is its raw twin with the white
+// tone muted, so it takes the same branch.
+$_one-bit-tile-families: ('grayscale', 'grayscale-preview');
+$_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
+
+// The 1-bit rail's checkerboard tone, the field the screen-backdrop slot paints
+// on light 1-bit screens. Light paint only: dark 1-bit repoints that slot to
+// gray-75, so the dark rails would carry three declarations nothing reads.
+@mixin _checker-bg-var($specs, $dark) {
+    @if not $dark {
+        @include _bg-tile('checker', map.get($specs, 'checker'));
+    }
+}
+
+@mixin _grayscale-bg-vars($family, $dark: false) {
+    $specs: map.get(vars.$bg-tile-specs, $family);
+    @each $shade in vars.$one-bit-shades {
+        $img-shade: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _bg-tile($shade, map.get($specs, $img-shade));
+    }
+    @if list.index($_one-bit-tile-families, $family) {
+        @each $legacy, $_ in vars.$deprecated-to-enhanced-mapping {
+            $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
+            @include _bg-tile($legacy, map.get($specs, $img-shade));
+        }
+        @include _checker-bg-var($specs, $dark);
+    } @else if list.index($_two-bit-tile-families, $family) {
+        @each $legacy, $enhanced in vars.$deprecated-to-enhanced-mapping {
+            $img-shade: if($dark, bg.dark-remap-token($enhanced), $enhanced);
+            @include _bg-tile($legacy, map.get($specs, $img-shade));
+        }
+    }
+}
+
+@mixin _grayscale-text-vars($family, $dark: false) {
+    $specs: map.get(vars.$bg-tile-specs, $family);
+    @each $shade in vars.$one-bit-shades {
+        @if $shade == 'black' or $shade == 'white' {
+            $css-var: if($dark, bg.dark-remap-token($shade), $shade);
+            @include _text-solid($shade, $css-var);
+            --text-#{$shade}-under: transparent;
+        } @else {
+            $img-shade: if($dark, bg.dark-remap-token($shade), $shade);
+            @include _text-tile($shade, map.get($specs, $img-shade));
+        }
+    }
+    @if list.index($_one-bit-tile-families, $family) {
+        @each $legacy, $_ in vars.$deprecated-to-enhanced-mapping {
+            $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
+            @include _text-tile($legacy, map.get($specs, $img-shade));
+        }
+    } @else if list.index($_two-bit-tile-families, $family) {
+        @each $legacy, $enhanced in vars.$deprecated-to-enhanced-mapping {
+            $img-shade: if($dark, bg.dark-remap-token($enhanced), $enhanced);
+            @include _text-tile($legacy, map.get($specs, $img-shade));
+        }
+    }
+}
+
+// Color token bg vars mapped to grayscale patterns
+@mixin _color-to-gray-bg-vars($family, $dark: false) {
+    $specs: map.get(vars.$bg-tile-specs, $family);
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        @if $family == 'grayscale' and $dark {
+            // 1-bit dark: map through deprecated, then dark-remap (matches original behavior)
+            $deprecated: map.get(vars.$extended-to-deprecated-mapping, $gray-token);
+            $pattern-shade: if($deprecated, $deprecated, $gray-token);
+            $img-shade: bg.dark-remap-token($pattern-shade);
+            @include _bg-tile($color-token, map.get($specs, $img-shade));
+        } @else {
+            $img-shade: if($dark, bg.dark-remap-token($gray-token), $gray-token);
+            @include _bg-tile($color-token, map.get($specs, $img-shade));
+        }
+    }
+}
+
+@mixin _color-to-gray-text-vars($family, $dark: false) {
+    $specs: map.get(vars.$bg-tile-specs, $family);
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        @if $family == 'grayscale' and $dark {
+            $deprecated: map.get(vars.$extended-to-deprecated-mapping, $gray-token);
+            $pattern-shade: if($deprecated, $deprecated, $gray-token);
+            $img-shade: bg.dark-remap-token($pattern-shade);
+            @include _text-tile($color-token, map.get($specs, $img-shade));
+        } @else {
+            $img-shade: if($dark, bg.dark-remap-token($gray-token), $gray-token);
+            @include _text-tile($color-token, map.get($specs, $img-shade));
+        }
+    }
+}
+
+// Preview-white muting for the chromatic fallback rail. The plain 1-bit and
+// 2-bit blocks resolve chromatic tokens through the unmuted grayscale specs,
+// so on a preview-white-limited screen a bg--red-40 field kept a literal
+// #FFFFFF light tone while the gray ladder around it muted to the preview
+// white. Re-emitting the whole fallback rail through the preview family would
+// add roughly 4,200 declarations; the preview twins share every tile and
+// differ only where a spec carries the white tone, so emit just the longhands
+// whose value actually changes between the two families.
+@function _bg-spec-longhands($spec) {
+    $kind: list.nth($spec, 1);
+    @if $kind == 'solid' {
+        @return ('image': 'none', 'color': '#{list.nth($spec, 2)}', 'solid': '#{list.nth($spec, 2)}');
+    } @else if $kind == 'baked' {
+        @return ('image': 'var(--tile-#{list.nth($spec, 2)})', 'color': 'transparent', 'solid': 'transparent');
+    }
+    @return ('image': 'var(--tile-#{list.nth($spec, 2)})', 'color': '#{list.nth($spec, 3)}', 'solid': 'transparent');
+}
+
+@function _text-spec-longhands($spec) {
+    $kind: list.nth($spec, 1);
+    @if $kind == 'solid' {
+        @return ('image': 'none', 'color': '#{list.nth($spec, 2)}', 'clip': 'border-box', 'under': 'transparent');
+    }
+    @return (
+        'image': 'var(--tile-#{list.nth($spec, 2)})',
+        'color': 'transparent',
+        'clip': 'text',
+        'under': '#{if($kind == 'baked', transparent, list.nth($spec, 3))}'
+    );
+}
+
+// Mirrors the shade mapping in _color-to-gray-bg-vars/_color-to-gray-text-vars:
+// 1-bit dark maps through the deprecated alias first, everything else
+// dark-remaps the fallback gray directly.
+@function _color-to-gray-pattern-shade($family, $gray-token, $dark) {
+    @if $family == 'grayscale' and $dark {
+        $deprecated: map.get(vars.$extended-to-deprecated-mapping, $gray-token);
+        $pattern-shade: if($deprecated, $deprecated, $gray-token);
+        @return bg.dark-remap-token($pattern-shade);
+    }
+    @return if($dark, bg.dark-remap-token($gray-token), $gray-token);
+}
+
+@mixin _color-to-gray-preview-mute-vars($family, $preview-family, $dark: false) {
+    $specs: map.get(vars.$bg-tile-specs, $family);
+    $preview-specs: map.get(vars.$bg-tile-specs, $preview-family);
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        $img-shade: _color-to-gray-pattern-shade($family, $gray-token, $dark);
+        $base-bg: _bg-spec-longhands(map.get($specs, $img-shade));
+        $preview-bg: _bg-spec-longhands(map.get($preview-specs, $img-shade));
+        @each $field, $value in $preview-bg {
+            @if $value != map.get($base-bg, $field) {
+                --bg-#{$color-token}-#{$field}: #{$value};
+            }
+        }
+        $base-text: _text-spec-longhands(map.get($specs, $img-shade));
+        $preview-text: _text-spec-longhands(map.get($preview-specs, $img-shade));
+        @each $field, $value in $preview-text {
+            @if $value != map.get($base-text, $field) {
+                --text-#{$color-token}-#{$field}: #{$value};
+            }
+        }
+    }
+}
+
+// Border token lines follow the same rule as bg, text and strokes: every
+// grayscale mode resolves a chromatic token through its gray fallback, so a
+// theme hue cannot reach a device that has no color to render it with.
+@mixin _color-to-gray-border-token-vars($dark: false) {
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        $mapped-gray: if($dark, bg.dark-remap-token($gray-token), $gray-token);
+        @each $dir in (h, v) {
+            --border-token-#{$color-token}-#{$dir}-image: var(--border-token-#{$mapped-gray}-#{$dir}-image, none);
+            --border-token-#{$color-token}-#{$dir}-color: var(--border-token-#{$mapped-gray}-#{$dir}-color, transparent);
+            --border-token-#{$color-token}-#{$dir}-size: var(--border-token-#{$mapped-gray}-#{$dir}-size, var(--dither-bg-size, auto));
+        }
+    }
+}
+
+// Solid bg vars for all grayscale + color tokens
+@mixin _solid-bg-vars($dark: false) {
+    @each $shade in vars.$one-bit-legacy-shades {
+        $css-var: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _bg-solid($shade, $css-var);
+    }
+    @each $shade, $_ in vars.$extended-to-deprecated-mapping {
+        $css-var: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _bg-solid($shade, $css-var);
+    }
+}
+
+@mixin _solid-text-vars($dark: false) {
+    @each $shade in vars.$one-bit-shades {
+        $css-var: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _text-solid($shade, $css-var);
+    }
+    @each $legacy, $enhanced in vars.$deprecated-to-enhanced-mapping {
+        $css-var: if($dark, bg.dark-remap-token($enhanced), $enhanced);
+        @include _text-solid($legacy, $css-var);
+    }
+}
+
+@mixin _solid-color-bg-vars($dark: false) {
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        $css-var: if($dark, bg.dark-remap-token($gray-token), $gray-token);
+        @include _bg-solid($color-token, $css-var);
+    }
+}
+
+@mixin _solid-color-text-vars($dark: false) {
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        $css-var: if($dark, bg.dark-remap-token($gray-token), $gray-token);
+        @include _text-solid($color-token, $css-var);
+    }
+}
+
+// Color-full mode: actual chromatic colors
+@mixin _color-full-bg-vars($dark: false) {
+    @each $shade in vars.$one-bit-shades {
+        $css-var: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _bg-solid($shade, $css-var);
+    }
+    @each $legacy, $enhanced in vars.$deprecated-to-enhanced-mapping {
+        $css-var: if($dark, bg.dark-remap-token($enhanced), $enhanced);
+        @include _bg-solid($legacy, $css-var);
+    }
+    @each $token, $_ in vars.$color-palette-framework {
+        $css-var: if($dark, bg.dark-remap-token($token), $token);
+        @include _bg-solid($token, $css-var);
+    }
+}
+
+@mixin _color-full-text-vars($dark: false) {
+    @each $shade in vars.$one-bit-shades {
+        $css-var: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _text-solid($shade, $css-var);
+    }
+    @each $legacy, $enhanced in vars.$deprecated-to-enhanced-mapping {
+        $css-var: if($dark, bg.dark-remap-token($enhanced), $enhanced);
+        @include _text-solid($legacy, $css-var);
+    }
+    @each $token, $_ in vars.$color-palette-framework {
+        $css-var: if($dark, bg.dark-remap-token($token), $token);
+        @include _text-solid($token, $css-var);
+    }
+}
+
+// Limited color palette bg vars
+@mixin _palette-bg-vars($palette-id, $preview: false, $dark: false) {
+    $suffix: if($preview, '-preview', '');
+    $specs: map.get(vars.$bg-tile-specs, 'color-#{$palette-id}#{$suffix}');
+
+    @each $shade in vars.$one-bit-shades {
+        $img-shade: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _bg-tile($shade, map.get($specs, $img-shade));
+    }
+
+    @if list.index(vars.$limited-palette-grayscale-1bit-ids, $palette-id) {
+        @each $legacy, $_ in vars.$deprecated-to-enhanced-mapping {
+            $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
+            @include _bg-tile($legacy, map.get($specs, $img-shade));
+        }
+        @include _checker-bg-var($specs, $dark);
+    }
+
+    @each $token, $_ in vars.$color-palette-framework {
+        $img-token: if($dark, bg.dark-remap-token($token), $token);
+        @include _bg-tile($token, map.get($specs, $img-token));
+    }
+}
+
+@mixin _palette-text-vars($palette-id, $preview: false, $dark: false) {
+    $suffix: if($preview, '-preview', '');
+    $specs: map.get(vars.$bg-tile-specs, 'color-#{$palette-id}#{$suffix}');
+
+    @each $shade in vars.$one-bit-shades {
+        $img-shade: if($dark, bg.dark-remap-token($shade), $shade);
+        @include _text-tile($shade, map.get($specs, $img-shade));
+    }
+
+    @if list.index(vars.$limited-palette-grayscale-1bit-ids, $palette-id) {
+        @each $legacy, $_ in vars.$deprecated-to-enhanced-mapping {
+            $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
+            @include _text-tile($legacy, map.get($specs, $img-shade));
+        }
+    }
+
+    @each $token, $_ in vars.$color-palette-framework {
+        $img-token: if($dark, bg.dark-remap-token($token), $token);
+        @include _text-tile($token, map.get($specs, $img-token));
+    }
+}
+
+// Stroke vars for all tokens
+@mixin _stroke-vars($dark: false) {
+    @each $name, $color in vars.$palette-shades {
+        $css-var: if($dark, bg.dark-remap-token($name), $name);
+        @include _stroke-color($name, $css-var);
+    }
+    @each $name, $_ in vars.$palette-shades-extended {
+        @if $name != 'black' and $name != 'white' {
+            $css-var: if($dark, bg.dark-remap-token($name), $name);
+            @include _stroke-color($name, $css-var);
+        }
+    }
+    @each $token, $_ in vars.$color-palette-framework {
+        $css-var: if($dark, bg.dark-remap-token($token), $token);
+        @include _stroke-color($token, $css-var);
+    }
+}
+
+// Grayscale screens render chromatic strokes as their gray fallbacks (the
+// same mapping bg/text use), so theme hues cannot leak color onto devices
+// that cannot display it. Border line colors resolve through strokes too.
+@mixin _color-to-gray-stroke-vars($dark: false) {
+    @each $color-token, $gray-token in vars.$color-to-gray-fallback {
+        $css-var: if($dark, bg.dark-remap-token($gray-token), $gray-token);
+        @include _stroke-color($color-token, $css-var);
+    }
+}
+
+// Preview mode mutes bg/text through the -preview image families; strokes are
+// the only solid-color chain, so remap chromatic tokens to their preview
+// solids. White stays on var(--white); screen--preview-white-limited mutes it.
+@mixin _preview-stroke-vars {
+    @each $token, $hex in vars.$preview-color-palette {
+        @include _stroke-hex($token, $hex);
+    }
+}
+
+@mixin _default-light-paint-vars {
+    @each $name, $color in vars.$palette-shades {
+        @include _bg-hex($name, $color);
+        @include _text-hex($name, $color);
+    }
+    @each $name, $color in vars.$palette-shades-extended {
+        @if $name != 'black' and $name != 'white' {
+            @include _bg-hex($name, $color);
+            @include _text-hex($name, $color);
+        }
+    }
+    @each $token, $hex in vars.$color-palette-framework {
+        @include _bg-hex($token, $hex);
+        @include _text-hex($token, $hex);
+    }
+    @include _stroke-vars;
+    @include _border-level-pattern-vars('borders--1bit');
+    @include _border-token-pattern-vars('borders-token');
+}
+
+// ============================================
+// Chart series ramp: full-color screens
+// ============================================
+// The two ordered lists and their span live in config/_tokens.scss, beside the
+// rest of the token data, because themes/dark-theme.scss binds the dark one too.
+//
+// The ramp aliases the --bg-* rail, and inside a dark block that rail already
+// carries the mirrored step (--bg-red-50-color resolves to --red-35), so the
+// dark binding passes its list through bg.dark-remap-tokens(): naming each
+// slot's mirror preimage is what lands the token the list names, the same
+// inversion every _*-vars($dark: true) mixin applies one level down.
+
+// ============================================
+// Runtime paint depth
+// ============================================
+// The mode class that selects a screen's paint rail also publishes that rail's
+// depth as --framework-bit-depth. getScreenContext() in
+// app/javascript/plugin-render/plugins.js reads the published value, so the mode
+// registry lives here and nowhere else: a palette added to
+// $color-palette-limited-ids reaches the runtime with no JS change.
+//
+// Depth describes the rail, not the panel's storage. The limited palettes paint
+// solid palette inks the way the 4-bit rail paints solid tokens, so they publish
+// 4 rather than the 1-bit grayscale fallback they keep for chromatic border
+// tokens. screen--color-full covers the 12-bit and 24-bit devices in
+// db/data/framework_devices.yml and publishes the lower of the two.
+//
+// A screen with no mode class makes no device claim, so it publishes 1: the
+// runtime treats an unstated device as the most constrained rail.
+$_screen-paint-depths: (
+    '1bit': 1,
+    '2bit': 2,
+    '4bit': 4,
+    '8bit': 8,
+    '16bit': 16,
+    'color-full': 12,
+);
+$_limited-palette-paint-depth: 4;
+
+// Every entry carries the same specificity, so a screen wearing more than one
+// mode class takes the last one declared. The order below is the order the paint
+// blocks resolve in, which makes the published depth the depth of the rail that
+// actually painted: screen--2bit.screen--color-7a paints palette inks and
+// publishes 4, the same way its background tokens resolve to palette solids.
+@mixin _screen-paint-depth-vars {
+    .screen {
+        --framework-bit-depth: 1;
+    }
+    @each $modifier, $depth in $_screen-paint-depths {
+        .screen.screen--#{$modifier} {
+            --framework-bit-depth: #{$depth};
+        }
+    }
+    @each $palette-id in vars.$color-palette-limited-ids {
+        .screen.screen--color-#{$palette-id} {
+            --framework-bit-depth: #{$_limited-palette-paint-depth};
+        }
+    }
+}
+
+// ============================================
+// CSS Output: Mode variable declarations
+// ============================================
+
+@include namespace.trmnl-namespace {
+    @include _screen-paint-depth-vars;
+
+    // ── Default (no bit-depth class): solid hex fallback ──
+    .screen {
+        --dither-ratio: var(--dither-ratio-override, var(--pixel-ratio, 1));
+        --dither-bg-size: calc(16px / var(--dither-ratio));
+        @include _tile-asset-definitions;
+        @include _default-light-paint-vars;
+    }
+
+    // ── 1-bit mode: grayscale dither patterns ──
+    .screen.screen--1bit,
+    .screen.screen--dark-mode.screen--1bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale');
+        @include _grayscale-text-vars('grayscale');
+        @include _color-to-gray-bg-vars('grayscale');
+        @include _color-to-gray-text-vars('grayscale');
+        @include _color-to-gray-border-token-vars;
+        @include _color-to-gray-stroke-vars;
+        @include _border-level-pattern-vars('borders--1bit');
+    }
+
+    // The default backdrop slot is gray-40 (see _screen.scss); its dense 56%
+    // 1-bit row-clumped dither reads as a harsh, busy stipple at backdrop
+    // scale, and dark mode only mirrors it to gray-45 instead of going
+    // near-black like the 2-bit backdrop. Re-point the slot per mode on the
+    // 1-bit rail's own tokens: light takes 'checker', the pure 50%
+    // checkerboard, so the backdrop reads as a flat uniform mid-tone on the
+    // family's white; dark re-points the slot at gray-75, which the dark remap
+    // resolves to the dense gray-10 tile over white, a near-black field with a
+    // sparse white lattice matching the 2-bit dark backdrop. 2-bit/4-bit and
+    // themes are unaffected.
+    .screen.screen--1bit#{helpers.$theme-exempt}:not(.screen--dark-mode),
+    .screen.screen--1bit.screen--dark-mode#{helpers.$theme-exempt} .inverse {
+        @include theme-slots.bg-slot('screen-backdrop', 'checker');
+    }
+    .screen.screen--1bit.screen--dark-mode#{helpers.$theme-exempt},
+    .screen.screen--1bit#{helpers.$theme-exempt}:not(.screen--dark-mode) .inverse {
+        @include theme-slots.bg-slot('screen-backdrop', 'gray-75');
+    }
+
+    // ── 2-bit mode: grayscale--2bit dither patterns ──
+    .screen.screen--2bit,
+    .screen.screen--dark-mode.screen--2bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale--2bit');
+        @include _grayscale-text-vars('grayscale--2bit');
+        @include _color-to-gray-bg-vars('grayscale--2bit');
+        @include _color-to-gray-text-vars('grayscale--2bit');
+        @include _color-to-gray-border-token-vars;
+        @include _color-to-gray-stroke-vars;
+        @include _border-level-pattern-vars('borders--2bit');
+        // Chromatic tokens resolve through the gray rail above, so only the rail
+        // itself needs the 2-bit lines.
+        @include _border-token-pattern-vars('borders-token--2bit', $chromatic: false);
+    }
+
+    // ── 4-bit+ mode: solid CSS variable colors ──
+    .screen.screen--4bit,
+    .screen.screen--8bit,
+    .screen.screen--16bit,
+    .screen.screen--dark-mode.screen--4bit#{helpers.$theme-exempt} .inverse,
+    .screen.screen--dark-mode.screen--8bit#{helpers.$theme-exempt} .inverse,
+    .screen.screen--dark-mode.screen--16bit#{helpers.$theme-exempt} .inverse {
+        @include _solid-bg-vars;
+        @include _solid-text-vars;
+        @include _solid-color-bg-vars;
+        @include _solid-color-text-vars;
+        @include _color-to-gray-border-token-vars;
+        @include _color-to-gray-stroke-vars;
+        @include _border-level-4bit-vars;
+        @include _border-step-4bit-vars;
+    }
+
+    // ── Full-spectrum color mode ──
+    .screen.screen--color-full,
+    .screen.screen--dark-mode.screen--color-full#{helpers.$theme-exempt} .inverse {
+        @include _color-full-bg-vars;
+        @include _color-full-text-vars;
+        @include _border-level-4bit-vars;
+        @include _border-step-4bit-vars;
+    }
+
+    // The chart-series ramp rides its own rule because it is theme-overridable
+    // and the paint vars above are not: a themed screen still needs real
+    // chromatic --bg-* values, but its own ramp has to survive. The gate keeps
+    // this rule off themed screens outright, and the tn--themes layer would
+    // outrank it regardless.
+    .screen.screen--color-full#{helpers.$theme-exempt},
+    .screen.screen--dark-mode.screen--color-full#{helpers.$theme-exempt} .inverse {
+        @include theme-slots.chart-series-ramp(
+            vars.$color-full-chart-series,
+            $span: vars.$color-full-chart-series-span
+        );
+    }
+
+    // ── Limited color palettes (actual + preview) ──
+    @each $palette-id in vars.$color-palette-limited-ids {
+        .screen.screen--color-#{$palette-id},
+        .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _palette-bg-vars($palette-id);
+            @include _palette-text-vars($palette-id);
+            @include _border-level-pattern-vars('borders--1bit');
+            // Palette paint below replaces every chromatic token in this rule;
+            // emit only the grayscale rail here to avoid 900 dead declarations.
+            @include _border-token-pattern-vars('borders-token', $chromatic: false);
+            @include _border-token-palette-vars($palette-id);
+        }
+
+        .screen.screen--preview-colors.screen--color-#{$palette-id},
+        .screen--preview-colors .screen.screen--color-#{$palette-id},
+        .screen.screen--dark-mode.screen--preview-colors.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen--dark-mode.screen--preview-colors .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen--preview-colors .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _palette-bg-vars($palette-id, $preview: true);
+            @include _palette-text-vars($palette-id, $preview: true);
+            @include _preview-stroke-vars;
+            @include _border-level-pattern-vars('borders--1bit-preview');
+            @include _border-token-pattern-vars('borders-token-preview', $chromatic: false);
+            @include _border-token-palette-vars($palette-id, $preview: true);
+        }
+    }
+
+    // ── Preview + limited white + 1bit ──
+    // The plain 1-bit rails on the preview family: identical geometry, every
+    // tile spec baking the muted preview white instead of #FFFFFF. Emitting
+    // both rails through the same mixins the plain block uses keeps bg and
+    // text muted together and keeps the deprecated rail from falling through
+    // to the unmuted block.
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--1bit,
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale-preview');
+        @include _grayscale-text-vars('grayscale-preview');
+        @include _border-level-pattern-vars('borders--1bit-preview');
+    }
+
+    // The chromatic fallback rail resolves in the plain 1-bit block with the
+    // unmuted white, so the mute mixin restates just the longhands the preview
+    // family changes. Gated to the grayscale rail: on a screen that also wears
+    // a palette class, chromatic tokens paint from the palette rail's own
+    // preview art, and this restatement would clobber two of its longhands.
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$grayscale-rail-only},
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$theme-exempt}#{helpers.$grayscale-rail-only} .inverse {
+        @include _color-to-gray-preview-mute-vars('grayscale', 'grayscale-preview');
+    }
+
+    // ── 1-bit + limited palettes: ensure chromatic border tokens use grayscale dotted fallback ──
+    @each $palette-id in vars.$color-palette-limited-ids {
+        .screen.screen--1bit.screen--color-#{$palette-id},
+        .screen.screen--preview-colors.screen--1bit.screen--color-#{$palette-id},
+        .screen--preview-colors .screen.screen--1bit.screen--color-#{$palette-id},
+        .screen.screen--dark-mode.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen.screen--dark-mode.screen--preview-colors.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen--dark-mode.screen--preview-colors .screen.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen--preview-colors .screen.screen--dark-mode.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _color-to-gray-border-token-vars;
+        }
+    }
+
+    // ── Preview + limited white + 2bit ──
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--2bit,
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale-preview--2bit');
+        @include _grayscale-text-vars('grayscale-preview--2bit');
+    }
+
+    // Same grayscale-rail gate as the 1-bit twin above.
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$grayscale-rail-only},
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$theme-exempt}#{helpers.$grayscale-rail-only} .inverse {
+        @include _color-to-gray-preview-mute-vars('grayscale--2bit', 'grayscale-preview--2bit');
+    }
+
+    // ════════════════════════════════════════════
+    // DARK AND INVERSE PAINT
+    // ════════════════════════════════════════════
+    // Screen selectors apply the dark scheme globally. Inverse selectors apply
+    // the same paint mapping only at that element's cascade boundary.
+    // Every dark block carries helpers.$theme-exempt on the .screen subject:
+    // themed screens own their colors and must not be remapped. On descendant
+    // wrapper forms the gate sits on the inner subject (the painted screen).
+    //
+    // The .inverse arms carry the same gate. A theme states its own inverse
+    // scheme (`.screen--theme-<id> .inverse`) in its own tokens, so the rail
+    // under a themed inverse subtree must stay the screen's own: remapping it
+    // here re-inverted the theme's already-inverted tokens, and on the gray
+    // fallback rails that flipped a hue ink onto its canvas (a yellow ink's
+    // gray-60 art mirrored to gray-25 on the theme's black inverse ground).
+    // Base hues hold still under the chromatic remap on the color rails, so
+    // the double inversion was invisible exactly there and broke everywhere
+    // else. Unthemed screens keep the remap: their inverse is the framework's
+    // own scheme flip, stated once here rather than per subtree.
+
+    // ── Dark mode + 1-bit ──
+    .screen.screen--dark-mode.screen--1bit#{helpers.$theme-exempt},
+    .screen.screen--1bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale', $dark: true);
+        @include _grayscale-text-vars('grayscale', $dark: true);
+        @include _color-to-gray-bg-vars('grayscale', $dark: true);
+        @include _color-to-gray-text-vars('grayscale', $dark: true);
+        @include _color-to-gray-border-token-vars($dark: true);
+        @include _stroke-vars($dark: true);
+        @include _color-to-gray-stroke-vars($dark: true);
+        @include _border-level-pattern-vars('borders--1bit', $dark: true);
+    }
+
+    // ── Dark mode + 2-bit ──
+    .screen.screen--dark-mode.screen--2bit#{helpers.$theme-exempt},
+    .screen.screen--2bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale--2bit', $dark: true);
+        @include _grayscale-text-vars('grayscale--2bit', $dark: true);
+        @include _color-to-gray-bg-vars('grayscale--2bit', $dark: true);
+        @include _color-to-gray-text-vars('grayscale--2bit', $dark: true);
+        @include _color-to-gray-border-token-vars($dark: true);
+        @include _stroke-vars($dark: true);
+        @include _color-to-gray-stroke-vars($dark: true);
+        @include _border-level-pattern-vars('borders--2bit', $dark: true);
+        @include _border-token-pattern-vars('borders-token--2bit', $dark: true, $chromatic: false);
+    }
+
+    // ── Dark mode + 4-bit+ ──
+    .screen.screen--dark-mode.screen--4bit#{helpers.$theme-exempt},
+    .screen.screen--dark-mode.screen--8bit#{helpers.$theme-exempt},
+    .screen.screen--dark-mode.screen--16bit#{helpers.$theme-exempt},
+    .screen.screen--4bit#{helpers.$theme-exempt} .inverse,
+    .screen.screen--8bit#{helpers.$theme-exempt} .inverse,
+    .screen.screen--16bit#{helpers.$theme-exempt} .inverse {
+        @include _solid-bg-vars($dark: true);
+        @include _solid-text-vars($dark: true);
+        @include _solid-color-bg-vars($dark: true);
+        @include _solid-color-text-vars($dark: true);
+        @include _color-to-gray-border-token-vars($dark: true);
+        @include _stroke-vars($dark: true);
+        @include _color-to-gray-stroke-vars($dark: true);
+        @include _border-level-4bit-vars($dark: true);
+        @include _border-step-4bit-vars($dark: true);
+    }
+
+    // ── Dark mode + color-full ──
+    .screen.screen--dark-mode.screen--color-full#{helpers.$theme-exempt},
+    .screen.screen--color-full#{helpers.$theme-exempt} .inverse {
+        @include _color-full-bg-vars($dark: true);
+        @include _color-full-text-vars($dark: true);
+        @include _stroke-vars($dark: true);
+        @include _border-level-4bit-vars($dark: true);
+        @include _border-step-4bit-vars($dark: true);
+    }
+
+    // The dark ground's own ramp, split off the paint block for the same reason
+    // the light one is.
+    .screen.screen--dark-mode.screen--color-full#{helpers.$theme-exempt},
+    .screen.screen--color-full#{helpers.$theme-exempt} .inverse {
+        @include theme-slots.chart-series-ramp(
+            bg.dark-remap-tokens(vars.$color-full-chart-series-dark),
+            $span: vars.$color-full-chart-series-span
+        );
+    }
+
+    // ── Dark mode + limited color palettes ──
+    @each $palette-id in vars.$color-palette-limited-ids {
+        .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _palette-bg-vars($palette-id, $dark: true);
+            @include _palette-text-vars($palette-id, $dark: true);
+            @include _stroke-vars($dark: true);
+            @include _border-level-pattern-vars('borders--1bit', $dark: true);
+            @include _border-token-pattern-vars('borders-token', $dark: true, $chromatic: false);
+            @include _border-token-palette-vars($palette-id, $dark: true);
+        }
+
+        .screen.screen--dark-mode.screen--preview-colors.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen--dark-mode.screen--preview-colors .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--preview-colors.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen--preview-colors .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _palette-bg-vars($palette-id, $preview: true, $dark: true);
+            @include _palette-text-vars($palette-id, $preview: true, $dark: true);
+            @include _preview-stroke-vars;
+            @include _border-level-pattern-vars('borders--1bit-preview', $dark: true);
+            @include _border-token-pattern-vars('borders-token-preview', $dark: true, $chromatic: false);
+            @include _border-token-palette-vars($palette-id, $preview: true, $dark: true);
+        }
+    }
+
+    // ── Dark mode + preview + limited white + 1bit ──
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$theme-exempt},
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale-preview', $dark: true);
+        @include _grayscale-text-vars('grayscale-preview', $dark: true);
+        @include _border-level-pattern-vars('borders--1bit-preview', $dark: true);
+    }
+
+    // Dark twin of the grayscale-rail-gated chromatic mute above.
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$theme-exempt}#{helpers.$grayscale-rail-only},
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--1bit#{helpers.$theme-exempt}#{helpers.$grayscale-rail-only} .inverse {
+        @include _color-to-gray-preview-mute-vars('grayscale', 'grayscale-preview', $dark: true);
+    }
+
+    // ── Dark mode 1-bit + limited palettes: preserve grayscale dotted border fallback ──
+    @each $palette-id in vars.$color-palette-limited-ids {
+        .screen.screen--dark-mode.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--dark-mode.screen--preview-colors.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen--dark-mode.screen--preview-colors .screen.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen--preview-colors .screen.screen--dark-mode.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen.screen--preview-colors.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse,
+        .screen--preview-colors .screen.screen--1bit.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _color-to-gray-border-token-vars($dark: true);
+        }
+    }
+
+    // ── Dark mode + preview + limited white + 2bit ──
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$theme-exempt},
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$theme-exempt} .inverse {
+        @include _grayscale-bg-vars('grayscale-preview--2bit', $dark: true);
+        @include _grayscale-text-vars('grayscale-preview--2bit', $dark: true);
+    }
+
+    // Dark twin of the grayscale-rail-gated chromatic mute above.
+    .screen.screen--dark-mode.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$theme-exempt}#{helpers.$grayscale-rail-only},
+    .screen.screen--preview-colors.screen--preview-white-limited.screen--2bit#{helpers.$theme-exempt}#{helpers.$grayscale-rail-only} .inverse {
+        @include _color-to-gray-preview-mute-vars('grayscale--2bit', 'grayscale-preview--2bit', $dark: true);
+    }
+
+    // ── Dark mode default (no bit-depth): remap solid colors ──
+    .screen.screen--dark-mode#{helpers.$theme-exempt},
+    .screen#{helpers.$theme-exempt} .inverse {
+        @each $name, $_ in vars.$palette-shades {
+            $css-var: bg.dark-remap-token($name);
+            @include _bg-solid($name, $css-var);
+            @include _text-solid($name, $css-var);
+        }
+        @each $name, $_ in vars.$palette-shades-extended {
+            @if $name != 'black' and $name != 'white' {
+                $css-var: bg.dark-remap-token($name);
+                @include _bg-solid($name, $css-var);
+                @include _text-solid($name, $css-var);
+            }
+        }
+        @each $token, $_ in vars.$color-palette-framework {
+            $css-var: bg.dark-remap-token($token);
+            @include _bg-solid($token, $css-var);
+            @include _text-solid($token, $css-var);
+        }
+        @include _stroke-vars($dark: true);
+        @include _border-level-pattern-vars('borders--1bit', $dark: true);
+        @include _border-token-pattern-vars('borders-token', $dark: true);
+    }
+
+    // ── Inverse inside a dark screen: restore light solid defaults ──
+    .screen.screen--dark-mode#{helpers.$theme-exempt} .inverse {
+        @include _default-light-paint-vars;
+    }
+
+    // Border-token preview overrides
+    .screen.screen--preview-colors,
+    .screen--preview-colors .screen,
+    .screen.screen--dark-mode.screen--preview-colors#{helpers.$theme-exempt} .inverse,
+    .screen--dark-mode.screen--preview-colors .screen#{helpers.$theme-exempt} .inverse,
+    .screen--preview-colors .screen.screen--dark-mode#{helpers.$theme-exempt} .inverse {
+        @include _border-token-pattern-vars('borders-token-preview');
+    }
+
+    .screen.screen--dark-mode.screen--preview-colors#{helpers.$theme-exempt},
+    .screen--dark-mode.screen--preview-colors .screen#{helpers.$theme-exempt},
+    .screen--preview-colors .screen.screen--dark-mode#{helpers.$theme-exempt},
+    .screen.screen--preview-colors#{helpers.$theme-exempt} .inverse,
+    .screen--preview-colors .screen#{helpers.$theme-exempt} .inverse {
+        @include _border-token-pattern-vars('borders-token-preview', $dark: true);
+    }
+
+    // Trailing on purpose: the registry is complete only after every mode
+    // block above has emitted its references.
+    .screen {
+        @include _flush-border-line-defs;
+    }
+}

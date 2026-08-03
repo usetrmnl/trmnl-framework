@@ -1,0 +1,246 @@
+// ============================================
+// TRMNL Framework - Font Utilities
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+
+@mixin font-size-small {
+    font-family: var(--font-small-font-family);
+    font-size: var(--font-small-font-size);
+    line-height: var(--font-small-line-height);
+    -webkit-font-smoothing: var(--font-small-font-smoothing);
+}
+
+@mixin font-size-base {
+    font-family: var(--font-base-font-family);
+    font-size: var(--font-base-font-size);
+    line-height: var(--font-base-line-height);
+    -webkit-font-smoothing: var(--font-base-font-smoothing);
+}
+
+@mixin font-size-large {
+    font-family: var(--font-large-font-family);
+    font-size: var(--font-large-font-size);
+    line-height: var(--font-large-line-height);
+    -webkit-font-smoothing: var(--font-large-font-smoothing);
+}
+
+@mixin font-size-xlarge {
+    font-family: var(--font-xlarge-font-family);
+    font-size: var(--font-xlarge-font-size);
+    line-height: var(--font-xlarge-line-height);
+    -webkit-font-smoothing: var(--font-xlarge-font-smoothing);
+}
+
+@mixin font-size-xxlarge {
+    font-family: var(--font-xxlarge-font-family);
+    font-size: var(--font-xxlarge-font-size);
+    line-height: var(--font-xxlarge-line-height);
+    -webkit-font-smoothing: var(--font-xxlarge-font-smoothing);
+}
+
+@mixin font-size-xxxlarge {
+    font-family: var(--font-xxxlarge-font-family);
+    font-size: var(--font-xxxlarge-font-size);
+    line-height: var(--font-xxxlarge-line-height);
+    -webkit-font-smoothing: var(--font-xxxlarge-font-smoothing);
+}
+
+@mixin font-size-mega {
+    font-family: var(--font-mega-font-family);
+    font-size: var(--font-mega-font-size);
+    line-height: var(--font-mega-line-height);
+    -webkit-font-smoothing: var(--font-mega-font-smoothing);
+}
+
+@mixin font-size-giga {
+    font-family: var(--font-giga-font-family);
+    font-size: var(--font-giga-font-size);
+    line-height: var(--font-giga-line-height);
+    -webkit-font-smoothing: var(--font-giga-font-smoothing);
+}
+
+@mixin font-size-tera {
+    font-family: var(--font-tera-font-family);
+    font-size: var(--font-tera-font-size);
+    line-height: var(--font-tera-line-height);
+    -webkit-font-smoothing: var(--font-tera-font-smoothing);
+}
+
+@mixin font-size-peta {
+    font-family: var(--font-peta-font-family);
+    font-size: var(--font-peta-font-size);
+    line-height: var(--font-peta-line-height);
+    -webkit-font-smoothing: var(--font-peta-font-smoothing);
+}
+
+// Variable fonts (4-bit+ screens) honor font-variation-settings over font-weight; emit both.
+@mixin font-weight-regular {
+    font-weight: 400;
+    font-variation-settings: 'wght' 400;
+}
+
+@mixin font-weight-bold {
+    font-weight: 700;
+    font-variation-settings: 'wght' 700;
+}
+
+// The size classes carry the dark gate because their namespace siblings do:
+// `dark:text--center` (alignment, _text.scss) and `dark:text--black` (color) both
+// compile, so a reader who meets either one expects the whole text-- namespace
+// to take the prefix. The deprecated font--{size} aliases follow the class they
+// alias; the weight utilities are their own family and keep their own set, and
+// `text--regular` / `text--bold` keep the weight family's set rather than the
+// namespace's, because a gate on one spelling of a synonym and not the other is
+// the one difference two names for the same rule must not have.
+@include mixins.trmnl-namespace {
+    .text--small {
+        @include responsive.with-dark-all-variants {
+            @include font-size-small;
+        }
+    }
+
+    .text--base {
+        @include responsive.with-dark-all-variants {
+            @include font-size-base;
+        }
+    }
+
+    .text--large {
+        @include responsive.with-dark-all-variants {
+            @include font-size-large;
+        }
+    }
+
+    .text--xlarge {
+        @include responsive.with-dark-all-variants {
+            @include font-size-xlarge;
+        }
+    }
+
+    .text--xxlarge {
+        @include responsive.with-dark-all-variants {
+            @include font-size-xxlarge;
+        }
+    }
+
+    .text--xxxlarge {
+        @include responsive.with-dark-all-variants {
+            @include font-size-xxxlarge;
+        }
+    }
+
+    .text--mega {
+        @include responsive.with-dark-all-variants {
+            @include font-size-mega;
+        }
+    }
+
+    .text--giga {
+        @include responsive.with-dark-all-variants {
+            @include font-size-giga;
+        }
+    }
+
+    .text--tera {
+        @include responsive.with-dark-all-variants {
+            @include font-size-tera;
+        }
+    }
+
+    .text--peta {
+        @include responsive.with-dark-all-variants {
+            @include font-size-peta;
+        }
+    }
+
+    // Weight utilities. One class per block, and one block per spelling: the
+    // variant emitters read a single class name out of the selector they are
+    // handed, so `.text--bold, .font--bold` would publish all 48 gates under
+    // `text--bold` and leave `font--bold` with its base rule alone.
+    .text--regular {
+        @include responsive.with-all-variants {
+            @include font-weight-regular;
+        }
+    }
+
+    .text--bold {
+        @include responsive.with-all-variants {
+            @include font-weight-bold;
+        }
+    }
+
+    // Deprecated aliases, removed in 4.0 (use text--* instead)
+    .font--small {
+        @include responsive.with-dark-all-variants {
+            @include font-size-small;
+        }
+    }
+
+    .font--base {
+        @include responsive.with-dark-all-variants {
+            @include font-size-base;
+        }
+    }
+
+    .font--large {
+        @include responsive.with-dark-all-variants {
+            @include font-size-large;
+        }
+    }
+
+    .font--xlarge {
+        @include responsive.with-dark-all-variants {
+            @include font-size-xlarge;
+        }
+    }
+
+    .font--xxlarge {
+        @include responsive.with-dark-all-variants {
+            @include font-size-xxlarge;
+        }
+    }
+
+    .font--xxxlarge {
+        @include responsive.with-dark-all-variants {
+            @include font-size-xxxlarge;
+        }
+    }
+
+    .font--mega {
+        @include responsive.with-dark-all-variants {
+            @include font-size-mega;
+        }
+    }
+
+    .font--giga {
+        @include responsive.with-dark-all-variants {
+            @include font-size-giga;
+        }
+    }
+
+    .font--tera {
+        @include responsive.with-dark-all-variants {
+            @include font-size-tera;
+        }
+    }
+
+    .font--peta {
+        @include responsive.with-dark-all-variants {
+            @include font-size-peta;
+        }
+    }
+
+    .font--regular {
+        @include responsive.with-all-variants {
+            @include font-weight-regular;
+        }
+    }
+
+    .font--bold {
+        @include responsive.with-all-variants {
+            @include font-weight-bold;
+        }
+    }
+}

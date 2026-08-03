@@ -1,0 +1,45 @@
+<div class="border border-sage-150 dark:border-sage-800 rounded-xl p-2 bg-sage-100/50 dark:bg-sage-850/50 max-w-2xl flex flex-col gap-2" style="aspect-ratio: 16 / 10;">
+  <div class="shrink-0 flex justify-between items-center gap-2 min-w-0 overflow-x-auto">
+    <%= render DocsRef.new(page: :screen) %>
+    <span class="text-[11px] font-mono text-sage-500/70 dark:text-sage-400/60 shrink-0 whitespace-nowrap">--portrait --no-bleed --dark-mode --og --v2 --backdrop</span>
+  </div>
+  <div class="border border-sage-200 dark:border-sage-750 rounded-lg p-2 bg-sage-100/30 dark:bg-sage-800/30 border-dashed flex-1 flex flex-col gap-2 min-h-0">
+    <div class="opacity-90 shrink-0 flex justify-between items-center gap-2 min-w-0 overflow-x-auto">
+      <span class="inline-flex items-center gap-1">
+        <%= render DocsRef.new(page: :mashup) %>
+        <span class="ml-0.5 <%= framework_badge_sage_sm_muted_classes %>">optional</span>
+      </span>
+      <span class="text-[11px] font-mono text-sage-500/70 dark:text-sage-400/60 shrink-0 whitespace-nowrap">--1x1 --1Lx1R --1Tx1B --2x2 --1Lx2R --2Lx1R --2Tx1B --1Tx2B --3x3</span>
+    </div>
+    <div class="border border-sage-150 dark:border-sage-800 rounded p-2 bg-sage-100 dark:bg-sage-850 flex-1 flex flex-col gap-2 min-h-0">
+      <div class="shrink-0 flex justify-between items-center gap-2 min-w-0 overflow-x-auto">
+        <%= render DocsRef.new(page: :view) %>
+        <span class="text-[11px] font-mono text-sage-500/70 dark:text-sage-400/60 shrink-0 whitespace-nowrap">--full --half_vertical --half_horizontal --quadrant</span>
+      </div>
+      <div class="flex flex-col gap-2 flex-1 min-h-0">
+        <div class="flex-1 border border-sage-150 dark:border-sage-800 rounded-sm p-2 bg-sage-200/60 dark:bg-sage-800/60 flex flex-col min-h-0">
+          <div class="shrink-0 flex flex-col gap-0.5">
+            <div class="flex justify-between items-center gap-2 min-w-0 overflow-x-auto">
+              <%= render DocsRef.new(page: :layout) %>
+              <span class="text-[11px] font-mono text-sage-500/70 dark:text-sage-400/60 shrink-0 whitespace-nowrap">--row --col</span>
+            </div>
+            <div class="flex justify-end">
+              <span class="text-[11px] font-mono text-sage-500/70 dark:text-sage-400/60 shrink-0 whitespace-nowrap">--left --center-x --right --top --center-y --bottom --center</span>
+            </div>
+            <div class="flex justify-end">
+              <span class="text-[11px] font-mono text-sage-500/70 dark:text-sage-400/60 shrink-0 whitespace-nowrap">--stretch --stretch-x --stretch-y</span>
+            </div>
+          </div>
+        </div>
+        <div class="shrink-0 border border-sage-200 dark:border-sage-700 rounded-sm p-2 bg-sage-200/40 dark:bg-sage-800/40 border-dashed flex flex-col">
+          <div class="shrink-0 flex justify-between items-center gap-2 min-w-0">
+            <span class="inline-flex items-center gap-1">
+              <%= render DocsRef.new(page: :title_bar) %>
+              <span class="ml-0.5 <%= framework_badge_sage_sm_muted_classes %>">optional</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

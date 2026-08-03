@@ -1,0 +1,195 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :clamp %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Clamp system provides a way to truncate text content with ellipsis after a specified number of lines.
+      Using classes from <code class="<%= framework_section_code_classes %>">clamp--1</code> to
+      <code class="<%= framework_section_code_classes %>">clamp--35</code>,
+      you can precisely control how many lines of text to display before truncating.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Clamping Options') %>
+          <p class="<%= framework_section_description_classes %>">
+            Text can be clamped to either a single line or multiple lines, depending on your layout needs.
+            The clamp system uses CSS line-clamp properties to ensure consistent truncation across browsers.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Single Line Clamp') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">clamp--1</code> class truncates text to a single line,
+              adding an ellipsis when content overflows.
+            </p>
+          </div>
+
+          <!-- Single Line Clamp demo screen -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="columns">
+                      <div class="column">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="label">Clamp 1</span>
+                            <span class="description clamp--1">
+                              This text is clamped to a single line. Any overflow will be truncated with an ellipsis.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="label">Clamp 1</span>
+                            <span class="description clamp--1">
+                              This text is clamped to a single line. Any overflow will be truncated with an ellipsis.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="label">Clamp 1</span>
+                            <span class="description clamp--1">
+                              This text is clamped to a single line. Any overflow will be truncated with an ellipsis.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Single Line Clamp</span>
+                    <span class="instance">Design System</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="description clamp--1">
+  This text is clamped to a single line. Any overflow will be truncated with an ellipsis.
+</span>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Multi-line Clamp') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">clamp--{n}</code> classes (where n is any number from 1 to 35)
+              allow you to control exactly how many lines of text to display before truncating with an ellipsis. This gives you precise control over text display
+              while maintaining layout consistency.
+            </p>
+          </div>
+
+          <!-- Multi-line Clamp demo screen -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="columns">
+                      <div class="column">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="label">Clamp 3</span>
+                            <span class="description clamp--3">
+                              This text is clamped to three lines. It will show up to three lines of text before truncating with an ellipsis.
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="label">Clamp 3</span>
+                            <span class="description clamp--3">
+                              This text is clamped to three lines. It will show up to three lines of text before truncating with an ellipsis.
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="label">Clamp 3</span>
+                            <span class="description clamp--3">
+                              This text is clamped to three lines. It will show up to three lines of text before truncating with an ellipsis.
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Multi-line Clamp</span>
+                    <span class="instance">Design System</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="description clamp--3">
+  This text is clamped to three lines. It will show up to three lines of text before truncating with an ellipsis. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Removing Text Clamping') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">clamp--none</code> class allows you to remove any clamping applied to an element,
+            restoring normal text flow and word wrapping behavior. This will reset text overflow handling, remove line clamping, and allow text to break naturally at word boundaries.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="description clamp--none">
+  This text has all clamping removed. It will display naturally without any truncation or ellipsis, regardless of length.
+</span>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

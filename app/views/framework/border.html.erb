@@ -1,0 +1,256 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :border %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:border) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use directional step selectors:
+            <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and
+            <code class="<%= framework_section_code_classes %>">border--v-{step}</code>
+            with steps 10 to 75
+            (the background utility shade scale), plus semantic
+            <code class="<%= framework_section_code_classes %>">border--h-black</code> /
+            <code class="<%= framework_section_code_classes %>">border--h-white</code>.
+            Borders render grayscale by default; themes repaint the whole rail.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            4-bit and full-color screens give each of the 14 steps its own art. Everywhere else (the default rail,
+            1-bit, 2-bit, and the limited palettes) the steps pair onto the seven border levels, so
+            <code class="<%= framework_section_code_classes %>">border--h-40</code> and
+            <code class="<%= framework_section_code_classes %>">border--h-45</code> draw the same line.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Pick steps two apart when two rules have to read differently on a 1-bit panel.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The numbered level classes (<code class="<%= framework_section_code_classes %>">border--h-1</code> through
+            <code class="<%= framework_section_code_classes %>">border--h-7</code>, and their vertical counterparts) are
+            deprecated and will be removed in Framework 4.0. Prefer step selectors in new markup.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Horizontal Borders') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--row gap w--full h--full flex--stretch">
+                          <% all_steps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75] %>
+                          <!-- White Background -->
+                          <div class="flex flex--col gap--space-between p--4 rounded bg--white">
+                            <% all_steps.each do |step| %>
+                              <div class="item border--h-<%= step %>">
+                                <span class="label mb--2"><%= step %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                          <!-- Black Background -->
+                          <div class="flex flex--col gap--space-between p--4 rounded bg--black">
+                            <% all_steps.each do |step| %>
+                              <div class="item border--h-<%= step %>">
+                                <span class="label mb--2 text--white"><%= step %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Horizontal Borders</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dark-mode-notice hidden <%= message_sage_classes %> !mt-0">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/info' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    <strong>Dark Mode Notice:</strong> The color palette appears inverted because dark mode remaps the framework tokens: black and white swap, grays and chromatic steps mirror. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens are exempt from dark mode entirely.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="border--h-10">Dark border</div>
+<div class="border--h-45">Mid border</div>
+<div class="border--h-75">Light border</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Vertical Borders') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--col flex--stretch gap w--full h--full">
+                          <% all_steps = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75] %>
+                          <!-- White Background -->
+                          <div class="flex flex--row flex--stretch p--4 rounded bg--white">
+                            <% all_steps.each do |step| %>
+                              <div class="stretch border--v-<%= step %> flex flex--col flex--bottom">
+                                <span class="label ml--2"><%= step %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                          <!-- Black Background -->
+                          <div class="flex flex--row flex--stretch p--4 rounded bg--black">
+                            <% all_steps.each do |step| %>
+                              <div class="stretch border--v-<%= step %> flex flex--col flex--bottom">
+                                <span class="label ml--2 text--white"><%= step %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Vertical Borders</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="border--v-20">Vertical border</div>
+<div class="border--v-65">Vertical border</div>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Themed Borders') %>
+          <p class="<%= framework_section_description_classes %>">
+            There are no per-hue border classes: the step rail renders the classic
+            patterns by default, and a theme recolors them (and
+            <code class="<%= framework_section_code_classes %>">.divider</code>) without changing their
+            geometry via <code class="<%= framework_section_code_classes %>">theme-slots.utility-remap-border-grayscale($hue, $side)</code>.
+            The <code class="<%= framework_section_code_classes %>">dark</code> side paints black-on-hue,
+            <code class="<%= framework_section_code_classes %>">bright</code> paints hue-on-white.
+            Pick a Style in the screen picker to watch the rails above repaint.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The 2-bit rail is the exception: its four tones are literal in the line data, so a hue remap leaves it
+            black, white and two grays. That is deliberate, since a hue quantizes to gray on a 4-tone panel anyway.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A theme that wants to move the 2-bit rail names levels instead, with
+            <code class="<%= framework_section_code_classes %>">theme-slots.utility-border-level($level, $dir, $from-level)</code>,
+            the way the shipped Dark theme does. See <%= render DocsRef.new(page: :theme_slots) %>.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '@include theme-slots.utility-remap-border-grayscale("yellow", $side: "dark");
+@include theme-slots.utility-remap-border-grayscale("red", $side: "bright");'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Black & White Borders') %>
+          <p class="<%= framework_section_description_classes %>">
+            Semantic <code class="<%= framework_section_code_classes %>">border--h-black</code> /
+            <code class="<%= framework_section_code_classes %>">border--h-white</code> borders adapt to themes
+            automatically. They resolve through framework semantic fill tokens, so they always
+            represent the strongest and softest fill in the current theme context.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="flex flex--row gap w--full h--full flex--stretch">
+                        <div class="flex flex--col gap--space-between p--4 rounded bg--white">
+                          <div class="item border--h-black">
+                            <span class="label mb--2">black</span>
+                          </div>
+                          <div class="item border--h-white">
+                            <span class="label mb--2">white</span>
+                          </div>
+                        </div>
+                        <div class="flex flex--col gap--space-between p--4 rounded bg--black">
+                          <div class="item border--h-black">
+                            <span class="label mb--2 text--white">black</span>
+                          </div>
+                          <div class="item border--h-white">
+                            <span class="label mb--2 text--white">white</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Black & White Borders</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="border--h-black">Black border (strongest fill)</div>
+<div class="border--h-white">White border (softest fill)</div>
+<div class="border--v-black">Black vertical border</div>
+<div class="border--v-white">White vertical border</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Borders in JavaScript') %>
+          <p class="<%= framework_section_description_classes %>">
+            Border rails are readable from JS through the paint API:
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.border(spec, { dir })</code> resolves a step,
+            or the literal <code class="<%= framework_section_code_classes %>">'black'</code> /
+            <code class="<%= framework_section_code_classes %>">'white'</code> rails straight from the live cascade
+            (theme tinting, bit depth and dark mode included), and
+            <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints it onto a node. Because these
+            fill-backed utilities carry real ink in every mode, they are the reliable hairline source for JS-drawn visuals
+            like chart grids. See <%= render DocsRef.new(page: :paint_borders) %>.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

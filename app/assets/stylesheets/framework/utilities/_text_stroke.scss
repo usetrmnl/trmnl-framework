@@ -1,0 +1,124 @@
+// ============================================
+// TRMNL Framework - Text Stroke Utility
+// ============================================
+// Uses --stroke-{token}-color CSS custom properties from _screen-mode-vars.scss
+// for dark-mode aware color remapping without per-mode selectors.
+// Strokes render as drop-shadow rings (mixins/_shadow-text-stroke.scss) so
+// background-clipped pattern fills stay visible in every engine.
+
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use 'sass:list';
+@use 'sass:string';
+
+// Width and radius per size modifier, read by the base classes and by their
+// bit-depth variants. `base` is the explicit spelling of the default width, so
+// it carries the default's numbers and reaches every tier its siblings reach.
+$text-stroke-sizes: (
+    'base': (3.5px, 1.75px),
+    'small': (2px, 1px),
+    'medium': (4.5px, 2.25px),
+    'large': (6px, 3px),
+    'xlarge': (7.5px, 3.75px)
+);
+
+@mixin text-stroke-default-vars {
+    --tn-text-stroke-width: #{vars.content-scaled(3.5px)};
+    --tn-text-stroke-radius: #{vars.content-scaled(1.75px)};
+    --tn-text-stroke-color: var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast));
+}
+
+@mixin text-stroke-apply-from-vars {
+    @include mixins.shadow-text-stroke(
+        var(--tn-text-stroke-width, 3.5px),
+        var(--tn-text-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))),
+        var(--tn-text-stroke-radius, clamp(0.85px, calc(var(--tn-text-stroke-width, 3.5px) * 0.5), 3.75px))
+    );
+}
+
+@include mixins.trmnl-namespace {
+    .text-stroke {
+        @include text-stroke-default-vars;
+
+        @each $size-name, $size-config in $text-stroke-sizes {
+            &--#{$size-name} {
+                --tn-text-stroke-width: #{vars.content-scaled(list.nth($size-config, 1))};
+                --tn-text-stroke-radius: #{vars.content-scaled(list.nth($size-config, 2))};
+            }
+        }
+
+        // Color variants bind --tn-text-stroke-color only. Standalone color
+        // classes stay inert like 3.1.2's; the --theme-stroke-* layer lets
+        // themes remap them.
+        @each $token in mixins.stroke-token-names() {
+            &--#{$token} {
+                --tn-text-stroke-color: var(--theme-stroke-#{$token}-color, var(--stroke-#{$token}-color, var(--#{$token})));
+            }
+        }
+    }
+
+    // The classes that draw a stroke standalone: the bare utility and its width
+    // modifiers. A shade class binds the color and leaves the drawing to one of
+    // these, which is the contract the Text Stroke page states. The list is read
+    // twice, here and by the bit-depth gates below, so both tiers publish the
+    // same set. The expensive text-shadow program is emitted once per tier for
+    // the whole selector group.
+    $render-classes: ('text-stroke',);
+    @each $size-name, $_ in $text-stroke-sizes {
+        $render-classes: list.append($render-classes, 'text-stroke--#{$size-name}');
+    }
+
+    $render-selectors: ();
+    @each $class-name in $render-classes {
+        $render-selectors: list.append($render-selectors, string.unquote('.#{$class-name}'), comma);
+    }
+
+    #{$render-selectors} {
+        @include text-stroke-apply-from-vars;
+    }
+
+    // Bit-depth variant classes for text-stroke
+    @each $bit-depth in (1, 2, 4) {
+        @include mixins.bit-depth-variant($bit-depth, 'text-stroke') {
+            @include text-stroke-default-vars;
+        }
+    }
+
+    @each $size-name, $size-config in $text-stroke-sizes {
+        $size-width: list.nth($size-config, 1);
+        $size-radius: list.nth($size-config, 2);
+
+        @each $bit-depth in (1, 2, 4) {
+            @include mixins.bit-depth-variant($bit-depth, 'text-stroke--#{$size-name}') {
+                --tn-text-stroke-width: #{vars.content-scaled($size-width)};
+                --tn-text-stroke-radius: #{vars.content-scaled($size-radius)};
+            }
+        }
+    }
+
+    // Bit-depth variant color classes (use mode-aware stroke variables)
+    @each $token in mixins.stroke-token-names() {
+        @each $bit-depth in (1, 2, 4) {
+            @include mixins.bit-depth-variant($bit-depth, 'text-stroke--#{$token}') {
+                --tn-text-stroke-color: var(--theme-stroke-#{$token}-color, var(--stroke-#{$token}-color, var(--#{$token})));
+            }
+        }
+    }
+
+    // The same standalone set at each bit depth, so `1bit:text-stroke--black`
+    // is the shade class its base is and not a full ring on its own. All
+    // selectors retain their original specificity while sharing one block.
+    $bit-render-selectors: ();
+    @each $bit-depth in (1, 2, 4) {
+        $escaped-prefix: mixins.escape-class-token('#{$bit-depth}bit');
+        @each $class-name in $render-classes {
+            $escaped-class: mixins.escape-class-token($class-name);
+            $selector: string.unquote('.screen--#{$bit-depth}bit .#{$escaped-prefix}\\:#{$escaped-class}');
+            $bit-render-selectors: list.append($bit-render-selectors, $selector, comma);
+        }
+    }
+
+    #{$bit-render-selectors} {
+        @include text-stroke-apply-from-vars;
+    }
+}

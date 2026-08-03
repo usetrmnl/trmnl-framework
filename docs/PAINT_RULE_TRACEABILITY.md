@@ -1,0 +1,106 @@
+# TRMNL paint rule traceability
+
+The framework CSS is the single implementation of TRMNL paint rules and supplies
+all resolved values through the live cascade. `window.TRMNLPaint` reads that
+resolved paint and converts it into renderer-native forms when CSS cannot paint the
+target directly, such as Highcharts SVG. It does not re-declare the design rules.
+`window.TRMNLCharts` selects chart roles and assembles Highcharts options; it
+delegates paint resolution and renderer conversion to TRMNLPaint.
+
+This map traces every conversion in the paint/chart IIFE in
+`app/javascript/plugin-render/plugins.js` to the CSS paint it consumes. Its purpose
+is to ensure the adapter introduces no independent paint decisions. DOM lookup,
+mutation observation, null-safe error handling, object merging, and disabled
+animation/interaction are runtime mechanics rather than paint rules.
+
+Citations name the mixin, selector, or block that declares a rule instead of a
+line range. A rule keeps its name when the file around it moves.
+
+| JS rule | SCSS counterpart | Status | Equivalence check |
+| --- | --- | --- | --- |
+| Resolvers probe inside `{ el }` when it belongs to the resolved screen, so subtree paint and direct slot overrides participate in the live cascade. Device metrics still come from the screen root. | Scoped inverse declarations in `base/_screen.scss` and `base/_screen-mode-vars.scss`; higher-specificity light restores flip dark-screen inverse subtrees back to light. All semantic and component slots are ordinary inherited custom properties. | Aligned | Resolver output inside a light-screen inverse versus a dark screen, dark-screen inverse versus a light screen, themed dark-mode invariance, and direct local slot overrides. |
+| `bg()` probes `bg--<token>` and returns the computed color, image, and tile size. | `apply-bg-paint-vars` and the token bindings in `emit-factorized-bg-variants`, both `utilities/_background.scss`; mode values from `_bg-tile`, `_bg-solid`, and `_bg-hex` in `base/_screen-mode-vars.scss`. | Aligned | `.bg--<token>` versus returned `Fill`. |
+| `text()` and semantic text probes keep solid color, tile image, and tile size. | `apply-text-paint-vars`, the token bindings in `emit-factorized-text-variants`, and the roles `.text--default` / `.text--muted` / `.text--inverse`, all `utilities/_text.scss`; `_text-tile` in `base/_screen-mode-vars.scss`. | Aligned | `.text--<token>` effective paint versus the returned `Fill`. Paint rides the enumerated color token classes and the three semantic roles, so the alignment and font-size utilities in the same namespace carry none and a probe reads the same values with or without them. |
+| `imageInk()` uses the first painted SVG `fill` when CSS text uses `background-clip:text`. The `-under` field is never selected as ink. | `_text-tile` in `base/_screen-mode-vars.scss`; `semantic-text-paint` in `mixins/_text-paint.scss`. | Fixed | SVG label/value color versus adjacent `.text--small` / `.value`, including 1-bit white-and-red. |
+| `stroke()` / `strokeSpec()` probe the public stroke color, width, and radius. | `text-stroke-default-vars`, `text-stroke-apply-from-vars`, and the `.text-stroke` size and color modifiers in `utilities/_text_stroke.scss`. | Aligned | Resolved stroke token and size versus the matching `.text-stroke*` utility. |
+| `semantic()` probes real canvas/surface/backdrop/text utilities and projects roles without a utility from their complete public semantic channel onto standard CSS properties. Image-backed fill/border/icon roles are not reduced to color-only aliases. The icon channel projects onto the same ink/tile/under-field properties its CSS consumer paints with. | Defaults in the `--framework-semantic-*` block of `config/_variables_root.scss` and the icon default in `base/_screen.scss`; theme chains in `semantic-bg`, `semantic-text`, `semantic-stroke`, and `semantic-border` in `mixins/_theme-slots.scss`; utility paint in `.bg--canvas` / `.bg--surface` / `.bg--backdrop` (`utilities/_background.scss`), the semantic text roles (`utilities/_text.scss`), and `img.image--adaptive` (`utilities/_image.scss`). | Fixed | Semantic reference element versus returned color/image/size `Fill`; the icon channel versus `img.image--adaptive` under both shipped themes. |
+| `series()` reads `--framework-chart-series-count`, `--framework-chart-series-span` and the selected `--framework-chart-series-<n>-{color,image}` slot. It has no JS span or slot-count default, and it does not bound the span against the ramp: CSS publishes a span that already points inside the ramp it declared. The final index is clamped to the last slot the published count declares. | Base declaration in `_chart-series-default` (`base/_screen.scss`), included by the screen block and by both `.inverse` restores; slot generation in `chart-series-ramp` (`mixins/_theme-slots.scss`); the categorical full-color ramps in `base/_screen-mode-vars.scss`, one per ground, gated off themed screens; theme ramps in `themes/white-and-red-theme.scss` and `themes/black-and-yellow-theme.scss`, each declaring one ramp for the theme and a second for its `.inverse` subtree. | Fixed | `[data-chart-series]` swatch versus Highcharts series fill for the same index/count. |
+| `ramp()` returns the CSS-declared chart slots without remapping, one entry per slot `--framework-chart-series-count` publishes. Slots past a theme's ramp read empty because CSS clears them, not because JS truncates the array; a screen with no ramp rule returns none. The published count is what bounds the loop: one Sass constant emits both the count and the slots, so the walk can never run past the ramp that exists, and reading it costs one property read per call on top of the two per slot. | `chart-series-ramp` in `mixins/_theme-slots.scss` (publishes the count, then publishes and clears all `$chart-series-slots`). | Fixed | Each returned slot versus a CSS swatch painted from that slot, and the returned length versus the published count. |
+| `apply()` paints field color under tile image, repeats the image, and uses only the resolved size. | `apply-bg-paint-vars` in `utilities/_background.scss`; generated utility bindings in `emit-factorized-bg-variants`; the repeat comes from the normalize-layer `dither-ready` hook in `framework/index.scss`, which matches the `bg--` and `text--` namespaces the resolvers probe and nothing wider. | Fixed | JS-painted legend marker versus `.bg--*` reference. |
+| `compositeFieldIntoTile()` inserts a full-asset field rectangle immediately below the original SVG ink paths. | CSS layer order in `apply-bg-paint-vars` (`utilities/_background.scss`); field and ink generation in `_tile-asset-definitions` and `_bg-tile` (`base/_screen-mode-vars.scss`). | Fixed and documented | Highcharts pattern pixels versus the CSS-rendered series swatch. |
+| `border()` probes the horizontal `::before` or vertical `::after` utility and preserves both its DOM background longhands and its CSS-declared renderer program. | Utility bindings in `utilities/_border.scss`; per-mode art and renderer declarations in `base/_screen-mode-vars.scss`. | Aligned | Returned `BorderFill` versus `.border--h-*` / `.border--v-*` computed values, unthemed and under both shipped themes at 1-bit and 2-bit. |
+| `divider()` probes the real level-6 rail, including the same renderer program. | `elements/_divider.scss`; shared rail and renderer bindings in `mixins/_border-levels.scss`. | Aligned | Returned `BorderFill` versus `.divider`. |
+| Neither resolver reconstructs a themed rail: the renderer program carries the same theme and slot layers as the background longhands, so a remapped level or a slotted border hands both outputs the one paint. | Slot and theme layers in `mixins/_border-levels.scss` (`border-level-vars`) and `utilities/_border.scss` (`border-step-paint`); companions emitted by `border-level-slot`, `border-token-slot`, and `utility-border-token` in `mixins/_theme-slots.scss`. A token line has no pattern program, so its companions take the `border-render-solid` shape over the same mode-correct stroke chain the bulk line remap uses. | Fixed | Emitted declarations per helper in `spec/assets/stylesheets/framework_theme_slot_contract_spec.rb`; live slot and remap resolution in `test/runtime/paint/paint.spec.js`. |
+| `_border-render-pattern()` emits SVG tile dimensions, viewBox, paths, colors, and fallback stroke at Sass build time from the exact same source-pixel segments that emit the CSS gradients. Theme polarity is resolved through the same `--theme-border-line-*` color chain. | Source coordinates in generated `$border-level-lines-*`; paired DOM/renderer emission in `base/_screen-mode-vars.scss`; polarity mapping in `mixins/_theme-slots.scss`. | Fixed | CSS rail pixels versus the declared SVG paths for every level and direction. |
+| `mintBorderPattern()` copies the declared width, height, viewBox, paths, and colors into SVG elements. Width and height are registered CSS `<length>` properties, so the computed cascade supplies concrete `px` values to every SVG engine instead of unresolved `calc()` strings. It contains no gradient parser, stop math, polarity logic, wrap reconstruction, or hash of interpreted CSS. | The complete `--framework-border-render-*` contract emitted by `mixins/_border-levels.scss` and `utilities/_border.scss`; length registration in `base/_screen-mode-vars.scss`. | Fixed | Rendered Highcharts paths carry the exact CSS-declared two-tone program, including White-and-Red and Black-and-Yellow, with plain pixel tile dimensions. |
+| `toHighchartsAxis()` copies the CSS-declared fallback stroke and passes the `BorderFill` to the render hook. It contains no dash, contrast, color-selection, or gradient logic. | One-pixel utility geometry and generic renderer bindings in `utilities/_border.scss`; actual program in `base/_screen-mode-vars.scss`. | Fixed | SVG path stroke becomes the declared color or `url(#trmnl-border-...)`; `stroke-dasharray` is absent. |
+| `textColor(token)` converts a caller-named text utility to the one-color value required by SVG/canvas, without selecting a semantic role itself. | Text paint in `_text-tile` (`base/_screen-mode-vars.scss`) and `apply-text-paint-vars` plus the token bindings and semantic roles (`utilities/_text.scss`). | Fixed API boundary | Returned color versus the named CSS text utility's ink. |
+| `applyHighchartsAxisPaint()` owns the final BorderFill-to-SVG application; the chart convenience layer passes the already-resolved fills through unchanged. | Border paint sources above. | Aligned | Chart grid/axis/tick paths versus CSS rails. |
+| `type()` probes role classes for exact font (including smoothing, numeric/variable-font settings and spacing), text-paint, clipping, and optional stroke longhands. `applyType()` writes the complete result, including tile under-field and the resolved 16-ring text-shadow. | Role/component declarations in `elements/_value.scss`, `elements/_label.scss`, `elements/_title.scss`, `elements/_description.scss`; size/weight utilities in `utilities/_font.scss`; text paint in `semantic-text-paint` (`mixins/_text-paint.scss`); stroke program in `shadow-text-stroke` (`mixins/_shadow-text-stroke.scss`). | Fixed | JS-applied unclassed specimen versus the original classed role, including dither/stroke paint. |
+| `toHighchartsText()` uses solid text color or tile ink, copies all renderer-applicable resolved font properties, and sets `textOutline: none` unless a resolved CSS stroke was requested. | Text paint in `semantic-text-paint` (`mixins/_text-paint.scss`); font rules in `utilities/_font.scss`; stroke widths and colors in `text-stroke-default-vars` and the `.text-stroke` modifiers (`utilities/_text_stroke.scss`). `textOutline:none` removes Highcharts' non-framework halo. | Fixed | Gauge/axis text versus `.value` / `.text--small`; optional outline versus `.text-stroke*`. |
+| `TRMNLCharts.paint()` and `series()` delegate directly to the background adapter without token-name, black, or text-ink fallback constants. Plotted data uses `series()`, not a text-color helper. | Background and series chains above. | Fixed | Missing CSS paint stays missing; valid paint matches its CSS reference. |
+| `applySwatches()` uses the same `series()` result as chart series. | `chart-series-ramp` in `mixins/_theme-slots.scss`. | Aligned | Legend marker versus plotted series. |
+| `TRMNLCharts.grid()` requests literal `border--h/v-65` rails from TRMNLPaint; `axisLine()` requests literal black rails; `options()` delegates SVG application back to TRMNLPaint on every render/redraw. | Step rail in the `$color-shade-steps` block of `utilities/_border.scss`; black rail in `.border--h-black` / `.border--v-black` in the same file; pattern sources above. | Fixed | Grid/axis/tick strokes versus adjacent CSS rails for each mode/theme cell. |
+| `TRMNLCharts.textStyle()` passes chart roles to `TRMNLPaint.type()`; TRMNLPaint owns the `.text--small` / `.value` role mapping and Highcharts conversion. | Role declarations above plus the semantic text roles in `utilities/_text.scss`. | Aligned | Font and ink equality in the typography reference cells. |
+
+## Removed divergences
+
+| Removed JS rule | Why it had no CSS counterpart |
+| --- | --- |
+| `AXIS_MIN_CONTRAST`, RGB parsing, Manhattan `colorDistance()`, light/dark tie-breaking, and `axisInk()` | CSS border patterns carry their own dark/light contrast structurally. No CSS rule chooses a stop by distance from the canvas. |
+| Runtime border gradient parsing (`splitCssList()`, stop extraction, percent/px conversion, layer matching, stagger reconstruction, and pattern hashing) | CSS now emits the complete SVG-ready program from the same source coordinates as the DOM gradient. JS has nothing to derive. |
+| Generic `ShortDot` grid approximation | CSS declares exact hard stops, tile widths, row height, stagger, and repeat direction. |
+| `|| '#000000'` text/axis fallbacks | Text and border fallbacks are resolved by their SCSS `var(...)` chains and probes. |
+| JS chart-series span `11` | The base ramp declares 11, the full-color ramp declares 7, and themes declare their own span, all through `chart-series-ramp()`. |
+| JS tile-size `16` and text-stroke-width `1px` defaults | Tile dimensions and stroke width come from the resolved asset/CSS utility. |
+| Public `TRMNLPaint.ink({ level })` role selector and adapter fallback plumbing | A paint converter should convert caller-selected paint, not hide semantic role selection or supply unrelated fallbacks to complete `BorderFill` / `TypeSpec` values. Replaced by explicit `textColor(token)`. |
+| `TRMNLCharts.ink()` compatibility wrapper | The chart layer is new in 3.2, so there is no released chart-helper API to preserve. Plotted data uses `series()` and text uses `textStyle()`. |
+| JS-only border names `strong` / `muted` | They were unreleased aliases with no CSS utility counterpart. Chart roles now request literal `black` and step `65` rails. |
+| `toHighcharts(fill, fallback)` and bare-string `apply()` input | Resolvers return canonical Fills. Empty paint stays empty (`null` in the Highcharts adapter); callers cannot inject a second fallback contract into the paint pipeline. |
+
+## Accepted non-paint runtime mechanics
+
+The following IIFE behavior does not choose color, pattern, typography, or series
+design and therefore requires no CSS paint counterpart: locating the nearest `.screen`, selecting
+the local cascade context, creating
+and removing hidden probes, rebuilding after a class change on the screen or on
+one of its ancestors, swallowing
+screenshot-service exceptions, deep-merging Highcharts options, disabling
+animation/mouse interaction, and destroying prior chart instances.
+
+`watch()` reads its rebuild trigger from the same place the cascade reads its
+gates. `screenSignature()` folds the `screen--*` classes of the screen and every
+ancestor into one string, and the observer is attached to each of those elements,
+because `base/_screen-mode-vars.scss` declares paint under wrapper selectors such
+as `.screen--preview-colors .screen` and `for-preview-color-palette` in
+`mixins/_screen.scss` emits the wrapper form for every limited palette. Watching
+the screen alone would sleep through a repaint the cascade had already applied.
+
+## Non-paint CSS the runtime reads
+
+Two runtime facts are device capability rather than paint, so they have no
+resolver in the table above. CSS still owns both: the rule that applies the
+behavior publishes the value, and JavaScript reads it back.
+
+| Runtime read | Where it is declared | Why CSS owns it |
+| --- | --- | --- |
+| `getScreenContext().bitDepth` reads `--framework-bit-depth` from the screen. The engines that stand down on richer displays (pixel-perfect fonts, even index widths) gate on it. | `_screen-paint-depth-vars` in `base/_screen-mode-vars.scss`, one entry per mode class plus one per id in `$color-palette-limited-ids` | The mode class that selects a paint rail publishes that rail's depth, in the block order the paint blocks resolve in. A screen wearing a grayscale class and a palette class reports the rail that actually painted, and a new palette reaches the runtime with no JS change. |
+| `scale()` and `px()` read `--device-ui-scale`, `--modifier-scale`, `--ui-scale`, `--content-scale`, `--modifier-text-scale` and `--text-ui-scale` through a width probe, and `screenScaleName()` reads the modifier class. | `base/_screen.scss` composes the products; `utilities/_scale.scss` and `utilities/_text_scale.scss` bind the modifier per class | The factors are `calc()` chains, so only the browser can resolve them. The probe hands the resolved number back instead of JS repeating the multiplication. |
+
+## CSS paint not exposed through TRMNLPaint
+
+The contract runs both ways: CSS paint is either mirrored by a resolver above or
+declared out of scope here. These channels paint framework components in the DOM,
+where CSS already reaches the target, so there is nothing for the adapter to
+convert. They stay readable as raw resolved values through `cssVar()`, which is
+the escape hatch for exactly this case.
+
+The icon channel is not one of them. `semantic('icon')` projects
+`--framework-semantic-icon-{color,image,under}` onto the same ink, tile, and
+under-field properties its CSS consumer paints with, and returns a full `Fill`, as the
+`semantic()` row above records.
+
+| CSS channel | Where it is declared | Why no resolver |
+| --- | --- | --- |
+| `--framework-slot-*` component slots: title bar, screen backdrop, item meta, progress track/fill/dot, table meta, table head/body row, label gray, label underline | `_component-slot-defaults` in `base/_screen.scss` through the slot mixins in `mixins/_theme-slots.scss`, remapped per theme and by the 1-bit screen-backdrop repoint in `base/_screen-mode-vars.scss` | A slot paints one framework component's own surface. Highcharts and the other non-CSS renderers draw series, rails, and text, never a framework component. |
+| Role aliases `--framework-canvas-bg`, `--framework-surface-bg`, `--framework-backdrop-bg`, `--framework-text-*`, `--framework-fill-*`, `--framework-border-*`, `--framework-stroke-contrast`, `--framework-outline-strong` | `_role-aliases` in `base/_screen.scss` | Each alias is the flat color of a channel `semantic()` already returns in full. Publishing the alias too would hand callers a color-only view of paint that carries a tile. |

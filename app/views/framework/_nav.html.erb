@@ -1,0 +1,433 @@
+<%
+  @menubar_theme = :framework
+  theme ||= "system"
+
+  if theme == "system"
+    text_color = "text-black dark:text-white"
+    hover_bg = "hover:bg-gray-100 dark:hover:bg-gray-800"
+    hover_text = "hover:text-black dark:hover:text-white"
+    active_border = "border-black dark:border-white"
+  else
+    text_color = theme == "dark" ? "text-white" : "text-black"
+    hover_bg = theme == "dark" ? "hover:bg-gray-800" : "hover:bg-gray-100"
+    hover_text = theme == "dark" ? "hover:text-white" : "hover:text-black"
+    active_border = theme == "dark" ? "border-white" : "border-black"
+  end
+
+  if theme == "system"
+    logo_light = "trmnl--glyph-black.svg"
+    logo_dark = "trmnl--glyph-white.svg"
+    logo_class = "h-5 block dark:hidden"
+    logo_dark_class = "h-5 hidden dark:block"
+  else
+    logo = theme == "dark" ? "trmnl--glyph-white.svg" : "trmnl--glyph-black.svg"
+  end
+%>
+
+<%= render AppMenubarComponent.new(
+  position: :fixed,
+  compact: true,
+  contained: false
+) do |menubar| %>
+  <%
+    section = current_section rescue nil
+    docs_active = section == :docs
+    examples_active = section == :examples
+    releases_active = section == :releases
+  %>
+
+  <% menubar.with_left do %>
+    <div class="flex items-center gap-2">
+      <a href="/framework" class="inline-flex items-center shrink-0">
+        <% if theme == "system" %>
+          <%= image_tag logo_light, class: logo_class %>
+          <%= image_tag logo_dark, class: logo_dark_class %>
+        <% else %>
+          <%= image_tag logo, class: "h-5 #{text_color}" %>
+        <% end %>
+      </a>
+
+      <div class="relative flex items-center" id="fw-section-dropdown">
+        <button type="button" id="fw-section-dropdown-btn"
+                class="lg:hidden <%= menubar_dropdown_trigger_classes %>">
+          <span>Framework</span>
+          <%= menubar_dropdown_chevron %>
+        </button>
+        <span class="hidden lg:inline-flex items-center text-sm font-medium <%= text_color %>">Framework</span>
+
+        <div id="fw-section-menu"
+             class="left-0 w-36 <%= menubar_dropdown_menu_classes %>"
+             hidden>
+          <%= link_to 'Docs', framework_docs_index_path(version: current_docs_version),
+              class: menubar_dropdown_item_classes(active: docs_active) %>
+          <%= link_to 'Examples', framework_examples_index_path,
+              class: menubar_dropdown_item_classes(active: examples_active) %>
+          <%= link_to 'Releases', framework_releases_index_path,
+              class: menubar_dropdown_item_classes(active: releases_active) %>
+        </div>
+      </div>
+
+      <div class="relative" id="fw-version-dropdown">
+        <button type="button" id="fw-version-dropdown-btn"
+                class="<%= menubar_dropdown_trigger_classes %>">
+          <span><%= current_docs_version.upcase %></span>
+          <%= menubar_dropdown_chevron %>
+        </button>
+
+        <div id="fw-version-menu"
+             class="left-0 w-36 <%= menubar_dropdown_menu_classes %>"
+             hidden>
+          <% FrameworkController::DOCS_VERSION_MENU.each do |version| %>
+            <% target_page = docs_pages.include?(params[:action]) ? params[:action] : 'docs_index' %>
+            <% target_path = target_page == 'docs_index' ? framework_docs_index_path(version: version) : framework_page_path(target_page, version: version) %>
+            <a href="<%= target_path %>"
+               class="<%= menubar_dropdown_item_classes(active: current_docs_version == version) %>">
+              <%= version.start_with?('v') ? version.upcase : version %>
+            </a>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Which asset set this page linked. Rendered in development only, where the
+          answer can be either one. %>
+      <% serving_badge = docs_serving_mode_badge %>
+      <% if serving_badge %>
+        <span class="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border border-gray-300 dark:border-gray-650 text-gray-600 dark:text-gray-400 whitespace-nowrap"
+              title="<%= serving_badge[:title] %>"><%= serving_badge[:label] %></span>
+      <% end %>
+
+      <div class="hidden lg:flex items-center gap-0.5 border-l border-gray-300 dark:border-gray-650 pl-2">
+        <% pill_active = 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' %>
+        <% pill_inactive = 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700' %>
+
+        <%= link_to framework_docs_index_path(version: current_docs_version),
+            class: "px-2.5 py-1 text-xs font-medium rounded-lg transition-colors #{docs_active ? pill_active : pill_inactive}" do %>
+          Docs
+        <% end %>
+
+        <%= link_to framework_examples_index_path,
+            class: "px-2.5 py-1 text-xs font-medium rounded-lg transition-colors #{examples_active ? pill_active : pill_inactive}" do %>
+          Examples
+        <% end %>
+
+        <%= link_to framework_releases_index_path,
+            class: "px-2.5 py-1 text-xs font-medium rounded-lg transition-colors #{releases_active ? pill_active : pill_inactive}" do %>
+          Releases
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% menubar.with_right do %>
+    <div class="flex items-center gap-2 md:hidden">
+      <button type="button"
+              class="<%= playlist_bar_button_classes %> h-9 px-2.5 !gap-1.5 justify-center"
+              onclick="window.dispatchEvent(new CustomEvent('command-palette:open',{detail:{focus:true}}))"
+              aria-label="Search">
+        <%= render 'shared/icons/search', classes: 'h-4 w-4 text-gray-500 dark:text-gray-400 shrink-0' %>
+        <kbd aria-hidden="true" data-command-shortcut-badge class="rounded-md border border-gray-300/80 bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-gray-500 shadow-sm dark:border-gray-700 dark:bg-gray-900/70 dark:text-gray-400">&#x2318;K</kbd>
+      </button>
+
+      <%# Mobile menu button %>
+      <button id="framework-mobile-menu-button" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 <%= text_color %>" aria-expanded="false">
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <%# Desktop navigation %>
+    <div class="hidden md:flex items-center gap-2" data-controller="overflow-nav">
+      <button type="button"
+              class="<%= playlist_bar_button_classes %> h-9 px-2.5 !gap-1.5 justify-center"
+              onclick="window.dispatchEvent(new CustomEvent('command-palette:open',{detail:{focus:true}}))"
+              aria-label="Search">
+        <%= render 'shared/icons/search', classes: 'h-4 w-4 text-gray-500 dark:text-gray-400 shrink-0' %>
+        <kbd aria-hidden="true" data-command-shortcut-badge class="rounded-md border border-gray-300/80 bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-gray-500 shadow-sm dark:border-gray-700 dark:bg-gray-900/70 dark:text-gray-400">&#x2318;K</kbd>
+      </button>
+
+      <% unless (current_section rescue nil) == :releases || current_docs_version == '1.2' %>
+        <%= render "shared/menubar_screen_picker",
+                   scope: "framework",
+                   summary_id: "fw-device-summary",
+                   theme: theme,
+                   refresh: device_selector_should_refresh? %>
+      <% end %>
+
+      <%# Standalone docs: no accounts here. Link out to the TRMNL app instead. %>
+      <div data-overflow-nav-target="item" data-overflow-priority="30"><%= menubar_divider %></div>
+      <a href="https://usetrmnl.com" data-overflow-nav-target="item" data-overflow-priority="30"
+         class="inline-block py-1.5 px-3 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-full transition-colors duration-200 text-xs tracking-tight shrink-0">
+        Get TRMNL
+      </a>
+
+      <%= menubar_divider %>
+
+      <div class="relative" id="fw-theme-dropdown">
+        <button type="button" id="fw-theme-dropdown-btn"
+                class="<%= menubar_icon_button_classes %> <%= hover_bg %> <%= text_color %>"
+                title="Appearance">
+          <% if theme == 'light' %>
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1m0 18v-2M5.05 5.05 3.636 3.636m12.728 12.728L14.95 14.95M3 10H1m18 0h-2M5.05 14.95l-1.414 1.414M16.364 3.636 14.95 5.05M14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+          <% elsif theme == 'dark' %>
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.509 5.75c0-1.493.394-2.96 1.144-4.25h-.081a8.5 8.5 0 1 0 7.356 12.746A8.5 8.5 0 0 1 8.509 5.75Z"/></svg>
+          <% else %>
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1M5.05 5.05 3.636 3.636M3 10H1M5.05 14.95l-1.414 1.414M10 17v2"/><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M10 6a4 4 0 0 1 0 8V6Z"/></svg>
+          <% end %>
+        </button>
+
+        <div id="fw-theme-menu" class="right-0 w-44 <%= menubar_dropdown_menu_classes %>" hidden>
+          <button data-fw-theme-option="light" class="gap-2 <%= menubar_dropdown_item_classes(active: theme == 'light') %>">
+            <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1m0 18v-2M5.05 5.05 3.636 3.636m12.728 12.728L14.95 14.95M3 10H1m18 0h-2M5.05 14.95l-1.414 1.414M16.364 3.636 14.95 5.05M14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+            <span class="grow text-left">Light</span>
+            <%= menubar_checkmark_icon(visible: theme == 'light', data: { theme_preference_check: true }) %>
+          </button>
+          <button data-fw-theme-option="dark" class="gap-2 <%= menubar_dropdown_item_classes(active: theme == 'dark') %>">
+            <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.509 5.75c0-1.493.394-2.96 1.144-4.25h-.081a8.5 8.5 0 1 0 7.356 12.746A8.5 8.5 0 0 1 8.509 5.75Z"/></svg>
+            <span class="grow text-left">Dark</span>
+            <%= menubar_checkmark_icon(visible: theme == 'dark', data: { theme_preference_check: true }) %>
+          </button>
+          <button data-fw-theme-option="system" class="gap-2 <%= menubar_dropdown_item_classes(active: theme == 'system') %>">
+            <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1M5.05 5.05 3.636 3.636M3 10H1M5.05 14.95l-1.414 1.414M10 17v2"/><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M10 6a4 4 0 0 1 0 8V6Z"/></svg>
+            <span class="grow text-left">System</span>
+            <%= menubar_checkmark_icon(visible: theme == 'system', data: { theme_preference_check: true }) %>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%# Mobile navigation menu (rendered outside component as overlay) %>
+<div id="framework-mobile-menu" class="md:hidden hidden fixed inset-0 z-[100] transform transition-all duration-300 ease-in-out opacity-0">
+  <div class="h-full w-full min-h-screen <%= theme == 'dark' ? 'bg-gray-750' : 'bg-gray-250' %> <%= theme == 'system' ? 'bg-gray-250 dark:bg-gray-750' : '' %> pt-0 flex flex-col">
+    <div class="absolute top-0 left-0 right-0 px-8 md:px-20 xl:px-32 max-w-9xl xs:pt-4 mx-auto w-full">
+      <div class="relative py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <a href="/" class="inline-block flex items-center">
+              <% if theme == "system" %>
+                <%= image_tag logo_light, class: logo_class %>
+                <%= image_tag logo_dark, class: logo_dark_class %>
+              <% else %>
+                <%= image_tag logo, class: "h-8 #{text_color} mt-1" %>
+              <% end %>
+              <span class="ml-2 <%= text_color %> font-medium">Framework Docs</span>
+            </a>
+          </div>
+
+          <button id="framework-mobile-menu-close" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 <%= theme == 'dark' ? 'text-white' : 'text-black' %> <%= theme == 'system' ? 'text-black dark:text-white' : '' %>">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1 flex items-start justify-end pt-20">
+      <div class="flex flex-col items-end gap-6 px-8 text-lg">
+        <% unless (current_section rescue nil) == :releases || current_docs_version == '1.2' %>
+          <div class="flex flex-col items-center gap-4 border border-gray-400 dark:border-gray-650 rounded-2xl px-4 py-3 w-full">
+            <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-500 select-none">Device Preview</span>
+            <%= render 'shared/fancy_screen_picker', variant: :mobile, theme: theme, refresh: device_selector_should_refresh? %>
+          </div>
+        <% end %>
+
+        <% if current_section == :docs %>
+          <div class="w-full flex items-center justify-end">
+            <label for="framework-docs-version-mobile" class="sr-only">Docs version</label>
+            <select
+              id="framework-docs-version-mobile"
+              class="px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-650 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+              onchange="window.location.href = this.value;">
+              <% FrameworkController::DOCS_VERSION_MENU.each do |version| %>
+                <% target_page = docs_pages.include?(params[:action]) ? params[:action] : 'docs_index' %>
+                <% target_path = target_page == 'docs_index' ? framework_docs_index_path(version: version) : framework_page_path(target_page, version: version) %>
+                <option value="<%= target_path %>" <%= 'selected' if current_docs_version == version %>><%= version.start_with?('v') ? version.upcase : version %></option>
+              <% end %>
+            </select>
+          </div>
+        <% end %>
+
+        <button type="button"
+                class="flex items-center gap-2 py-2 px-3 rounded-full <%= hover_bg %> <%= text_color %> text-sm"
+                onclick="document.getElementById('framework-mobile-menu-close').click(); window.dispatchEvent(new CustomEvent('command-palette:open',{detail:{focus:true}}));">
+          <%= render 'shared/icons/search', classes: 'w-5 h-5' %>
+          <span>Search</span>
+        </button>
+
+        <%# Standalone docs: no accounts here. Link out to the TRMNL app instead. %>
+        <a href="https://usetrmnl.com" class="mt-2 inline-block py-2 px-4 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-full transition-colors duration-200 text-sm tracking-tight">
+          Get TRMNL
+        </a>
+
+        <div class="w-full" id="fw-mobile-theme-accordion">
+          <button type="button" id="fw-mobile-theme-trigger"
+                  class="w-full flex items-center justify-end gap-2 py-2 px-3 rounded-full <%= hover_bg %> <%= text_color %> text-sm">
+            <% if theme == 'light' %>
+              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1m0 18v-2M5.05 5.05 3.636 3.636m12.728 12.728L14.95 14.95M3 10H1m18 0h-2M5.05 14.95l-1.414 1.414M16.364 3.636 14.95 5.05M14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+              <span>Light Theme</span>
+            <% elsif theme == 'dark' %>
+              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.509 5.75c0-1.493.394-2.96 1.144-4.25h-.081a8.5 8.5 0 1 0 7.356 12.746A8.5 8.5 0 0 1 8.509 5.75Z"/></svg>
+              <span>Dark Theme</span>
+            <% else %>
+              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1M5.05 5.05 3.636 3.636M3 10H1M5.05 14.95l-1.414 1.414M10 17v2"/><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M10 6a4 4 0 0 1 0 8V6Z"/></svg>
+              <span>System Theme</span>
+            <% end %>
+            <svg class="w-4 h-4 transition-transform duration-200" id="fw-mobile-theme-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+          </button>
+          <div id="fw-mobile-theme-panel" class="flex flex-col items-end gap-1 mt-2 pr-3" hidden>
+            <button data-fw-theme-option="light" class="flex items-center gap-2 py-1.5 px-3 rounded-full text-sm <%= theme == 'light' ? text_color : 'text-gray-500 dark:text-gray-500' %>">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1m0 18v-2M5.05 5.05 3.636 3.636m12.728 12.728L14.95 14.95M3 10H1m18 0h-2M5.05 14.95l-1.414 1.414M16.364 3.636 14.95 5.05M14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+              <span>Light</span>
+              <svg data-theme-preference-check class="w-3.5 h-3.5 <%= 'invisible' unless theme == 'light' %>" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+            </button>
+            <button data-fw-theme-option="dark" class="flex items-center gap-2 py-1.5 px-3 rounded-full text-sm <%= theme == 'dark' ? text_color : 'text-gray-500 dark:text-gray-500' %>">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.509 5.75c0-1.493.394-2.96 1.144-4.25h-.081a8.5 8.5 0 1 0 7.356 12.746A8.5 8.5 0 0 1 8.509 5.75Z"/></svg>
+              <span>Dark</span>
+              <svg data-theme-preference-check class="w-3.5 h-3.5 <%= 'invisible' unless theme == 'dark' %>" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+            </button>
+            <button data-fw-theme-option="system" class="flex items-center gap-2 py-1.5 px-3 rounded-full text-sm <%= theme == 'system' ? text_color : 'text-gray-500 dark:text-gray-500' %>">
+              <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3V1M5.05 5.05 3.636 3.636M3 10H1M5.05 14.95l-1.414 1.414M10 17v2"/><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M10 6a4 4 0 0 1 0 8V6Z"/></svg>
+              <span>System</span>
+              <svg data-theme-preference-check class="w-3.5 h-3.5 <%= 'invisible' unless theme == 'system' %>" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var runtime = window.__frameworkNavRuntime || (window.__frameworkNavRuntime = {});
+    var btn = document.getElementById('fw-theme-dropdown-btn');
+    var menu = document.getElementById('fw-theme-menu');
+    var sectionBtn = document.getElementById('fw-section-dropdown-btn');
+    var sectionMenu = document.getElementById('fw-section-menu');
+    var versionBtn = document.getElementById('fw-version-dropdown-btn');
+    var versionMenu = document.getElementById('fw-version-menu');
+
+    // The screen-picker dropdown is rendered by `shared/_menubar_screen_picker`
+    // and toggled by the Stimulus `dropdown` controller, so it is intentionally
+    // not managed by this IIFE.
+    var allMenus = [menu, sectionMenu, versionMenu].filter(Boolean);
+
+    function closeAllExcept(keep) {
+      allMenus.forEach(function(m) { if (m !== keep) m.hidden = true; });
+    }
+
+    function wire(el, key, eventName, handler) {
+      if (!el) return;
+      var prop = '__fwNav' + key;
+      if (el[prop]) el.removeEventListener(eventName, el[prop]);
+      el[prop] = handler;
+      el.addEventListener(eventName, handler);
+    }
+
+    if (btn && menu) {
+      wire(btn, 'Theme', 'click', function(e) {
+        e.stopPropagation();
+        closeAllExcept(menu);
+        menu.hidden = !menu.hidden;
+      });
+    }
+
+    if (sectionBtn && sectionMenu) {
+      wire(sectionBtn, 'Section', 'click', function(e) {
+        e.stopPropagation();
+        closeAllExcept(sectionMenu);
+        sectionMenu.hidden = !sectionMenu.hidden;
+      });
+    }
+
+    if (versionBtn && versionMenu) {
+      wire(versionBtn, 'Version', 'click', function(e) {
+        e.stopPropagation();
+        closeAllExcept(versionMenu);
+        versionMenu.hidden = !versionMenu.hidden;
+      });
+    }
+
+    if (runtime.documentClickHandler) {
+      document.removeEventListener('click', runtime.documentClickHandler);
+    }
+    runtime.documentClickHandler = function() {
+      allMenus.forEach(function(m) { m.hidden = true; });
+    };
+    document.addEventListener('click', runtime.documentClickHandler);
+
+    document.querySelectorAll('[data-fw-theme-option]').forEach(function(opt) {
+      wire(opt, 'ThemeOption', 'click', function() {
+        var theme = this.dataset.fwThemeOption;
+        if (window.__setThemePreference) {
+          window.__setThemePreference(theme);
+        } else {
+          try { window.localStorage.setItem('theme', theme); } catch (error) {}
+        }
+        if (menu) menu.hidden = true;
+      });
+    });
+
+    var trigger = document.getElementById('fw-mobile-theme-trigger');
+    var panel = document.getElementById('fw-mobile-theme-panel');
+    var chevron = document.getElementById('fw-mobile-theme-chevron');
+    if (trigger && panel) {
+      wire(trigger, 'MobileTheme', 'click', function() {
+        panel.hidden = !panel.hidden;
+        if (chevron) chevron.classList.toggle('rotate-180');
+      });
+    }
+  })();
+</script>
+
+<script>
+  (function() {
+    var runtime = window.__frameworkMobileMenuRuntime || (window.__frameworkMobileMenuRuntime = {});
+    if (runtime.onReady) {
+      document.removeEventListener('DOMContentLoaded', runtime.onReady);
+      document.removeEventListener('turbo:load', runtime.onReady);
+    }
+
+    runtime.onReady = function() {
+      requestAnimationFrame(() => requestAnimationFrame(initFrameworkMobileMenu));
+    };
+
+    document.addEventListener('DOMContentLoaded', runtime.onReady);
+    document.addEventListener('turbo:load', runtime.onReady);
+  })();
+
+  function initFrameworkMobileMenu() {
+    const menuButton = document.getElementById('framework-mobile-menu-button');
+    const mobileMenu = document.getElementById('framework-mobile-menu');
+    const closeButton = document.getElementById('framework-mobile-menu-close');
+
+    if (!menuButton || !mobileMenu || !closeButton) return;
+
+    if (mobileMenu.dataset.wired === 'true') return;
+    mobileMenu.dataset.wired = 'true';
+
+    menuButton.addEventListener('click', function() {
+      mobileMenu.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          mobileMenu.classList.add('opacity-100');
+          mobileMenu.classList.remove('opacity-0');
+        });
+      });
+    });
+
+    closeButton.addEventListener('click', function() {
+      mobileMenu.classList.remove('opacity-100');
+      mobileMenu.classList.add('opacity-0');
+      const onEnd = () => {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.removeEventListener('transitionend', onEnd);
+      };
+      mobileMenu.addEventListener('transitionend', onEnd);
+      setTimeout(() => { if (!mobileMenu.classList.contains('opacity-100')) mobileMenu.classList.add('hidden'); }, 360);
+    });
+  }
+</script>

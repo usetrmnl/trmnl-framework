@@ -1,0 +1,31 @@
+// ============================================
+// TRMNL Framework - Effect Utilities
+// ============================================
+// `invert` shares one filter declaration with the stroke utilities
+// (mixins/_utilities.scss: filter-from-vars), so `image invert image-stroke`
+// renders both instead of the later class erasing the earlier one.
+
+@use '../mixins' as mixins;
+
+// The two filter channels. Registered so they do not inherit: a plain custom
+// property set by `.invert` would reach every descendant, and a descendant
+// carrying an image-stroke class would then invert itself inside an already
+// inverted container. No initial value, so an element that sets neither channel
+// resolves both to the empty fallback.
+@property --tn-invert {
+    syntax: "*";
+    inherits: false;
+}
+
+@property --tn-image-stroke {
+    syntax: "*";
+    inherits: false;
+}
+
+@include mixins.trmnl-namespace {
+    // Invert effect
+    .invert {
+        --tn-invert: invert(1);
+        @include mixins.filter-from-vars;
+    }
+}

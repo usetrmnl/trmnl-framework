@@ -1,0 +1,28 @@
+<%
+  css_class = local_assigns[:css_class] || 'h-2.5 w-2.5 shrink-0 transition-transform text-gray-400 dark:text-gray-500'
+  additional_classes = local_assigns[:additional_classes] || local_assigns[:class] || local_assigns[:classes]
+  full_class = [css_class, additional_classes].compact.join(' ')
+
+  style_overrides = [local_assigns[:style], local_assigns[:styles]].compact.join(' ')
+  raw_attrs = (local_assigns[:attrs] || local_assigns[:attributes] || {}).dup
+  raw_class = raw_attrs&.delete(:class) || raw_attrs&.delete('class')
+  raw_style = raw_attrs&.delete(:style) || raw_attrs&.delete('style')
+  raw_data = raw_attrs&.delete(:data) || raw_attrs&.delete('data')
+
+  combined_class = [full_class, raw_class].compact.join(' ')
+  combined_style = [raw_style, style_overrides].compact.join(' ')
+  data_attributes = (raw_data || {}).merge(local_assigns[:data] || {})
+  data_attributes = nil if data_attributes.empty?
+
+  attrs = raw_attrs
+  attrs[:class] = combined_class.presence
+  attrs[:style] = combined_style.presence
+  attrs[:data] = data_attributes if data_attributes
+  attrs[:xmlns] ||= 'http://www.w3.org/2000/svg'
+  attrs[:fill] ||= 'none'
+  attrs[:viewBox] ||= '0 0 10 6'
+  attrs['aria-hidden'] = true unless attrs.key?(:'aria-hidden') || attrs.key?('aria-hidden')
+%>
+<svg <%= tag.attributes(attrs.compact) %>>
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"></path>
+</svg>

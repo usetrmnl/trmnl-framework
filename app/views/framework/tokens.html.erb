@@ -1,0 +1,101 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :tokens %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:tokens) %>
+
+    <section class="space-y-4">
+      <%= framework_heading(3, 'How To Read This Table') %>
+      <p class="<%= framework_section_description_classes %>">
+        Each row is a CSS custom property token. <code class="<%= framework_section_code_classes %>">Root</code> comes from
+        <code class="<%= framework_section_code_classes %>">_variables_root.scss</code>. <code class="<%= framework_section_code_classes %>">2-bit</code>,
+        <code class="<%= framework_section_code_classes %>">density 2x</code>, and
+        <code class="<%= framework_section_code_classes %>">4-bit and up</code> come from mixins in
+        <code class="<%= framework_section_code_classes %>">_variables_overrides.scss</code>.
+      </p>
+    </section>
+
+    <div class="space-y-12">
+      <% framework_token_categories.each do |category| %>
+        <% rows = framework_token_catalog_by_category.fetch(category, []) %>
+        <% next if rows.empty? %>
+
+        <section id="<%= framework_token_group_anchor(category) %>" class="space-y-4">
+          <%= framework_heading(3, framework_token_category_title(category)) %>
+
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %> table-fixed">
+                <colgroup>
+                  <col class="w-[28%]">
+                  <col class="w-[18%]">
+                  <col class="w-[18%]">
+                  <col class="w-[18%]">
+                  <col class="w-[18%]">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">Token</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">1-bit</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">2-bit</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">Density 2x</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">4-bit and up</th>
+                  </tr>
+                </thead>
+                <tbody class="<%= framework_docs_table_body_classes %>">
+                  <% framework_token_variant_groups(rows, category).each do |variant_label, variant_tokens| %>
+                    <% if variant_label %>
+                      <tr>
+                        <td colspan="5" class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500 bg-gray-100/50 dark:bg-gray-800/30"><%= variant_label %></td>
+                      </tr>
+                    <% end %>
+                    <% variant_tokens.each do |row| %>
+                      <% inherits_2bit = row[:override_2bit].blank? && row[:root_value].present? %>
+                      <% inherits_density = row[:override_density_2x].blank? && (row[:override_2bit].present? || row[:root_value].present?) %>
+                      <% inherits_density_from = row[:override_2bit].present? ? '2-bit' : '1-bit' %>
+                      <% inherits_4bit = row[:override_4bit_plus].blank? && (row[:override_2bit].present? || row[:root_value].present?) %>
+                      <% inherits_4bit_from = row[:override_2bit].present? ? '2-bit' : '1-bit' %>
+                      <tr id="<%= framework_token_anchor(row[:token_name]) %>" class="<%= framework_docs_table_row_classes %>">
+                        <td class="<%= framework_docs_table_cell_emphasis_classes %>">
+                          <code class="text-sm font-mono text-syntax-string break-words"><%= row[:token_name] %></code>
+                        </td>
+                        <td class="<%= framework_docs_table_cell_classes %>">
+                          <span class="block break-words text-xs font-mono text-gray-500 dark:text-gray-400"><%= row[:root_value] || '-' %></span>
+                        </td>
+                        <td class="<%= framework_docs_table_cell_classes %>">
+                          <% if inherits_2bit %>
+                            <span class="block break-words text-xs font-mono text-gray-400 dark:text-gray-600" title="inherits 1-bit" aria-label="Inherits 1-bit">-</span>
+                          <% else %>
+                            <span class="block break-words text-xs font-mono text-gray-500 dark:text-gray-400"><%= row[:override_2bit] || '-' %></span>
+                          <% end %>
+                        </td>
+                        <td class="<%= framework_docs_table_cell_classes %>">
+                          <% if inherits_density %>
+                            <span class="block break-words text-xs font-mono text-gray-400 dark:text-gray-600" title="inherits <%= inherits_density_from %>" aria-label="Inherits <%= inherits_density_from %>">-</span>
+                          <% else %>
+                            <span class="block break-words text-xs font-mono text-gray-500 dark:text-gray-400"><%= row[:override_density_2x] || '-' %></span>
+                          <% end %>
+                        </td>
+                        <td class="<%= framework_docs_table_cell_classes %>">
+                          <% if inherits_4bit %>
+                            <span class="block break-words text-xs font-mono text-gray-400 dark:text-gray-600" title="inherits <%= inherits_4bit_from %>" aria-label="Inherits <%= inherits_4bit_from %>">-</span>
+                          <% else %>
+                            <span class="block break-words text-xs font-mono text-gray-500 dark:text-gray-400"><%= row[:override_4bit_plus] || '-' %></span>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      <% end %>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

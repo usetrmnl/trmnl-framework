@@ -1,0 +1,42 @@
+// ============================================
+// TRMNL Framework - Aspect Ratio Utilities
+// ============================================
+// Emitted gate-outer, value-inner through the factorized engine, so every
+// `md:` rule precedes every `lg:` rule. Per-class emission wrote each class's
+// whole gate set as one block, and since two size gates of different
+// breakpoints carry the same weight, the tie fell to source order: on a large
+// screen `md:aspect--16/9 lg:aspect--4/3` resolved to whichever class the file
+// happened to declare last. Tier order is what settles it.
+
+@use 'sass:list';
+@use '../mixins' as mixins;
+@use '../mixins/factorized_utilities' as fz;
+
+// Auto first, then the landscape ratios, then their portrait inversions.
+// The ratios are built with list.slash: a bare `4 / 3` inside a map is read as
+// division and would arrive here as 1.3333333333.
+$aspect-ratios: (
+    '--auto': auto,
+    '--1/1': list.slash(1, 1),
+    '--4/3': list.slash(4, 3),
+    '--3/2': list.slash(3, 2),
+    '--16/9': list.slash(16, 9),
+    '--21/9': list.slash(21, 9),
+    '--3/4': list.slash(3, 4),
+    '--2/3': list.slash(2, 3),
+    '--9/16': list.slash(9, 16),
+    '--9/21': list.slash(9, 21)
+);
+
+@include mixins.trmnl-namespace {
+    @include fz.each-size-orientation-gate using ($prefix, $screen-selectors) {
+        @each $modifier, $value in $aspect-ratios {
+            @include fz.emit-class-apply(
+                fz.token-match-selectors('#{$prefix}aspect#{$modifier}'),
+                $screen-selectors
+            ) {
+                aspect-ratio: $value;
+            }
+        }
+    }
+}

@@ -1,0 +1,122 @@
+<script>
+  (function() {
+    var VALID_THEMES = ['light', 'system', 'dark'];
+    var STORAGE_KEY = 'theme';
+    var initialPageTheme = '<%= theme %>';
+
+    function normalizeTheme(theme) {
+      theme = String(theme || 'system');
+      return VALID_THEMES.indexOf(theme) >= 0 ? theme : 'system';
+    }
+
+    function readCookie(name) {
+      var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function expireCookie(name, path) {
+      document.cookie = name + '=;path=' + path + ';max-age=0;samesite=lax';
+    }
+
+    function readStoredPreference() {
+      var stored = null;
+
+      try {
+        stored = window.localStorage && window.localStorage.getItem(STORAGE_KEY);
+      } catch (error) {
+        stored = null;
+      }
+
+      if (VALID_THEMES.indexOf(stored) >= 0) return stored;
+
+      if (stored) {
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch (error) {}
+      }
+
+      var legacyTheme = readCookie('theme');
+      if (VALID_THEMES.indexOf(legacyTheme) >= 0) {
+        try { window.localStorage.setItem(STORAGE_KEY, legacyTheme); } catch (error) {}
+        expireCookie('theme', '/');
+        return legacyTheme;
+      }
+
+      return 'system';
+    }
+
+    function writeStoredPreference(theme) {
+      theme = normalizeTheme(theme);
+
+      try { window.localStorage.setItem(STORAGE_KEY, theme); } catch (error) {}
+      expireCookie('theme', '/');
+
+      return theme;
+    }
+
+    function systemPrefersDark() {
+      return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+
+    function applyResolvedTheme(theme) {
+      if (window.__darkModeListener && window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)')
+          .removeEventListener('change', window.__darkModeListener);
+        window.__darkModeListener = null;
+      }
+
+      if (theme === 'dark' || (theme === 'system' && systemPrefersDark())) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+
+      if (theme === 'system' && window.matchMedia) {
+        window.__darkModeListener = function(e) {
+          document.documentElement.classList.toggle('dark', e.matches);
+          window.dispatchEvent(new CustomEvent('trmnl:theme-change', {
+            detail: { preference: 'system', pageTheme: 'system', resolvedDark: e.matches }
+          }));
+        };
+        window.matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener('change', window.__darkModeListener);
+      }
+    }
+
+    window.__themePreference = readStoredPreference;
+
+    window.__setThemePreference = function(theme) {
+      var preference = writeStoredPreference(theme);
+      var pageTheme = document.body ? document.body.getAttribute('data-page-theme') : 'system';
+      window.__applyPageTheme(pageTheme || 'system');
+      return preference;
+    };
+
+    window.__applyPageTheme = function(pageTheme) {
+      pageTheme = normalizeTheme(pageTheme);
+
+      var preference = pageTheme === 'system' ? readStoredPreference() : pageTheme;
+      document.documentElement.dataset.themePreference = preference;
+      if (document.body) document.body.setAttribute('data-page-theme', pageTheme);
+
+      applyResolvedTheme(preference);
+      window.dispatchEvent(new CustomEvent('trmnl:theme-change', {
+        detail: {
+          preference: preference,
+          pageTheme: pageTheme,
+          resolvedDark: document.documentElement.classList.contains('dark')
+        }
+      }));
+
+      return preference;
+    };
+
+    if (!window.__themeTurboListenerInstalled) {
+      window.__themeTurboListenerInstalled = true;
+      document.addEventListener('turbo:before-render', function(event) {
+        var newTheme = event.detail.newBody.getAttribute('data-page-theme') || 'light';
+        window.__applyPageTheme(newTheme);
+      });
+    }
+
+    window.__applyPageTheme(initialPageTheme);
+  })();
+</script>

@@ -1,0 +1,9 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'The paint half of the runtime') %>
+  <p class="<%= framework_section_description_classes %>">
+    The same <code class="<%= framework_section_code_classes %>">plugins.js</code> that runs these engines also
+    ships TRMNLPaint, the framework's public paint API. It reads the live cascade and returns canonical Fill,
+    BorderFill, and TypeSpec objects, so a plugin can resolve framework colors from JavaScript while the engines
+    handle layout. See <%= render DocsRef.new(page: :paint_api) %>.
+  </p>
+</div>

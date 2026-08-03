@@ -1,0 +1,561 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :grid %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:grid) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8" id="when-to-use">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'When to Use Grid') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use Grid inside <%= render DocsRef.new(page: :layout) %> when you need a strict, grid-based layout. Grid gives you precise control over column count and span, so items align to a consistent rhythm and every element snaps to the same underlying grid.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Grid-Based Distribution') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              You define how many columns the grid has with <code class="<%= framework_section_code_classes %>">grid--cols-{number}</code>, and you can let individual cells span multiple columns with <code class="<%= framework_section_code_classes %>">col--span-{number}</code>. The result is a predictable, aligned layout where everything shares the same column structure. Ideal for Swiss-style or editorial designs where visual consistency matters.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Multiple Grids and Nesting') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              You can place multiple Grid components as direct children of Layout; Layout's modifiers (row/col, alignment, stretch) arrange those grids within the available space. Inside each grid cell, you can nest <%= render DocsRef.new(page: :flex) %> for row or column flexibility within that cell. For example, a grid cell that stacks items vertically or aligns them horizontally.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Compared to Flex and Columns') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Choose Grid when you need fixed column structure and spans. If you need content-sized flexibility (items that grow or shrink by content), use Flex. If you have lots of same-type data and want the system to handle column distribution and overflow, use <%= render DocsRef.new(page: :columns) %>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <%= framework_heading(3, 'Related') %>
+        <div class="flex flex-wrap gap-2">
+          <%= render DocsRef.new(page: :columns) %>
+          <%= render DocsRef.new(page: :flex) %>
+          <%= render DocsRef.new(page: :gap) %>
+          <%= render DocsRef.new(page: :layout) %>
+        </div>
+      </section>
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Ways to Define the Grid') %>
+          <p class="<%= framework_section_description_classes %>">
+            Define a column layout in one of two ways:
+          </p>
+          <ul class="list-disc list-inside space-y-2 ml-4 <%= framework_list_classes %>">
+            <li>
+              <strong>Column Count:</strong> Set <code class="<%= framework_section_code_classes %>">grid--cols-{number}</code>
+              on the parent to create equal-width columns
+            </li>
+            <li>
+              <strong>Column Spans:</strong> Set <code class="<%= framework_section_code_classes %>">col--span-{number}</code>
+              on individual columns to control their width
+            </li>
+          </ul>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Count') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">grid--cols-{number}</code> to set the column count,
+              from 1 to 12. A number above 12 has no class, so the grid keeps its default auto-fit template.
+              Here are examples with 4 and 3 columns:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid grid--cols-4 p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/4</span>
+                        </div>
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/4</span>
+                        </div>
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/4</span>
+                        </div>
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/4</span>
+                        </div>
+                      </div>
+                      <div class="grid grid--cols-3 p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/3</span>
+                        </div>
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/3</span>
+                        </div>
+                        <div class="col bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col 1/3</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Column Count</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid grid--cols-4">
+  <div>1/4</div>
+  <div>1/4</div>
+  <div>1/4</div>
+  <div>1/4</div>
+</div>
+
+<div class="grid grid--cols-3">
+  <div>1/3</div>
+  <div>1/3</div>
+  <div>1/3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Spans') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">col--span-{number}</code> to make a column
+              span multiple grid columns, from 1 to 12 like the column count. In a grid row, the sum of all column
+              spans should equal the total number of grid columns. For example, you might have spans of 1 and 2, or
+              spans of 3, 6, and 2.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="col col--span-1 bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col Span 1</span>
+                        </div>
+                        <div class="col col--span-2 bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col Span 2</span>
+                        </div>
+                      </div>
+                      <div class="grid gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="col col--span-3 bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col Span 3</span>
+                        </div>
+                        <div class="col col--span-6 bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col Span 6</span>
+                        </div>
+                        <div class="col col--span-2 bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Col Span 2</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Column Spans</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid">
+  <div class="col--span-1">Span 1</div>
+  <div class="col--span-2">Span 2</div>
+</div>
+
+<div class="grid">
+  <div class="col--span-3">Span 3</div>
+  <div class="col--span-6">Span 6</div>
+  <div class="col--span-2">Span 2</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Column Layouts') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use columns to create vertical layouts within the grid. Columns can be positioned and aligned using modifier classes.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Basic Column Layout') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use the <code class="<%= framework_section_code_classes %>">col</code> class to create vertical layouts.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid">
+                        <div class="col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 1</span></div>
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 2</span></div>
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 3</span></div>
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 4</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Column Layout</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid">
+  <div class="col">
+    <div>Item</div>
+    <div>Item</div>
+    <div>Item</div>
+    <div>Item</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Positioning') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">col--{position}</code> where position can be
+              <code>start</code>, <code>center</code>, or <code>end</code> to control vertical alignment:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row">
+                      <div class="grid grid--cols-3 h--full">
+                        <div class="col col--start gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Start</span></div>
+                        </div>
+                        <div class="col col--center gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Center</span></div>
+                        </div>
+                        <div class="col col--end gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">End</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Column Positioning</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid grid--cols-3">
+  <div class="col col--start">
+    <div>Item</div>
+  </div>
+  <div class="col col--center">
+    <div>Item</div>
+  </div>
+  <div class="col col--end">
+    <div>Item</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Row Layouts') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use rows to create horizontal layouts within the grid. Rows can be positioned and aligned using modifier classes.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Basic Row Layout') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use the <code class="<%= framework_section_code_classes %>">row</code> class to create horizontal layouts.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid">
+                        <div class="row gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 1</span></div>
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 2</span></div>
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 3</span></div>
+                          <div class="w--full bg--white p--2.5 rounded--small text--center"><span class="label">Item 4</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Row Layout</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid">
+  <div class="row">
+    <div>Item</div>
+    <div>Item</div>
+    <div>Item</div>
+    <div>Item</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Row Positioning') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">row--{position}</code> where position can be
+              <code>start</code>, <code>center</code>, or <code>end</code> to control horizontal alignment:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid grid--cols-1">
+                        <div class="row row--start gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--32 bg--white p--2.5 rounded--small text--center"><span class="label">Start</span></div>
+                        </div>
+                        <div class="row row--center gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--32 bg--white p--2.5 rounded--small text--center"><span class="label">Center</span></div>
+                        </div>
+                        <div class="row row--end gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                          <div class="w--32 bg--white p--2.5 rounded--small text--center"><span class="label">End</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Row Positioning</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid grid--cols-1">
+  <div class="row row--start">
+    <div>Item</div>
+  </div>
+  <div class="row row--center">
+    <div>Item</div>
+  </div>
+  <div class="row row--end">
+    <div>Item</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Grid Wrapping') %>
+          <p class="<%= framework_section_description_classes %>">
+            Enable responsive wrapping based on a minimum column width using
+            <code class="<%= framework_section_code_classes %>">grid--wrap</code>.
+            Combine with <code class="<%= framework_section_code_classes %>">grid--min-{size}</code> to set the minimum track size.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Different Minimum Sizes') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              As the container shrinks, the grid reduces column count to respect the minimum size.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="grid grid--wrap grid--min-32 p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium w--full">
+                        <% 8.times do |i| %>
+                          <div class="col bg--white p--2.5 rounded--small text--center"><span class="label">Item <%= i+1 %></span></div>
+                        <% end %>
+                      </div>
+                      <div class="grid grid--wrap grid--min-56 p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium w--full">
+                        <% 8.times do |i| %>
+                          <div class="col bg--white p--2.5 rounded--small text--center"><span class="label">Item <%= i+1 %></span></div>
+                        <% end %>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Grid</span>
+                      <span class="instance">Grid Wrapping</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="grid grid--wrap grid--min-32">
+  <div class="col">Item 1</div>
+  <div class="col">Item 2</div>
+  <div class="col">Item 3</div>
+  <div class="col">Item 4</div>
+  <div class="col">Item 5</div>
+  <div class="col">Item 6</div>
+  <div class="col">Item 7</div>
+  <div class="col">Item 8</div>
+</div>
+
+<div class="grid grid--wrap grid--min-56">
+  <div class="col">Item 1</div>
+  <div class="col">Item 2</div>
+  <div class="col">Item 3</div>
+  <div class="col">Item 4</div>
+  <div class="col">Item 5</div>
+  <div class="col">Item 6</div>
+  <div class="col">Item 7</div>
+  <div class="col">Item 8</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Removing the Gap') %>
+          <p class="<%= framework_section_description_classes %>">
+            A grid separates its columns by the screen's gap. Add
+            <code class="<%= framework_section_code_classes %>">grid--no-gap</code> to close it, so tiles meet edge to
+            edge and read as one band. Size and orientation prefixes work on it like any other grid modifier
+            (<code class="<%= framework_section_code_classes %>">portrait:grid--no-gap</code>), and a
+            <%= render DocsRef.new(page: :gap) %> utility sets a different gap rather than none.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="grid grid--cols-4 w--full">
+                      <% %w[Mon Tue Wed Thu].each do |day| %>
+                        <div class="col bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 p--2.5 rounded--small text--center"><span class="label"><%= day %></span></div>
+                      <% end %>
+                    </div>
+                    <div class="grid grid--cols-4 grid--no-gap w--full">
+                      <% %w[Mon Tue Wed Thu].each do |day| %>
+                        <div class="col bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 p--2.5 text--center"><span class="label"><%= day %></span></div>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Grid</span>
+                    <span class="instance">grid--no-gap</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="grid grid--cols-4 grid--no-gap">
+  <div class="col">Mon</div>
+  <div class="col">Tue</div>
+  <div class="col">Wed</div>
+  <div class="col">Thu</div>
+</div>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

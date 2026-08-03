@@ -1,0 +1,357 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :color_palettes %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:color_palettes) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Grayscale palettes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Four palettes cover the panels that print no color. Each one maps onto a bit-depth class on the
+            <%= render DocsRef.new(page: :screen) %> element, so a grayscale screen carries
+            <code class="<%= framework_section_code_classes %>">screen--1bit</code>,
+            <code class="<%= framework_section_code_classes %>">screen--2bit</code>, or
+            <code class="<%= framework_section_code_classes %>">screen--4bit</code> instead of a palette class.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">bw</code> (2 levels) renders as <code class="<%= framework_section_code_classes %>">screen--1bit</code>. Every token resolves to a black and white dither pattern.</li>
+            <li><code class="<%= framework_section_code_classes %>">gray-4</code> (4 grays) renders as <code class="<%= framework_section_code_classes %>">screen--2bit</code>.</li>
+            <li><code class="<%= framework_section_code_classes %>">gray-16</code> (16 grays) renders as <code class="<%= framework_section_code_classes %>">screen--4bit</code>, where the gray tokens land on solids.</li>
+            <li><code class="<%= framework_section_code_classes %>">gray-256</code> renders as <code class="<%= framework_section_code_classes %>">screen--4bit</code> too. It is a delivery format, not a fifth tier.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-4">
+          <%= framework_heading(4, 'Two ways to deliver 16 levels') %>
+          <p class="<%= framework_subsection_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">gray-16</code> and
+            <code class="<%= framework_section_code_classes %>">gray-256</code> share a class because they share the
+            glass: 16 panel levels either way. They differ in who reduces the image.
+          </p>
+          <ul class="<%= framework_subsection_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">gray-16</code>: the platform posterizes and dithers to those 16 levels before it sends the screen.</li>
+            <li><code class="<%= framework_section_code_classes %>">gray-256</code>: the platform sends a smooth 8-bit PNG and the device quantizes it to its own 16 levels.</li>
+          </ul>
+          <p class="<%= framework_subsection_description_classes %>">
+            Its registry name, Smooth Grayscale (device-quantized), describes that delivery. It is not a claim of 256
+            displayable grays, and it renders at the 4-bit tier, so author against
+            <code class="<%= framework_section_code_classes %>">screen--4bit</code>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Color palette classes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every color panel the framework supports has a palette class on the
+            <%= render DocsRef.new(page: :screen) %> element. Five classes cover the limited-ink e-paper panels;
+            <code class="<%= framework_section_code_classes %>">screen--color-full</code> covers displays that render
+            arbitrary color.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A device can support more than one palette. Inky Impression 7.3 carries six: black and white, 7-color,
+            6-color, 4-ink B/W/R/Y, 3-ink B/W/R, and 3-ink B/W/Y. The selected mode picks the class.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Inks</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Panels</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-3bwr</code></td>
+                  <td class="px-6 py-4 text-sm">Black, white, red</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Waveshare 7.5" B/W/R</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-3bwy</code></td>
+                  <td class="px-6 py-4 text-sm">Black, white, yellow</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">No native B/W/Y panel yet, but nine profiles offer it as a mode (Inky Impression 7.3 and 13.3, Seeed E1002 and E1004, and others)</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-4bwry</code></td>
+                  <td class="px-6 py-4 text-sm">Black, white, red, yellow</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">TRMNL OG (B/W/R/Y), Waveshare 7.5" B/W/R/Y</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-6a</code></td>
+                  <td class="px-6 py-4 text-sm">Black, white, red, green, blue, yellow</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Inky Impression 7.3 and 13.3, Seeed E1002 and E1004</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-7a</code></td>
+                  <td class="px-6 py-4 text-sm">Black, white, red, green, blue, yellow, orange</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Inkplate 6COLOR, Inky Impression 7.3</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-full</code></td>
+                  <td class="px-6 py-4 text-sm">Whatever the display can show</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">12-bit and 24-bit displays: Onyx BOOX Nova Air C, Tidbyt</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Full color') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">screen--color-full</code> is a first-class mode, not a
+            fallback. The CSS paints every framework color token at its actual hex, with no ink remap and no dithering.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">color-24bit</code> (16.7 million colors) covers LCD, OLED, browser, and virtual screens. The render ships as lossless sRGB: no remap, no dithering, no posterize.</li>
+            <li><code class="<%= framework_section_code_classes %>">color-12bit</code> (4096 colors) covers Kaleido-class color e-paper. It shares the class, and the platform posterizes the render to those 4096 colors.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Both publish <code class="<%= framework_section_code_classes %>">--framework-bit-depth: 12</code>, the lower
+            of the two, so nothing reading the depth over-promises what a Kaleido panel prints. Every color the
+            framework paints is sRGB.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip
+              <div class="screen screen--generic_16_9 screen--color-full">
+                <div class="view view--full">
+                  <!-- bg--red-60 is a solid red here, a dither on every limited palette -->
+                  <div class="layout bg--red-60">
+                    <span class="title">Delayed</span>
+                  </div>
+                </div>
+              </div>
+            HTML
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Every palette and its class') %>
+          <p class="<%= framework_section_description_classes %>">
+            The device registry assigns each device the palettes it can render, and a selected palette resolves to one
+            framework class. That class also publishes its paint depth as
+            <code class="<%= framework_section_code_classes %>">--framework-bit-depth</code>, which
+            <%= render DocsRef.new(page: :paint_api) %> reads.
+          </p>
+        </div>
+
+        <%# Depths mirror $_screen-paint-depths in base/_screen-mode-vars.scss, where the registry lives. %>
+        <% paint_depths = { 'screen--1bit' => 1, 'screen--2bit' => 2, 'screen--4bit' => 4, 'screen--color-full' => 12 } %>
+        <% limited_palette_depth = 4 %>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Palette</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Registry name</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Framework class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Published depth</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <% framework_palette_options.each do |palette| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>"><%= palette[:id] %></code></td>
+                    <td class="px-6 py-4 text-sm"><%= palette[:name] %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>"><%= palette[:framework_class] %></code></td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= paint_depths.fetch(palette[:framework_class], limited_palette_depth) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="<%= framework_section_description_classes %>">
+          Depth describes the paint rail, not the panel's storage. The limited palettes print solid inks the way the
+          4-bit rail prints solid tokens, so they publish 4.
+        </p>
+
+        <p class="<%= framework_section_description_classes %>">
+          <strong>The numeric variants stop at <code class="<%= framework_section_code_classes %>">4bit:</code>.</strong>
+          Grayscale glass stops at 16 levels, so
+          <code class="<%= framework_section_code_classes %>">1bit:</code>,
+          <code class="<%= framework_section_code_classes %>">2bit:</code>, and
+          <code class="<%= framework_section_code_classes %>">4bit:</code> cover every grayscale palette. Color is a
+          separate axis with its own classes, and no numeric variant matches it; the mode-by-mode story is
+          <%= render DocsRef.new(page: :rendering_modes) %>.
+        </p>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'How tokens resolve') %>
+          <p class="<%= framework_section_description_classes %>">
+            A limited palette prints solid inks and nothing in between, so the framework dithers every token in the
+            <%= render DocsRef.new(page: :colors) %> palette down to the inks that panel carries. Your markup does not
+            change: the same <code class="<%= framework_section_code_classes %>">bg--</code> and
+            <code class="<%= framework_section_code_classes %>">text--</code> utilities resolve differently per palette.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><strong>Grays dither in black and white.</strong> On every limited palette, <code class="<%= framework_section_code_classes %>">bg--gray-50</code> is a 1-bit pattern rather than a solid gray.</li>
+            <li><strong>Hues snap to the closest ink.</strong> On <code class="<%= framework_section_code_classes %>">screen--color-3bwr</code> every hue prints red, so blue and green stop reading as separate categories. <code class="<%= framework_section_code_classes %>">screen--color-7a</code> carries its own orange ink.</li>
+            <li><strong>Shade steps dither the ink.</strong> <code class="<%= framework_section_code_classes %>">bg--red-20</code> mixes red with black and <code class="<%= framework_section_code_classes %>">bg--red-60</code> mixes red with white, which is how one ink covers a ladder of shades.</li>
+            <li><strong>Full color skips dithering.</strong> <code class="<%= framework_section_code_classes %>">screen--color-full</code> paints every token as a solid color.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            <strong>Device Preview tip:</strong> Pick a color device in the Device Preview (top right) to see the
+            palette applied to every demo on this site.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Applying a palette') %>
+          <p class="<%= framework_section_description_classes %>">
+            The palette class sits on the screen, next to the device class. Grayscale palettes use the same slot for
+            their bit-depth class. Who puts it there depends on where the screen is rendered.
+          </p>
+        </div>
+
+        <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+          <% c.with_left_message do %>
+            <p class="text-sm font-medium">You don't write the palette class. The platform renders your layout against the device's own profile, so one plugin covers 1-bit panels and 7-color panels alike.</p>
+          <% end %>
+          <% c.with_right_message do %>
+            <p class="text-sm font-medium">You add the palette class to the screen yourself, next to the device class, and the framework repaints every token for that ink set.</p>
+          <% end %>
+          <% c.with_left_code do %>
+            <%= render CodeExampleComponent.new(
+              demo_code: <<~'HTML'.strip,
+                <!-- Your layout; the platform supplies the screen and its classes -->
+                <div class="layout">
+                  <span class="title">Northbound</span>
+                  <span class="label label--primary">On time</span>
+                </div>
+              HTML
+              extra_classes: '!rounded-t-none'
+            ) %>
+          <% end %>
+          <% c.with_right_code do %>
+            <%= render CodeExampleComponent.new(
+              demo_code: <<~'HTML'.strip,
+                <div class="screen screen--inky_impression_7_3 screen--color-7a">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <span class="title">Northbound</span>
+                      <span class="label label--primary">On time</span>
+                    </div>
+                  </div>
+                </div>
+              HTML
+              extra_classes: '!rounded-t-none'
+            ) %>
+          <% end %>
+        <% end %>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Preview modes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Panel inks are darker and flatter than the same hex on a monitor. Two modifiers repaint a limited palette
+            with device-accurate values so a preview on a screen matches the print.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">screen--preview-colors</code>: swaps the full-bright inks for the muted ones the panel actually prints.</li>
+            <li><code class="<%= framework_section_code_classes %>">screen--preview-white-limited</code>: mutes white to the panel's off-white. Add it alongside <code class="<%= framework_section_code_classes %>">screen--preview-colors</code> for panels whose white is not paper white.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The Device Preview's Raw Colors and Preview Colors toggle sets both for you. Rendered output on a device
+            uses neither.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip
+              <!-- Device-accurate preview of a 6-color panel -->
+              <div class="screen screen--color-6a screen--preview-colors screen--preview-white-limited">
+                ...
+              </div>
+            HTML
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Targeting a palette in SCSS') %>
+          <p class="<%= framework_section_description_classes %>">
+            Custom SCSS scopes rules to a palette with the same mixins the framework uses. The mixin ids drop the
+            <code class="<%= framework_section_code_classes %>">color-</code> prefix the class carries:
+            <code class="<%= framework_section_code_classes %>">'3bwr'</code>,
+            <code class="<%= framework_section_code_classes %>">'3bwy'</code>,
+            <code class="<%= framework_section_code_classes %>">'4bwry'</code>,
+            <code class="<%= framework_section_code_classes %>">'6a'</code>, and
+            <code class="<%= framework_section_code_classes %>">'7a'</code>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">for-color-palette($id)</code>: scopes to one limited palette.</li>
+            <li><code class="<%= framework_section_code_classes %>">for-color-full</code>: scopes to full-color displays.</li>
+            <li><code class="<%= framework_section_code_classes %>">for-preview-color-palette($id)</code>: scopes to the device-accurate preview of one limited palette.</li>
+            <li><code class="<%= framework_section_code_classes %>">for-1bit</code>, <code class="<%= framework_section_code_classes %>">for-2bit</code>, <code class="<%= framework_section_code_classes %>">for-4bit</code>: scope to a grayscale tier.</li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '@use \'framework/mixins\' as trmnl;
+
+.legend-swatch {
+    width: 12px;
+    height: 12px;
+
+    // Three-ink panels print every hue in the same accent, so carry the
+    // distinction in shape instead of color.
+    @include trmnl.for-color-palette(\'3bwr\') {
+        border-radius: 50%;
+    }
+
+    @include trmnl.for-color-full {
+        border-radius: 0;
+    }
+}', language: 'scss') %>
+        </div>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            The full mixin surface is documented on <%= render DocsRef.new(page: :sass_mixins) %>, and
+            <%= render DocsRef.new(page: :sass_devices) %> covers adding a device profile that selects a palette.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Palettes from JavaScript') %>
+          <p class="<%= framework_section_description_classes %>">
+            TRMNLPaint resolves color by reading the live cascade, so JavaScript needs no palette handling of its own.
+            A Fill resolved on a 7-color screen already carries that palette's dither, and the same call on a
+            full-color screen returns a solid. See <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

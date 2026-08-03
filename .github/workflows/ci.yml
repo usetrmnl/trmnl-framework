@@ -1,0 +1,261 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Called by the Release workflow, which publishes only when these suites are green.
+  # A tag push does not trigger CI on its own.
+  workflow_call:
+
+# Every job here reads the checkout and writes nothing back, so the token they run
+# third-party code with says exactly that. Only the Release workflow's publish job
+# raises it, and it raises it on itself.
+permissions:
+  contents: read
+
+jobs:
+  js-tests:
+    name: JS tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # node-version-file, not a literal: .nvmrc is the single Node pin, and every
+      # other one (package.json engines, the Dockerfile install) follows it.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the lockfile pins the cssnano and terser builds these
+      # suites assert against, and npm install rewrites it.
+      - run: npm ci
+      - run: npm run test:stylesheets
+      - run: npm run test:scripts
+      - run: npm run test:rulediff
+
+  # The repo ships a rubocop config and CONTRIBUTING lists a clean run as a pull-request
+  # requirement, so the check that says whether a change met it belongs here. Style drift
+  # is cheapest to answer on the pull request that introduces it, and hand-policing it in
+  # review is the alternative.
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle exec rubocop --format github
+
+  # No Node here: bin/build shells out to the sass binary from the sass-embedded gem and
+  # to cp, nothing else. Minification is the step that needs npm, and it runs in the
+  # release pipeline (see the comment in bin/build).
+  sass-build:
+    name: Sass build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle exec bin/build
+
+  # The two generated color SCSS files are tracked, and only the release task ever
+  # regenerates them, so a hand edit to either one (or an edit to framework_colors.yml
+  # without a regeneration) compiles green and surfaces as a surprise diff inside the next
+  # release commit. Regenerating here and diffing makes db/data/framework_colors.yml the
+  # single source of truth on every pull request.
+  color-tokens:
+    name: Color tokens
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle exec rake framework:colors
+      - name: Fail on generated color drift
+        run: |
+          git diff --exit-code \
+            app/assets/stylesheets/framework/config/_tokens_colors_generated.scss \
+            app/assets/stylesheets/framework/config/_variables_colors.scss \
+          || {
+            echo "::error::Generated color SCSS is out of date. Run 'bundle exec rake framework:colors' and commit the result."
+            exit 1
+          }
+
+  # The processed bundle (renamed, minified, duplicate bodies merged) is what a release
+  # publishes as plugins.css and what the release size work changes, and
+  # until this job it was produced only by the release task, so no pull request ever saw
+  # it. Building it here puts the public custom-property contract in front of every
+  # change that could break it: a variable renamed out from under a theme, a plugin
+  # author, or plugins.js compiles green and paints nothing.
+  #
+  # Both toolchains, because the bundle needs the Sass compile and the procss pass. It
+  # runs the one spec that reads the artifact; the rest of the asset contracts read the
+  # readable build and belong to the RSpec shards.
+  processed-bundle:
+    name: Processed bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the renamer's output depends on the cssnano build, and
+      # only the lockfile pins it.
+      - run: npm ci
+      - run: bundle exec rake framework:processed_bundle
+      - run: bundle exec rspec spec/assets/stylesheets/framework_processed_bundle_spec.rb
+
+  # AGENTS.md, the write-docs skill, and the pull request template all ban em-dashes in
+  # docs copy and code comments, and the rule was aspirational until this job: the tree
+  # carried them in tooling comments, reference docs, and the runtime's own JSDoc. Same
+  # shape as the color-tokens guard above, a scripted check plus a diagnosable failure.
+  # The script's allowlist names every legitimate use (published bundles, third-party
+  # license text, frozen docs tracks, the "no value" placeholder glyph).
+  em-dashes:
+    name: Em-dashes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on a new em-dash
+        run: |
+          bin/check-em-dashes \
+          || {
+            echo "::error::House style bans em-dashes. Rewrite with a period, comma, colon, or parentheses, or add a commented entry to the allowlist in bin/check-em-dashes."
+            exit 1
+          }
+
+  # RSpec runs as a matrix of shards. The suite is one CPU-bound process (the asset
+  # specs read a 16MB compiled bundle), so once the duplicate Sass builds are gone,
+  # splitting the work across runners is the only lever left on wall clock. Every
+  # shard compiles the bundle itself, in parallel, which beats compiling once in a
+  # setup job and making every shard wait for the artifact.
+  #
+  # Membership is exhaustive by construction, so a new spec file lands in exactly one
+  # shard with no edit here: two shards split spec/assets, two take the halves of the
+  # docs page sweep, and the last takes everything outside spec/assets that the sweep
+  # did not claim.
+  #
+  # The split is balanced from measured runner timings, not from local ones: a docs
+  # page render costs 2.1s on a runner against 0.2s on a developer machine, which is
+  # why seventy pages need two shards to themselves. Re-measure before moving a
+  # boundary.
+  rspec-shard:
+    name: RSpec shard (${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    strategy:
+      # Every shard reports. A red shard must not hide the state of the others.
+      fail-fast: false
+      matrix:
+        include:
+          - shard: cascade and variants
+            args: spec/assets/stylesheets/framework_cascade_weight_spec.rb spec/assets/stylesheets/framework_responsive_variants_spec.rb
+          - shard: rest of assets
+            args: spec/assets --exclude-pattern "**/framework_{cascade_weight,responsive_variants}_spec.rb"
+          - shard: docs page sweep 1
+            args: spec/requests/framework_docs_spec.rb --tag page_sweep:1
+          - shard: docs page sweep 2
+            args: spec/requests/framework_docs_spec.rb --tag page_sweep:2
+          - shard: docs, helpers, lib and requests
+            args: --exclude-pattern "assets/**/*_spec.rb" --tag '~page_sweep'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle exec rspec ${{ matrix.args }}
+
+  # The single check name branch protection points at. It is green only when every
+  # shard is, so the shard count can change without touching a ruleset.
+  rspec:
+    name: RSpec
+    runs-on: ubuntu-latest
+    needs: rspec-shard
+    if: ${{ always() }}
+    steps:
+      - name: Require every shard to pass
+        run: |
+          echo "shards: ${{ needs.rspec-shard.result }}"
+          [ "${{ needs.rspec-shard.result }}" = "success" ]
+
+  # Browser-level enforcement of terminalize, TRMNLPaint, TRMNLCharts, and the docs
+  # picker. The suite boots its own Rails server and compiles the framework CSS and
+  # docs chrome first, so it needs both toolchains.
+  #
+  # It blocks. Every assertion here is a rendering fact no static check can reach, and
+  # the alternative is what this repo had: a rendering regression landing green. The
+  # geometry it measures carries across platforms because every face is self-hosted
+  # from public/fonts and the fixtures naming Arial fall back to fonts-liberation,
+  # which playwright install --with-deps brings in with Arial-compatible metrics.
+  # Add "Playwright runtime" to the required checks on main.
+  playwright-runtime:
+    name: Playwright runtime
+    runs-on: ubuntu-latest
+    # Skipped while the repo is private: browser jobs run only where Actions
+    # minutes are free. The gate opens itself the moment the repo goes public.
+    # The Release workflow runs its own browser gate on every tag regardless, so a
+    # published version is never one no browser ever loaded.
+    if: ${{ !github.event.repository.private }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the browser installed below is the build pinned to
+      # the @playwright/test version in the lockfile.
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:runtime
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-runtime-results
+          path: tmp/playwright/runtime-results
+          retention-days: 7
+
+  # The 46 committed PNGs are the only thing guarding what the framework actually
+  # draws, and nothing ran them until this job: a rendering regression landed green.
+  #
+  # It reports without blocking, and the reason is the baselines rather than the
+  # suite. Browsers and fonts rasterize differently per platform, so the committed
+  # PNGs (all darwin) cannot be compared against a Linux run; CONTRIBUTING says as
+  # much. Until Linux baselines are generated and committed, this job exists to
+  # publish the diff images, which is what makes generating them possible. Drop
+  # continue-on-error in the same change that commits them, and add "Playwright
+  # visual" to the required checks on main.
+  playwright-visual:
+    name: Playwright visual
+    runs-on: ubuntu-latest
+    # Same visibility gate as the runtime job, for the same reason.
+    if: ${{ !github.event.repository.private }}
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the browser installed below is the build pinned to
+      # the @playwright/test version in the lockfile.
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:visual
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-visual-results
+          path: tmp/playwright/visual-results
+          retention-days: 7

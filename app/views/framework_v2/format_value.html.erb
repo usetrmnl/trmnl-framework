@@ -1,0 +1,422 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :format_value %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:format_value) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            To enable automatic value formatting, add the <code class="<%= framework_section_code_classes %>">data-value-format="true"</code>
+            attribute to your element.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xlarge value--tnums" data-value-format="true">2345678</span>
+                            <span class="label">XLarge</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true">2345678</span>
+                            <span class="label">Regular</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" data-value-format="true">2345678</span>
+                            <span class="label">Small</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xlarge value--tnums" data-value-format="true">456789</span>
+                            <span class="label">XLarge</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true">456789</span>
+                            <span class="label">Regular</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" data-value-format="true">456789</span>
+                            <span class="label">Small</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xlarge value--tnums" data-value-format="true">34562</span>
+                            <span class="label">XLarge</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true">34562</span>
+                            <span class="label">Regular</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" data-value-format="true">34562</span>
+                            <span class="label">Small</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value Formatting</span>
+                      <span class="instance">Size Comparison</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xlarge value--tnums" data-value-format="true">2345678</span>
+
+<span class="value value--large value--tnums" data-value-format="true">456789</span>
+
+<span class="value value--small value--tnums" data-value-format="true">34562</span>'
+            ) %>
+          </div>
+
+          <div class="space-y-4">
+            <p class="<%= framework_section_description_classes %>">
+              To add a delimiter to large numbers, for example 1234 => 1,234, see <%= link_to 'custom filters', 'https://intercom.help/trmnl/en/articles/10347358-custom-plugin-filters', target: :_blank, class: 'underline' %>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Currency Values') %>
+          <p class="<%= framework_section_description_classes %>">
+            Values with currency symbols are automatically formatted while maintaining the symbol placement.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xlarge value--tnums" data-value-format="true" data-fit-value="true">$2345678</span>
+                            <span class="label">XLarge</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true" data-fit-value="true">$2345678</span>
+                            <span class="label">Regular</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" data-value-format="true" data-fit-value="true">$2345678</span>
+                            <span class="label">Small</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xlarge value--tnums" data-value-format="true" data-fit-value="true">$456789</span>
+                            <span class="label">XLarge</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true" data-fit-value="true">$456789</span>
+                            <span class="label">Regular</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" data-value-format="true" data-fit-value="true">$456789</span>
+                            <span class="label">Small</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xlarge value--tnums" data-value-format="true" data-fit-value="true">$34562</span>
+                            <span class="label">XLarge</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true" data-fit-value="true">$34562</span>
+                            <span class="label">Regular</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" data-value-format="true" data-fit-value="true">$34562</span>
+                            <span class="label">Small</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value Formatting</span>
+                      <span class="instance">Currency Example</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xlarge value--tnums" data-value-format="true" data-fit-value="true">$2345678</span>
+
+<span class="value value--large value--tnums" data-value-format="true" data-fit-value="true">$456789</span>
+
+<span class="value value--small value--tnums" data-value-format="true" data-fit-value="true">$34562</span>'
+            ) %>
+          </div>
+
+          <div class="space-y-4">
+            <p class="<%= framework_section_description_classes %>">
+              To add a currency symbol, for example 1234 => $1,234, see <%= link_to 'custom filters', 'https://intercom.help/trmnl/en/articles/10347358-custom-plugin-filters', target: :_blank, class: 'underline' %>.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <p class="<%= framework_section_description_classes %>">
+              Supported currency symbols include:
+            </p>
+            <div class="flex flex-col space-y-3">
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">$</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">US Dollar</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">€</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Euro</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">£</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">British Pound</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">¥</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Japanese Yen / Chinese Yuan</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₴</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Ukrainian Hryvnia</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₹</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Indian Rupee</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₪</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Israeli Shekel</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₩</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Korean Won</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₫</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Vietnamese Dong</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₱</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Philippine Peso</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₽</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Russian Ruble</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">₿</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Bitcoin</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Regional Number Formats') %>
+          <p class="<%= framework_section_description_classes %>">
+            Numbers can be formatted according to different regional standards using the <code class="<%= framework_section_code_classes %>">data-value-locale</code> attribute.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid">
+                        <div class="item col--span-2">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true" data-value-locale="en-US">$123456.78</span>
+                            <span class="label">United States (en-US)</span>
+                          </div>
+                        </div>
+                        <div class="item col--span-1">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--tnums" data-value-format="true" data-value-locale="en-US">$123456.78</span>
+                            <span class="label">United States (en-US)</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="grid">
+                        <div class="item col--span-2">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true" data-value-locale="de-DE">€123456.78</span>
+                            <span class="label">German (de-DE)</span>
+                          </div>
+                        </div>
+                        <div class="item col--span-1">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--tnums" data-value-format="true" data-value-locale="de-DE">€123456.78</span>
+                            <span class="label">German (de-DE)</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="divider"></div>
+                      <div class="grid">
+                        <div class="item col--span-2">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--large value--tnums" data-value-format="true" data-value-locale="fr-FR">€123456.78</span>
+                            <span class="label">French (fr-FR)</span>
+                          </div>
+                        </div>
+                        <div class="item col--span-1">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--tnums" data-value-format="true" data-value-locale="fr-FR">€123456.78</span>
+                            <span class="label">French (fr-FR)</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value Formatting</span>
+                      <span class="instance">Regional Formats</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xlarge value--tnums" data-value-format="true" data-value-locale="en-US">$123456.78</span>
+
+<span class="value value--large value--tnums" data-value-format="true" data-value-locale="de-DE">€123456.78</span>
+
+<span class="value value--small value--tnums" data-value-format="true" data-value-locale="fr-FR">€123456.78</span>'
+            ) %>
+          </div>
+
+          <div class="space-y-4">
+            <p class="<%= framework_section_description_classes %>">
+              Common locale options include:
+            </p>
+            <div class="flex flex-col space-y-3">
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">en-US</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">United States (123,456.78)</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">de-DE</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">German (123.456,78)</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">fr-FR</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">French (123 456,78)</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">en-GB</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">British English (123,456.78)</span>
+              </div>
+              <div class="flex items-start">
+                <code class="<%= framework_section_code_classes %>">ja-JP</code>
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Japanese (123,456.78)</span>
+              </div>
+            </div>
+            <p class="<%= framework_section_description_classes %>">
+              If no locale is specified, numbers will be formatted using US format (en-US) by default.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

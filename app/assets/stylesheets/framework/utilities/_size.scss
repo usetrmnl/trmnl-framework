@@ -1,0 +1,99 @@
+// ============================================
+// TRMNL Framework - Size Utilities
+// ============================================
+
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use '../mixins/factorized_utilities' as fz;
+
+// The size channel. A layout container that has to declare one of these
+// properties as its own default reads the channel with that default as the
+// fallback (utilities/_flexbox.scss), so an explicit size utility on the same
+// element decides the value without either rule outweighing the other.
+//
+// Registered so the channel does not inherit. A size is a statement about one
+// element: left inheriting, `w--min-32` on a container would hand its floor to
+// every `.stretch` descendant and stop the flex children shrinking.
+@each $channel in ('w', 'h', 'w-min', 'h-min', 'w-max', 'h-max') {
+    @property --tn-size-#{$channel} {
+        syntax: "*";
+        inherits: false;
+    }
+}
+
+// One rule per (gate, token): the token's mode var and the declaration that
+// reads it, so a size lands on the enumerated token classes and nothing else.
+//
+// A `[class^="w--"]` prefix matcher used to carry the declarations instead. It
+// also selected the w--min-* and w--max-* sub-namespaces, which bind
+// --tn-size-w-min / --tn-size-w-max and never --tn-size-w, so on
+// `class="item w--max-32"` the matcher resolved a guaranteed-invalid variable
+// and dropped width to auto from tn--utilities, the last cascade layer, wiping
+// the component's own width. Out-of-range arbitrary values (`w--[200px]`, past
+// the 0-128 loop below) hit the same path and zeroed the width instead of doing
+// nothing. An exclusion list cannot fix it: :not() reads the whole class
+// attribute, so excluding `w--max-` would also strip the width from
+// `w--full w--max-32`.
+//
+// A token class weighs exactly what the prefix matcher weighed (one class
+// versus one attribute selector), so nothing else in the layer shifts.
+@mixin bind-and-apply-size($full-token, $var, $value, $property, $screen-selectors) {
+    @include fz.emit-class-apply(fz.token-match-selectors($full-token), $screen-selectors) {
+        // Property names go through interpolation so the compressed compiler
+        // emits them without the post-`:` whitespace it preserves for literal
+        // custom-property declarations.
+        #{$var}: #{$value};
+        #{$property}: var(#{$var});
+    }
+}
+
+// Every gate emits the whole token set: a class a gate does not enumerate has
+// no rule at all, so `sm:w--32` exists only because the sm gate wrote it.
+@mixin bind-size-tokens-for-gate($prefix, $screen-selectors) {
+    @each $size-token, $value in vars.$size-scale {
+        @include bind-size-token($prefix, $screen-selectors, $size-token, $value);
+    }
+
+    @each $size-token, $value in vars.$decimal-scale {
+        @include bind-size-token($prefix, $screen-selectors, $size-token, $value);
+    }
+
+    @include bind-size-token($prefix, $screen-selectors, 'full', 100%, $auto-max: 100%);
+    @include bind-size-token($prefix, $screen-selectors, 'auto', auto, $auto-max: none);
+
+    @for $i from 0 through 128 {
+        @include bind-size-token($prefix, $screen-selectors, '[#{$i}px]', $i * 1px);
+    }
+
+    @for $i from 0 through 100 {
+        @include bind-and-apply-size('#{$prefix}w--[#{$i}cqw]', '--tn-size-w', #{$i}cqw, 'width', $screen-selectors);
+        @include bind-and-apply-size('#{$prefix}h--[#{$i}cqh]', '--tn-size-h', #{$i}cqh, 'height', $screen-selectors);
+        @include bind-and-apply-size('#{$prefix}w--min-[#{$i}cqw]', '--tn-size-w-min', #{$i}cqw, 'min-width', $screen-selectors);
+        @include bind-and-apply-size('#{$prefix}w--max-[#{$i}cqw]', '--tn-size-w-max', #{$i}cqw, 'max-width', $screen-selectors);
+        @include bind-and-apply-size('#{$prefix}h--min-[#{$i}cqh]', '--tn-size-h-min', #{$i}cqh, 'min-height', $screen-selectors);
+        @include bind-and-apply-size('#{$prefix}h--max-[#{$i}cqh]', '--tn-size-h-max', #{$i}cqh, 'max-height', $screen-selectors);
+    }
+}
+
+// max-width/height have no `auto`; the keyword maps to `none` there, so keyword
+// tokens pass $auto-max while scalar tokens default it to their own value.
+@mixin bind-size-token($prefix, $screen-selectors, $suffix, $value, $auto-max: $value) {
+    $value: vars.content-scaled($value);
+    $auto-max: vars.content-scaled($auto-max);
+    @include bind-and-apply-size('#{$prefix}w--#{$suffix}', '--tn-size-w', $value, 'width', $screen-selectors);
+    @include bind-and-apply-size('#{$prefix}h--#{$suffix}', '--tn-size-h', $value, 'height', $screen-selectors);
+    @include bind-and-apply-size('#{$prefix}w--min-#{$suffix}', '--tn-size-w-min', $value, 'min-width', $screen-selectors);
+    @include bind-and-apply-size('#{$prefix}w--max-#{$suffix}', '--tn-size-w-max', $auto-max, 'max-width', $screen-selectors);
+    @include bind-and-apply-size('#{$prefix}h--min-#{$suffix}', '--tn-size-h-min', $value, 'min-height', $screen-selectors);
+    @include bind-and-apply-size('#{$prefix}h--max-#{$suffix}', '--tn-size-h-max', $auto-max, 'max-height', $screen-selectors);
+}
+
+@mixin emit-factorized-size-variants {
+    @include fz.each-size-orientation-gate using ($prefix, $screen-selectors) {
+        @include bind-size-tokens-for-gate($prefix, $screen-selectors);
+    }
+}
+
+@include mixins.trmnl-namespace {
+    @include emit-factorized-size-variants;
+}

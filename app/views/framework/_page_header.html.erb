@@ -1,0 +1,13 @@
+<div class="flex items-center justify-between gap-4">
+  <div class="flex items-center gap-3">
+    <%= page_icon(page_name, "w-8 h-8 text-gray-600 dark:text-gray-400") %>
+    <div class="flex items-center gap-2">
+      <%= render 'shared/heading', title: page_titles[page_name.to_s] %>
+      <% if framework_beta?(page_name) %>
+        <span class="mt-0.5 <%= framework_badge_primary_classes %>">Beta</span>
+      <% end %>
+    </div>
+  </div>
+
+  <%= render 'framework/copy_page_button' %>
+</div>

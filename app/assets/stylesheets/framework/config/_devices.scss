@@ -1,0 +1,537 @@
+// ============================================
+// TRMNL Framework - Device Configurations
+// ============================================
+//
+// DO NOT MANUALLY EDIT THIS FILE!
+//
+// The device set belongs to the TRMNL platform. Core generates this map from its
+// device models and this repository carries the synced copy, so an edit made here
+// is lost on the next sync. Corrections go to core first.
+//
+// Local truth:
+//   db/data/framework_devices.yml   device and palette manifest core exports
+//   lib/framework/devices.rb        Framework::Devices, the reader for it
+//
+// A custom stack adds its own profiles through $custom-devices in _custom.scss
+// instead of editing this map.
+//
+
+$devices: (
+    'og': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'v2': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 1.8,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'og_png': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'amazon_kindle_2024': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.75,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 0.8,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'sm'
+    ),
+    'amazon_kindle_paperwhite_6th_gen': (
+        'screen-w': 800px,
+        'screen-h': 592px,
+        'pixel-ratio': 1.28,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'amazon_kindle_paperwhite_7th_gen': (
+        'screen-w': 905px,
+        'screen-h': 670px,
+        'pixel-ratio': 1.6,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'inkplate_10': (
+        'screen-w': 800px,
+        'screen-h': 550px,
+        'pixel-ratio': 1.5,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'amazon_kindle_7': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'mac_classic': (
+        'screen-w': 512px,
+        'screen-h': 342px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'playdate': (
+        'screen-w': 400px,
+        'screen-h': 240px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'inky_impression_7_3': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'kobo_libra_2': (
+        'screen-w': 840px,
+        'screen-h': 632px,
+        'pixel-ratio': 2.0,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'amazon_kindle_oasis_2': (
+        'screen-w': 800px,
+        'screen-h': 602px,
+        'pixel-ratio': 2.1,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'ogv2': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 2,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'kobo_aura_one': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 1.8,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'kobo_aura_hd': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 1.8,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'inky_impression_13_3': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 2.0,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'frame': (
+        'screen-w': 2560px,
+        'screen-h': 1440px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'm5_paper_s3': (
+        'screen-w': 960px,
+        'screen-h': 540px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'amazon_kindle_scribe': (
+        'screen-w': 992px,
+        'screen-h': 744px,
+        'pixel-ratio': 2.5,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'generic_16_9': (
+        'screen-w': 800px,
+        'screen-h': 450px,
+        'pixel-ratio': 2.4,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 24,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'palma': (
+        'screen-w': 824px,
+        'screen-h': 412px,
+        'pixel-ratio': 2.0,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 0.8,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'onyx_boox_go_7': (
+        'screen-w': 933px,
+        'screen-h': 702px,
+        'pixel-ratio': 1.8008,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'kobo_glo': (
+        'screen-w': 788px,
+        'screen-h': 591px,
+        'pixel-ratio': 1.2995,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'onxy_boox_nova_air_c': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 1.8,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 12,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'nook_simple_touch': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'kobo_sage': (
+        'screen-w': 1371px,
+        'screen-h': 1028px,
+        'pixel-ratio': 1.4004,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'amazon_kindle_voyage': (
+        'screen-w': 1034px,
+        'screen-h': 765px,
+        'pixel-ratio': 1.4008,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'inkplate_5_2': (
+        'screen-w': 1067px,
+        'screen-h': 600px,
+        'pixel-ratio': 1.1996,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'raspberry_pi_touch_2': (
+        'screen-w': 1067px,
+        'screen-h': 600px,
+        'pixel-ratio': 1.1996,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 24,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'ed133ut2': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 1.5385,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'avalue_epd_42s': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 2.7692,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'kobo_touch': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'kobo_forma': (
+        'screen-w': 1371px,
+        'screen-h': 1028px,
+        'pixel-ratio': 1.4004,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'openframe': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 24,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'amazon_kindle_paperwhite_signature_11th_gen': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 2.06,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'inkplate_6_plus': (
+        'screen-w': 1040px,
+        'screen-h': 770px,
+        'pixel-ratio': 0.9846,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'kobo_aura_h2o_2': (
+        'screen-w': 1040px,
+        'screen-h': 785px,
+        'pixel-ratio': 1.375,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'inkplate_6_color': (
+        'screen-w': 800px,
+        'screen-h': 597px,
+        'pixel-ratio': 0.75,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'seeed_e1003': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 1.8,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'seeed_e1004': (
+        'screen-w': 1040px,
+        'screen-h': 780px,
+        'pixel-ratio': 1.5385,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'onyx_boox_poke_5': (
+        'screen-w': 800px,
+        'screen-h': 1081px,
+        'pixel-ratio': 1.34,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'remarkable_paper_2': (
+        'screen-w': 780px,
+        'screen-h': 1040px,
+        'pixel-ratio': 1.8,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 4,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'meta_portal': (
+        'screen-w': 1040px,
+        'screen-h': 650px,
+        'pixel-ratio': 1.2308,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 24,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'lg'
+    ),
+    'byod_custom': (
+        'screen-w': 800px,
+        'screen-h': 480px,
+        'pixel-ratio': 1.0,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'waveshare_5_8_bw': (
+        'screen-w': 800px,
+        'screen-h': 593px,
+        'pixel-ratio': 0.81,
+        'dither-pixel-ratio': 1.0,
+        'ui-scale': 1.0,
+        'color-depth': 2,
+        'density-tier': '1x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+    'inkplate_13_spectra': (
+        'screen-w': 800px,
+        'screen-h': 600px,
+        'pixel-ratio': 2.0,
+        'dither-pixel-ratio': 2.0,
+        'ui-scale': 1.0,
+        'color-depth': 1,
+        'density-tier': '2x',
+        'gap-scale': 1.0,
+        'size': 'md'
+    ),
+);

@@ -1,0 +1,13 @@
+// ============================================
+// TRMNL Framework - Columns Component Device Overrides
+// ============================================
+
+@use '../mixins' as mixins;
+
+@include mixins.trmnl-namespace {
+    .column {
+        @include mixins.for-4bit {
+            gap: var(--gap);
+        }
+    }
+} 

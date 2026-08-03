@@ -1,0 +1,263 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :font_glyphs %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:font_glyphs) %>
+
+    <div class="space-y-16">
+
+      <%
+        font_groups = [
+          {
+            id: 'classic',
+            label: 'Classic bundle',
+            note: 'Original TRMNL pixel fonts. Each family ships in a single weight, so there is no bold variant.',
+            fonts: [
+              { file: '/fonts/NicoPups-Regular.ttf',  family: 'NicoPups',  weight: 'normal', label: 'NicoPups',  size: 16 },
+              { file: '/fonts/NicoClean-Regular.ttf', family: 'NicoClean', weight: 'normal', label: 'NicoClean', size: 16 },
+              { file: '/fonts/BlockKie.ttf',          family: 'BlockKie',  weight: 'normal', label: 'BlockKie',  size: 26 }
+            ]
+          },
+          {
+            id: 'trmnl',
+            label: 'TRMNL bundle',
+            note: 'New TRMNL family. Each family ships with both Regular and Bold weight variants.',
+            fonts: [
+              { file: '/fonts/TRMNL12-Regular.ttf', family: 'TRMNL12', weight: 'normal', label: 'TRMNL12 Regular', size: 12 },
+              { file: '/fonts/TRMNL12-Bold.ttf',    family: 'TRMNL12', weight: 'bold',   label: 'TRMNL12 Bold',    size: 12 },
+              { file: '/fonts/TRMNL16-Regular.ttf', family: 'TRMNL16', weight: 'normal', label: 'TRMNL16 Regular', size: 16 },
+              { file: '/fonts/TRMNL16-Bold.ttf',    family: 'TRMNL16', weight: 'bold',   label: 'TRMNL16 Bold',    size: 16 },
+              { file: '/fonts/TRMNL21-Regular.ttf', family: 'TRMNL21', weight: 'normal', label: 'TRMNL21 Regular', size: 21 },
+              { file: '/fonts/TRMNL21-Bold.ttf',    family: 'TRMNL21', weight: 'bold',   label: 'TRMNL21 Bold',    size: 21 }
+            ]
+          }
+        ]
+      %>
+
+      <div class="<%= message_sage_classes %>">
+        <div class="flex items-center w-full">
+          <div class="flex-shrink-0 items-center">
+            <%= render 'shared/icons/info' %>
+          </div>
+          <div class="w-full flex items-center justify-between ml-3">
+            <p class="text-sm font-medium">
+              The glyph tables are read in the browser by opentype.js, loaded from jsDelivr, so they stay
+              empty without network. The fonts themselves are served from this origin.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <section class="space-y-6" id="glyph-font-selector">
+        <%= framework_heading(3, 'Font selector') %>
+
+        <% first_button = true %>
+        <% font_groups.each do |group| %>
+          <div class="space-y-2">
+            <div class="text-xs font-mono uppercase tracking-wider text-gray-500 dark:text-gray-600">
+              <%= group[:label] %>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-600"><%= group[:note] %></p>
+            <div class="flex flex-wrap gap-2">
+              <% group[:fonts].each do |f| %>
+                <button
+                  type="button"
+                  data-font-file="<%= f[:file] %>"
+                  data-font-family="<%= f[:family] %>"
+                  data-font-weight="<%= f[:weight] %>"
+                  data-font-size="<%= f[:size] %>"
+                  class="glyph-font-btn px-4 py-2 text-xs font-mono rounded-lg border transition-colors
+                         <%= first_button ? 'border-gray-900 bg-gray-900 text-white dark:border-gray-200 dark:bg-gray-200 dark:text-gray-900' : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500' %>"
+                >
+                  <%= f[:label] %>
+                </button>
+                <% first_button = false %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <div id="glyph-summary" class="text-sm text-gray-500 dark:text-gray-600 font-mono"></div>
+      </section>
+
+      <section class="space-y-6" id="glyph-sections">
+        <div class="text-sm text-gray-400 dark:text-gray-600 py-8 text-center" id="glyph-loading">Loading font&hellip;</div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js"></script>
+<script>
+(function() {
+  var BLOCKS = [
+    { id: 'basic_latin',      label: 'Basic Latin',                          test: function(u) { return u >= 0x0020 && u <= 0x007E; } },
+    { id: 'latin1_supp',      label: 'Latin-1 Supplement (Western European)', test: function(u) { return u >= 0x00A0 && u <= 0x00FF; } },
+    { id: 'latin_ext_a',      label: 'Latin Extended-A (Central European)',   test: function(u) { return u >= 0x0100 && u <= 0x017F; } },
+    { id: 'latin_ext_b',      label: 'Latin Extended-B',                      test: function(u) { return u >= 0x0180 && u <= 0x024F; } },
+    { id: 'ipa_ext',          label: 'IPA Extensions',                        test: function(u) { return u >= 0x0250 && u <= 0x02AF; } },
+    { id: 'spacing_mod',      label: 'Spacing Modifier Letters',              test: function(u) { return u >= 0x02B0 && u <= 0x02FF; } },
+    { id: 'combining',        label: 'Combining Diacritical Marks',           test: function(u) { return u >= 0x0300 && u <= 0x036F; } },
+    { id: 'greek',            label: 'Greek and Coptic',                      test: function(u) { return u >= 0x0370 && u <= 0x03FF; } },
+    { id: 'currency',         label: 'Currency Symbols',                      test: function(u) { return (u >= 0x20A0 && u <= 0x20CF) || u === 0x0024 || u === 0x00A2 || u === 0x00A3 || u === 0x00A5 || u === 0x0E3F; } },
+    { id: 'latin_ext_add',    label: 'Latin Extended Additional',             test: function(u) { return u >= 0x1E00 && u <= 0x1EFF; } },
+    { id: 'gen_punct',        label: 'General Punctuation',                   test: function(u) { return u >= 0x2000 && u <= 0x206F; } },
+    { id: 'letterlike',       label: 'Letterlike Symbols',                    test: function(u) { return u >= 0x2100 && u <= 0x214F; } },
+    { id: 'numforms',         label: 'Number Forms',                          test: function(u) { return u >= 0x2150 && u <= 0x218F; } },
+    { id: 'arrows',           label: 'Arrows',                                test: function(u) { return u >= 0x2190 && u <= 0x21FF; } },
+    { id: 'math_ops',         label: 'Mathematical Operators',                test: function(u) { return u >= 0x2200 && u <= 0x22FF; } },
+    { id: 'misc_tech',        label: 'Miscellaneous Technical',               test: function(u) { return u >= 0x2300 && u <= 0x23FF; } },
+    { id: 'enclosed_alpha',   label: 'Enclosed Alphanumerics',                test: function(u) { return u >= 0x2460 && u <= 0x24FF; } },
+    { id: 'box_drawing',      label: 'Box Drawing & Block Elements',          test: function(u) { return u >= 0x2500 && u <= 0x259F; } },
+    { id: 'geometric',        label: 'Geometric Shapes',                      test: function(u) { return u >= 0x25A0 && u <= 0x25FF; } },
+    { id: 'misc_sym',         label: 'Miscellaneous Symbols',                 test: function(u) { return u >= 0x2600 && u <= 0x26FF; } },
+    { id: 'dingbats',         label: 'Dingbats',                              test: function(u) { return u >= 0x2700 && u <= 0x27BF; } },
+    { id: 'supp_arrows',      label: 'Supplemental Arrows & Symbols',         test: function(u) { return u >= 0x2B00 && u <= 0x2BFF; } },
+    { id: 'other_ext',        label: 'Other Extended (Latin Ext-C/D, misc)',   test: function(u) { return (u >= 0x2C60 && u <= 0x2C7F) || (u >= 0xA780 && u <= 0xA7FF) || (u >= 0x2E00 && u <= 0x2E3F); } },
+    { id: 'pua',              label: 'Private Use Area (Custom Icons)',        test: function(u) { return u >= 0xE000 && u <= 0xF8FF; } },
+    { id: 'supp_symbols',     label: 'Supplemental Symbols & Pictographs',    test: function(u) { return u >= 0x1F100 && u <= 0x1F9FF; } }
+  ];
+
+  var container = document.getElementById('glyph-sections');
+  var loadingEl = document.getElementById('glyph-loading');
+  var summaryEl = document.getElementById('glyph-summary');
+  var selectorEl = document.getElementById('glyph-font-selector');
+  var buttons = selectorEl.querySelectorAll('.glyph-font-btn');
+  var currentFont = null;
+
+  var activeCls = 'border-gray-900 bg-gray-900 text-white dark:border-gray-200 dark:bg-gray-200 dark:text-gray-900';
+  var inactiveCls = 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500';
+
+  function setActiveBtn(btn) {
+    buttons.forEach(function(b) {
+      activeCls.split(' ').forEach(function(c) { b.classList.remove(c); });
+      inactiveCls.split(' ').forEach(function(c) { b.classList.add(c); });
+    });
+    inactiveCls.split(' ').forEach(function(c) { btn.classList.remove(c); });
+    activeCls.split(' ').forEach(function(c) { btn.classList.add(c); });
+  }
+
+  function classifyGlyphs(glyphs) {
+    var groups = {};
+    BLOCKS.forEach(function(b) { groups[b.id] = []; });
+    groups._other = [];
+
+    glyphs.forEach(function(g) {
+      for (var i = 0; i < BLOCKS.length; i++) {
+        if (BLOCKS[i].test(g.unicode)) { groups[BLOCKS[i].id].push(g); return; }
+      }
+      if (g.unicode >= 0x0020) groups._other.push(g);
+    });
+    return groups;
+  }
+
+  function renderGlyphs(glyphs, fontFamily, fontWeight, fontSize) {
+    container.innerHTML = '';
+    var groups = classifyGlyphs(glyphs);
+    var printable = glyphs.filter(function(g) { return g.unicode >= 0x0020 && g.unicode !== 0xFEFF; });
+    summaryEl.textContent = printable.length + ' glyphs in this font';
+
+    var sizePx = (fontSize != null && fontSize !== '') ? (fontSize + 'px') : '16px';
+
+    var allBlocks = BLOCKS.concat([{ id: '_other', label: 'Other / Miscellaneous' }]);
+
+    allBlocks.forEach(function(block) {
+      var items = groups[block.id];
+      if (!items || items.length === 0) return;
+
+      var section = document.createElement('div');
+      section.className = 'glyph-block rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden';
+
+      var header = document.createElement('button');
+      header.type = 'button';
+      header.className = 'w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors';
+      header.innerHTML = '<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">' + block.label + '</span>' +
+        '<span class="flex items-center gap-2">' +
+          '<span class="text-xs font-mono text-gray-400 dark:text-gray-600">' + items.length + '</span>' +
+          '<svg class="glyph-block-chevron w-4 h-4 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>' +
+        '</span>';
+
+      var body = document.createElement('div');
+      body.className = 'glyph-block-body p-3';
+
+      var grid = document.createElement('div');
+      grid.className = 'grid gap-1.5';
+      grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(80px, 1fr))';
+
+      items.forEach(function(g) {
+        var cell = document.createElement('div');
+        cell.className = 'flex flex-col items-center justify-center p-2 rounded-lg bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors min-h-[72px]';
+
+        var ch = document.createElement('div');
+        ch.className = 'leading-none mb-1 text-gray-900 dark:text-gray-100';
+        ch.style.fontFamily = "'" + fontFamily + "'";
+        ch.style.fontWeight = fontWeight;
+        ch.style.fontSize = sizePx;
+        ch.style.webkitFontSmoothing = 'none';
+        try { ch.textContent = String.fromCodePoint(g.unicode); } catch(e) { ch.textContent = '?'; }
+
+        var code = document.createElement('div');
+        code.className = 'text-[9px] font-mono text-gray-400 dark:text-gray-600';
+        code.textContent = 'U+' + g.unicode.toString(16).toUpperCase().padStart(4, '0');
+
+        cell.appendChild(ch);
+        cell.appendChild(code);
+        if (g.name) { cell.title = g.name; }
+        grid.appendChild(cell);
+      });
+
+      body.appendChild(grid);
+
+      var expanded = true;
+      header.addEventListener('click', function() {
+        expanded = !expanded;
+        body.style.display = expanded ? '' : 'none';
+        header.querySelector('.glyph-block-chevron').style.transform = expanded ? '' : 'rotate(-90deg)';
+      });
+
+      section.appendChild(header);
+      section.appendChild(body);
+      container.appendChild(section);
+    });
+  }
+
+  function loadFont(file, family, weight, fontSize) {
+    loadingEl.style.display = '';
+    container.innerHTML = '';
+    summaryEl.textContent = '';
+
+    opentype.load(file, function(err, font) {
+      loadingEl.style.display = 'none';
+      if (err) {
+        container.innerHTML = '<div class="text-sm text-red-500 py-4">Failed to load ' + file + ': ' + err + '</div>';
+        return;
+      }
+      var glyphs = [];
+      for (var i = 0; i < font.glyphs.length; i++) {
+        var g = font.glyphs.get(i);
+        if (g.unicode !== undefined && g.unicode !== null) {
+          glyphs.push({ unicode: g.unicode, name: g.name || '' });
+        }
+      }
+      glyphs.sort(function(a, b) { return a.unicode - b.unicode; });
+      currentFont = { glyphs: glyphs, family: family, weight: weight };
+      renderGlyphs(glyphs, family, weight, fontSize);
+    });
+  }
+
+  buttons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setActiveBtn(btn);
+      loadFont(btn.dataset.fontFile, btn.dataset.fontFamily, btn.dataset.fontWeight, btn.dataset.fontSize);
+    });
+  });
+
+  // Load the first font on page load
+  var first = buttons[0];
+  if (first) loadFont(first.dataset.fontFile, first.dataset.fontFamily, first.dataset.fontWeight, first.dataset.fontSize);
+})();
+</script>

@@ -1,0 +1,30 @@
+<%
+  css_class = local_assigns[:css_class] || 'size-5'
+  additional_classes = local_assigns[:additional_classes] || local_assigns[:class] || local_assigns[:classes]
+  full_class = [css_class, additional_classes].compact.join(' ')
+
+  style_overrides = [local_assigns[:style], local_assigns[:styles]].compact.join(' ')
+  raw_attrs = (local_assigns[:attrs] || local_assigns[:attributes] || {}).dup
+  raw_class = raw_attrs&.delete(:class) || raw_attrs&.delete('class')
+  raw_style = raw_attrs&.delete(:style) || raw_attrs&.delete('style')
+  raw_data = raw_attrs&.delete(:data) || raw_attrs&.delete('data')
+
+  combined_class = [full_class, raw_class].compact.join(' ')
+  combined_style = [raw_style, style_overrides].compact.join(' ')
+  data_attributes = (raw_data || {}).merge(local_assigns[:data] || {})
+  data_attributes = nil if data_attributes.empty?
+
+  attrs = raw_attrs
+  attrs[:class] = combined_class.presence
+  attrs[:style] = combined_style.presence
+  attrs[:data] = data_attributes if data_attributes
+  attrs[:xmlns] ||= 'http://www.w3.org/2000/svg'
+  attrs[:fill] ||= 'currentColor'
+  attrs[:viewBox] ||= '0 0 256 256'
+  attrs[:width] ||= '32'
+  attrs[:height] ||= '32'
+  attrs['aria-hidden'] = true unless attrs.key?(:'aria-hidden') || attrs.key?('aria-hidden')
+%>
+<svg <%= tag.attributes(attrs.compact) %>>
+  <path d="M54.8,119.49A35.06,35.06,0,0,1,49.05,128a35.06,35.06,0,0,1,5.75,8.51C60,147.24,60,159.83,60,172c0,25.94,1.84,32,20,32a12,12,0,0,1,0,24c-19.14,0-32.2-6.9-38.8-20.51C36,196.76,36,184.17,36,172c0-25.94-1.84-32-20-32a12,12,0,0,1,0-24c18.16,0,20-6.06,20-32,0-12.17,0-24.76,5.2-35.49C47.8,34.9,60.86,28,80,28a12,12,0,0,1,0,24c-18.16,0-20,6.06-20,32C60,96.17,60,108.76,54.8,119.49ZM240,116c-18.16,0-20-6.06-20-32,0-12.17,0-24.76-5.2-35.49C208.2,34.9,195.14,28,176,28a12,12,0,0,0,0,24c18.16,0,20,6.06,20,32,0,12.17,0,24.76,5.2,35.49A35.06,35.06,0,0,0,207,128a35.06,35.06,0,0,0-5.75,8.51C196,147.24,196,159.83,196,172c0,25.94-1.84,32-20,32a12,12,0,0,0,0,24c19.14,0,32.2-6.9,38.8-20.51C220,196.76,220,184.17,220,172c0-25.94,1.84-32,20-32a12,12,0,0,0,0-24Z"/>
+</svg>

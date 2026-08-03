@@ -1,0 +1,76 @@
+// ============================================
+// TRMNL Framework - Divider Element
+// ============================================
+// Uses --border-{level}-{dir}-* CSS variables from _screen-mode-vars.scss.
+// All bit-depth, dark-mode, and palette handling is automatic via variable cascade.
+
+@use '../mixins' as mixins;
+
+// The box is one pixel across, the same box utilities/_border.scss gives the
+// pseudo it paints the identical band on. The Divider page calls the two
+// equivalent, so they have to measure the same: sizing this one with --ui-scale
+// left a divider and a border--h-6 a different thickness apart on every
+// screen--scale-* modifier and on the two devices with a ui-scale of their own,
+// while the level art underneath stayed a hairline in both.
+@mixin divider-level-horizontal($level) {
+    width: 100%;
+    height: 1px;
+    min-height: 1px;
+    @include mixins.border-level-vars($level, h);
+}
+
+@mixin divider-level-vertical($level) {
+    width: 1px;
+    min-width: 1px;
+    height: 100%;
+    @include mixins.border-level-vars($level, v);
+}
+
+@include mixins.trmnl-namespace {
+    .divider,
+    .divider--h {
+        @include divider-level-horizontal(6);
+    }
+
+    .divider--v {
+        @include divider-level-vertical(6);
+    }
+
+    // ── Background variants (deprecated) ──
+    // 3.x compatibility aliases; removal deferred to 4.0, see docs/V4_BREAKING.md.
+    .divider--on-white.divider--h,
+    .divider--on-white:not(.divider--v) {
+        @include mixins.border-level-vars(6, h);
+    }
+
+    .divider--on-white.divider--v {
+        @include mixins.border-level-vars(6, v);
+    }
+
+    .divider--on-light.divider--h,
+    .divider--on-light:not(.divider--v) {
+        @include mixins.border-level-vars(5, h);
+    }
+
+    .divider--on-light.divider--v {
+        @include mixins.border-level-vars(5, v);
+    }
+
+    .divider--on-dark.divider--h,
+    .divider--on-dark:not(.divider--v) {
+        @include mixins.border-level-vars(3, h);
+    }
+
+    .divider--on-dark.divider--v {
+        @include mixins.border-level-vars(3, v);
+    }
+
+    .divider--on-black.divider--h,
+    .divider--on-black:not(.divider--v) {
+        @include mixins.border-level-vars(2, h);
+    }
+
+    .divider--on-black.divider--v {
+        @include mixins.border-level-vars(2, v);
+    }
+}

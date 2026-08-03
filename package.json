@@ -1,0 +1,41 @@
+{
+  "name": "trmnl-framework",
+  "version": "3.2.0",
+  "private": true,
+  "description": "Build tooling for the TRMNL ePaper design framework: CSS/JS minifiers and the Playwright runtime and visual suites. The framework itself ships as the trmnl_framework Ruby gem.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usetrmnl/trmnl-framework.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=24.13.0"
+  },
+  "scripts": {
+    "process_stylesheets": "node lib/procss/procss.cjs",
+    "process_scripts": "node lib/projs/projs.cjs",
+    "test:stylesheets": "node --test lib/procss/procss.test.cjs lib/procss/mergerules.test.cjs",
+    "test:scripts": "node --test lib/projs/projs.test.cjs",
+    "test:rulediff": "node --test lib/rulediff/rulediff.test.cjs",
+    "test:runtime": "playwright test --config test/runtime/playwright.config.js",
+    "test:runtime:processed": "PROCESSED_BUNDLE=1 playwright test --config test/runtime/playwright.config.js",
+    "test:runtime:headed": "playwright test --config test/runtime/playwright.config.js --headed",
+    "test:runtime:ui": "playwright test --config test/runtime/playwright.config.js --ui",
+    "test:runtime:debug": "playwright test --config test/runtime/playwright.config.js --debug",
+    "test:visual": "playwright test --config test/visual/playwright.config.js",
+    "test:visual:processed": "PROCESSED_BUNDLE=1 playwright test --config test/visual/playwright.config.js",
+    "test:visual:update": "playwright test --config test/visual/playwright.config.js --update-snapshots",
+    "test:visual:headed": "playwright test --config test/visual/playwright.inspect.config.js",
+    "test:visual:ui": "playwright test --config test/visual/playwright.config.js --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "cssnano": "^7.1.3",
+    "cssnano-preset-advanced": "^7.0.11",
+    "postcss": "^8.5.8",
+    "postcss-rename": "^0.8.0",
+    "postcss-value-parser": "^4.2.0",
+    "terser": "^5.46.1"
+  }
+}

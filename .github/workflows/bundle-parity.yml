@@ -1,0 +1,47 @@
+name: Bundle parity
+
+# Byte-compares the committed release bundles against a fresh build of the source in the
+# same change (bin/parity-check). It runs when public/css/** or public/js/** move, which
+# is what cutting a release does, and on demand from the Actions tab.
+#
+# The comparison covers the processed plugins.css and plugins.js, the plugins.min.*
+# aliases published from the same bytes, and the .gz and .br siblings, each of which has
+# to decompress to its plaintext file.
+#
+# It is deliberately not an every-push job: main carries source ahead of the committed
+# bundles between a fix landing and the next re-cut, so a check that ran on every push
+# would be red for that whole window. See RELEASE.md.
+
+on:
+  pull_request:
+    paths:
+      - "public/css/**"
+      - "public/js/**"
+  push:
+    branches: [main]
+    paths:
+      - "public/css/**"
+      - "public/js/**"
+  workflow_dispatch:
+
+# Reads the checkout, rebuilds into a temp directory, writes nothing back.
+permissions:
+  contents: read
+
+jobs:
+  bundle-parity:
+    name: Bundle parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the minified bundles are compared byte for byte, and
+      # only the lockfile pins the cssnano and terser builds that produced them.
+      - run: npm ci
+      - run: bin/parity-check

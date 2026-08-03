@@ -1,0 +1,108 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :paint_colors %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:paint_colors) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Color and token fills') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every resolver takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
+            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code> ancestor
+            supplies the paint. Each returns a canonical
+            <code class="<%= framework_section_code_classes %>">Fill</code>; the shape and the probe technique are
+            documented on <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">bg(token, { el })</code>: a background token
+              (<code class="<%= framework_section_code_classes %>">bg--&lt;token&gt;</code>), e.g.
+              <code class="<%= framework_section_code_classes %>">'black'</code>,
+              <code class="<%= framework_section_code_classes %>">'gray-40'</code>,
+              <code class="<%= framework_section_code_classes %>">'red-55'</code>. Solid modes yield a color-only
+              Fill; dither modes yield a tile Fill.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">text(token, { el })</code>: a text token
+              (<code class="<%= framework_section_code_classes %>">text--&lt;token&gt;</code>). Text paints via
+              background-clip, so both the ink color and the background image are read.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">stroke(token, { el })</code>: a stroke token
+              (<code class="<%= framework_section_code_classes %>">text-stroke--&lt;token&gt;</code>), re-exposed as a
+              concrete <code class="<%= framework_section_code_classes %>">rgb</code> in a color-only Fill.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">semantic(slot, { el })</code>: a framework semantic
+              slot. Slots with a public utility (<code class="<%= framework_section_code_classes %>">canvas</code>,
+              <code class="<%= framework_section_code_classes %>">surface</code>,
+              <code class="<%= framework_section_code_classes %>">text-primary</code>,
+              <code class="<%= framework_section_code_classes %>">text-secondary</code>,
+              <code class="<%= framework_section_code_classes %>">text-inverse</code>,
+              <code class="<%= framework_section_code_classes %>">backdrop</code>) are probed through that utility.
+              The rest (<code class="<%= framework_section_code_classes %>">border-strong</code>,
+              <code class="<%= framework_section_code_classes %>">border-muted</code>,
+              <code class="<%= framework_section_code_classes %>">fill-strong</code>,
+              <code class="<%= framework_section_code_classes %>">fill-muted</code>,
+              <code class="<%= framework_section_code_classes %>">fill-soft</code>,
+              <code class="<%= framework_section_code_classes %>">stroke-contrast</code>,
+              <code class="<%= framework_section_code_classes %>">icon</code>) are projected from their
+              <code class="<%= framework_section_code_classes %>">--framework-semantic-*</code> channel, so
+              image-backed paint is retained.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">textColor(token, { el })</code>: the effective
+              one-color value of a named text utility
+              (<code class="<%= framework_section_code_classes %>">'default'</code>,
+              <code class="<%= framework_section_code_classes %>">'muted'</code>, ...) for SVG or canvas. When CSS
+              clips a tile to the glyphs, it returns the tile's painted ink rather than its under-field.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// Resolve a token for the current screen mode/theme.
+var fill = TRMNLPaint.bg("red-55", { el: "my-chart" });
+// => solid mode:  { color: "rgb(204, 0, 0)", image: null, url: null, size: null }
+// => dither mode: { color: "rgb(255,255,255)", image: "url(...)", url: "data:...", size: 16 }
+
+// One-color form of the semantic default text utility for SVG/canvas text.
+var textColor = TRMNLPaint.textColor("default", { el: "my-chart" });', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Painting fills') %>
+          <p class="<%= framework_section_description_classes %>">
+            A resolved Fill is painted back with one call. Wrap paints in
+            <code class="<%= framework_section_code_classes %>">watch()</code> so they re-run when the screen's mode,
+            dark or theme classes change; see <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">apply(node, fill)</code>: paints a node's background
+              from a Fill, compositing the field color under the tile image with the same two-layer CSS the rest of
+              the screen uses.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'var swatch = document.getElementById("legend-swatch");
+
+TRMNLPaint.watch(swatch, function () {
+  // Solid on 4-bit+ panels, a composited dither tile on 1- and 2-bit screens.
+  TRMNLPaint.apply(swatch, TRMNLPaint.bg("gray-30", { el: swatch }));
+});', language: 'javascript') %>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

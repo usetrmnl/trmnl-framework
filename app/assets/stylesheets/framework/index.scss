@@ -1,0 +1,129 @@
+// TRMNL Frontend Framework
+
+// ============================================
+// Public configuration
+// ============================================
+// Forwarded before anything else loads it, so a consumer entrypoint can
+// configure the framework: @use 'framework' with ($custom-devices: (...));
+// See config/_custom.scss for the schema.
+@forward 'config/custom';
+
+// ============================================
+// Configuration & Mixins (must come first)
+// ============================================
+@use 'config/tokens' as vars;
+@use 'config/devices' as devices;
+@use 'config/fonts';
+@use 'config/environment';
+@use 'config/layers' as layers;
+@use 'mixins' as mixins;
+// Emit CSS custom properties once, outside all layers
+@use "sass:meta";
+@use 'config/variables_root';
+
+// ============================================
+// Layer Order Definition
+// ============================================
+// Define the layer order explicitly - later layers win.
+// config/_layers.scss holds the statement; theme files emit the same one so a
+// theme <link> parsed before this bundle still lands in the right layer.
+@include layers.order;
+
+// ============================================
+// Layered Imports
+// ============================================
+
+// Normalize/Reset styles - lowest priority
+@layer tn--normalize {
+    @include meta.load-css('config/normalize');
+
+    // Both matchers spell the framework's own class grammar, `bg--` and
+    // `text--`. `bg-` on a single dash matched no framework class (every
+    // background utility is `bg--<token>`) and did match foreign classes, so
+    // `bg-white` or `bg-gray-100` from Tailwind picked up pixelated rendering
+    // and a dither background-size anywhere under `.trmnl`. That is the
+    // conflict the tn-- layer prefix above exists to prevent.
+    @include mixins.trmnl-namespace {
+        [class*="bg--"],
+        [class*="text--"] {
+            @include mixins.dither-ready;
+        }
+    }
+}
+// Element styles
+@layer tn--elements {
+    @include meta.load-css('elements');
+}
+
+// Component styles
+@layer tn--components {
+    @include meta.load-css('components');
+}
+
+// Base styles
+@layer tn--base {
+    @include meta.load-css('base');
+}
+
+// Device-specific overrides
+@layer tn--device-overrides {
+    @include meta.load-css('device-overrides');
+}
+
+// ============================================
+// Themes - Include individually (not shipped with framework)
+// ============================================
+// Themes are compiled as separate CSS files that users can include
+// to keep bundle sizes small. Include only the themes you need.
+//
+// Available themes:
+// - black-and-yellow-theme.css: High-contrast yellow remap for grayscale tokens
+// - white-and-red-theme.css: Pure red canvas with white text and light red accents
+// - dark-theme.css: The dark: variant axis written as a theme, black canvas and all
+//
+// Theme authoring contract (v3):
+// - Allowed: semantic/slot token refs via mixins/theme-slots.
+// - Allowed: utility token remaps via theme-slots.utility-bg, utility-text, utility-stroke.
+// - Optional: icon paint for adaptive images via theme-slots.semantic-icon
+//   (defaults to the theme's text color when omitted).
+// - Disallowed: root palette overrides (--white/--black, --gray-*, --color-*).
+// - Disallowed: deprecated theme-slots.role-token helper.
+// - Protected/internal: --bg-*, --text-*, --border-* paint variables (owned by screen-mode vars).
+// - Validate with: rake framework:themes:lint
+//
+// Themes are light/dark agnostic: `screen--dark-mode` has no effect on a
+// themed screen (every dark remap carries a :where(:not([class*="screen--theme-"]))
+// gate). A theme may opt into its own dark treatment by styling
+// `.screen--theme-<id>.screen--dark-mode` in its own file.
+//
+// Usage - Include CSS files in your HTML:
+// <link rel="stylesheet" href="trmnl-framework.css">
+// <link rel="stylesheet" href="black-and-yellow-theme.css">
+// <link rel="stylesheet" href="white-and-red-theme.css">
+//
+// Then apply the theme class to your screen element:
+// <div class="screen screen--theme-black-and-yellow">...</div>
+// <div class="screen screen--theme-white-and-red">...</div>
+
+// Utility styles - highest priority
+@layer tn--utilities {
+    @include meta.load-css('utilities');
+}
+
+// ============================================
+// Important Note about Device Overrides
+// ============================================
+// Device-specific styles need to be explicitly placed in the tn--device-overrides layer
+// to ensure proper cascade priority. 
+//
+// To add device-specific overrides:
+// 1. Add them to the _device-overrides.scss file, OR
+// 2. Create component-specific device override files and import them there
+//
+// Use these mixins to target specific screen characteristics:
+// - Bit-depth: @include for-1bit, @include for-2bit, @include for-4bit
+// - Screen size: @include for-sm, @include for-md, @include for-lg  
+// - Orientation: @include for-portrait, @include for-landscape
+//
+// These mixins generate the appropriate selectors, but they must be used within the 
+// tn--device-overrides layer context to have the correct priority.

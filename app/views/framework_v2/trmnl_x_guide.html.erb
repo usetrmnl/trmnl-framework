@@ -1,0 +1,323 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :trmnl_x_guide %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      TRMNL X is a larger, 4-bit ePaper display. This guide covers everything that changed in the Framework to support it. Your existing plugins will continue to work, but by adopting these new features you can build layouts that take full advantage of the larger screen, portrait orientation, and expanded grayscale.
+    </p>
+
+    <div class="space-y-16">
+
+      <!-- The --base Modifier -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'The --base Modifier') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every element and component now supports an explicit <code class="<%= framework_section_code_classes %>">--base</code> size modifier. It produces the exact same result as using the class without any size modifier, but it lets you <strong>reset to the default size at a specific breakpoint</strong>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Previously, if you set a smaller size for compact screens, there was no way to undo it at a larger breakpoint. Now you can:
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<!-- Small title on compact screens, default size on large screens -->
+<span class="title title--small lg:title--base">Dashboard</span>
+
+<!-- Extra-small value by default, normal size on medium+ screens -->
+<span class="value value--xsmall md:value--base">48,206</span>
+
+<!-- Small gap by default, standard gap on large screens -->
+<div class="flex flex--col gap--small lg:gap--base">...</div>'
+        ) %>
+
+        <p class="<%= framework_section_description_classes %>">
+          The <code class="<%= framework_section_code_classes %>">--base</code> modifier is available on:
+        </p>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><strong>Typography:</strong> <%= render DocsRef.new(page: :title) %> (<code class="<%= framework_section_code_classes %>">title--base</code>), <%= render DocsRef.new(page: :value) %> (<code class="<%= framework_section_code_classes %>">value--base</code>), <%= render DocsRef.new(page: :label) %> (<code class="<%= framework_section_code_classes %>">label--base</code>), <%= render DocsRef.new(page: :description) %> (<code class="<%= framework_section_code_classes %>">description--base</code>)</li>
+          <li><strong>Rich Text:</strong> <%= render DocsRef.new(page: :rich_text) %> (<code class="<%= framework_section_code_classes %>">content--base</code>)</li>
+          <li><strong>Components:</strong> <%= render DocsRef.new(page: :table) %> (<code class="<%= framework_section_code_classes %>">table--base</code>), <%= render DocsRef.new(page: :progress) %> (<code class="<%= framework_section_code_classes %>">progress-bar--base</code>, <code class="<%= framework_section_code_classes %>">progress-dots--base</code>)</li>
+          <li><strong>Utilities:</strong> <%= render DocsRef.new(page: :gap) %> (<code class="<%= framework_section_code_classes %>">gap--base</code>), <%= render DocsRef.new(page: :rounded) %> (<code class="<%= framework_section_code_classes %>">rounded--base</code>), <%= render DocsRef.new(page: :text_stroke) %> (<code class="<%= framework_section_code_classes %>">text-stroke--base</code>), <%= render DocsRef.new(page: :image_stroke) %> (<code class="<%= framework_section_code_classes %>">image-stroke--base</code>)</li>
+        </ul>
+      </section>
+
+      <!-- New Larger Typography Sizes -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'New Larger Typography Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            To take full advantage of TRMNL X's larger display, new size tiers have been added across all typography elements. All new sizes support responsive prefixes and render correctly on 2-bit and 4-bit screens.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Value') %>
+          <p class="<%= framework_section_description_classes %>">
+            Four new sizes for hero-style numbers and display text. See the <%= render DocsRef.new(page: :value) %> docs for full details.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<span class="value value--mega">42</span>    <!-- 170px -->
+<span class="value value--giga">42</span>    <!-- 220px -->
+<span class="value value--tera">42</span>    <!-- 290px -->
+<span class="value value--peta">42</span>    <!-- 380px -->
+
+<!-- Responsive example: xxxlarge on OG, giga on X -->
+<span class="value value--xxxlarge lg:value--giga">42</span>'
+        ) %>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Title') %>
+          <p class="<%= framework_section_description_classes %>">
+            Three new large sizes for headings. See the <%= render DocsRef.new(page: :title) %> docs.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<span class="title title--large">Heading</span>     <!-- 30px -->
+<span class="title title--xlarge">Heading</span>    <!-- 35px -->
+<span class="title title--xxlarge">Heading</span>   <!-- 40px -->'
+        ) %>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Label, Description, Rich Text') %>
+          <p class="<%= framework_section_description_classes %>">
+            New large sizes for <%= render DocsRef.new(page: :label) %> (<code class="<%= framework_section_code_classes %>">label--large</code>, <code class="<%= framework_section_code_classes %>">label--xlarge</code>, <code class="<%= framework_section_code_classes %>">label--xxlarge</code>), <%= render DocsRef.new(page: :description) %> (<code class="<%= framework_section_code_classes %>">description--large</code>, <code class="<%= framework_section_code_classes %>">description--xlarge</code>, <code class="<%= framework_section_code_classes %>">description--xxlarge</code>), and <%= render DocsRef.new(page: :rich_text) %> content (<code class="<%= framework_section_code_classes %>">content--xlarge</code>, <code class="<%= framework_section_code_classes %>">content--xxlarge</code>, <code class="<%= framework_section_code_classes %>">content--xxxlarge</code>).
+          </p>
+        </div>
+      </section>
+
+      <!-- Container Query Units -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Container Query Units') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <%= render DocsRef.new(page: :layout) %> element now establishes a CSS Container Query context, enabling a new set of container-relative sizing utilities. Unlike viewport units, these are relative to the layout's dimensions, so they work correctly inside mashup slots (half vertical, quadrant, etc.) where the available space is a fraction of the full screen.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<!-- Width as percentage of the layout container -->
+<div class="w--[50cqw]">Half the layout width</div>
+
+<!-- Height as percentage of the layout container -->
+<div class="h--[80cqh]">80% of layout height</div>
+
+<!-- Min/max constraints -->
+<div class="w--min-[30cqw] w--max-[70cqw]">Constrained width</div>
+
+<!-- Responsive container query units -->
+<div class="w--[100cqw] lg:w--[50cqw]">Full width on small, half on large</div>'
+        ) %>
+
+        <p class="<%= framework_section_description_classes %>">
+          Available utilities: <code class="<%= framework_section_code_classes %>">w--[Ncqw]</code>, <code class="<%= framework_section_code_classes %>">h--[Ncqh]</code> (0 to 100), plus <code class="<%= framework_section_code_classes %>">w--min-[Ncqw]</code>, <code class="<%= framework_section_code_classes %>">w--max-[Ncqw]</code>, <code class="<%= framework_section_code_classes %>">h--min-[Ncqh]</code>, <code class="<%= framework_section_code_classes %>">h--max-[Ncqh]</code>. All support responsive variants. See the <%= render DocsRef.new(page: :size) %> docs for full details.
+        </p>
+      </section>
+
+      <!-- Responsive Arbitrary Sizes -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Responsive Arbitrary Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">w--[Npx]</code> and <code class="<%= framework_section_code_classes %>">h--[Npx]</code> utilities now support responsive prefixes. Previously, these were static-only. The maximum value has been reduced from 1000px to 800px. See the <%= render DocsRef.new(page: :size) %> docs.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<!-- Responsive arbitrary sizes -->
+<div class="w--[150px] md:w--[250px] lg:w--[400px]">Responsive arbitrary width</div>
+<div class="h--[100px] portrait:h--[200px]">Orientation-aware height</div>'
+        ) %>
+      </section>
+
+      <!-- Responsive Overflow Columns -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Responsive Overflow Columns') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <%= render DocsRef.new(page: :overflow) %> engine now reads responsive data attributes to determine how many columns to generate, based on screen size and orientation. Resolution order (most specific wins): size + portrait, then size, then portrait, then base.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<!-- 2 columns on small screens, 3 on large -->
+<div class="columns"
+     data-overflow-max-cols="2"
+     data-overflow-max-cols-lg="3">
+  ...
+</div>
+
+<!-- Different column counts for portrait orientation -->
+<div class="columns"
+     data-overflow-max-cols="3"
+     data-overflow-max-cols-portrait="1"
+     data-overflow-max-cols-lg-portrait="2">
+  ...
+</div>'
+        ) %>
+
+        <p class="<%= framework_section_description_classes %>">
+          Supported suffixes: <code class="<%= framework_section_code_classes %>">-sm</code>, <code class="<%= framework_section_code_classes %>">-md</code>, <code class="<%= framework_section_code_classes %>">-lg</code>, <code class="<%= framework_section_code_classes %>">-portrait</code>, <code class="<%= framework_section_code_classes %>">-sm-portrait</code>, <code class="<%= framework_section_code_classes %>">-md-portrait</code>, <code class="<%= framework_section_code_classes %>">-lg-portrait</code>. The same pattern works for <code class="<%= framework_section_code_classes %>">data-overflow-cols</code> (fixed column count).
+        </p>
+      </section>
+
+      <!-- Layout Improvements -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Layout Improvements') %>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Axis-Correct stretch-x / stretch-y') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">stretch-x</code> and <code class="<%= framework_section_code_classes %>">stretch-y</code> now behave correctly relative to the <%= render DocsRef.new(page: :layout) %> direction. In <code class="<%= framework_section_code_classes %>">layout--row</code>, <code class="<%= framework_section_code_classes %>">stretch-x</code> grows along the horizontal axis and <code class="<%= framework_section_code_classes %>">stretch-y</code> stretches vertically. In <code class="<%= framework_section_code_classes %>">layout--col</code>, the axes are swapped. These utilities also now include <code class="<%= framework_section_code_classes %>">min-width: 0</code> / <code class="<%= framework_section_code_classes %>">min-height: 0</code> to prevent flex children from overflowing their containers.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Responsive Grid Column Spans') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <%= render DocsRef.new(page: :grid) %> <code class="<%= framework_section_code_classes %>">col--span-*</code> classes now work with all responsive prefixes. Responsive parent variants also work: if the grid itself has a responsive prefix (e.g., <code class="<%= framework_section_code_classes %>">portrait:grid</code>), nested children resolve correctly.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<div class="grid grid--cols-6">
+  <div class="col--span-6 lg:col--span-3">Full width on small, half on large</div>
+  <div class="col--span-6 lg:col--span-3">Full width on small, half on large</div>
+</div>
+
+<!-- Portrait reflow -->
+<div class="grid grid--cols-2 portrait:grid--cols-1 portrait:gap">
+  <div class="item col--span-2 portrait:col--span-1">...</div>
+</div>'
+        ) %>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Item Component') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <%= render DocsRef.new(page: :item) %> component now gives <code class="<%= framework_section_code_classes %>">.icon</code> elements the same flex styling as <code class="<%= framework_section_code_classes %>">.content</code>. Items in <%= render DocsRef.new(page: :flex) %> row containers automatically stretch to match the tallest sibling, and items in <%= render DocsRef.new(page: :grid) %> containers stretch to fill their cell height.
+          </p>
+        </div>
+      </section>
+
+      <!-- Gap and Rounded -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Gap and Rounded Utilities') %>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Gap') %>
+          <p class="<%= framework_section_description_classes %>">
+            New <%= render DocsRef.new(page: :gap) %> classes: <code class="<%= framework_section_code_classes %>">gap--base</code> (explicit base, useful for responsive reset), <code class="<%= framework_section_code_classes %>">gap--auto</code> (distributes space evenly around items), and <code class="<%= framework_section_code_classes %>">gap--distribute</code> (first item at start, last at end, space between). Arbitrary gaps now start from <code class="<%= framework_section_code_classes %>">gap--[0px]</code> (previously 5px). <code class="<%= framework_section_code_classes %>">gap--space-between</code> remains as a legacy alias.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Rounded') %>
+          <p class="<%= framework_section_description_classes %>">
+            New <%= render DocsRef.new(page: :rounded) %> class: <code class="<%= framework_section_code_classes %>">rounded--base</code> (explicit base, 10px). Arbitrary values now start from <code class="<%= framework_section_code_classes %>">rounded--[0px]</code> (previously 1px).
+          </p>
+        </div>
+      </section>
+
+      <!-- Rich Text -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Rich Text Improvements') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <%= render DocsRef.new(page: :rich_text) %> component has several improvements:
+          </p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><code class="<%= framework_section_code_classes %>">content--center</code> now correctly centers text on 4-bit screens.</li>
+          <li>Rich text content max-width is now size-aware and adjusts automatically per screen size (small: 380px, medium: 640px, large: 780px). In portrait orientation, it uses the full screen width.</li>
+          <li>All content size variants support responsive prefixes.</li>
+        </ul>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<div class="richtext">
+  <div class="content content--small lg:content--base">
+    <p>Small on compact devices, default on large screens</p>
+  </div>
+</div>'
+        ) %>
+      </section>
+
+      <!-- Responsive Clamp -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Responsive Clamp') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <%= render DocsRef.new(page: :clamp) %> system now supports the <code class="<%= framework_section_code_classes %>">lg</code> breakpoint.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          demo_code: '<!-- 2 lines on small/medium, 4 on large, 1 in portrait -->
+<span class="label"
+      data-clamp="2"
+      data-clamp-lg="4"
+      data-clamp-portrait="1">
+  Long label text...
+</span>'
+        ) %>
+
+        <p class="<%= framework_section_description_classes %>">
+          Available attributes: <code class="<%= framework_section_code_classes %>">data-clamp</code>, <code class="<%= framework_section_code_classes %>">data-clamp-sm</code>, <code class="<%= framework_section_code_classes %>">data-clamp-md</code>, <code class="<%= framework_section_code_classes %>">data-clamp-lg</code>, <code class="<%= framework_section_code_classes %>">data-clamp-portrait</code>, <code class="<%= framework_section_code_classes %>">data-clamp-sm-portrait</code>, <code class="<%= framework_section_code_classes %>">data-clamp-md-portrait</code>, <code class="<%= framework_section_code_classes %>">data-clamp-lg-portrait</code>.
+        </p>
+      </section>
+
+      <!-- Landscape Orientation -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Landscape Orientation Default') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">landscape:</code> prefixed classes now work correctly even without an explicit <code class="<%= framework_section_code_classes %>">.screen--landscape</code> class on the screen element. Since landscape is the default orientation, <code class="<%= framework_section_code_classes %>">landscape:</code> prefixes activate whenever <code class="<%= framework_section_code_classes %>">.screen--portrait</code> is not present. See the <%= render DocsRef.new(page: :responsive) %> docs.
+          </p>
+        </div>
+      </section>
+
+      <!-- Bug Fixes -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Bug Fixes') %>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><strong>Title bar on 4-bit screens:</strong> Fixed an issue where the background image could bleed through on 4-bit displays. The title bar now explicitly clears the background image before applying the background color.</li>
+          <li><strong>Half horizontal layout height:</strong> The layout height inside half horizontal views was incorrectly using quadrant dimensions. It now correctly uses half horizontal dimensions.</li>
+          <li><strong>Available height computation:</strong> Improved height calculation for elements inside flex column layouts. The engine now sums sibling heights and gaps instead of relying on <code class="<%= framework_section_code_classes %>">getBoundingClientRect()</code>, which can be inaccurate before layout settles.</li>
+        </ul>
+      </section>
+
+      <!-- Internal Changes -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Internal Changes') %>
+          <p class="<%= framework_section_description_classes %>">
+            The following changes are under-the-hood improvements to how the Framework generates its CSS. They don't introduce new classes or markup patterns, but they make the responsive system more robust and maintainable.
+          </p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li>Responsive mixin system refactored to use a shared <code class="<%= framework_section_code_classes %>">parse-selector-components</code> helper, fixing edge cases with nested selectors.</li>
+          <li>New <code class="<%= framework_section_code_classes %>">with-responsive-parent-child-variants</code> mixin powers responsive grid column spans and flex child utilities.</li>
+          <li>New device-specific responsive generators (<code class="<%= framework_section_code_classes %>">responsive-for-bit-depth</code>, <code class="<%= framework_section_code_classes %>">responsive-orientation-for-bit-depth</code>) for scoped bit-depth overrides.</li>
+          <li>Value and rich text device overrides refactored from manual per-class rules to generated loops.</li>
+          <li><code class="<%= framework_section_code_classes %>">screen--sm</code>, <code class="<%= framework_section_code_classes %>">screen--md</code>, and <code class="<%= framework_section_code_classes %>">screen--lg</code> now apply size-specific CSS variable overrides (previously empty).</li>
+        </ul>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

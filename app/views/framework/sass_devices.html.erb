@@ -1,0 +1,154 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :sass_devices %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:sass_devices) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The device map') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">$devices</code> in
+            <code class="<%= framework_section_code_classes %>">framework/config/_devices.scss</code> defines every
+            device profile the framework ships. The map is generated from the platform's device registry
+            (<code class="<%= framework_section_code_classes %>">db/data/framework_devices.yml</code>), so it is not
+            edited by hand.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Each entry becomes a <code class="<%= framework_section_code_classes %>">screen--&lt;name&gt;</code> class
+            carrying the device's dimensions and rendering variables. <%= render DocsRef.new(page: :screen) %> shows
+            how the class is used in markup. Every profile carries the same schema:
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Key</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">What it sets</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen-w</code>, <code class="<%= framework_section_code_classes %>">screen-h</code></td>
+                  <td class="px-6 py-4 text-sm">Screen dimensions in CSS pixels.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">pixel-ratio</code></td>
+                  <td class="px-6 py-4 text-sm">Physical-to-CSS pixel ratio of the display.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">dither-pixel-ratio</code></td>
+                  <td class="px-6 py-4 text-sm">Ratio dither tiles render at, so patterns stay crisp on high-DPI panels.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">ui-scale</code></td>
+                  <td class="px-6 py-4 text-sm">The device's native interface density factor.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">color-depth</code></td>
+                  <td class="px-6 py-4 text-sm">The grayscale tier: 1, 2, or 4. Full-color profiles carry 12 or 24.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">density-tier</code></td>
+                  <td class="px-6 py-4 text-sm"><code class="<%= framework_section_code_classes %>">'1x'</code> or <code class="<%= framework_section_code_classes %>">'2x'</code>: picks the pixel-font or vector typography tier.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">gap-scale</code></td>
+                  <td class="px-6 py-4 text-sm">Multiplier applied to the gap variables.</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">size</code></td>
+                  <td class="px-6 py-4 text-sm"><code class="<%= framework_section_code_classes %>">'sm'</code>, <code class="<%= framework_section_code_classes %>">'md'</code>, or <code class="<%= framework_section_code_classes %>">'lg'</code>: the size class the device extends.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Configure your own') %>
+          <p class="<%= framework_section_description_classes %>">
+            Custom stacks add device profiles without touching framework source: configure
+            <code class="<%= framework_section_code_classes %>">$custom-devices</code> where you load the framework.
+            Every generator that walks the device set picks the profile up, so a configured device behaves exactly
+            like a built-in one.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// my-build.scss
+@use \'framework\' with (
+    $custom-devices: (
+        \'my-panel\': (
+            \'screen-w\': 1024px,
+            \'screen-h\': 758px,
+            \'pixel-ratio\': 1.0,
+            \'dither-pixel-ratio\': 1.0,
+            \'ui-scale\': 1.0,
+            \'color-depth\': 2,
+            \'density-tier\': \'1x\',
+            \'gap-scale\': 1.0,
+            \'size\': \'lg\'
+        )
+    )
+);', language: 'scss') %>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<div class="screen screen--my-panel">
+  <div class="view view--full">...</div>
+</div>') %>
+        </div>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            Profiles are validated at compile time: a missing key or an invalid
+            <code class="<%= framework_section_code_classes %>">size</code> or
+            <code class="<%= framework_section_code_classes %>">density-tier</code> fails the build with a named
+            error. An entry that reuses a built-in device name overrides that device. Compile as usual; see
+            <%= render DocsRef.new(page: :sass_build) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'What a profile generates') %>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>A <code class="<%= framework_section_code_classes %>">screen--&lt;name&gt;</code> class publishing the device variables (<code class="<%= framework_section_code_classes %>">--screen-w</code>, <code class="<%= framework_section_code_classes %>">--pixel-ratio</code>, <code class="<%= framework_section_code_classes %>">--color-depth</code>, ...).</li>
+            <li>The size behavior of its <code class="<%= framework_section_code_classes %>">size</code> class, and the typography tier of its <code class="<%= framework_section_code_classes %>">density-tier</code>. See <%= render DocsRef.new(page: :scale) %> for how density and scale compose.</li>
+            <li>The per-device utility rules, like high-DPI outline dots for profiles with a <code class="<%= framework_section_code_classes %>">dither-pixel-ratio</code> of 2 and up.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The JavaScript runtime reads the same variables when it normalizes screen context at render time; see
+            <%= render DocsRef.new(page: :framework_runtime) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The built-in byod profile') %>
+          <p class="<%= framework_section_description_classes %>">
+            The map ships a generic <code class="<%= framework_section_code_classes %>">byod_custom</code> profile, so
+            even a released build has a bring-your-own-device class. Apply
+            <code class="<%= framework_section_code_classes %>">screen--byod_custom</code> for a quick start without
+            compiling anything, then graduate to
+            <code class="<%= framework_section_code_classes %>">$custom-devices</code> when you need your panel's
+            exact dimensions and depth.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

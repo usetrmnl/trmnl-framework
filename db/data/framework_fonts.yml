@@ -1,0 +1,131 @@
+# Source of truth for Framework font metadata. Used by:
+#   - app/views/framework/font_family.html.erb (typography docs page)
+#   - lib/framework/fonts_release_task.rb (rake framework:release:fonts)
+#
+# Edit metadata fields manually. `released_at` is bumped automatically
+# by the fonts release task each time it runs.
+released_at: 2026-07-31
+bundles:
+  classic:
+    label: Classic
+    class_name: screen--fonts-classic
+    blurb: Three single-weight pixel fonts.
+    fonts:
+      - family: NicoPups
+        size: 16px
+        desc: Used for descriptions, small labels, and metadata.
+        weights: [normal]
+        formats: [ttf]
+        files:
+          - NicoPups-Regular.ttf
+        designer: Emily Huo (emhuo)
+        designer_url: https://emhuo.itch.io/nico-pixel-fonts-pack
+        license: SIL Open Font License v1.1
+        license_id: ofl
+        license_url: https://scripts.sil.org/OFL
+        copyright: Copyright (c) 2021, Emily Huo
+      - family: NicoClean
+        size: 16px
+        desc: The workhorse font, used for labels, rich text body copy, and title-bar text.
+        weights: [normal]
+        formats: [ttf]
+        files:
+          - NicoClean-Regular.ttf
+        designer: Emily Huo (emhuo)
+        designer_url: https://emhuo.itch.io/nico-pixel-fonts-pack
+        license: SIL Open Font License v1.1
+        license_id: ofl
+        license_url: https://scripts.sil.org/OFL
+        copyright: Copyright (c) 2021, Emily Huo
+      - family: BlockKie
+        size: 26px
+        desc: Used for titles and large rich-text. The largest pixel font in the Classic bundle.
+        weights: [normal]
+        formats: [ttf]
+        files:
+          - BlockKie.ttf
+        designer: JoohnFonts
+        designer_url: https://fontstruct.com/fontstructors/show/1669437/joohnfonts
+        license: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+        license_id: cc-by-3.0
+        license_url: https://creativecommons.org/licenses/by/3.0/
+        source_url: https://fonts2u.com/blockkie-regular.font
+        copyright: Copyright (c) 2021 JoohnFonts
+  trmnl:
+    label: TRMNL
+    class_name: screen--fonts-trmnl
+    blurb: Three font families, each with Regular and Bold weights.
+    # Second archive next to the full bundle: the TRMNL families without Inter. Core's
+    # Font Family page links it as its download. Drop the key to stop publishing it.
+    fonts_only_zip: trmnl-fonts--trmnl-only.zip
+    fonts:
+      - family: TRMNL12
+        size: 12px
+        desc: The smallest pixel font, used for descriptions, small labels, and metadata.
+        weights: [normal, bold]
+        formats: [woff2, woff, ttf]
+        files:
+          - TRMNL12-Regular.woff2
+          - TRMNL12-Regular.woff
+          - TRMNL12-Regular.ttf
+          - TRMNL12-Bold.woff2
+          - TRMNL12-Bold.woff
+          - TRMNL12-Bold.ttf
+        designer: Heavyweight Digital Type Foundry
+        designer_url: https://heavyweight-type.com
+        license: SIL Open Font License v1.1
+        license_id: ofl
+        license_url: https://scripts.sil.org/OFL
+        copyright: Copyright © 2026 Heavyweight Digital Type Foundry s.r.o.
+      - family: TRMNL16
+        size: 16px
+        desc: The workhorse font, used for labels, rich text body copy, and title-bar text.
+        weights: [normal, bold]
+        formats: [woff2, woff, ttf]
+        files:
+          - TRMNL16-Regular.woff2
+          - TRMNL16-Regular.woff
+          - TRMNL16-Regular.ttf
+          - TRMNL16-Bold.woff2
+          - TRMNL16-Bold.woff
+          - TRMNL16-Bold.ttf
+        designer: Heavyweight Digital Type Foundry
+        designer_url: https://heavyweight-type.com
+        license: SIL Open Font License v1.1
+        license_id: ofl
+        license_url: https://scripts.sil.org/OFL
+        copyright: Copyright © 2026 Heavyweight Digital Type Foundry s.r.o.
+      - family: TRMNL21
+        size: 21px
+        desc: The largest pixel font, used for titles, headings, and large rich-text.
+        weights: [normal, bold]
+        formats: [woff2, woff, ttf]
+        files:
+          - TRMNL21-Regular.woff2
+          - TRMNL21-Regular.woff
+          - TRMNL21-Regular.ttf
+          - TRMNL21-Bold.woff2
+          - TRMNL21-Bold.woff
+          - TRMNL21-Bold.ttf
+        designer: Heavyweight Digital Type Foundry
+        designer_url: https://heavyweight-type.com
+        license: SIL Open Font License v1.1
+        license_id: ofl
+        license_url: https://scripts.sil.org/OFL
+        copyright: Copyright © 2026 Heavyweight Digital Type Foundry s.r.o.
+shared:
+  - family: Inter Variable
+    desc: Used on high-density displays in both bundles for legibility.
+    weights: [normal, italic]
+    formats: [ttf]
+    files:
+      - Inter.ttf
+      - Inter-Italic.ttf
+    designer: Rasmus Andersson
+    designer_url: https://rsms.me/inter
+    license: SIL Open Font License v1.1
+    license_id: ofl
+    license_url: https://scripts.sil.org/OFL
+    # Verbatim from the shipped Inter.ttf name table (ID 0, version 4.001), which is what
+    # OFL condition 2 asks a redistributed copy to carry.
+    copyright: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)

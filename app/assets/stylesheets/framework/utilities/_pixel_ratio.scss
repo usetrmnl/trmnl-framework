@@ -1,0 +1,30 @@
+// ============================================
+// TRMNL Framework - Pixel Ratio Utility
+// ============================================
+//
+// screen--1x forces --pixel-ratio: 1.0 for display scaling (transform, margins) so the
+// framework demo preview fits on the page. Dither patterns use --dither-pixel-ratio
+// (set here when screen--1x + device) so they still render correctly for high-DPI devices.
+//
+// Internal: the docs preview harness sets screen--1x. It is not part of the documented
+// class surface and can change without notice.
+// ============================================
+
+@use 'sass:map';
+@use '../mixins' as mixins;
+@use '../config/custom' as custom;
+
+@include mixins.trmnl-namespace {
+    .screen--1x {
+        --pixel-ratio: 1.0;
+    }
+
+    // When screen--1x is used with a device (e.g. framework demo), set --dither-pixel-ratio
+    // so dither patterns use the device's ratio while display stays at 1x scale
+    @each $device-name, $device-config in custom.$all-devices {
+        .screen--#{$device-name}.screen--1x {
+            --dither-pixel-ratio: #{map.get($device-config, 'dither-pixel-ratio')};
+            --dither-ratio: var(--dither-pixel-ratio, 1);
+        }
+    }
+} 

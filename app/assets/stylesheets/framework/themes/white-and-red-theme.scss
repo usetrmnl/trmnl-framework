@@ -1,0 +1,152 @@
+// ============================================
+// TRMNL Framework - White and Red Theme
+// ============================================
+// Engine-safe theme model:
+// - Sets role/slot token refs only.
+// - Does not override root palette vars (--white, --gray-*, --color-*).
+// - Does not override framework-owned paint vars (--bg-*, --text-*, --border-*).
+//
+// Standalone theme file that compiles to its own CSS file.
+// Usage: <link rel="stylesheet" href="white-and-red-theme.css">
+// Apply: <div class="screen screen--theme-white-and-red">
+
+@use '../config/layers' as layers;
+@use '../mixins/theme-slots' as theme-slots;
+
+// Emit the framework's layer order before the theme's own layer, so the theme
+// lands after tn--base whichever stylesheet the browser parses first.
+@include layers.order;
+
+@layer tn--themes {
+    // Pure red canvas + white text with lighter red accents.
+    .trmnl .screen--theme-white-and-red {
+        // Semantic full-stack refs
+        @include theme-slots.semantic-bg('canvas', 'red');
+        @include theme-slots.semantic-bg('surface', 'red');
+        @include theme-slots.semantic-bg('backdrop', 'red-25');
+        // fill-strong is the guaranteed-ink rail: border--h-black, border--v-black,
+        // chart axes and filled progress dots all paint from it. Point it at this
+        // theme's ink, the way black-and-yellow points it at its black ink. A
+        // near-canvas red left those hairlines a 17/255 step from the canvas.
+        @include theme-slots.semantic-bg('fill-strong', 'white');
+        @include theme-slots.semantic-bg('fill-muted', 'red-60');
+        @include theme-slots.semantic-bg('fill-soft', 'red-70');
+        @include theme-slots.semantic-text('text-primary', 'white');
+        // Secondary steps off the white ink toward the canvas, mirroring
+        // black-and-yellow's yellow-30: red-70 stays legible on the pure red
+        // canvas while reading visibly dimmer than primary. Its gray fallback
+        // (gray-65) keeps the same step off white on the 1-bit and 2-bit rails.
+        @include theme-slots.semantic-text('text-secondary', 'red-70');
+        @include theme-slots.semantic-text('text-inverse', 'white');
+        // Stroke-contrast tracks the canvas hue (default model: white canvas, white stroke).
+        @include theme-slots.semantic-stroke('stroke-contrast', 'red');
+        @include theme-slots.semantic-border('border-strong', 'white');
+        @include theme-slots.semantic-border('border-muted', 'red-75');
+
+        // Slot token remaps (component paint intent)
+        @include theme-slots.bg-slot('item-meta', 'red-60');
+        @include theme-slots.bg-slot('item-meta-emphasis-2', 'red-55');
+        @include theme-slots.bg-slot('item-meta-emphasis-3', 'red-50');
+        @include theme-slots.bg-slot('title-bar', 'red-60');
+        @include theme-slots.bg-slot('screen-backdrop', 'red-25');
+        @include theme-slots.bg-slot('progress-track', 'red-60');
+        @include theme-slots.bg-slot('progress-fill', 'red-45');
+        @include theme-slots.bg-slot('progress-fill-emphasis-2', 'red-40');
+        @include theme-slots.bg-slot('progress-fill-emphasis-3', 'red-35');
+        @include theme-slots.bg-slot('progress-dot', 'red-60');
+        @include theme-slots.bg-slot('progress-dot-current', 'red-45');
+        @include theme-slots.bg-slot('table-meta', 'red-65');
+        @include theme-slots.bg-slot('table-meta-device', 'red-70');
+        // Muted label glyphs. The default is gray-40 and black-and-yellow uses
+        // yellow-40: two tint steps past text-secondary, so label--gray still
+        // reads as grayed out. white made it identical to primary text on the
+        // red canvas; red-60 keeps the two-step distance from text-secondary
+        // (red-70), mirroring the inverse block's red-60 off its red-50.
+        @include theme-slots.text-slot('label-gray', 'red-60');
+        // The marker box. Its default chains to fill-strong under text-inverse,
+        // and this theme points both of those at white, so the chained pairing
+        // would print white text on a white field. A white field with red text
+        // is the marker box this canvas asks for, and it is the reason the slot
+        // exists.
+        @include theme-slots.bg-slot('chip', 'white');
+        @include theme-slots.text-slot('chip', 'red');
+        // Border levels anchor level 4 to the base hue (red-on-red on this
+        // canvas), so the underline needs its own contrasting token.
+        @include theme-slots.border-token-slot('label-underline', 'red-75');
+
+        // Utility palette remaps (all grays → bright reds, black → red)
+        @include theme-slots.utility-remap-grayscale('red', $side: 'bright');
+        // Explicit white surfaces adopt the canvas hue: this theme's ink is
+        // white, so a surface left white would swallow the white outlines,
+        // borders, and labels sitting on it. Text/stroke whites stay white,
+        // they are the ink.
+        @include theme-slots.utility-bg('white', 'red');
+        @include theme-slots.utility-remap-border-grayscale('red', $side: 'bright');
+
+        // Chart series ramp anchored on the white ink: series run from white
+        // through the light-red tints toward the red canvas, so they stay legible
+        // on this canvas instead of collapsing into it the way the raw grayscale
+        // ramp (black → canvas) would.
+        @include theme-slots.chart-series-ramp((white, red-75, red-70, red-65, red-60, red-55, red-50, red-45, red-40, red-35, red-30, red-25, red-20, red-15, red-10, red));
+    }
+
+    // The inverse form uses the theme's white ink as its canvas and the red
+    // canvas as its ink. Tokens are literal: the framework leaves the screen's
+    // own paint rail under a themed inverse subtree, so each token resolves
+    // exactly as it does on the screen root, dither tiles and gray fallbacks
+    // included. Component slots stay on the light tints, keeping the same
+    // near-canvas subtlety on the white ground that the screen block's red-60
+    // accents have on the red one.
+    .trmnl .screen--theme-white-and-red .inverse {
+        @include theme-slots.semantic-bg('canvas', 'white');
+        @include theme-slots.semantic-bg('surface', 'white');
+        @include theme-slots.semantic-bg('backdrop', 'red-70');
+        @include theme-slots.semantic-bg('fill-strong', 'red');
+        @include theme-slots.semantic-bg('fill-muted', 'red-50');
+        @include theme-slots.semantic-bg('fill-soft', 'red-35');
+        @include theme-slots.semantic-text('text-primary', 'red');
+        @include theme-slots.semantic-text('text-secondary', 'red-50');
+        @include theme-slots.semantic-text('text-inverse', 'white');
+        @include theme-slots.semantic-stroke('stroke-contrast', 'white');
+        @include theme-slots.semantic-border('border-strong', 'red');
+        @include theme-slots.semantic-border('border-muted', 'red-70');
+
+        @include theme-slots.bg-slot('item-meta', 'red-60');
+        @include theme-slots.bg-slot('item-meta-emphasis-2', 'red-55');
+        @include theme-slots.bg-slot('item-meta-emphasis-3', 'red-50');
+        @include theme-slots.bg-slot('title-bar', 'red-60');
+        @include theme-slots.bg-slot('screen-backdrop', 'red-60');
+        @include theme-slots.bg-slot('progress-track', 'red-60');
+        @include theme-slots.bg-slot('progress-fill', 'red-45');
+        @include theme-slots.bg-slot('progress-fill-emphasis-2', 'red-40');
+        @include theme-slots.bg-slot('progress-fill-emphasis-3', 'red-35');
+        @include theme-slots.bg-slot('progress-dot', 'red-60');
+        @include theme-slots.bg-slot('progress-dot-current', 'red-45');
+        @include theme-slots.bg-slot('table-meta', 'red-65');
+        @include theme-slots.bg-slot('table-meta-device', 'red-70');
+        // Two tint steps subtler than text-secondary (red-50) toward the white
+        // ground, the same grayed-out distance the screen block keeps on red.
+        @include theme-slots.text-slot('label-gray', 'red-60');
+        // The marker box takes the ink and the ground, not the light tints the
+        // near-canvas slots above keep: a chip is a contrast surface, the way
+        // fill-strong is, so on this white ground it is a red field with white
+        // text. That is what this block's fill-strong and text-inverse already
+        // resolve to, named rather than left to the chain.
+        @include theme-slots.bg-slot('chip', 'red');
+        @include theme-slots.text-slot('chip', 'white');
+        // The underline is the contrasting accent: dark red on the white
+        // ground, mirroring the screen block's light red-75 on red.
+        @include theme-slots.border-token-slot('label-underline', 'red-15');
+
+        @include theme-slots.utility-remap-grayscale('red', $side: 'bright');
+        // The screen block folds explicit white surfaces into its red canvas.
+        // Here the canvas is white and the ink is red, so a white surface is
+        // canvas-colored already; the inherited fold has to be restated as
+        // identity or bg--white would paint an ink-colored field under ink-
+        // colored text.
+        @include theme-slots.utility-bg('white', 'white');
+        @include theme-slots.utility-remap-border-grayscale('red', $side: 'bright');
+        // Ink first, then darker reds toward the white ground.
+        @include theme-slots.chart-series-ramp((red, red-10, red-15, red-20, red-25, red-30, red-35, red-40, red-45, red-50, red-55, red-60, red-65, red-70, red-75, white));
+    }
+}

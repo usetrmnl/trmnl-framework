@@ -1,0 +1,93 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :title_bar %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Title Bar component provides a consistent header for terminal-like interfaces, displaying application information
+      such as icons, titles, and instance details.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Title Bar consists of three main elements: an icon, a title, and an optional instance label. These elements
+            are arranged horizontally and automatically spaced.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Basic Title Bar') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The basic Title Bar includes an icon and title. Use the <code class="<%= framework_section_code_classes %>">title_bar</code> class
+              for the container.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout"></div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Basic Title Bar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="title_bar">
+  <img class="image" src="/images/plugins/trmnl--render.svg">
+  <span class="title">Basic Title Bar</span>
+</div>'
+          ) %>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Title Bar with Instance') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add an instance label using the <code class="<%= framework_section_code_classes %>">instance</code> class
+              to display additional context.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout"></div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Title Bar with Instance</span>
+                    <span class="instance">Production</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="title_bar">
+  <img class="image" src="/images/plugins/trmnl--render.svg">
+  <span class="title">Title Bar with Instance</span>
+  <span class="instance">Production</span>
+</div>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,277 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :rendering_modes %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:rendering_modes) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The three grayscale tiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            A grayscale screen carries one tier class. The class names how many grays the panel prints, and it picks
+            both the paint rail and a set of display variables.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">screen--1bit</code>: every gray token paints as a dither pattern of black and white pixels, borders and text fills included. The root display variables apply unchanged.</li>
+            <li><code class="<%= framework_section_code_classes %>">screen--2bit</code>: tokens still dither, between four gray tones instead of two. Table and progress metrics scale with the interface.</li>
+            <li><code class="<%= framework_section_code_classes %>">screen--4bit</code>: every gray token paints as a solid, and each border step gets its own shade instead of two steps sharing one. The title bar drops its pixel-font padding offset and its text stroke thins.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            All three tiers resolve a chromatic token to its gray fallback, so a theme hue never reaches a panel that
+            cannot print it.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The demo below labels the tier it is rendering on. Switch device in the Device Preview to see the same
+            screen on each one.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <div class="flex flex--row flex--between flex--center-y">
+                      <span class="title">Cold chain</span>
+                      <span class="label label--outline hidden 1bit:visible">1-bit</span>
+                      <span class="label label--outline hidden 2bit:visible">2-bit</span>
+                      <span class="label label--outline hidden 4bit:visible">4-bit</span>
+                    </div>
+
+                    <div class="progress-bar">
+                      <div class="content">
+                        <span class="label label--small">Bay 1</span>
+                        <span class="label label--small">82%</span>
+                      </div>
+                      <div class="track">
+                        <div class="fill" style="width: 82%"></div>
+                      </div>
+                    </div>
+
+                    <div class="progress-bar progress-bar--emphasis-2">
+                      <div class="content">
+                        <span class="label label--small">Bay 2</span>
+                        <span class="label label--small">64%</span>
+                      </div>
+                      <div class="track">
+                        <div class="fill" style="width: 64%"></div>
+                      </div>
+                    </div>
+
+                    <div class="progress-bar progress-bar--emphasis-3">
+                      <div class="content">
+                        <span class="label label--small">Bay 3</span>
+                        <span class="label label--small">38%</span>
+                      </div>
+                      <div class="track">
+                        <div class="fill" style="width: 38%"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Rendering Modes</span>
+                    <span class="instance">Grayscale tiers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip
+              <!-- Two grays: the fills dither -->
+              <div class="screen screen--ogv2 screen--2bit">...</div>
+
+              <!-- Sixteen grays: the fills paint as solids -->
+              <div class="screen screen--v2 screen--4bit">...</div>
+            HTML
+          ) %>
+        </div>
+      </section>
+
+      <% limited_palette_classes = framework_palette_options.map { |palette| palette[:framework_class] }
+                                                            .select { |cls| cls.start_with?('screen--color-') && cls != 'screen--color-full' }
+                                                            .uniq %>
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The color modes') %>
+          <p class="<%= framework_section_description_classes %>">
+            A color panel carries a palette class in place of a tier class. Two families cover them.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              One class per limited ink set
+              (<%= safe_join(limited_palette_classes.map { |cls| tag.code(cls, class: framework_section_code_classes) }, ', ') %>):
+              every framework token, grayscale rail included, dithers down to that palette's fixed inks.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">screen--color-full</code> for 12-bit and 24-bit
+              displays: every token paints at its actual hex, with no ink remap and no dithering.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Paint is palette-driven. The palette selected for a device decides which class the screen wears, and the
+            class decides the rail. <%= render DocsRef.new(page: :color_palettes) %> lists every palette and the class
+            it maps to.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip
+              <!-- Seven inks: bg--red-60 dithers between the panel's inks -->
+              <div class="screen screen--inkplate_6_color screen--color-7a">...</div>
+
+              <!-- Full color: bg--red-60 paints that exact hex -->
+              <div class="screen screen--generic_16_9 screen--color-full">...</div>
+            HTML
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'How the runtime learns the depth') %>
+          <p class="<%= framework_section_description_classes %>">
+            The rule that selects a screen's paint rail also publishes that rail's depth as
+            <code class="<%= framework_section_code_classes %>">--framework-bit-depth</code>. The JavaScript runtime
+            reads the resolved value and never parses a class name, so a palette added in CSS reaches it with no
+            JavaScript change.
+          </p>
+        </div>
+
+        <%# Depths mirror $_screen-paint-depths and $_limited-palette-paint-depth in base/_screen-mode-vars.scss. %>
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Mode class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Published depth</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 text-sm">No mode class</td>
+                  <td class="px-6 py-4 text-sm">1</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--1bit</code></td>
+                  <td class="px-6 py-4 text-sm">1</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--2bit</code></td>
+                  <td class="px-6 py-4 text-sm">2</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--4bit</code></td>
+                  <td class="px-6 py-4 text-sm">4</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 text-sm">Any limited palette class</td>
+                  <td class="px-6 py-4 text-sm">4</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">screen--color-full</code></td>
+                  <td class="px-6 py-4 text-sm">12</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            The depth describes the rail, not the panel's storage. A limited palette prints solid inks the way the
+            4-bit rail prints solid tokens, so it publishes 4. A screen with no mode class publishes 1, because an
+            unstated device is treated as the most constrained one.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Every mode rule carries the same specificity, so a screen wearing two mode classes reports the rail that
+            actually painted. <code class="<%= framework_section_code_classes %>">screen--2bit screen--color-7a</code>
+            paints palette inks and publishes 4.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Runtime engines gate on the published value: pixel-perfect fonts stand down at 4 and up, and the even
+            index-width pin stops at 2 and up. See <%= render DocsRef.new(page: :framework_runtime) %>, or
+            <%= render DocsRef.new(page: :paint_api) %> to read the variable from your own JavaScript.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Where the numeric variants stop') %>
+          <p class="<%= framework_section_description_classes %>">
+            Utility classes take three numeric variant prefixes:
+            <code class="<%= framework_section_code_classes %>">1bit:</code>,
+            <code class="<%= framework_section_code_classes %>">2bit:</code>, and
+            <code class="<%= framework_section_code_classes %>">4bit:</code>. They end at 4-bit because grayscale glass
+            ends at 16 levels, so those three cover every grayscale panel.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Color is a separate axis, and no numeric variant matches a color screen. Target the color modes from SCSS
+            instead, with the <code class="<%= framework_section_code_classes %>">for-color-palette($id)</code> and
+            <code class="<%= framework_section_code_classes %>">for-color-full</code> mixins on
+            <%= render DocsRef.new(page: :sass_mixins) %>.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip
+              <!-- A dense dither needs a lighter shade to stay readable -->
+              <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70">...</div>
+            HTML
+          ) %>
+        </div>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            <strong>Do not build on <code class="<%= framework_section_code_classes %>">screen--8bit</code> or
+            <code class="<%= framework_section_code_classes %>">screen--16bit</code>.</strong>
+            Both are compatibility aliases scheduled for removal. They take the 4-bit display variables and the 4-bit
+            paint rail, though they publish their own number as the depth rather than 4.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Nothing above 4-bit grayscale needs them. The axis above 16 grays is color, through
+            <code class="<%= framework_section_code_classes %>">screen--color-full</code>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <%= render DocsRef.new(page: :responsive) %> covers the full variant grammar, including how bit-depth
+            prefixes combine with breakpoints and orientation.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Chart series per mode') %>
+          <p class="<%= framework_section_description_classes %>">
+            Chart series colors follow the mode too. Grayscale tiers and limited palettes draw from the shade ladder,
+            which opens on the screen's ink and steps toward its canvas.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">screen--color-full</code> draws from a categorical color
+            ramp instead: the ink, then seven hues in a fixed order, with steps picked for the light and dark ground
+            separately. A theme's own ramp still wins over both.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <%= render DocsRef.new(page: :paint_charts) %> resolves the active ramp from JavaScript, and
+            <%= render DocsRef.new(page: :chart) %> covers the markup.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

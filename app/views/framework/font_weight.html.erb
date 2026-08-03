@@ -1,0 +1,204 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :font_weight %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:font_weight) %>
+
+    <div class="space-y-16">
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use <code class="<%= framework_section_code_classes %>">text--regular</code> and
+            <code class="<%= framework_section_code_classes %>">text--bold</code> to control font weight
+            independently of size. Density decides whether the active pixel-font bundle or Inter receives the
+            weight. The bold variant is resolved as follows:
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc list-outside ml-5 space-y-1">
+            <li><strong>Classic</strong> bundle: every font ships in a single weight, so <code class="<%= framework_section_code_classes %>">text--bold</code> has no visual effect on low-density Classic.</li>
+            <li><strong>TRMNL</strong> bundle: <code class="<%= framework_section_code_classes %>">text--bold</code> selects the matching <strong>TRMNL12/16/21 Bold</strong> font file at the active size.</li>
+            <li><strong>High-density</strong> displays: both classes simply set the Inter Variable weight to 400 or 700.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The older <code class="<%= framework_section_code_classes %>">font--regular</code> and
+            <code class="<%= framework_section_code_classes %>">font--bold</code> spellings still render and are
+            deprecated. See Deprecated weight aliases below.
+          </p>
+        </div>
+
+        <%= render 'framework/high_density_font_notice' %>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Weight</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Classic (low-density)</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">TRMNL (low-density)</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">High-density</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <% [
+                  ['text--regular', '400', 'NicoPups / NicoClean / BlockKie', 'TRMNL12/16/21 Regular', 'Inter Variable @ 400'],
+                  ['text--bold',    '700', 'No bold variant',                 'TRMNL12/16/21 Bold',    'Inter Variable @ 700']
+                ].each do |class_name, weight, classic, trmnl, hi_bit| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <code class="text-sm font-mono text-syntax-string"><%= class_name %></code>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><%= weight %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= classic %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= trmnl %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= hi_bit %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <% [
+          { id: 'classic', label: 'Classic', class_name: 'screen--fonts-classic' },
+          { id: 'trmnl',   label: 'TRMNL',   class_name: 'screen--fonts-trmnl' }
+        ].each do |bundle| %>
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, "Weight comparison &middot; #{bundle[:label]} bundle".html_safe) %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Each weight shown at every pixel-font size with
+                <code class="<%= framework_section_code_classes %>"><%= bundle[:class_name] %></code> on the screen root.
+                Low-density displays use that bundle; high-density displays use Inter weights instead.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen <%= bundle[:class_name] %>">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--medium">
+                        <% %w[text--small text--base text--large].each do |size_class| %>
+                          <div class="flex flex--col gap--xsmall">
+                            <span class="<%= size_class %> text--regular"><%= size_class %> text--regular</span>
+                            <span class="<%= size_class %> text--bold"><%= size_class %> text--bold</span>
+                          </div>
+                        <% end %>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Font Weight</span>
+                        <span class="instance"><%= bundle[:label] %></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="text--small text--regular">Small regular</span>
+<span class="text--small text--bold">Small bold</span>
+<span class="text--base text--regular">Base regular</span>
+<span class="text--base text--bold">Base bold</span>
+<span class="text--large text--regular">Large regular</span>
+<span class="text--large text--bold">Large bold</span>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive & bit-depth variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            Font weight utilities support responsive, orientation, and bit-depth prefixes.
+            Combine them to fine-tune weight across screen sizes and display types.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Variant</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Example</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Description</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <% [
+                  ['Responsive',  'md:text--bold',          'Bold at medium breakpoint and up'],
+                  ['Orientation', 'portrait:text--regular', 'Regular weight in portrait orientation'],
+                  ['Bit-depth',   '4bit:text--bold',        'Bold on 4-bit displays only'],
+                  ['Combined',    'md:4bit:text--bold',     'Bold at medium breakpoint on 4-bit displays']
+                ].each do |variant, example, description| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100"><%= variant %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <code class="text-sm font-mono text-syntax-string"><%= example %></code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= description %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="text--base text--regular 4bit:text--bold">
+  Bold only on 4-bit displays
+</span>
+<span class="text--large text--regular md:text--bold">
+  Bold at medium breakpoint and up
+</span>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Deprecated weight aliases') %>
+          <p class="<%= framework_section_description_classes %>">
+            Two <code class="<%= framework_section_code_classes %>">font--{weight}</code> classes ship as aliases of
+            the weight utilities: <code class="<%= framework_section_code_classes %>">font--regular</code> and
+            <code class="<%= framework_section_code_classes %>">font--bold</code>. Each renders exactly like the
+            <code class="<%= framework_section_code_classes %>">text--</code> class with the same suffix, down to the
+            responsive, orientation, and bit-depth variants.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            They are deprecated and will be removed in Framework 4.0. Prefer
+            <code class="<%= framework_section_code_classes %>">text--regular</code> and
+            <code class="<%= framework_section_code_classes %>">text--bold</code> in new markup. The ten
+            <code class="<%= framework_section_code_classes %>">font--{size}</code> classes carry the same removal
+            release; see <%= render DocsRef.new(page: :text_size) %>.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Deprecated (but still works) -->
+<span class="text--base font--bold">Bold text</span>
+<span class="text--base font--regular md:font--bold">Bold at medium breakpoint and up</span>
+
+<!-- Preferred -->
+<span class="text--base text--bold">Bold text</span>
+<span class="text--base text--regular md:text--bold">Bold at medium breakpoint and up</span>'
+          ) %>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+// ============================================
+// TRMNL Framework - Description Component Device Overrides
+// ============================================
+
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+
+// Map of size class names to their font-weight CSS variables. Bare `description`
+// and `description--base` sit at the element's own weight and take no override.
+$description-sizes: (
+    'description--large': '--description-large-font-weight',
+    'description--xlarge': '--description-xlarge-font-weight',
+    'description--xxlarge': '--description-xxlarge-font-weight'
+);
+
+// 4-bit only. Nothing pins the wght axis on the other depths, so the size
+// classes there already reach their weight through font-weight.
+$description-bit-depths: (4);
+
+@each $class-name, $weight-var in $description-sizes {
+    @each $bit-depth in $description-bit-depths {
+        // Base bit-depth styles
+        .trmnl .screen--#{$bit-depth}bit .#{helpers.escape-class-token($class-name)} {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+
+        // Every prefixed gate the class itself is published under. Without them
+        // md:description--large renders at the size of a large description and
+        // the weight of a plain one.
+        @include responsive.device-variants-for-bit-depth($class-name, $bit-depth) {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}

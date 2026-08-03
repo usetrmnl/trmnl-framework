@@ -1,0 +1,95 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :title %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Title system provides consistent text headings with different size variants.
+      It helps maintain visual hierarchy and readability throughout the interface.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Title system offers two primary variations: default and small.
+            These base structures form the foundation for content headings.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default Title') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">title</code> class creates a standard-sized heading.
+              This is the most common usage for primary content headers.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <span class="title">Default Title</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Title</span>
+                    <span class="instance">Default</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="title">Default Title</span>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Small Title') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add <code class="<%= framework_section_code_classes %>">title--small</code> to create a more compact heading.
+              Useful for secondary headers or where space is limited.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <span class="title title--small">Small Title</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Title</span>
+                    <span class="instance">Small</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="title title--small">Small Title</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

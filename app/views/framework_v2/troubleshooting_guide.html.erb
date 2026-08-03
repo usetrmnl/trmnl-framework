@@ -1,0 +1,39 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :troubleshooting_guide %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Framework v2 is more advanced than earlier versions, which makes it less forgiving of markup that was not intended. This may cause certain layouts or plugins to behave differently. Use this checklist to review your project and bring it in line with the intended usage.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Troubleshooting Checklist') %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li>
+              <strong>Does your markup contain a single layout element?</strong>
+              <div>There should be exactly one element with the <%= render DocsRef.new(page: :layout) %> class in your markup. Multiple or nested layouts are not supported.</div>
+            </li>
+          </ul>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li>
+              <strong>Do your elements contain supported content?</strong>
+              <div>Elements don't support nesting other elements inside them. For example, <%= render DocsRef.new(page: :label) %> elements can't have nested more labels or any other elements inside them. If you need rich text capability, use the <%= render DocsRef.new(page: :rich_text) %> component instead.</div>
+            </li>
+          </ul>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li>
+              <strong>Clamping is not working as expected?</strong>
+              <div>When using <%= render DocsRef.new(page: :clamp) %> on elements like <%= render DocsRef.new(page: :label) %> and <%= render DocsRef.new(page: :description) %>, these elements can't contain rich text. If you want to clamp rich text content, you need to use the <%= render DocsRef.new(page: :rich_text) %> component in tandem with the <%= render DocsRef.new(page: :content_limiter) %> modulation utility.</div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

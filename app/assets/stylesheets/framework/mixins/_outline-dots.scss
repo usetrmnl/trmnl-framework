@@ -1,0 +1,114 @@
+// ============================================
+// TRMNL Framework - Outline Dots Mixin
+// ============================================
+// Pixel-perfect dotted rounded border using pure CSS gradients.
+//
+// Two coordinate spaces share the drawing:
+//   * Dot size and edge cadence divide by --_pr (--dither-ratio) so each dot
+//     and the rhythm between dots map 1:1 to physical pixels on high-DPI
+//     devices.
+//   * The corner curve and the edge insets multiply by --_arc (--ui-scale),
+//     the same space as the ui-scaled(7px) rounded clip on mashup views and
+//     cells. The curve must trace the clip: dividing these by --_pr shrank
+//     the arc inside the clip radius on 2x devices, and overflow: hidden
+//     erased every corner dot (the cut-off corner bug).
+//
+// Two color tiers:
+//   --_c   edges + 1x corners (always visible)
+//   --_c2  2x fill-in dots (transparent by default, enabled via --_outline-hdpi-color)
+//
+// The 2x fill-ins sit BETWEEN the 1x corner positions on the same curve.
+// At 2x, the combined 1x+2x set (15 dots/corner) traces the same shape as
+// the 1x curve (4 dots/corner) but at double the physical pixel resolution:
+// their half-pixel offsets land on whole physical pixels there.
+//   Flat run:  (8,0) [7,0] [6,.5] [5,.5] (4,1)
+//   Diagonal:  (4,1) [3.5,1.5] [3,2] [2.5,2.5] [2,3] [1.5,3.5] (1,4)
+//   Steep run: (1,4) [.5,5] [.5,6] [0,7] (0,8)
+// Parenthesized = 1x dots, bracketed = 2x fill-ins.
+
+@mixin outline-dots {
+    --_c: var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
+    --_c2: var(--_outline-hdpi-color, transparent);
+    --_pr: var(--dither-ratio, 1);
+    --_arc: var(--ui-scale, 1);
+    --_dot: calc(1px / var(--_pr));
+    --_gap3: calc(3px / var(--_pr));
+    --_gap4: calc(4px / var(--_pr));
+    background:
+        // ── Edges (always visible) ──
+        repeating-linear-gradient(to right, var(--_c) 0 var(--_dot), transparent var(--_dot) var(--_gap4))
+            calc(12px * var(--_arc)) 0 / calc(100% - 24px * var(--_arc)) var(--_dot) no-repeat,
+        repeating-linear-gradient(to right, transparent 0 var(--_gap3), var(--_c) var(--_gap3) var(--_gap4))
+            calc(9px * var(--_arc)) 100% / calc(100% - 21px * var(--_arc)) var(--_dot) no-repeat,
+        repeating-linear-gradient(to bottom, var(--_c) 0 var(--_dot), transparent var(--_dot) var(--_gap4))
+            100% calc(12px * var(--_arc)) / var(--_dot) calc(100% - 24px * var(--_arc)) no-repeat,
+        repeating-linear-gradient(to bottom, transparent 0 var(--_gap3), var(--_c) var(--_gap3) var(--_gap4))
+            0 calc(9px * var(--_arc)) / var(--_dot) calc(100% - 21px * var(--_arc)) no-repeat,
+
+        // ── 1x corners (always visible) ──
+        // TL: (8,0) (4,1) (1,4) (0,8)
+        linear-gradient(var(--_c), var(--_c)) calc(8px * var(--_arc)) 0 / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(4px * var(--_arc)) calc(1px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(1px * var(--_arc)) calc(4px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) 0 calc(8px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        // TR
+        linear-gradient(var(--_c), var(--_c)) calc(100% - 8px * var(--_arc)) 0 / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(100% - 4px * var(--_arc)) calc(1px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(100% - 1px * var(--_arc)) calc(4px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) 100% calc(8px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        // BL
+        linear-gradient(var(--_c), var(--_c)) 0 calc(100% - 8px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(1px * var(--_arc)) calc(100% - 4px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(4px * var(--_arc)) calc(100% - 1px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(8px * var(--_arc)) 100% / var(--_dot) var(--_dot) no-repeat,
+        // BR
+        linear-gradient(var(--_c), var(--_c)) 100% calc(100% - 8px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(100% - 1px * var(--_arc)) calc(100% - 4px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(100% - 4px * var(--_arc)) calc(100% - 1px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c), var(--_c)) calc(100% - 8px * var(--_arc)) 100% / var(--_dot) var(--_dot) no-repeat,
+
+        // ── 2x corner fill-ins (transparent at 1x, enabled via --_outline-hdpi-color) ──
+        // Sparse arc + one side join:
+        // - keep a clean curved feel at 2x (fewer points, less blockiness)
+        // - bridge to edge cadence with a single midpoint dot at 10px
+        // TL fill-ins
+        linear-gradient(var(--_c2), var(--_c2)) calc(10px * var(--_arc)) 0 / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(7px * var(--_arc)) 0 / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(5.5px * var(--_arc)) calc(0.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(3.5px * var(--_arc)) calc(1.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(2.5px * var(--_arc)) calc(2.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(1.5px * var(--_arc)) calc(3.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(0.5px * var(--_arc)) calc(5.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 0 calc(7px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 0 calc(10px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        // TR fill-ins
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 10px * var(--_arc)) 0 / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 7px * var(--_arc)) 0 / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 5.5px * var(--_arc)) calc(0.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 3.5px * var(--_arc)) calc(1.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 2.5px * var(--_arc)) calc(2.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 1.5px * var(--_arc)) calc(3.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 0.5px * var(--_arc)) calc(5.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 100% calc(7px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 100% calc(10px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        // BL fill-ins
+        linear-gradient(var(--_c2), var(--_c2)) calc(10px * var(--_arc)) 100% / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(7px * var(--_arc)) 100% / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(5.5px * var(--_arc)) calc(100% - 0.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(3.5px * var(--_arc)) calc(100% - 1.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(2.5px * var(--_arc)) calc(100% - 2.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(1.5px * var(--_arc)) calc(100% - 3.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(0.5px * var(--_arc)) calc(100% - 5.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 0 calc(100% - 7px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 0 calc(100% - 10px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        // BR fill-ins
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 10px * var(--_arc)) 100% / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 7px * var(--_arc)) 100% / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 5.5px * var(--_arc)) calc(100% - 0.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 3.5px * var(--_arc)) calc(100% - 1.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 2.5px * var(--_arc)) calc(100% - 2.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 1.5px * var(--_arc)) calc(100% - 3.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) calc(100% - 0.5px * var(--_arc)) calc(100% - 5.5px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 100% calc(100% - 7px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat,
+        linear-gradient(var(--_c2), var(--_c2)) 100% calc(100% - 10px * var(--_arc)) / var(--_dot) var(--_dot) no-repeat;
+}

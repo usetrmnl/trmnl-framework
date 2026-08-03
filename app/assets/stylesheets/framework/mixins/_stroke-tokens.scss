@@ -1,0 +1,59 @@
+// ============================================
+// TRMNL Framework - Stroke Token Registry
+// ============================================
+// The single list of size and color modifiers a stroke family publishes.
+// text-stroke and image-stroke are the same utility for two media, and the docs
+// teach them side by side, so both read their modifier set from here. Enumerated
+// per file, the two families drifted: image-stroke hardcoded black and white and
+// never published the 21 grayscale tokens its text twin has.
+
+@use 'sass:list';
+@use '../config/tokens' as vars;
+
+// Width modifiers. `base` is the explicit spelling of the default width, so it
+// belongs to every tier its siblings reach, including the bit-depth variants.
+$stroke-sizes: ('base', 'small', 'medium', 'large', 'xlarge');
+
+@function _append-unique($items, $item) {
+    @if list.index($items, $item) == null {
+        @return list.append($items, $item);
+    }
+
+    @return $items;
+}
+
+// Every color token a stroke modifier can name, in emission order. The two
+// shade palettes share black and white, so the list is deduped by name.
+@function stroke-token-names() {
+    $names: ();
+
+    @each $name, $_ in vars.$palette-shades {
+        $names: _append-unique($names, $name);
+    }
+
+    @each $name, $_ in vars.$palette-shades-extended {
+        $names: _append-unique($names, $name);
+    }
+
+    @each $token, $_ in vars.$color-palette-framework {
+        $names: _append-unique($names, $token);
+    }
+
+    @return $names;
+}
+
+// Every class in a stroke family: the bare utility, its width modifiers, and one
+// class per color token.
+@function stroke-family-classes($family) {
+    $classes: ('#{$family}',);
+
+    @each $size in $stroke-sizes {
+        $classes: list.append($classes, '#{$family}--#{$size}');
+    }
+
+    @each $token in stroke-token-names() {
+        $classes: list.append($classes, '#{$family}--#{$token}');
+    }
+
+    @return $classes;
+}

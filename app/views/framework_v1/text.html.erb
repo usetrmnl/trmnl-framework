@@ -1,0 +1,144 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :text %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Text system provides utility classes for controlling text alignment and grayscale shading.
+      These classes help maintain consistent text formatting across your interface.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Shading') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply grayscale shades to text using the grayscale text utility classes. These use carefully designed dither patterns that create the illusion of different shades of gray when rendered on 1-bit (black and white only) displays.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+
+                      <div class="grid grid--cols-3 gap-4">
+                        <div class="text-center">
+                          <p class="text--black value value--xxlarge">Aa</p>
+                          <p class="description">black</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-1 value value--xxlarge">Aa</p>
+                          <p class="description">gray-1</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-2 value value--xxlarge">Aa</p>
+                          <p class="description">gray-2</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-3 value value--xxlarge">Aa</p>
+                          <p class="description">gray-3</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-4 value value--xxlarge">Aa</p>
+                          <p class="description">gray-4</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-5 value value--xxlarge">Aa</p>
+                          <p class="description">gray-5</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-6 value value--xxlarge">Aa</p>
+                          <p class="description">gray-6</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--gray-7 value value--xxlarge">Aa</p>
+                          <p class="description">gray-7</p>
+                        </div>
+                        <div class="text-center">
+                          <p class="text--white value value--xxlarge bg-gray">Aa</p>
+                          <p class="description">white</p>
+                        </div>
+                      </div>
+
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Text</span>
+                    <span class="instance">Shading</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<p class="text--black">Black text</p>
+<p class="text--gray-1">Gray-1 text</p>
+<p class="text--gray-2">Gray-2 text</p>
+<p class="text--gray-3">Gray-3 text</p>
+<p class="text--gray-4">Gray-4 text</p>
+<p class="text--gray-5">Gray-5 text</p>
+<p class="text--gray-6">Gray-6 text</p>
+<p class="text--gray-7">Gray-7 text</p>
+<p class="text--white">White text</p>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Alignment') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control text alignment using the alignment utility classes. Options include left, center, right, and justify alignment.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="w--64 p-4 border border-2 border-dashed rounded-lg">
+                      <p class="description truncate-none mb--6 text--left">This text is left-aligned. This is the default alignment for most text content.</p>
+                      <p class="description truncate-none mb--6 text--center">This text is center-aligned. Useful for headings and important content.</p>
+                      <p class="description truncate-none mb--6 text--right">This text is right-aligned. Often used for numerical data or RTL languages.</p>
+                      <p class="description truncate-none text--justify">This text is justified. Creates even text edges on both sides but affects readability. Useful for multi-column text layouts.</p>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Text</span>
+                    <span class="instance">Alignment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<p class="text--left">Left-aligned text</p>
+<p class="text--center">Center-aligned text</p>
+<p class="text--right">Right-aligned text</p>
+<p class="text--justify">Justified text</p>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,440 @@
+// ============================================
+// TRMNL Framework - Factorized Utility Engine
+// ============================================
+// Shared selector and variant gate generators for compact utility files.
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+@use 'selector-helpers' as helpers;
+
+// Sass has no native string split.
+@function _split-colons($str) {
+    $parts: ();
+    $current: '';
+    @for $i from 1 through string.length($str) {
+        $ch: string.slice($str, $i, $i);
+        @if $ch == ':' {
+            $parts: list.append($parts, $current);
+            $current: '';
+        } @else {
+            $current: $current + $ch;
+        }
+    }
+    @return list.append($parts, $current);
+}
+
+// Plain (escaped) class selectors, not `[class~="…"]` attribute selectors:
+// attribute matching is dramatically more expensive for browser style recalc.
+// Escaping mirrors the convention in _responsive.scss.
+@function token-class-selector($full-token) {
+    $parts: _split-colons('#{$full-token}');
+    $sel: '';
+    @for $i from 1 through list.length($parts) {
+        $ec: helpers.escape-class-token(list.nth($parts, $i));
+        @if $i == 1 {
+            $sel: $ec;
+        } @else {
+            $sel: #{$sel}#{'\\:'}#{$ec};
+        }
+    }
+    @return string.unquote('.#{$sel}');
+}
+
+@function token-match-selectors($full-token) {
+    @return (
+        token-class-selector($full-token)
+    );
+}
+
+@mixin bind-token-vars($full-token, $vars-map) {
+    @include bind-token-vars-scoped($full-token, $vars-map);
+}
+
+@mixin bind-token-vars-scoped($full-token, $vars-map, $screen-selectors: ()) {
+    @include emit-class-apply(token-match-selectors($full-token), $screen-selectors) {
+        @each $var-name, $var-value in $vars-map {
+            #{$var-name}: #{$var-value};
+        }
+    }
+}
+
+@mixin emit-class-apply($class-selectors, $screen-selectors: ()) {
+    $selectors: ();
+    @if list.length($screen-selectors) == 0 {
+        @each $class-selector in $class-selectors {
+            $selectors: list.append($selectors, $class-selector, comma);
+        }
+    } @else {
+        $scope: helpers.scope-selector($screen-selectors);
+        @each $class-selector in $class-selectors {
+            $selectors: list.append(
+                $selectors,
+                string.unquote("#{$scope} #{$class-selector}"),
+                comma
+            );
+        }
+    }
+
+    #{$selectors} {
+        @content;
+    }
+}
+
+@function prefixed-class-selectors($class-prefix, $variant-prefix: null, $word-token: null) {
+    $full-prefix: $class-prefix;
+    @if $variant-prefix != null {
+        $full-prefix: '#{$variant-prefix}#{$class-prefix}';
+    }
+
+    $selectors: ();
+    @if $word-token != null {
+        $word: $word-token;
+        @if $variant-prefix != null {
+            $word: '#{$variant-prefix}#{$word-token}';
+        }
+        $selectors: list.append($selectors, token-class-selector($word), comma);
+    }
+    $selectors: list.append($selectors, string.unquote("[class^=\"#{$full-prefix}\"]"), comma);
+    $selectors: list.append($selectors, string.unquote("[class*=\" #{$full-prefix}\"]"), comma);
+    @return $selectors;
+}
+
+@function selectors-for-size($breakpoint, $orientation: null, $bit-depth: null, $dark: false) {
+    $selectors: ();
+    @each $screen-size in helpers.$size-hierarchy {
+        @if helpers.is-size-active($breakpoint, $screen-size) {
+            $selector: '.screen--#{$screen-size}';
+            @if $orientation != null {
+                $selector: $selector + helpers.orientation-suffix($orientation);
+            }
+            @if $bit-depth != null {
+                $selector: $selector + '.screen--#{$bit-depth}bit';
+            }
+            @if $dark {
+                $selector: '.screen--dark-mode' + $selector;
+            }
+            $selectors: list.append($selectors, string.unquote($selector), comma);
+        }
+    }
+    @return $selectors;
+}
+
+// ============================================
+// Gate registry: flattened selector lists
+// ============================================
+// Build a single comma-separated selector list spanning every variant
+// "gate" (base, size, orientation, size+orientation, bit-depth combos,
+// dark-first combos) for a given token class. Used to collapse one
+// rule per (gate × token) pair into one rule per token.
+
+// The screen-scope collapse lives in selector-helpers (helpers.scope-selector),
+// shared with the responsive emitters.
+@function prefix-pair-selector($class-prefix) {
+    @return string.unquote(':is([class^="#{$class-prefix}"],[class*=" #{$class-prefix}"])');
+}
+
+@function _scoped-token-selectors($screen-selectors, $token-class) {
+    $matcher: token-class-selector($token-class);
+    @if list.length($screen-selectors) == 0 {
+        @return ($matcher,);
+    }
+    @return (string.unquote('#{helpers.scope-selector($screen-selectors)} #{$matcher}'),);
+}
+
+@function _scoped-prefix-selectors($screen-selectors, $class-prefix) {
+    $pair: prefix-pair-selector($class-prefix);
+    @if list.length($screen-selectors) == 0 {
+        @return ($pair,);
+    }
+    @return (string.unquote('#{helpers.scope-selector($screen-selectors)} #{$pair}'),);
+}
+
+@function _append-list($acc, $items) {
+    @each $item in $items {
+        $acc: list.append($acc, $item, comma);
+    }
+    @return $acc;
+}
+
+// $emit-mode controls how each gate contributes selectors:
+//   'token'  → matches a single token class via `[class~="<prefix><token>"]`
+//   'prefix' → matches any class starting with the utility prefix via
+//              `[class^="<prefix><class-prefix>"], [class*=" <prefix><class-prefix>"]`
+@function _gate-selectors(
+    $token-or-prefix,
+    $emit-mode,
+    $include-bit-depth,
+    $include-dark
+) {
+    $base-class: $token-or-prefix;
+    $selectors: ();
+
+    // 1. Base (no variant prefix)
+    @if $emit-mode == 'token' {
+        $selectors: _append-list($selectors, _scoped-token-selectors((), $base-class));
+    } @else {
+        $selectors: _append-list($selectors, _scoped-prefix-selectors((), $base-class));
+    }
+
+    // 2. Size variants (mobile-first)
+    @each $bp in helpers.$size-hierarchy {
+        $variant: '#{$bp}:#{$base-class}';
+        @if $emit-mode == 'token' {
+            $selectors: _append-list($selectors, _scoped-token-selectors(selectors-for-size($bp), $variant));
+        } @else {
+            $selectors: _append-list($selectors, _scoped-prefix-selectors(selectors-for-size($bp), $variant));
+        }
+    }
+
+    // 3. Orientation variants
+    $landscape-screens: helpers.orientation-screens('landscape');
+    $portrait-screens: helpers.orientation-screens('portrait');
+
+    $variant: 'landscape:#{$base-class}';
+    @if $emit-mode == 'token' {
+        $selectors: _append-list($selectors, _scoped-token-selectors($landscape-screens, $variant));
+    } @else {
+        $selectors: _append-list($selectors, _scoped-prefix-selectors($landscape-screens, $variant));
+    }
+
+    $variant: 'portrait:#{$base-class}';
+    @if $emit-mode == 'token' {
+        $selectors: _append-list($selectors, _scoped-token-selectors($portrait-screens, $variant));
+    } @else {
+        $selectors: _append-list($selectors, _scoped-prefix-selectors($portrait-screens, $variant));
+    }
+
+    // 4. Size + Orientation
+    @each $bp in helpers.$size-hierarchy {
+        @each $orient in helpers.$orientations {
+            $variant: '#{$bp}:#{$orient}:#{$base-class}';
+            @if $emit-mode == 'token' {
+                $selectors: _append-list($selectors, _scoped-token-selectors(selectors-for-size($bp, $orient), $variant));
+            } @else {
+                $selectors: _append-list($selectors, _scoped-prefix-selectors(selectors-for-size($bp, $orient), $variant));
+            }
+        }
+    }
+
+    @if $include-bit-depth {
+        // 5. Bit-depth alone
+        @each $bd in helpers.$bit-depths {
+            $variant: '#{$bd}bit:#{$base-class}';
+            $screens: (string.unquote('.screen--#{$bd}bit'),);
+            @if $emit-mode == 'token' {
+                $selectors: _append-list($selectors, _scoped-token-selectors($screens, $variant));
+            } @else {
+                $selectors: _append-list($selectors, _scoped-prefix-selectors($screens, $variant));
+            }
+        }
+
+        // 6. Size + Bit-depth
+        @each $bp in helpers.$size-hierarchy {
+            @each $bd in helpers.$bit-depths {
+                $variant: '#{$bp}:#{$bd}bit:#{$base-class}';
+                @if $emit-mode == 'token' {
+                    $selectors: _append-list($selectors, _scoped-token-selectors(selectors-for-size($bp, null, $bd), $variant));
+                } @else {
+                    $selectors: _append-list($selectors, _scoped-prefix-selectors(selectors-for-size($bp, null, $bd), $variant));
+                }
+            }
+        }
+
+        // 7. Orientation + Bit-depth
+        @each $orient in helpers.$orientations {
+            @each $bd in helpers.$bit-depths {
+                $variant: '#{$orient}:#{$bd}bit:#{$base-class}';
+                // Bit-depth class leads so the landscape :not() suffix trails a real anchor.
+                $screens: (string.unquote('.screen--#{$bd}bit#{helpers.orientation-suffix($orient)}'),);
+                @if $emit-mode == 'token' {
+                    $selectors: _append-list($selectors, _scoped-token-selectors($screens, $variant));
+                } @else {
+                    $selectors: _append-list($selectors, _scoped-prefix-selectors($screens, $variant));
+                }
+            }
+        }
+
+        // 8. Triple: Size + Orient + Bit-depth
+        @each $bp in helpers.$size-hierarchy {
+            @each $orient in helpers.$orientations {
+                @each $bd in helpers.$bit-depths {
+                    $variant: '#{$bp}:#{$orient}:#{$bd}bit:#{$base-class}';
+                    @if $emit-mode == 'token' {
+                        $selectors: _append-list($selectors, _scoped-token-selectors(selectors-for-size($bp, $orient, $bd), $variant));
+                    } @else {
+                        $selectors: _append-list($selectors, _scoped-prefix-selectors(selectors-for-size($bp, $orient, $bd), $variant));
+                    }
+                }
+            }
+        }
+    }
+
+    @if $include-dark {
+        $size-options: (null, 'sm', 'md', 'lg');
+        $orientation-options: (null, 'portrait', 'landscape');
+        $bit-depth-options: (null);
+        @if $include-bit-depth {
+            $bit-depth-options: (null, 1, 2, 4);
+        }
+
+        @each $size in $size-options {
+            @each $orient in $orientation-options {
+                @each $bd in $bit-depth-options {
+                    $prefix: 'dark:';
+                    @if $size != null { $prefix: $prefix + '#{$size}:'; }
+                    @if $orient != null { $prefix: $prefix + '#{$orient}:'; }
+                    @if $bd != null { $prefix: $prefix + '#{$bd}bit:'; }
+
+                    $variant: '#{$prefix}#{$base-class}';
+
+                    $screens: ();
+                    @if $size == null {
+                        $screen: '.screen--dark-mode';
+                        @if $bd != null { $screen: $screen + '.screen--#{$bd}bit'; }
+                        @if $orient != null { $screen: $screen + helpers.orientation-suffix($orient); }
+                        $screens: (string.unquote($screen),);
+                    } @else {
+                        $screens: selectors-for-size($size, $orient, $bd, true);
+                    }
+                    $screens: (helpers.dark-scope($screens),);
+
+                    @if $emit-mode == 'token' {
+                        $selectors: _append-list($selectors, _scoped-token-selectors($screens, $variant));
+                    } @else {
+                        $selectors: _append-list($selectors, _scoped-prefix-selectors($screens, $variant));
+                    }
+                }
+            }
+        }
+    }
+
+    @return $selectors;
+}
+
+@function gate-selectors-for-token(
+    $token-class,
+    $include-bit-depth: true,
+    $include-dark: true
+) {
+    @return _gate-selectors($token-class, 'token', $include-bit-depth, $include-dark);
+}
+
+@function gate-selectors-for-utility-prefix(
+    $class-prefix,
+    $include-bit-depth: true,
+    $include-dark: true
+) {
+    @return _gate-selectors($class-prefix, 'prefix', $include-bit-depth, $include-dark);
+}
+
+// Yield each variant gate as (variant-prefix, screen-selectors). Variant
+// prefix is null for the base case and 'sm:' / 'md:portrait:2bit:' /
+// 'dark:lg:portrait:4bit:' / etc. for non-base gates. Screen selectors is
+// a (possibly empty) comma-list of `.screen--*` selectors that scope the
+// gate.
+@mixin each-utility-gate(
+    $include-bit-depth: true,
+    $include-dark: true
+) {
+    @content(null, ());
+
+    @each $bp in helpers.$size-hierarchy {
+        @content('#{$bp}:', selectors-for-size($bp));
+    }
+
+    @content('landscape:', helpers.orientation-screens('landscape'));
+    @content('portrait:', helpers.orientation-screens('portrait'));
+
+    @each $bp in helpers.$size-hierarchy {
+        @each $orient in helpers.$orientations {
+            @content('#{$bp}:#{$orient}:', selectors-for-size($bp, $orient));
+        }
+    }
+
+    @if $include-bit-depth {
+        @each $bd in helpers.$bit-depths {
+            @content('#{$bd}bit:', (string.unquote('.screen--#{$bd}bit'),));
+        }
+
+        @each $bp in helpers.$size-hierarchy {
+            @each $bd in helpers.$bit-depths {
+                @content('#{$bp}:#{$bd}bit:', selectors-for-size($bp, null, $bd));
+            }
+        }
+
+        @each $orient in helpers.$orientations {
+            @each $bd in helpers.$bit-depths {
+                // Bit-depth class leads so the landscape :not() suffix trails a real anchor.
+                @content(
+                    '#{$orient}:#{$bd}bit:',
+                    (string.unquote('.screen--#{$bd}bit#{helpers.orientation-suffix($orient)}'),)
+                );
+            }
+        }
+
+        @each $bp in helpers.$size-hierarchy {
+            @each $orient in helpers.$orientations {
+                @each $bd in helpers.$bit-depths {
+                    @content(
+                        '#{$bp}:#{$orient}:#{$bd}bit:',
+                        selectors-for-size($bp, $orient, $bd)
+                    );
+                }
+            }
+        }
+    }
+
+    @if $include-dark {
+        $size-options: (null, 'sm', 'md', 'lg');
+        $orientation-options: (null, 'portrait', 'landscape');
+        $bit-depth-options: (null);
+        @if $include-bit-depth {
+            $bit-depth-options: (null, 1, 2, 4);
+        }
+
+        @each $size in $size-options {
+            @each $orient in $orientation-options {
+                @each $bd in $bit-depth-options {
+                    $prefix: 'dark:';
+                    @if $size != null { $prefix: $prefix + '#{$size}:'; }
+                    @if $orient != null { $prefix: $prefix + '#{$orient}:'; }
+                    @if $bd != null { $prefix: $prefix + '#{$bd}bit:'; }
+
+                    $screens: ();
+                    @if $size == null {
+                        $screen: '.screen--dark-mode';
+                        @if $bd != null { $screen: $screen + '.screen--#{$bd}bit'; }
+                        @if $orient != null { $screen: $screen + helpers.orientation-suffix($orient); }
+                        $screens: (string.unquote($screen),);
+                    } @else {
+                        $screens: selectors-for-size($size, $orient, $bd, true);
+                    }
+                    $screens: (helpers.dark-scope($screens),);
+
+                    @content($prefix, $screens);
+                }
+            }
+        }
+    }
+}
+
+@mixin each-size-orientation-gate {
+    @content(null, ());
+
+    @each $breakpoint-name in helpers.$size-hierarchy {
+        @content('#{$breakpoint-name}:', selectors-for-size($breakpoint-name));
+    }
+
+    @content('landscape:', helpers.orientation-screens('landscape'));
+    @content('portrait:', helpers.orientation-screens('portrait'));
+
+    @each $breakpoint-name in helpers.$size-hierarchy {
+        @each $orientation in helpers.$orientations {
+            @content(
+                '#{$breakpoint-name}:#{$orientation}:',
+                selectors-for-size($breakpoint-name, $orientation)
+            );
+        }
+    }
+}

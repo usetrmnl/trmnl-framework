@@ -1,0 +1,11 @@
+// ============================================
+// TRMNL Framework - Device Mixins
+// ============================================
+// This file provides device configuration access
+// For targeting specific screen characteristics, use:
+// - Bit-depth mixins: @include for-1bit, @include for-2bit, etc. (in _screen-bit-depth.scss)
+// - Size mixins: @include for-sm, @include for-md, etc. (in _screen-size.scss)
+// - Orientation mixins: @include for-portrait, @include for-landscape (in _screen-orientation.scss)
+
+@use '../config/devices' as *;
+@use '../config/variables_overrides' as device-vars; 

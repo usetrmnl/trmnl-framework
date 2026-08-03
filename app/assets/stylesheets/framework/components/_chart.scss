@@ -1,0 +1,34 @@
+// ============================================
+// TRMNL Framework - Chart Component
+// ============================================
+
+@use '../mixins' as mixins;
+
+@include mixins.trmnl-namespace {
+    // Highcharts specific styles
+    // Framework 3.1 and CSS-only charts still depend on these cascade styles.
+    // TRMNLCharts sets the 3.2 values inline via TRMNLCharts.textStyle, so JS wins.
+    .highcharts-axis-labels text {
+        font-family: var(--font-small-font-family);
+        font-size: var(--font-small-font-size);
+        -webkit-font-smoothing: var(--font-small-font-smoothing);
+    }
+
+    // Chart containers are named `chart-<anything>`, which is what
+    // TRMNLCharts.watch() is handed and what the Chart page teaches. Matching
+    // the prefix covers every id an author picks; a hardcoded #chart-1 through
+    // #chart-20 range covered none of the docs' own demos and was written down
+    // nowhere.
+    [id^="chart-"] {
+        height: auto;
+        overflow: visible;
+    }
+
+    [id^="highcharts-pattern-"] {
+        @include mixins.crisp-edges;
+    }
+
+    .highcharts-container {
+        top: 0;
+    }
+}

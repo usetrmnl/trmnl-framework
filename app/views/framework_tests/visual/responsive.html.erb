@@ -1,0 +1,81 @@
+<%# Visual coverage for the responsive variant axis.
+    The other visual fixtures pin one device and one orientation, and every one
+    of them hardcodes screen--landscape, a class the picker never emits. That
+    combination is exactly what let a broken landscape gate ship unnoticed.
+    These cases vary size and orientation instead, and deliberately carry no
+    explicit orientation class in the landscape rows so the framework default
+    is what gets photographed. %>
+<%# sm is the tightest size class the framework has, so it is where clamping,
+    overflow and gap collapse are most likely to look wrong. Its device is
+    amazon_kindle_2024, the one profile core exports at that size, and it brings
+    a 0.8 device ui-scale with it.
+
+    New cases go on the end. Playwright scrolls each case into view before it
+    clips the screenshot, so inserting a row above one moves it down the document
+    and re-rasterizes its text against a different subpixel offset. Four baselines
+    went red the first time these two rows led the list. %>
+<% responsive_modes = [
+  ['responsive-md-landscape', 'screen--og', 800, 480],
+  ['responsive-md-portrait', 'screen--og screen--portrait', 480, 800],
+  ['responsive-lg-landscape', 'screen--v2 screen--lg', 1040, 780],
+  ['responsive-lg-portrait', 'screen--v2 screen--lg screen--portrait', 780, 1040],
+  ['responsive-sm-landscape', 'screen--amazon_kindle_2024 screen--sm', 800, 480],
+  ['responsive-sm-portrait', 'screen--amazon_kindle_2024 screen--sm screen--portrait', 480, 800]
+] %>
+
+<style>
+  .visual-responsive-screen {
+    position: relative !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+</style>
+
+<main class="visual-page" data-visual-ready="true">
+  <% responsive_modes.each do |visual_id, screen_classes, width, height| %>
+    <div id="<%= visual_id %>" class="trmnl" data-visual
+         style="width: <%= width %>px; height: <%= height %>px;">
+      <div class="screen screen--1bit <%= screen_classes %> visual-responsive-screen"
+           style="width: <%= width %>px !important; height: <%= height %>px !important;">
+        <div class="view view--full">
+          <%# Direction, gap, and column count all swing on orientation, so a
+              dead orientation gate rearranges the whole frame. %>
+          <div class="layout layout--row portrait:layout--col gap--small lg:gap--large">
+            <div class="grid grid--cols-2 portrait:grid--cols-1 lg:grid--cols-3 gap--small">
+              <div class="item rounded bg--gray-70 landscape:bg--gray-40 p--3">
+                <div class="content">
+                  <span class="value value--large lg:value--xlarge value--tnums">42</span>
+                  <span class="label label--small portrait:label--outline">Landscape ink</span>
+                </div>
+              </div>
+              <div class="item rounded bg--gray-55 p--3">
+                <div class="content">
+                  <span class="value value--large portrait:value--xxlarge value--tnums">7</span>
+                  <span class="label label--small">Portrait ink</span>
+                </div>
+              </div>
+              <div class="item rounded bg--gray-35 p--3 md:flex--center">
+                <div class="content">
+                  <span class="value value--large value--tnums">13</span>
+                  <span class="label label--small">Alignment</span>
+                </div>
+              </div>
+            </div>
+
+            <%# Table sizes took orientation variants late; this pins the rows. %>
+            <table class="table table--xsmall lg:table--base lg:portrait:table--xlarge">
+              <thead>
+                <tr><th><span class="title title--small">Job</span></th><th><span class="title title--small">State</span></th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="label">build</span></td><td><span class="label label--filled">ok</span></td></tr>
+                <tr><td><span class="label">deploy</span></td><td><span class="label label--inverted">queued</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</main>

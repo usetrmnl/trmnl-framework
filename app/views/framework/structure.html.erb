@@ -1,0 +1,179 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :structure %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:structure) %>
+
+    <div class="space-y-16">
+      <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">You don't specify Screen, Mashup, or View. The platform provides them automatically, and you specify the Layout and optionally a Title Bar.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">You provide the full hierarchy yourself: Screen, View, Layout, and optionally a Mashup container and a Title Bar.</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip,
+              <!-- plugin's view markup -->
+              <div class="layout">...</div>
+              <div class="title_bar">...</div>
+              <!-- /plugin's view markup -->
+            HTML
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="screen">
+  <div class="view view--full">
+    <div class="layout">...</div>
+    <div class="title_bar">...</div>
+  </div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The Exact Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The framework uses a fixed div hierarchy. Each level has a specific role. The canonical structure is:
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <strong>Screen</strong> → (<strong>Mashup</strong> →) <strong>View</strong> → <strong>Layout</strong> (+ optional <strong>Title Bar</strong>)
+          </p>
+
+          <%= render 'framework/structure_infographic' %>
+        </div>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Component Roles') %>
+          <p class="<%= framework_section_description_classes %>">
+            Each foundation component has a specific role. Use them as intended.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <%= render FrameworkDocCardComponent.new(icon: :screen, title: 'Screen', docs_page: :screen) do %>
+            <p class="<%= framework_subsection_description_classes %>">Root container. Defines viewport dimensions, padding, and CSS variables that cascade throughout.</p>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :view, title: 'View', docs_page: :view) do %>
+            <p class="<%= framework_subsection_description_classes %>">Container for a plugin slot. Size modifiers (<code class="<%= framework_section_code_classes %>">view--full</code>, <code class="<%= framework_section_code_classes %>">view--half_horizontal</code>, <code class="<%= framework_section_code_classes %>">view--half_vertical</code>, <code class="<%= framework_section_code_classes %>">view--quadrant</code>) set how much space the plugin gets. Non-full views must be nested inside a Mashup.</p>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :layout, title: 'Layout', docs_page: :layout) do %>
+            <p class="<%= framework_subsection_description_classes %>">The content container, exactly one per View. Its direct children are typically Columns, Grid, or Flex, arranged with <code class="<%= framework_section_code_classes %>">layout--row</code>, <code class="<%= framework_section_code_classes %>">layout--col</code>, and alignment modifiers. See the Layout page's "What Goes Inside Layout" section for when to use each.</p>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :title_bar, title: 'Title Bar', docs_page: :title_bar) do %>
+            <p class="<%= framework_subsection_description_classes %>">Optional. Sibling to Layout within a View. Displays icon, title, and instance label.</p>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :columns, title: 'Columns', docs_page: :columns) do %>
+            <p class="<%= framework_subsection_description_classes %>">Use <em>inside</em> Layout for column-based content organization.</p>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :mashup, title: 'Mashup', docs_page: :mashup) do %>
+            <p class="<%= framework_subsection_description_classes %>">Wraps multiple Views and arranges them within the Screen (1Lx1R, 1Tx1B, 2x2, etc.).</p>
+          <% end %>
+        </div>
+      </section>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Single View') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For a single plugin occupying the full screen:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                      <span class="label text-stroke">Layout</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Plugin</span>
+                      <span class="instance">Instance</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen">
+  <div class="view view--full">
+    <div class="layout">
+      <!-- Your content here -->
+    </div>
+    <div class="title_bar">...</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Mashup (Multiple Views)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For multiple plugins on one screen, wrap views in a <%= render DocsRef.new(page: :mashup) %>. Each view has exactly one <%= render DocsRef.new(page: :layout) %>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--1Lx1R">
+                    <div class="view view--half_vertical">
+                      <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_vertical">
+                      <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Plugin B</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen">
+  <div class="mashup mashup--1Lx1R">
+    <div class="view view--half_vertical">
+      <div class="layout">...</div>
+    </div>
+    <div class="view view--half_vertical">
+      <div class="layout">...</div>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

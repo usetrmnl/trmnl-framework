@@ -1,0 +1,164 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :title %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:title) %>
+
+    <div class="space-y-16">
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variations') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Title system offers five size variants: small, base (default), large, xlarge, and xxlarge.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col items--start gap">
+                      <span class="title title--small">Small Title</span>
+                      <span class="title">Base Title</span>
+                      <span class="title title--large">Large Title</span>
+                      <span class="title title--xlarge">Extra Large Title</span>
+                      <span class="title title--xxlarge">XXL Title</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Title</span>
+                      <span class="instance">Size Variations</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Small: compact headings for secondary content -->
+<span class="title title--small">Small Title</span>
+
+<!-- Base: default size, most common usage -->
+<span class="title">Base Title</span>
+<span class="title title--base">Base Title</span>
+
+<!-- Large: prominent headers -->
+<span class="title title--large">Large Title</span>
+
+<!-- Extra Large: hero sections -->
+<span class="title title--xlarge">Extra Large Title</span>
+
+<!-- Extra Extra Large: maximum impact -->
+<span class="title title--xxlarge">XXL Title</span>
+
+<!-- Responsive example -->
+<span class="title title--small lg:title--base">Small by default, base on large screens</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section id="responsive-titles" class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Titles') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Title system supports responsive variants using breakpoint prefixes.
+          </p>
+        </div>
+
+        <!-- Breakpoint Prefixes -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Breakpoint Prefixes') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use breakpoint prefixes like <code class="<%= framework_section_code_classes %>">sm:</code>,
+              <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">lg:</code>
+              to apply different sizes at different screen widths.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col items--start gap">
+                      <span class="title title--small lg:title--xlarge">Responsive Title</span>
+                      <span class="label">Small by default, xlarge on lg screens</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Title</span>
+                      <span class="instance">Responsive</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Small by default, xlarge on lg screens -->
+<span class="title title--small lg:title--xlarge">
+  Responsive Title
+</span>
+
+<!-- Caption describing the responsive behavior (optional) -->
+<span class="label">Base by default, xlarge on lg screens</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Orientation and Size+Orientation -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Orientation and Size+Orientation') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Title sizes can adapt to orientation with <code class="<%= framework_section_code_classes %>">portrait:</code> and can be combined
+              with size breakpoints (e.g., <code class="<%= framework_section_code_classes %>">md:portrait:</code>).
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col items--start gap">
+                      <span class="title title--large portrait:title--small">Orientation Variant</span>
+                      <span class="label">Large by default, small in portrait.</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Title</span>
+                      <span class="instance">Orientation</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Large by default, small in portrait -->
+<span class="title title--large portrait:title--small">Orientation Variant</span>
+
+<!-- Caption describing the responsive behavior (optional) -->
+<span class="label">Large by default, small in portrait.</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

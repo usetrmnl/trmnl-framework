@@ -1,0 +1,12 @@
+// ============================================
+// TRMNL Framework - Text Paint Mixins
+// ============================================
+// Keep semantic text rendering consistent for color + pattern modes.
+
+@mixin semantic-text-paint($semantic: 'text-primary', $fallback-color: inherit, $clip-fallback: border-box) {
+    color: var(--framework-semantic-#{$semantic}-text-color, #{$fallback-color});
+    background-color: var(--framework-semantic-#{$semantic}-text-under, transparent);
+    background-image: var(--framework-semantic-#{$semantic}-text-image, none);
+    -webkit-background-clip: var(--framework-semantic-#{$semantic}-text-clip, #{$clip-fallback});
+    background-clip: var(--framework-semantic-#{$semantic}-text-clip, #{$clip-fallback});
+}

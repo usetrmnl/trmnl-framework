@@ -1,0 +1,189 @@
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+
+// ============================================
+// TRMNL Framework - Progress Component
+// ============================================
+// Backgrounds use --bg-* mode variables for automatic
+// bit-depth and dark-mode adaptation.
+//
+// Every size and emphasis modifier takes the variant ladder, so
+// `md:progress-bar--large` and `4bit:progress-dots--small` are real classes.
+// `--base` is the reason they have to be: it restates the default, which does
+// nothing at all unless a gate can switch back to it, and the Progress page
+// teaches exactly that. One modifier per block, since the emitters read a
+// single class off the selector.
+
+@include mixins.trmnl-namespace {
+    .progress {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap-small);
+        width: 100%;
+    }
+
+    .progress-bar {
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--gap-xsmall);
+        }
+
+        .track {
+            position: relative;
+            width: 100%;
+            height: var(--progress-bar-height);
+            background-color: var(--framework-slot-progress-track-bg-color, transparent);
+            background-image: var(--framework-slot-progress-track-bg-image, none);
+            @include mixins.dither-ready;
+            border-style: solid;
+            border-color: var(--framework-semantic-border-strong-border-color, var(--framework-border-strong));
+            border-width: 1px;
+            border-radius: var(--progress-bar-radius);
+            overflow: hidden;
+        }
+
+        .fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--framework-slot-progress-fill-bg-color, transparent);
+            background-image: var(--framework-slot-progress-fill-bg-image, none);
+            @include mixins.dither-ready;
+        }
+
+        &--base {
+            @include responsive.with-all-variants {
+                .track {
+                    height: var(--progress-bar-height);
+                }
+            }
+        }
+
+        &--small {
+            @include responsive.with-all-variants {
+                .track {
+                    height: var(--progress-bar-height-small);
+                }
+            }
+        }
+
+        &--xsmall {
+            @include responsive.with-all-variants {
+                .track {
+                    height: var(--progress-bar-height-xsmall);
+                }
+            }
+        }
+
+        &--large {
+            @include responsive.with-all-variants {
+                .track {
+                    height: var(--progress-bar-height-large);
+                }
+            }
+        }
+
+        &--emphasis-2 {
+            @include responsive.with-all-variants {
+                .fill {
+                    background-color: var(--framework-slot-progress-fill-emphasis-2-bg-color, transparent);
+                    background-image: var(--framework-slot-progress-fill-emphasis-2-bg-image, none);
+                    background-repeat: repeat;
+                    background-size: var(--dither-bg-size, auto);
+                }
+            }
+        }
+
+        &--emphasis-3 {
+            @include responsive.with-all-variants {
+                .fill {
+                    background-color: var(--framework-slot-progress-fill-emphasis-3-bg-color, transparent);
+                    background-image: var(--framework-slot-progress-fill-emphasis-3-bg-image, none);
+                    background-repeat: repeat;
+                    background-size: var(--dither-bg-size, auto);
+                }
+            }
+        }
+    }
+
+    .progress-dots {
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--gap-xsmall);
+        }
+
+        .track {
+            display: flex;
+            gap: var(--gap-small);
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .dot {
+            width: var(--progress-dot-size);
+            height: var(--progress-dot-size);
+            border-radius: 50%;
+            background-color: var(--framework-slot-progress-dot-bg-color, transparent);
+            background-image: var(--framework-slot-progress-dot-bg-image, none);
+            @include mixins.dither-ready;
+            border-style: solid;
+            border-color: var(--framework-semantic-border-strong-border-color, var(--framework-border-strong));
+            border-width: 1px;
+
+            &--filled {
+                background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+                background-image: var(--framework-semantic-fill-strong-bg-image, none);
+                background-size: var(--dither-bg-size, auto);
+            }
+
+            &--current {
+                background-color: var(--framework-slot-progress-dot-current-bg-color, transparent);
+                background-image: var(--framework-slot-progress-dot-current-bg-image, none);
+                background-repeat: repeat;
+                background-size: var(--dither-bg-size, auto);
+            }
+        }
+
+        &--base {
+            @include responsive.with-all-variants {
+                .dot {
+                    width: var(--progress-dot-size);
+                    height: var(--progress-dot-size);
+                }
+            }
+        }
+
+        &--small {
+            @include responsive.with-all-variants {
+                .dot {
+                    width: var(--progress-dot-size-small);
+                    height: var(--progress-dot-size-small);
+                }
+            }
+        }
+
+        &--xsmall {
+            @include responsive.with-all-variants {
+                .dot {
+                    width: var(--progress-dot-size-xsmall);
+                    height: var(--progress-dot-size-xsmall);
+                }
+            }
+        }
+
+        &--large {
+            @include responsive.with-all-variants {
+                .dot {
+                    width: var(--progress-dot-size-large);
+                    height: var(--progress-dot-size-large);
+                }
+            }
+        }
+
+    }
+}

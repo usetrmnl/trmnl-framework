@@ -1,0 +1,223 @@
+#!/usr/bin/env bash
+#
+# Byte-parity check for the committed release artifacts. Rebuilds the framework from the
+# current source with the release task's own steps (framework:release:build, then the
+# procss/projs minifiers) and compares the result against public/css/latest and
+# public/js/latest, their compressed siblings, and the versioned directory latest was cut from.
+#
+# This is not a clean-compile smoke test (that is bin/build). It answers one question:
+# do the committed artifacts match what this source compiles to?
+#
+# It answers that for everything the rebuild produces, including the four tracked files
+# the build rewrites in place, and it leaves the working tree exactly as it found it.
+#
+# main legitimately carries source ahead of the committed bundles between a fix landing
+# and the next re-cut, so CI runs this only when a change touches public/css/** or
+# public/js/** (what cutting a release does) or on demand. See RELEASE.md.
+#
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+BUILDS=server/app/assets/builds
+RUNTIME_JS=app/javascript/plugin-render/plugins.js
+CSS_LATEST=public/css/latest
+JS_LATEST=public/js/latest
+
+if [ ! -d node_modules ]; then
+  echo "error: node_modules is missing (run 'npm ci')" >&2
+  exit 1
+fi
+
+WORK="$(mktemp -d)"
+DRIFT="$WORK/drift.txt"
+: > "$DRIFT"
+
+# framework:release:build regenerates four tracked files in place: the two color partials
+# framework:colors writes, and the two packaged snapshots framework:docs_chrome and
+# framework:legacy_bundle write. This is a check, not a fixer, so their committed bytes
+# are copied aside first, compared against whatever the build produces, and put back on
+# the way out however the run ends. A contributor's tree is the same after this as before.
+GENERATED_TRACKED=(
+  app/assets/stylesheets/framework/config/_tokens_colors_generated.scss
+  app/assets/stylesheets/framework/config/_variables_colors.scss
+  app/assets/static/docs_chrome.css
+  app/assets/static/legacy_bundle.css
+)
+
+COMMITTED="$WORK/committed"
+for path in "${GENERATED_TRACKED[@]}"; do
+  mkdir -p "$COMMITTED/$(dirname "$path")"
+  cp -p "$path" "$COMMITTED/$path"
+done
+
+# -p, so the modification times come back too. Several build and test paths decide
+# whether an artifact is current by comparing timestamps against these sources, and a
+# check that bumped them would make the next processed-bundle spec skip itself.
+restore_generated() {
+  for path in "${GENERATED_TRACKED[@]}"; do
+    cp -p "$COMMITTED/$path" "$path"
+  done
+}
+
+trap 'restore_generated; rm -rf "$WORK"' EXIT
+
+record() { # <message>
+  echo "$1" >> "$DRIFT"
+  echo "  DRIFT $1"
+}
+
+same() { # <path>
+  echo "  ok    $1"
+}
+
+compare() { # <fresh> <committed>
+  if [ ! -f "$2" ]; then
+    record "$2 is missing from the committed release"
+  elif cmp -s "$1" "$2"; then
+    same "$2"
+  else
+    record "$2 does not match a fresh build of this source"
+  fi
+}
+
+# The .gz variants are compared by content, not by bytes: gzip -cn9 output depends on the
+# compressor build, and CI's GNU gzip is not the one that cut the release. A stale or
+# hand-edited archive still fails here, because it stops matching its plaintext sibling.
+compare_gz() { # <committed plaintext>
+  local archive="$1.gz"
+  if [ ! -f "$archive" ]; then
+    record "$archive is missing from the committed release"
+  elif gzip -dc "$archive" | cmp -s - "$1"; then
+    same "$archive"
+  else
+    record "$archive does not decompress to $1"
+  fi
+}
+
+# The .br siblings start with the 3.2.0 re-cut, and every version published before it is a
+# frozen archive that will never gain one, so an absent .br is a fact about the release
+# rather than drift. A published one still has to carry its plaintext sibling's bytes.
+# Decompression runs through the same exactly pinned gem the release compresses with, so
+# this needs no brotli binary on the machine.
+compare_br() { # <committed plaintext>
+  local archive="$1.br"
+  if [ ! -f "$archive" ]; then
+    echo "  none  $archive is not published for this release"
+  elif bundle exec ruby -rbrotli -e 'print Brotli.inflate(File.binread(ARGV[0]))' "$archive" | cmp -s - "$1"; then
+    same "$archive"
+  else
+    record "$archive does not decompress to $1"
+  fi
+}
+
+version="$(sed -n 's/^latest: //p' db/data/framework_versions.yml | head -1)"
+
+echo "Rebuilding the framework from source (framework:release:build)"
+bin/rails framework:release:build
+
+# The four the build just rewrote. Each is a tracked artifact of a source in this
+# checkout, so a committed copy that no longer matches is drift exactly like a released
+# bundle that no longer matches. Compared before anything restores them.
+echo "Comparing the tracked files the release build regenerates"
+for path in "${GENERATED_TRACKED[@]}"; do
+  if cmp -s "$path" "$COMMITTED/$path"; then
+    same "$path"
+  else
+    record "$path does not match what this source regenerates"
+  fi
+done
+restore_generated
+
+echo "Processing with the release pipeline (procss / projs)"
+theme_args=()
+for theme_css in "$BUILDS"/themes/*-theme.css; do
+  [ -f "$theme_css" ] || continue
+  theme_args+=(--preserve-variables-from "$theme_css")
+done
+# The released version's published themes ride along, exactly as
+# Framework::ReleaseTask#process_stylesheet passes them: a pinned or cached theme file
+# from that version keeps resolving against the bundle even where the current theme
+# sources no longer name a variable. Without them this rebuild renames names the cut
+# preserved and reports drift on every theme token change. The shell glob sorts, which
+# matches the release task's Pathname.glob(...).sort.
+for theme_css in "public/css/$version/themes/"*.css; do
+  [ -f "$theme_css" ] || continue
+  theme_args+=(--preserve-variables-from "$theme_css")
+done
+npm run --silent process_stylesheets -- "$BUILDS/plugins.css" --output "$WORK/plugins.min.css" \
+  ${theme_args[@]+"${theme_args[@]}"}
+# Both published runtimes carry the release's build marker, so the fresh copies are
+# stamped with the released version too; comparing raw source would report drift on that
+# one line forever. The readable runtime is the stamped source, unminified.
+npm run --silent process_scripts -- "$RUNTIME_JS" --stamp "$version" --no-minify --output "$WORK/plugins.js"
+npm run --silent process_scripts -- "$RUNTIME_JS" --stamp "$version" --output "$WORK/plugins.min.js"
+
+# A real pair per language: plugins.* is the readable build (the compiled stylesheet as
+# written, the stamped source for JS) and plugins.min.* is the processed bundle
+# production serves.
+echo "Comparing against the committed bundles"
+compare "$BUILDS/plugins.css" "$CSS_LATEST/plugins.css"
+compare_gz "$CSS_LATEST/plugins.css"
+compare_br "$CSS_LATEST/plugins.css"
+compare "$WORK/plugins.min.css" "$CSS_LATEST/plugins.min.css"
+compare_gz "$CSS_LATEST/plugins.min.css"
+compare_br "$CSS_LATEST/plugins.min.css"
+compare "$WORK/plugins.js" "$JS_LATEST/plugins.js"
+compare_gz "$JS_LATEST/plugins.js"
+compare_br "$JS_LATEST/plugins.js"
+compare "$WORK/plugins.min.js" "$JS_LATEST/plugins.min.js"
+compare_gz "$JS_LATEST/plugins.min.js"
+compare_br "$JS_LATEST/plugins.min.js"
+
+for theme_css in "$BUILDS"/themes/*-theme.css; do
+  [ -f "$theme_css" ] || continue
+  committed="$CSS_LATEST/themes/$(basename "$theme_css")"
+  compare "$theme_css" "$committed"
+  compare_gz "$committed"
+  compare_br "$committed"
+done
+
+# A theme dropped from the source tree must also leave the published bundle.
+for committed in "$CSS_LATEST"/themes/*-theme.css; do
+  [ -f "$committed" ] || continue
+  [ -f "$BUILDS/themes/$(basename "$committed")" ] || record "$committed has no theme source in this checkout"
+done
+
+# The responsive harness ships unprocessed beside the themes, with the same .gz and .br
+# siblings. It is published, so it is compared: without this the only thing that ever
+# looked at it was the latest-mirror tree diff, which cannot tell a stale copy from a
+# current one because both directories carry the same stale bytes.
+compare "$BUILDS/framework/responsive_test.css" "$CSS_LATEST/framework/responsive_test.css"
+compare_gz "$CSS_LATEST/framework/responsive_test.css"
+compare_br "$CSS_LATEST/framework/responsive_test.css"
+
+# latest/ is a copy of the released version's directory, so the two must be identical.
+echo "Comparing latest against the released version ($version)"
+for pair in "public/css/$version:$CSS_LATEST" "public/js/$version:$JS_LATEST"; do
+  versioned="${pair%%:*}"
+  latest="${pair##*:}"
+  if [ ! -d "$versioned" ]; then
+    record "$versioned is missing, so $latest cannot be verified"
+  elif diff -r "$versioned" "$latest" > "$WORK/mirror.txt" 2>&1; then
+    same "$latest mirrors $versioned"
+  else
+    cat "$WORK/mirror.txt"
+    record "$latest does not mirror $versioned"
+  fi
+done
+
+if [ ! -s "$DRIFT" ]; then
+  echo "Bundle parity OK: the committed bundles match a fresh build of this source."
+  exit 0
+fi
+
+echo
+echo "Bundle parity FAILED. Drifted files:"
+sed 's/^/  - /' "$DRIFT"
+echo "Re-cut the release (see RELEASE.md) so the committed bundles match the source."
+if [ -n "${GITHUB_ACTIONS:-}" ]; then
+  echo "::error::Committed release bundles do not match a fresh build of this source ($(wc -l < "$DRIFT" | tr -d ' ') drifted file(s))."
+fi
+exit 1

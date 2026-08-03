@@ -1,0 +1,157 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :text_stroke %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Text Stroke system allows you to add outlined text with customizable stroke width and color. This is useful for creating text that stands out against shaded backgrounds.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Text Stroke system includes preset size modifiers that allow you to quickly apply different stroke widths to your text. The default stroke is 3.5px white, with additional options for small (2px), medium (4.5px), large (6px), and extra large (7.5px).
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="flex flex--col gap--4 bg--gray-6 p--6 rounded-lg">
+                      <div class="flex flex--row flex--center stretch-x">
+                        <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                          <span class="value value--large">Aa</span>
+                          <span class="label">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                          <span class="value value--large text-stroke text-stroke--small">Aa</span>
+                          <span class="label text-stroke text-stroke--small">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                          <span class="value value--large text-stroke">Aa</span>
+                          <span class="label text-stroke">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                          <span class="value value--large text-stroke text-stroke--medium">Aa</span>
+                          <span class="label text-stroke text-stroke--medium">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                          <span class="value value--large text-stroke text-stroke--large">Aa</span>
+                          <span class="label text-stroke text-stroke--large">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                          <span class="value value--large text-stroke text-stroke--xlarge">Aa</span>
+                          <span class="label text-stroke text-stroke--xlarge">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Text Stroke</span>
+                    <span class="instance">Preset Sizes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large">Aa</span>
+<span class="value value--large text-stroke text-stroke--small">Aa</span>
+<span class="value value--large text-stroke">Aa</span>
+<span class="value value--large text-stroke text-stroke--medium">Aa</span>
+<span class="value value--large text-stroke text-stroke--large">Aa</span>
+<span class="value value--large text-stroke text-stroke--xlarge">Aa</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Stroke Colors') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the black modifier for text on dark backgrounds.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="richtext">
+                      <div class="content gap--large bg--gray-2 p--6 rounded-lg">
+                        <div class="flex flex--col gap--4">
+                          <div class="flex flex--row flex--center stretch-x">
+                            <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                              <span class="value value--large text--white">Aa</span>
+                              <span class="label text--white">No Stroke</span>
+                            </div>
+                            <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                              <span class="value value--large text--white text-stroke text-stroke--small text-stroke--black">Aa</span>
+                              <span class="label text--white text-stroke text-stroke--small text-stroke--black">Small</span>
+                            </div>
+                            <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                              <span class="value value--large text--white text-stroke text-stroke--black">Aa</span>
+                              <span class="label text--white text-stroke text-stroke--black">Default</span>
+                            </div>
+                            <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                              <span class="value value--large text--white text-stroke text-stroke--medium text-stroke--black">Aa</span>
+                              <span class="label text--white text-stroke text-stroke--medium text-stroke--black">Medium</span>
+                            </div>
+                            <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                              <span class="value value--large text--white text-stroke text-stroke--large text-stroke--black">Aa</span>
+                              <span class="label text--white text-stroke text-stroke--large text-stroke--black">Large</span>
+                            </div>
+                            <div class="flex flex--col flex--center h-[102px] w-[102px] stretch">
+                              <span class="value value--large text--white text-stroke text-stroke--xlarge text-stroke--black">Aa</span>
+                              <span class="label text--white text-stroke text-stroke--xlarge text-stroke--black">Extra Large</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Text Stroke</span>
+                    <span class="instance">Color Variants</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large text--white">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--small text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--medium text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--large text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--xlarge text-stroke--black">Aa</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

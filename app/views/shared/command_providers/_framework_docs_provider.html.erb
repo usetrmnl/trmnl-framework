@@ -1,0 +1,22 @@
+<%# Framework Documentation items (extracted from shared/_command_palette) %>
+<% titles = page_titles rescue {} %>
+<% section = current_section rescue :docs %>
+<% section_name = section.to_s.humanize %>
+<% framework_nav_groups.each do |group_key, page_keys| %>
+  <% group_name = "#{section_name} - #{group_key.to_s.humanize}" %>
+  <%= command_palette_section_header(group_name) %>
+  <% page_keys.each do |page_key| %>
+    <% title = (titles[page_key] || page_key.to_s.titleize) %>
+    <% desc = (page_description(page_key) rescue nil) %>
+    <% href = framework_page_path(page_key) rescue '#' %>
+    <%= command_item(
+          icon_html: (page_icon(page_key, 'w-6 h-6') rescue nil),
+          title: title,
+          description: (desc.presence || ''),
+          href: href,
+          group: group_name,
+          key: page_key,
+          beta: framework_beta?(page_key)
+        ) %>
+  <% end %>
+<% end %>

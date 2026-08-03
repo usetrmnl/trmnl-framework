@@ -1,0 +1,170 @@
+// ============================================
+// TRMNL Framework - Label Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../config/tokens' as vars;
+@use 'sass:map';
+@use 'sass:list';
+@use '../mixins/selector-helpers' as helpers;
+
+@mixin semantic-label-background($token, $gray-fallback: null) {
+    background-color: var(--theme-bg-#{$token}-color, var(--bg-#{$token}-color, var(--#{$token})));
+    background-image: var(--theme-bg-#{$token}-image, var(--bg-#{$token}-image, none));
+    @include mixins.dither-ready;
+}
+
+@include mixins.trmnl-namespace {
+    .label {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        font-family: var(--label-font-family);
+        -webkit-font-smoothing: var(--label-font-smoothing);
+        font-size: var(--label-font-size);
+        font-weight: var(--label-font-weight);
+        line-height: var(--label-line-height);
+        @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+        padding-left: 0;
+        padding-right: 0;
+        position: relative;
+        border-radius: 0;
+
+        &--base {
+            @include responsive.with-all-variants {
+                font-family: var(--label-font-family);
+                -webkit-font-smoothing: var(--label-font-smoothing);
+                font-size: var(--label-font-size);
+                font-weight: var(--label-font-weight);
+                line-height: var(--label-line-height);
+            }
+        }
+
+        &--small {
+            @include responsive.with-all-variants {
+                padding-top: vars.ui-scaled(1px);
+                padding-bottom: vars.ui-scaled(1px);
+                font-family: var(--label-small-font-family);
+                font-size: var(--label-small-font-size);
+                line-height: var(--label-small-line-height);
+                -webkit-font-smoothing: var(--label-small-font-smoothing);
+                font-weight: var(--label-small-font-weight);
+            }
+        }
+
+        &--large {
+            @include responsive.with-all-variants {
+                font-family: var(--label-large-font-family);
+                font-size: var(--label-large-font-size);
+                line-height: var(--label-large-line-height);
+                -webkit-font-smoothing: var(--label-large-font-smoothing);
+                font-weight: var(--label-large-font-weight);
+            }
+        }
+
+        &--xlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--label-xlarge-font-family);
+                font-size: var(--label-xlarge-font-size);
+                line-height: var(--label-xlarge-line-height);
+                -webkit-font-smoothing: var(--label-xlarge-font-smoothing);
+                font-weight: var(--label-xlarge-font-weight);
+            }
+        }
+
+        &--xxlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--label-xxlarge-font-family);
+                font-size: var(--label-xxlarge-font-size);
+                line-height: var(--label-xxlarge-line-height);
+                -webkit-font-smoothing: var(--label-xxlarge-font-smoothing);
+                font-weight: var(--label-xxlarge-font-weight);
+            }
+        }
+
+        &--outline {
+            @include responsive.with-all-variants {
+                border: 1px solid var(--framework-semantic-border-strong-border-color, var(--framework-border-strong));
+                border-radius: vars.ui-scaled(4px);
+                padding-left: vars.ui-scaled(2px);
+                padding-right: vars.ui-scaled(2px);
+                padding-top: 0;
+            }
+        }
+
+        &--underline {
+            @include responsive.with-all-variants {
+                &::after {
+                    content: " ";
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    @include mixins.border-level-vars(4, h, $slot: 'label-underline');
+                    background-repeat: repeat;
+                    height: 1px;
+                }
+            }
+        }
+
+        // One modifier per block: the variant emitters read the class name off the
+        // current selector and keep only the first, so a grouped selector would
+        // leave every name after the comma with no variants at all.
+        @each $gray-modifier in ('gray', 'gray-out') {
+            &--#{$gray-modifier} {
+                @include responsive.with-all-variants {
+                    color: var(--framework-slot-label-gray-text-color, transparent);
+                    background-color: var(--framework-slot-label-gray-text-under, transparent);
+                    background-image: var(--framework-slot-label-gray-text-image, none);
+                    background-repeat: repeat;
+                    background-size: var(--dither-bg-size, auto);
+                    -webkit-background-clip: var(--framework-slot-label-gray-text-clip, border-box);
+                    background-clip: var(--framework-slot-label-gray-text-clip, border-box);
+                    @include mixins.crisp-edges;
+                }
+            }
+        }
+
+        @each $filled-modifier in ('filled', 'inverted') {
+            &--#{$filled-modifier} {
+                @include responsive.with-all-variants {
+                    @include semantic-label-background('black');
+                    color: var(--framework-semantic-text-inverse-text-solid, var(--framework-semantic-text-inverse-text-color, var(--framework-text-inverse)));
+                    border-radius: vars.ui-scaled(4px);
+                    padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
+                }
+            }
+        }
+
+        @each $name, $token in map.remove(vars.$semantic-colors, 'warning', 'success') {
+            &--#{$name} {
+                @include responsive.with-all-variants {
+                    @include semantic-label-background($token);
+                    color: var(--framework-semantic-text-inverse-text-solid, var(--framework-semantic-text-inverse-text-color, var(--framework-text-inverse)));
+                    border-radius: vars.ui-scaled(4px);
+                    padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
+                }
+            }
+        }
+
+        &--success {
+            @include responsive.with-all-variants {
+                $success-token: map.get(vars.$semantic-colors, 'success');
+                @include semantic-label-background($success-token);
+                color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+                border-radius: vars.ui-scaled(4px);
+                padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
+            }
+        }
+
+        &--warning {
+            @include responsive.with-all-variants {
+                @include semantic-label-background('yellow');
+                color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+                border-radius: vars.ui-scaled(4px);
+                padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
+            }
+        }
+    }
+}

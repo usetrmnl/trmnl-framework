@@ -1,0 +1,14 @@
+<%# Room booking: a calendar with a clock badge. Geometric Art-Deco line-art set. %>
+<svg class="<%= local_assigns[:classes] || 'w-[20px] h-[20px] flex-shrink-0' %>" viewBox="0 0 32 32" fill="none"
+     stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <%# calendar frame, opened at the bottom-right so the clock badge sits clear of it %>
+  <path d="M26 17 V8.5 A2.5 2.5 0 0 0 23.5 6 H6.5 A2.5 2.5 0 0 0 4 8.5 V25.5 A2.5 2.5 0 0 0 6.5 28 H15" />
+  <%# binding tabs %>
+  <path d="M10 3.5 V7.5" />
+  <path d="M22 3.5 V7.5" />
+  <%# header rule %>
+  <path d="M4 11.5 H26" />
+  <%# clock badge, bottom-right %>
+  <circle cx="22.5" cy="22.5" r="5.5" />
+  <path d="M22.5 19.5 V22.5 H25" />
+</svg>

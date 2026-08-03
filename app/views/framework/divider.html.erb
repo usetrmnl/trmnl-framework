@@ -1,0 +1,221 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :divider %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:divider) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use <code class="<%= framework_section_code_classes %>">divider</code> or <code class="<%= framework_section_code_classes %>">divider--h</code> for horizontal dividers,
+            and <code class="<%= framework_section_code_classes %>">divider--v</code> for vertical dividers.
+            Divider uses the same rendering pipeline as border utilities and defaults to border level 6.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The background variants (<code class="<%= framework_section_code_classes %>">divider--on-white</code>,
+            <code class="<%= framework_section_code_classes %>">divider--on-light</code>,
+            <code class="<%= framework_section_code_classes %>">divider--on-dark</code>,
+            <code class="<%= framework_section_code_classes %>">divider--on-black</code>) are deprecated and will be
+            removed in Framework 4.0. Pick an explicit border level or token instead.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Border Shorthand') %>
+            <p class="<%= framework_section_description_classes %>">
+              Divider is a convenience alias for the common separator pattern. Use it when you want a
+              one-pixel horizontal or vertical separator without writing a full border utility class.
+            </p>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="grid grid--cols-2 gap--large w--full h--full">
+                          <div class="flex flex--col gap--medium p--4 rounded bg--gray-70">
+                            <span class="label">Horizontal Divider</span>
+                            <div class="divider"></div>
+                            <span class="description">Equivalent intent: border--h-6</span>
+                          </div>
+
+                          <div class="flex flex--row gap--medium p--4 rounded bg--gray-70 h--full">
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label">Left</span>
+                            </div>
+                            <div class="divider--v"></div>
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label">Right</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Divider Border Shorthand</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Horizontal shorthand (same rendering intent as border--h-6) -->
+<div class="divider"></div>
+
+<!-- Explicit horizontal class -->
+<div class="divider--h"></div>
+
+<!-- Vertical shorthand -->
+<div class="divider--v"></div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Vertical Dividers') %>
+            <p class="<%= framework_section_description_classes %>">
+              Vertical dividers use the same border-level pipeline as horizontal dividers.
+            </p>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--col gap--medium w--full h--full">
+                          <!-- White background with vertical divider -->
+                          <div class="flex flex--row gap--medium p--4 rounded bg--white h--full">
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label">Left Side</span>
+                              <span class="description">White background</span>
+                            </div>
+                            <div class="divider--v"></div>
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label">Right Side</span>
+                              <span class="description">Auto-detected</span>
+                            </div>
+                          </div>
+
+                          <!-- Black background with vertical divider -->
+                          <div class="flex flex--row gap--medium p--4 rounded bg--black h--full">
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label text--white">Left Side</span>
+                              <span class="description text--white">Black background</span>
+                            </div>
+                            <div class="divider--v"></div>
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label text--white">Right Side</span>
+                              <span class="description text--white">Auto-detected</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Vertical Dividers</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Vertical divider -->
+<div class="divider--v"></div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Common Usage Patterns') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--space-between">
+                        <div class="grid">
+                          <div class="row">
+                            <div class="item col--span-4">
+                              <div class="content">
+                                <span class="value">$1,234</span>
+                                <span class="label">Revenue</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="grid">
+                          <div class="row">
+                            <div class="item col--span-2">
+                              <div class="content">
+                                <span class="value value--small">42</span>
+                                <span class="label">Orders</span>
+                              </div>
+                            </div>
+                            <div class="item col--span-2">
+                              <div class="content">
+                                <span class="value value--small">$29.38</span>
+                                <span class="label">AOV</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Section Separation</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Replacing common border--h-x w--full pattern -->
+<!-- Old way: -->
+<div class="border--h-6 w--full"></div>
+
+<!-- New way: -->
+<div class="divider"></div>
+'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Dividers in JavaScript') %>
+          <p class="<%= framework_section_description_classes %>">
+            The divider rail is readable from JS via
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider({ dir })</code>, which resolves the
+            level-6 rail straight from the live cascade (theme, bit depth and dark mode included), and
+            <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints the returned
+            <code class="<%= framework_section_code_classes %>">BorderFill</code> onto a node. Unlike the
+            <code class="<%= framework_section_code_classes %>">.border--*</code> utilities, the divider paints on the
+            element itself, so it is probed there rather than on a pseudo. See
+            <%= render DocsRef.new(page: :paint_borders) %>.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

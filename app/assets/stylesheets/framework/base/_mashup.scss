@@ -1,0 +1,229 @@
+@use '../mixins' as mixins;
+@use '../config/tokens' as vars;
+
+// ============================================
+// TRMNL Framework - Mashup Component
+// ============================================
+
+@include mixins.trmnl-namespace {
+    .mashup {
+        width: calc(var(--screen-w) - var(--gap) * 2);
+        height: calc(var(--screen-h) - var(--gap) * 2);
+        box-sizing: border-box;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+
+        gap: var(--gap);
+
+        @include mixins.crisp-edges;
+
+        // The fixed layouts below place children on the 2x2 track grid and
+        // nothing else. Their bottom-row children used to carry a 1px
+        // translateY, inherited from the pre-1.0 bundles: the two 1fr rows and
+        // the gap already fill the box exactly, so the nudge pushed that row's
+        // last pixel row, dotted frame included, outside the mashup and into
+        // .screen's overflow: hidden. mashup--3x3 never had it, so two visually
+        // identical tilings sat 1px apart.
+
+        // Single
+        &--1x1 {
+            > div {
+                grid-column: 1 / 3;
+                grid-row: 1 / 3;
+            }
+        }
+
+        // 1 Left, 1 Right
+        &--1Lx1R {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 2;
+                grid-row: 1 / 3;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 2 / 3;
+                grid-row: 1 / 3;
+            }
+        }
+
+        // 1 Top, 1 Bottom
+        &--1Tx1B {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 3;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 1 / 3;
+                grid-row: 2 / 3;
+            }
+        }
+
+        // 1 Left, 2 Right
+        &--1Lx2R {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 2;
+                grid-row: 1 / 3;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(3) {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+        }
+
+        // 2 Left, 1 Right
+        &--2Lx1R {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 1 / 2;
+                grid-row: 2 / 3;
+            }
+
+            > div:nth-of-type(3) {
+                grid-column: 2 / 3;
+                grid-row: 1 / 3;
+            }
+        }
+
+        // 2 Top, 1 Bottom
+        &--2Tx1B {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(3) {
+                grid-column: 1 / 3;
+                grid-row: 2 / 3;
+            }
+        }
+
+        // 1 Top, 2 Bottom
+        &--1Tx2B {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 3;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 1 / 2;
+                grid-row: 2 / 3;
+            }
+
+            > div:nth-of-type(3) {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+        }
+
+        // 2 Top, 2 Bottom
+        &--2x2 {
+            > div:nth-of-type(1) {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(2) {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+
+            > div:nth-of-type(3) {
+                grid-column: 1 / 2;
+                grid-row: 2 / 3;
+            }
+
+            > div:nth-of-type(4) {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+        }
+
+        // Fluid Mashups. Cells carve up a 3x3 track grid with
+        // mashup-cell placement modifiers. The .mashup-cell wrapper is the
+        // window: it owns the surface fill and the dotted / solid frame (see
+        // _screen.scss and _screen-device.scss), so the inner view's size class
+        // (quadrant / half / full) never changes the frame.
+        &--3x3 {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+
+            @for $track from 1 through 3 {
+                > .mashup-cell--col-#{$track} {
+                    grid-column-start: $track;
+                }
+
+                > .mashup-cell--col-span-#{$track} {
+                    grid-column-end: span $track;
+                }
+
+                > .mashup-cell--row-#{$track} {
+                    grid-row-start: $track;
+                }
+
+                > .mashup-cell--row-span-#{$track} {
+                    grid-row-end: span $track;
+                }
+            }
+
+            > .mashup-cell {
+                min-width: 0;
+                min-height: 0;
+                overflow: hidden;
+                display: flex;
+                border-radius: vars.ui-scaled(7px);
+                background-color: var(--framework-semantic-surface-bg-color, var(--framework-surface-bg));
+                background-image: var(--framework-semantic-surface-bg-image, none);
+                background-repeat: repeat;
+                background-size: var(--dither-bg-size, auto);
+
+                > .view {
+                    width: 100% !important;
+                    height: 100% !important;
+                    // The cell owns the surface fill; the inner view is a plain
+                    // content holder so cells never double the fill.
+                    background-color: transparent;
+                    background-image: none;
+                    border-radius: 0;
+                }
+
+                // Fill the cell (any size) instead of the fixed per-size-class
+                // heights that standalone views use. margin-bottom is reset
+                // because view--full adds one below its layout when a title bar
+                // follows, which would push the cell content past the frame.
+                > .view > .layout {
+                    height: 100%;
+                    padding: var(--gap);
+                    margin-bottom: 0;
+
+                    &:has(+ .title_bar) {
+                        height: calc(100% - var(--title-bar-small-height));
+                    }
+
+                    &.gap--auto,
+                    &.gap--space-between {
+                        padding-top: 0;
+                        padding-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+} 

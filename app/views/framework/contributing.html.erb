@@ -1,0 +1,151 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :contributing %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:contributing) %>
+
+    <div class="space-y-16">
+
+      <!-- Run it locally -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Run It Locally') %>
+          <p class="<%= framework_section_description_classes %>">
+            You need Ruby (see <code class="<%= framework_section_code_classes %>">.ruby-version</code>) and Node (see the <code class="<%= framework_section_code_classes %>">engines</code> field in <code class="<%= framework_section_code_classes %>">package.json</code>). Then run two commands.
+          </p>
+        </div>
+
+        <%= render CodeExampleComponent.new(
+          language: 'bash',
+          demo_code: 'bin/setup   # gems, npm, token generation, and every CSS build
+bin/dev     # server on :3001 with live Sass and Tailwind rebuilds'
+        ) %>
+
+        <p class="<%= framework_section_description_classes %>">
+          Open <code class="<%= framework_section_code_classes %>">http://localhost:3001/framework</code> to view the docs. <code class="<%= framework_section_code_classes %>">server/app/assets/builds/</code> is gitignored, so re-run <code class="<%= framework_section_code_classes %>">bin/setup</code> after a pull if the CSS looks stale.
+        </p>
+      </section>
+
+      <!-- Where things live -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Where Things Live') %>
+          <p class="<%= framework_section_description_classes %>">
+            The framework and its docs share one Rails app. These are the paths you will touch most.
+          </p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><code class="<%= framework_section_code_classes %>">app/assets/stylesheets/framework/</code>: the Sass design system (base, components, utilities, themes, mixins).</li>
+          <li><code class="<%= framework_section_code_classes %>">app/javascript/</code>: the JavaScript runtime (terminalize, TRMNLPaint, TRMNLCharts) and the docs harness.</li>
+          <li><code class="<%= framework_section_code_classes %>">app/views/framework/*.html.erb</code>: one docs page per framework feature.</li>
+          <li><code class="<%= framework_section_code_classes %>">app/helpers/framework_helper.rb</code>: page intro paragraphs and docs helpers.</li>
+          <li><code class="<%= framework_section_code_classes %>">db/data/</code>: the token and release data (colors, fonts, devices, versions).</li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          The full directory map is in <code class="<%= framework_section_code_classes %>">README.md</code>. For what this repository is and the rule that shapes it, see <%= render DocsRef.new(page: :open_source) %>.
+        </p>
+      </section>
+
+      <!-- Test suites -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'The Test Suites') %>
+          <p class="<%= framework_section_description_classes %>">
+            Run the layer that matches your change, or run all of them before opening a pull request.
+          </p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><code class="<%= framework_section_code_classes %>">npm run test:stylesheets</code>: public classes, variables, theme contracts, and the CSS paint data.</li>
+          <li><code class="<%= framework_section_code_classes %>">npm run test:scripts</code>: runtime syntax, the public API names, and the CSS to JavaScript paint boundary.</li>
+          <li><code class="<%= framework_section_code_classes %>">bundle exec rspec</code>: the Rails docs routes, versioned bundle selection, and generated endpoints.</li>
+          <li><code class="<%= framework_section_code_classes %>">npm run test:runtime</code>: terminalize, the layout engines, and the paint API in Chromium.</li>
+          <li><code class="<%= framework_section_code_classes %>">npm run test:visual</code>: rendered CSS against platform-specific PNG baselines.</li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          The last two use Playwright. Install its browser once per machine.
+        </p>
+
+        <%= render CodeExampleComponent.new(
+          language: 'bash',
+          demo_code: 'npx playwright install chromium'
+        ) %>
+
+        <div class="<%= message_sage_classes %>">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/info' %>
+            </div>
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="leading-none text-sm font-medium">
+                The runtime and visual suites run entirely on your machine. Both have CI jobs that start once the repository is public, and the visual one reports without blocking until Linux baselines are committed, so run them locally after a rendering change.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Writing docs -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Writing Documentation') %>
+          <p class="<%= framework_section_description_classes %>">
+            The docs are the framework's test bench, so most changes touch a docs page. The copy follows a house style.
+          </p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li>Lead with what the reader can do or what the thing is.</li>
+          <li>Keep paragraphs to one to three short sentences, one idea each.</li>
+          <li>Never use em-dashes. Rewrite with a period, comma, colon, or parentheses.</li>
+          <li>Inside a <code class="<%= framework_section_code_classes %>">.screen</code> demo, use framework classes only (<code class="<%= framework_section_code_classes %>">title</code>, <code class="<%= framework_section_code_classes %>">description</code>, <code class="<%= framework_section_code_classes %>">label</code>, <code class="<%= framework_section_code_classes %>">value</code>).</li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          The full guide is the write-docs skill under <code class="<%= framework_section_code_classes %>">.claude/skills/write-docs/</code>.
+        </p>
+      </section>
+
+      <!-- Good PR -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'What Makes a Good PR') %>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li>Keep it small and focused. One concern per pull request.</li>
+          <li>Change a utility? Update its docs page and its live example in the same change. A utility without a rendered example is incomplete.</li>
+          <li>Run the test suites and confirm <code class="<%= framework_section_code_classes %>">bin/build</code> succeeds before you push.</li>
+          <li>No em-dashes in any copy you touch.</li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          Releases are maintainer-only. Land your change, and a maintainer cuts the release. See <code class="<%= framework_section_code_classes %>">CONTRIBUTING.md</code> for the rest.
+        </p>
+      </section>
+
+      <!-- Issues and security -->
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Report Issues and Security') %>
+          <p class="<%= framework_section_description_classes %>">
+            Found a bug or have an idea? Open a GitHub issue with a minimal reproduction.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Security issues are different. Report them privately through GitHub's private vulnerability reporting, not a public issue. See <code class="<%= framework_section_code_classes %>">SECURITY.md</code>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            All participation follows the <code class="<%= framework_section_code_classes %>">CODE_OF_CONDUCT.md</code>.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

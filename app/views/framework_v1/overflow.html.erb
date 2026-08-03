@@ -1,0 +1,216 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :overflow %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Overflow Management system provides a way to handle layouts that exceed a specified height limit.
+      It automatically hides excess items and provides a visual indicator for hidden content.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            To enable overflow management on a list, add the <code class="<%= framework_section_code_classes %>">data-list-limit="true"</code>
+            attribute. Specify a custom maximum height of the container using <code class="<%= framework_section_code_classes %>">data-list-max-height</code> expressed in pixel values.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col">
+                    <div class="columns">
+                      <div class="column" data-list-limit="true" data-list-max-height="340" data-list-hidden-count="true">
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">1</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Team Meeting</span>
+                            <span class="description">Weekly team sync-up</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                              <span class="label label--small label--underline">Confirmed</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">2</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Client Presentation</span>
+                            <span class="description">Quarterly review with XYZ Corp</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                              <span class="label label--small label--underline">Tentative</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">3</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Project Deadline</span>
+                            <span class="description">Submit final deliverables for Project Alpha</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">11:59 PM</span>
+                              <span class="label label--small label--underline">Important</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">4</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Code Review</span>
+                            <span class="description">Review pull requests for Project Beta</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">3:30 PM - 4:30 PM</span>
+                              <span class="label label--small label--underline">High Priority</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">3</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Project Deadline</span>
+                            <span class="description">Submit final deliverables for Project Alpha</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">11:59 PM</span>
+                              <span class="label label--small label--underline">Important</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="title title--small">And 6 more</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column" data-list-limit="true" data-list-max-height="340" data-list-hidden-count="true">
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">1</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Team Meeting</span>
+                            <span class="description">Weekly team sync-up</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                              <span class="label label--small label--underline">Confirmed</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">2</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Client Presentation</span>
+                            <span class="description">Quarterly review with XYZ Corp</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                              <span class="label label--small label--underline">Tentative</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item">
+                          <div class="meta">
+                            <span class="index">3</span>
+                          </div>
+                          <div class="content">
+                            <span class="title title--small">Project Deadline</span>
+                            <span class="description">Submit final deliverables for Project Alpha</span>
+                            <div class="flex gap--small">
+                              <span class="label label--small label--underline">11:59 PM</span>
+                              <span class="label label--small label--underline">Important</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Overflow Management</span>
+                    <span class="instance">With Hidden Count</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="column"
+     data-list-limit="true"
+     data-list-max-height="340"
+     data-list-hidden-count="true"
+     data-list-max-columns="3">
+  <!-- Items go here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Configuration Options') %>
+          <p class="<%= framework_section_description_classes %>">
+            The overflow management system can be customized using various data attributes to control its behavior.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Height Limit') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">data-list-max-height</code> to set a custom maximum height (in pixels).
+              If not specified, it defaults to 320px.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Hidden Count Indicator') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Set <code class="<%= framework_section_code_classes %>">data-list-hidden-count="true"</code> to display
+              an "And X more" message showing how many items are hidden.
+            </p>
+          </div>
+
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Multiple Columns') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">data-list-max-columns</code> to automatically
+              wrap items across multiple columns when necessary. If not specified, it defaults to 1 column.
+            </p>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

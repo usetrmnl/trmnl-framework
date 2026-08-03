@@ -1,0 +1,158 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :image_stroke %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:image_stroke) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Image Stroke system includes preset size modifiers that allow you to quickly apply different stroke widths to your images. The default stroke is 1.5px white, with additional options for base (1.5px, equivalent to default), small (1px), medium (2px), large (2.5px), and extra large (3px). The <code class="<%= framework_section_code_classes %>">image-stroke--base</code> modifier explicitly sets the default stroke width and is useful for responsive layouts.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="bg--gray-50 2bit:bg--gray-65 4bit:bg--gray-65 p--6 rounded flex flex--row portrait:flex--col flex--center gap--large portrait:gap--small">
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "w--16 h--16" %>
+                          <span class="label">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--small w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--small">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--base w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--base">Base</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke w--16 h--16" %>
+                          <span class="label text-stroke">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--medium w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--medium">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--large w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--large">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--xlarge w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--xlarge">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image" %>
+                      <span class="title">Image Stroke</span>
+                      <span class="instance">Preset Sizes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<img src="/images/trmnl--glyph-black.svg">
+<img class="image-stroke image-stroke--small" src="/images/trmnl--glyph-black.svg">
+<img class="image-stroke image-stroke--base" src="/images/trmnl--glyph-black.svg">
+<img class="image-stroke" src="/images/trmnl--glyph-black.svg">
+<img class="image-stroke image-stroke--medium" src="/images/trmnl--glyph-black.svg">
+<img class="image-stroke image-stroke--large" src="/images/trmnl--glyph-black.svg">
+<img class="image-stroke image-stroke--xlarge" src="/images/trmnl--glyph-black.svg">'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Stroke Colors') %>
+
+          <p class="<%= framework_section_description_classes %>">
+            Use the black modifier for images on dark backgrounds.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="bg--gray-20 2bit:bg--gray-30 4bit:bg--gray-30 p--6 rounded flex flex--row portrait:flex--col flex--center gap--large portrait:gap--small">
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "w--16 h--16" %>
+                          <span class="label text--white">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--small w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--small">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--base w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--base">Base</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--medium w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--medium">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--large w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--large">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--xlarge w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--xlarge">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image" %>
+                      <span class="title">Image Stroke</span>
+                      <span class="instance">Color Variants</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<img src="/images/trmnl--glyph-white.svg">
+<img class="image-stroke image-stroke--black image-stroke--small" src="/images/trmnl--glyph-white.svg">
+<img class="image-stroke image-stroke--black image-stroke--base" src="/images/trmnl--glyph-white.svg">
+<img class="image-stroke image-stroke--black" src="/images/trmnl--glyph-white.svg">
+<img class="image-stroke image-stroke--black image-stroke--medium" src="/images/trmnl--glyph-white.svg">
+<img class="image-stroke image-stroke--black image-stroke--large" src="/images/trmnl--glyph-white.svg">
+<img class="image-stroke image-stroke--black image-stroke--xlarge" src="/images/trmnl--glyph-white.svg">'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

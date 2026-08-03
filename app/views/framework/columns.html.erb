@@ -1,0 +1,206 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :columns %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:columns) %>
+
+    <div class="space-y-16">
+      <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">Columns go inside Layout. Use them in your plugin markup to organize content into balanced columns.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">Same rules apply. Columns go inside Layout, which you provide as part of the full hierarchy.</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip,
+              <!-- view view--full (platform-provided) -->
+              <div class="layout">
+                <div class="columns">
+                  <div class="column">...</div>
+                  <div class="column">...</div>
+                </div>
+              </div>
+              <div class="title_bar">...</div>
+              <!-- /view -->
+            HTML
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="view view--full">
+  <div class="layout">
+    <div class="columns">
+      <div class="column">...</div>
+      <div class="column">...</div>
+    </div>
+  </div>
+  <div class="title_bar">...</div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <section class="space-y-8" id="when-to-use">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'When to Use Columns') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use Columns when you have a lot of same-type data to show and you want to display as few or as many items as there are in any given situation. The Columns system takes care of the layout: it distributes content into columns, adapts column count to the available space, and handles overflow when content exceeds the viewport.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Variable Data, Automatic Layout') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              You provide the items; Columns figures out how to fit them. It distributes content into multiple columns based on available screen real estate, adapts column count when the viewport or orientation changes, and works seamlessly with the framework's overflow and clamping systems. Set a maximum column count or let the system choose the best fit.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Overflow Handling') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              When content exceeds the available height, Columns doesn't break or overflow. It gracefully hides items that don't fit and, when configured, adds an "and X more" indicator so users know there's additional content. See the <%= render DocsRef.new(page: :overflow) %> page for details.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Item Grouping and Flow') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Items can be grouped (for example, by date or category), and the Columns system keeps those groups together as they flow into columns. Group headers stay with their items, so you don't end up with orphaned headings or broken visual hierarchy when space is limited.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Compared to Grid and Flex') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Choose Columns when you have lists or feeds of same-type items and want the system to handle distribution and overflow. If you need strict grid alignment with fixed column spans, use <%= render DocsRef.new(page: :grid) %>. If you need flexible, content-sized row or column arrangements (toolbars, inline groups, etc.), use <%= render DocsRef.new(page: :flex) %>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Column Layout') %>
+          <p class="<%= framework_section_description_classes %>">
+            The basic column layout is flexible: add as many columns as your content needs.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="columns gap">
+                      <div class="column gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Column 1</span>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                      </div>
+                      <div class="column gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Column 2</span>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                      </div>
+                      <div class="column gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Column 3</span>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Item</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Columns</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="columns">
+  <div class="column">
+    Content for column 1
+  </div>
+  <div class="column">
+    Content for column 2
+  </div>
+  <div class="column">
+    Content for column 3
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Vertical Alignment') %>
+          <p class="<%= framework_section_description_classes %>">
+            Columns align to the top of the row by default, so uneven columns share a baseline at the top. Add
+            <code class="<%= framework_section_code_classes %>">columns--center</code> to center each column against
+            the tallest one instead.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="columns columns--center gap">
+                      <div class="column gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Today</span>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Standup</span></div>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Review</span></div>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">Retro</span></div>
+                      </div>
+                      <div class="column gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                        <span class="label text-stroke">Tomorrow</span>
+                        <div class="flex flex--center p--2.5 rounded--small bg--white w--full"><span class="label">1:1</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Columns</span>
+                    <span class="instance">columns--center</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="columns columns--center">
+  <div class="column">
+    Three items
+  </div>
+  <div class="column">
+    One item, vertically centered
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

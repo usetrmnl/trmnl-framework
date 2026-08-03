@@ -1,0 +1,68 @@
+// ============================================
+// TRMNL Framework - Screen Size Targeting Mixins
+// ============================================
+// Internal development mixins for targeting specific screen sizes
+
+@use 'selector-helpers' as helpers;
+@use 'sass:meta';
+
+// ============================================
+// Mobile-First Size Targeting (applies to target size and larger)
+// ============================================
+
+// Target small screens and up (sm, md, lg)
+@mixin for-sm {
+    @include helpers.for-screen-modifier('sm', 'md', 'lg') {
+        @content;
+    }
+}
+
+// Target medium screens and up (md, lg)
+@mixin for-md {
+    @include helpers.for-screen-modifier('md', 'lg') {
+        @content;
+    }
+}
+
+// Target large screens only
+@mixin for-lg {
+    @include helpers.for-screen-modifier('lg') {
+        @content;
+    }
+}
+
+// ============================================
+// Size-Specific Targeting (applies to exact size only)
+// ============================================
+
+// Target only small screens
+@mixin for-sm-only {
+    @include helpers.for-screen-modifier('sm') {
+        @content;
+    }
+}
+
+// Target only medium screens
+@mixin for-md-only {
+    @include helpers.for-screen-modifier('md') {
+        @content;
+    }
+}
+
+// Target only large screens
+@mixin for-lg-only {
+    @include helpers.for-screen-modifier('lg') {
+        @content;
+    }
+}
+
+// Generate size-specific variants for classes
+// This creates classes like: sm:p--large, md:gap--large, etc.
+@mixin generate-size-variants($class-name: null) {
+    @include helpers.generate-screen-utilities(helpers.$size-hierarchy, null, $class-name, meta.get-function('is-size-active', false, 'helpers')) {
+        @content;
+    }
+}
+
+// Note: legacy helpers (generate-size-class, with-size-variants, each-with-size-variants,
+// with-compound-size-variants, size-variant, for-size) were removed to reduce API surface.

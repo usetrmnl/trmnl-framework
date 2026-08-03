@@ -1,0 +1,551 @@
+const defaultFontFamily = {
+  sans: ['ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+  serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+  mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
+}
+
+const primaryScale = {
+  25:  '#fff9f7',
+  50:  '#fff1eb',
+  75:  '#ffe8dd',
+  100: '#ffe4d7',
+  150: '#ffdacc',
+  200: '#ffd1c0',
+  250: '#ffc5b2',
+  300: '#ffbaa3',
+  350: '#ffa692',
+  400: '#ff9280',
+  450: '#ff7c66',
+  500: '#f8654b',
+  550: '#ec5d45',
+  600: '#e05b44',
+  650: '#d04a3e',
+  700: '#b94938',
+  750: '#a54032',
+  800: '#91372d',
+  850: '#7e2e26',
+  900: '#6a251f',
+  950: '#4a1714',
+}
+
+const grayScale = {
+  25:  '#fdfcfb',  // full warmth (unchanged)
+  50:  '#fbfaf8',  // full warmth (unchanged)
+  75:  '#f8f7f5',  // full warmth (unchanged)
+  100: '#f2f0ed',  // full warmth (unchanged)
+  150: '#edebe8',  // ~88% warmth (unchanged)
+  175: '#eae8e6',  // ~81% warmth
+  200: '#e8e7e4',  // ~75% warmth
+  250: '#e3e2df',  // ~62% warmth
+  300: '#dcdbd9',  // ~50% warmth
+  325: '#d6d5d4',  // ~44% warmth
+  350: '#d1d0cf',  // ~38% warmth
+  400: '#c4c3c2',  // ~25% warmth
+  450: '#aaaaaa',  // ~12% warmth
+  500: '#8f8f8f',  // neutral
+  550: '#757575',  // neutral
+  575: '#646464',  // neutral
+  600: '#5b5b5b',  // neutral
+  610: '#535353',  // neutral
+  615: '#484848',  // neutral
+  625: '#3a3a3a',  // neutral
+  650: '#2b2b2b',  // neutral
+  660: '#2e2e2e',  // neutral
+  675: '#252525',  // neutral
+  700: '#202020',  // neutral
+  750: '#181818',  // neutral
+  800: '#151515',  // neutral
+  850: '#101010',  // neutral
+  900: '#0d0d0d',  // neutral
+  950: '#050505',  // neutral
+}
+
+const grayWarm = {
+  25:  '#fefbfb',
+  50:  '#fcf9f8',
+  75:  '#f9f6f5',
+  100: '#f2f0ed',
+  150: '#edebe8',
+  175: '#ebe7e6',
+  200: '#e9e6e4',
+  250: '#e4e1df',
+  300: '#dddbd8',
+  325: '#d8d4d3',
+  350: '#d3cfce',
+  400: '#c6c2c1',
+  450: '#ada9a8',
+  500: '#928e8d',
+  550: '#777473',
+  575: '#666362',
+  600: '#5d5a59',
+  610: '#555252',
+  615: '#4a4747',
+  625: '#3c3939',
+  650: '#2d2a2a',
+  660: '#302d2d',
+  675: '#262524',
+  700: '#21201f',
+  750: '#191817',
+  800: '#161514',
+  850: '#11100f',
+  900: '#0e0c0d',
+  950: '#060405',
+}
+
+const grayCold = {
+  25:  '#fbfcfe',
+  50:  '#f8fbfc',
+  75:  '#f5f8f9',
+  100: '#edf2f2',
+  150: '#e8eded',
+  175: '#e6e9eb',
+  200: '#e4e8e9',
+  250: '#dfe3e4',
+  300: '#d8dcdd',
+  325: '#d3d6d8',
+  350: '#ced1d3',
+  400: '#c1c4c6',
+  450: '#a8aaad',
+  500: '#8d8f92',
+  550: '#737677',
+  575: '#626566',
+  600: '#595c5d',
+  610: '#525355',
+  615: '#47484a',
+  625: '#393a3c',
+  650: '#2a2b2d',
+  660: '#2d2e30',
+  675: '#242526',
+  700: '#1f2021',
+  750: '#171819',
+  800: '#141516',
+  850: '#0f1011',
+  900: '#0d0d0e',
+  950: '#050506',
+}
+
+
+module.exports = {
+  content: [
+    './app/helpers/**/*.rb',
+    './app/javascript/**/*.js',
+    './app/views/**/*',
+    './app/components/**/*.html.erb',
+    './app/components/**/*.rb',
+    './apps/**/views/**/*',
+    './apps/**/components/**/*.html.erb',
+    './apps/**/components/**/*.rb',
+    './lib/**/*.rb'
+  ],
+  theme: {
+    extend: {
+      screens: {
+      'xs': '420px',
+      '3xl': '1920px'
+      },
+      spacing: {
+        '100': '25rem',
+        '104': '26rem',
+        '108': '27rem',
+        '112': '28rem',
+        '120': '30rem',
+        '128': '32rem',
+        '136': '34rem',
+        '144': '36rem',
+        '152': '38rem',
+        '160': '40rem',
+        '168': '42rem',
+        '176': '44rem',
+        '184': '46rem',
+        '192': '48rem',
+        'widget': '24rem',
+      },
+      minHeight: {
+        'lg': '32rem',
+        'xl': '36rem',
+        '2xl': '40rem',
+        '4xl': '56rem',
+
+      },
+      maxHeight: {
+        'lg': '32rem',
+        'xl': '36rem',
+        '2xl': '40rem',
+        '4xl': '56rem',
+        '5xl': '60rem',
+        '7xl': '72rem',
+        '8xl': '84rem',
+        '9xl': '96rem',
+
+      },
+      maxWidth: {
+        '8xl': '84rem',
+        '9xl': '100rem',
+        '10xl': '120rem',
+      },
+      aspectRatio: {
+        'og': '40 / 21', // 1200×630 Open Graph / social preview
+      },
+      backgroundImage: {
+        'smooth-fade-black': `linear-gradient(
+          to bottom,
+          hsla(0, 0%, 0%, 0) 0%,
+          hsla(0, 0%, 0%, 0.006) 8.1%,
+          hsla(0, 0%, 0%, 0.024) 15.5%,
+          hsla(0, 0%, 0%, 0.052) 22.5%,
+          hsla(0, 0%, 0%, 0.088) 29%,
+          hsla(0, 0%, 0%, 0.13) 35.3%,
+          hsla(0, 0%, 0%, 0.176) 41.2%,
+          hsla(0, 0%, 0%, 0.225) 47.1%,
+          hsla(0, 0%, 0%, 0.275) 52.9%,
+          hsla(0, 0%, 0%, 0.324) 58.8%,
+          hsla(0, 0%, 0%, 0.37) 64.7%,
+          hsla(0, 0%, 0%, 0.412) 71%,
+          hsla(0, 0%, 0%, 0.448) 77.5%,
+          hsla(0, 0%, 0%, 0.476) 84.5%,
+          hsla(0, 0%, 0%, 0.494) 91.9%,
+          hsla(0, 0%, 0%, 0.5) 100%
+        )`,
+      },
+      translate: {
+        '1/6': '16.666667%',
+        '5/6': '83.333333%'
+      },
+      fontFamily: {
+        'sans': ['Inter var', ...defaultFontFamily.sans],
+        'number': ['DM Serif Display', ...defaultFontFamily.serif],
+        'heading': ['EB Garamond', ...defaultFontFamily.sans],
+        'pluginTitle': ['BlockKie', ...defaultFontFamily.sans],
+        'mono': ['Space Mono', ...defaultFontFamily.mono]
+      },
+      fontSize: {
+        '2xs' : '0.6rem',
+        '3xs' : '0.55rem',
+        '4xs' : '0.45rem',
+        // Extra-large heading sizes for hero text
+        '7xl': ['4.5rem', { lineHeight: '1' }],
+        '8xl': ['5rem', { lineHeight: '1' }],
+        '9xl': ['5.5rem', { lineHeight: '1' }],
+        '10xl': ['6rem', { lineHeight: '1' }],
+        '11xl': ['6.5rem', { lineHeight: '1' }],
+        '12xl': ['7rem', { lineHeight: '1' }],
+      },
+      colors: {
+        primary: primaryScale,
+        gray: grayScale,
+        grayWarm: grayWarm,
+        grayCold: grayCold,
+        // Prism-seeded scales (generated via scripts/generate_palette.mjs)
+        teal: {
+          25:  '#e0fef9',
+          50:  '#d9faf4',
+          75:  '#d2f6ef',
+          100: '#c9f0e9',
+          150: '#b8e6de',
+          200: '#a7dcd3',
+          250: '#96d2c8',
+          300: '#82c7bc',
+          350: '#6ebbb0',
+          400: '#58aea3',
+          450: '#43a195',
+          500: '#2c9286',
+          550: '#158377',
+          600: '#037267',
+          650: '#046259',
+          700: '#0b534c',
+          750: '#0f453f',
+          800: '#113833',
+          850: '#102b27',
+          900: '#0d201d',
+          950: '#060f0e',
+        },
+        green: {
+          25:  '#e7ffe1',
+          50:  '#defcd7',
+          75:  '#d7f8d0',
+          100: '#cff2c7',
+          150: '#bfe9b6',
+          200: '#afdfa5',
+          250: '#a0d594',
+          300: '#8eca81',
+          350: '#7dbf6e',
+          400: '#6ab25a',
+          450: '#58a546',
+          500: '#469633',
+          550: '#378622',
+          600: '#2b7417',
+          650: '#246413',
+          700: '#215513',
+          750: '#1d4713',
+          800: '#1a3913',
+          850: '#152c10',
+          900: '#10200d',
+          950: '#071006',
+        },
+        blue: {
+          25:  '#f3f7ff',
+          50:  '#ebf2ff',
+          75:  '#e4edff',
+          100: '#dae7ff',
+          150: '#c9dbff',
+          200: '#b7d0ff',
+          250: '#a6c4ff',
+          300: '#92b7ff',
+          350: '#7ea9ff',
+          400: '#6799ff',
+          450: '#5188ff',
+          500: '#3674ff',
+          550: '#2060f8',
+          600: '#1651dc',
+          650: '#1245be',
+          700: '#113ca1',
+          750: '#113484',
+          800: '#102b68',
+          850: '#0e224e',
+          900: '#0b1a39',
+          950: '#050d1e',
+        },
+        red: {
+          25:  '#fff4f3',
+          50:  '#ffedec',
+          75:  '#ffe6e5',
+          100: '#ffdddb',
+          150: '#ffccca',
+          200: '#ffbbb9',
+          250: '#ffaaa7',
+          300: '#fc9794',
+          350: '#f48684',
+          400: '#ea7373',
+          450: '#de6264',
+          500: '#cf5054',
+          550: '#bd4046',
+          600: '#a6343a',
+          650: '#8f2c31',
+          700: '#7a272b',
+          750: '#652325',
+          800: '#501e1f',
+          850: '#3d1818',
+          900: '#2d1312',
+          950: '#170908',
+        },
+        yellow: {
+          25:  '#fff6e2',
+          50:  '#fdf1d7',
+          75:  '#f9ecd0',
+          100: '#f3e5c6',
+          150: '#ead9b6',
+          200: '#e1cda5',
+          250: '#d7c294',
+          300: '#cdb481',
+          350: '#c2a76e',
+          400: '#b6995a',
+          450: '#a98b47',
+          500: '#9a7c35',
+          550: '#8b6d25',
+          600: '#795d19',
+          650: '#685015',
+          700: '#594415',
+          750: '#493914',
+          800: '#3b2e13',
+          850: '#2d2410',
+          900: '#211b0d',
+          950: '#100d06',
+        },
+        amber: {
+          25:  '#fff5eb',
+          50:  '#ffefdf',
+          75:  '#ffe8d3',
+          100: '#ffe0c3',
+          150: '#f8d3b0',
+          200: '#f1c69e',
+          250: '#e9ba8c',
+          300: '#e0ab78',
+          350: '#d79d64',
+          400: '#cc8e4e',
+          450: '#bf7f39',
+          500: '#b16f23',
+          550: '#a0600d',
+          600: '#8c5200',
+          650: '#794600',
+          700: '#673c06',
+          750: '#55330b',
+          800: '#442a0d',
+          850: '#34210d',
+          900: '#26180a',
+          950: '#130c05',
+        },
+        violet: {
+          25:  '#f6f6ff',
+          50:  '#f0f0ff',
+          75:  '#ebeaff',
+          100: '#e4e3ff',
+          150: '#d8d6ff',
+          200: '#cbc8ff',
+          250: '#c0bbff',
+          300: '#b2abff',
+          350: '#a69bff',
+          400: '#9888ff',
+          450: '#8b77f8',
+          500: '#7d66ea',
+          550: '#6f56d8',
+          600: '#6048bf',
+          650: '#523ea5',
+          700: '#46368c',
+          750: '#3a2e73',
+          800: '#2f265b',
+          850: '#241e45',
+          900: '#1b1733',
+          950: '#0c0b1a',
+        },
+        fuchsia: {
+          25:  '#fff2fe',
+          50:  '#ffeafd',
+          75:  '#ffe2fc',
+          100: '#ffd8fb',
+          150: '#fec6f8',
+          200: '#f7b7f0',
+          250: '#f0a8e9',
+          300: '#e797e0',
+          350: '#de86d7',
+          400: '#d374cc',
+          450: '#c663c0',
+          500: '#b752b1',
+          550: '#a642a1',
+          600: '#92368d',
+          650: '#7e2e79',
+          700: '#6b2867',
+          750: '#582355',
+          800: '#471e44',
+          850: '#361934',
+          900: '#281326',
+          950: '#140913',
+        },
+        sage: {
+          25:  '#f0f5f3',
+          50:  '#e1ebe7',
+          75:  '#d2e1db',
+          100: '#c3d7cf',
+          150: '#b4cdc3',
+          200: '#a5c3b7',
+          250: '#96b9ab',
+          300: '#87af9f',
+          350: '#78a593',
+          400: '#699b87',
+          450: '#5a917b',
+          500: '#4b876f',
+          550: '#3c7d63',
+          600: '#335b4c',
+          650: '#2d5243',
+          675: '#2a4a3d',   // intermediate sage shade
+          700: '#27493a',
+          750: '#214031',
+          800: '#1b3728',
+          850: '#152e1f',
+          900: '#0f2516',
+          950: '#091c0d',
+        },
+        clay: {
+          25:  '#f5f0f0',
+          50:  '#ebe1e1',
+          75:  '#e1d2d2',
+          100: '#d7c3c3',
+          150: '#cdb4b4',
+          200: '#c3a5a5',
+          250: '#b99696',
+          300: '#af8787',
+          350: '#a57878',
+          400: '#9b6969',
+          450: '#915a5a',
+          500: '#874b4b',
+          550: '#7d3c3c',
+          600: '#5b3333',
+          650: '#522d2d',
+          675: '#4a2a2a',
+          700: '#493027',
+          750: '#402721',
+          800: '#371e1b',
+          850: '#2e1515',
+          900: '#250f0f',
+          950: '#1c0909',
+        },
+        lander: {
+          bg: grayScale[200],
+          box: grayWarm[300],
+          primary: primaryScale[500],
+          footer: grayScale[625]
+        },
+        syntax: {
+          base: 'var(--syntax-base)',
+          bg: 'var(--syntax-bg)',
+          comment: 'var(--syntax-comment)',
+          punctuation: 'var(--syntax-punctuation)',
+          tag: 'var(--syntax-tag)',
+          attr: 'var(--syntax-attr)',
+          deleted: 'var(--syntax-deleted)',
+          function: 'var(--syntax-function)',
+          boolean: 'var(--syntax-boolean)',
+          number: 'var(--syntax-number)',
+          property: 'var(--syntax-property)',
+          class: 'var(--syntax-class)',
+          keyword: 'var(--syntax-keyword)',
+          string: {
+            DEFAULT: 'var(--syntax-string)',
+            bg: 'var(--syntax-string-bg)',
+            border: 'var(--syntax-string-border)',
+          },
+          inserted: 'var(--syntax-inserted)',
+        },
+      },
+      keyframes: {
+        flashin: {
+          '0%': { opacity: '0', transform: 'translateY(40px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        flashout: {
+          '0%': { opacity: '1', transform: 'translateY(0px)' },
+          '100%': { opacity: '0', transform: 'translateY(40px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-800px 0' },
+          '100%': { backgroundPosition: '800px 0' },
+        },
+        cardEnter: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        flashin: 'flashin 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+        flashout: 'flashout 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+        bounce: 'bounce .8s ease-in-out 2',
+        shimmer: 'shimmer 2s linear infinite',
+        'card-enter': 'cardEnter 0.2s ease-out both'
+      },
+    },
+  },
+  plugins: [
+    // Custom plugin for calculating layout height
+    function({ addUtilities, theme }) {
+      const newUtilities = {
+        '.layout_height': {
+          [`@media (min-width: ${theme('screens.lg')})`]: {
+            height: `calc(100vh - ${theme('spacing.14')})`,
+            overflow: 'scroll',
+          },
+        },
+      };
+      addUtilities(newUtilities, ['responsive']);
+    },
+    function({ addUtilities, theme }) {
+      const newUtilities = {
+        '.nav_height': {
+          [`@media (min-width: ${theme('screens.md')})`]: {
+            height: `calc(100vh - ${theme('spacing.14')})`,
+            overflow: 'scroll',
+          },
+        },
+      };
+      addUtilities(newUtilities, ['responsive']);
+    },
+  ]
+}

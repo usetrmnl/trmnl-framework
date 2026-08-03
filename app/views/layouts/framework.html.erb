@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>" data-controller="theme" data-theme-preference="system">
+<head>
+  <%= render "shared/theme_script", theme: "system" %>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <%= render "shared/meta" %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;350;375;400;450;600;700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+
+  <%# Prism.js syntax highlighting for Framework docs code examples - TRMNL theme %>
+  <%= stylesheet_link_tag "prism_trmnl", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "prism-1.29.0.min" %>
+
+  <%= javascript_importmap_tags %>
+
+  <%# Docs chrome. Hosts that build Tailwind serve their own digested bundle;
+      hosts that never run it fall back to the snapshot the gem ships. %>
+  <%= stylesheet_link_tag framework_docs_asset_path('tailwind.css'), "data-turbo-track": "reload" %>
+
+  <% parent_terminalize = params[:action] == 'responsive_test' %>
+  <script>
+    window.__TRMNL_FRAMEWORK_BUILD__ = 'framework.html.erb v2026-06-06-1';
+    window.__TRMNL_FRAMEWORK_PARENT_TERMINALIZE__ = <%= parent_terminalize ? 'true' : 'false' %>;
+  </script>
+
+  <% legacy_docs = legacy_docs? %>
+  <%# One resolution for the parent page, the iframe attributes below, and the
+      example_iframe_config JSON: the live build on the current docs version in live
+      mode, the pinned release everywhere else. Every href here is resolved by the
+      controller, so a build that was never compiled loses a style rather than raising
+      Propshaft::MissingAssetError on an unguarded lookup. %>
+  <% plugins_bundle = docs_plugins_bundle %>
+  <%# Inline demos (Colors palette, Size rows) render in the page body, not in
+      .trmnl-example iframes, so those pages need the framework CSS in the
+      parent page. They never need the framework JS; that stays gated to
+      responsive_test, the only page that terminalizes the parent. %>
+  <% inline_framework_demos = docs_page_renders_inline_framework_demos? %>
+  <% if parent_terminalize || inline_framework_demos %>
+    <%= tag.link rel: 'stylesheet', href: plugins_bundle[:css], data: { turbo_track: 'reload' } %>
+    <% if parent_terminalize %>
+      <%# The mixin half of the parity harness, resolved like the bundle above so both
+          halves of a parity row come from one build. Nothing to link on a docs server
+          that carries neither a released copy nor a live one. %>
+      <% harness_css = docs_responsive_test_css_url %>
+      <%= tag.link rel: 'stylesheet', href: harness_css, data: { turbo_track: 'reload' } if harness_css %>
+      <%= javascript_include_tag plugins_bundle[:js], 'data-turbo-track': 'reload' %>
+    <% end %>
+    <%# Theme CSS is inert until a screen carries screen--theme-*; the picker's Style selector needs it for inline screens too. %>
+    <% docs_theme_css_urls.each_value do |theme_css_href| %>
+      <%= tag.link rel: 'stylesheet', href: theme_css_href, data: { turbo_track: 'reload' } %>
+    <% end %>
+  <% end %>
+
+  <%= render 'shared/favicon' %>
+
+  <%= javascript_include_tag "jquery-3.6.0.min" %>
+  <% fw_docs_version = current_docs_version %>
+</head>
+<body data-page-theme="system" class="<%= layout_application %>" data-controller="framework-examples"
+      data-framework-examples-plugins-css-path-value="<%= plugins_bundle[:css] %>"
+      data-framework-examples-plugins-js-path-value="<%= plugins_bundle[:js] %>"
+      data-framework-examples-bridge-path-value="<%= framework_docs_asset_path('framework_iframe_bridge.js') %>"
+      data-framework-examples-screen-class-sync-path-value="<%= framework_docs_asset_path('lib/screen_class_sync.js') %>"
+      data-framework-examples-example-iframe-config-url-value="<%= framework_docs_example_iframe_config_url(version: fw_docs_version) %>"
+      data-framework-examples-single-bundle-mode-value="<%= plugins_bundle[:single_bundle_mode] %>"
+      data-framework-examples-frozen-runtime-value="<%= legacy_docs ? 'true' : 'false' %>"
+      data-framework-examples-examples-scope-value="framework"
+      data-framework-examples-theme-css-urls-value="<%= docs_theme_css_urls.to_json %>">
+  <%= render "framework/nav", theme: "system" %>
+  <%= render "shared/command_palette", default_provider: 'unified' %>
+
+  <!-- Main layout container -->
+  <div class="flex w-full pt-11 min-h-screen">
+    <% unless ['index', 'docs_index', 'examples_index', 'releases_index'].include?(params[:action]) %>
+    <!-- Left Sidebar -->
+    <div id="left-sidebar-wrapper"
+         class="hidden md:flex shrink-0 sticky top-11 h-[calc(100vh-2.75rem)]"
+         data-controller="docs-sidebar"
+         data-docs-sidebar-side-value="left"
+         data-docs-sidebar-storage-key-value="fw-left-sidebar"
+         data-docs-sidebar-default-width-value="256"
+         data-docs-sidebar-min-width-value="200"
+         data-docs-sidebar-max-width-value="400">
+      <div id="left-sidebar"
+           data-docs-sidebar-target="panel"
+           class="flex-1 min-w-0 h-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+        <%= render legacy_docs ? "framework_v1/sidebar" : "framework/sidebar", sidebar_type: "left" %>
+      </div>
+      <div data-docs-sidebar-target="handle"
+           data-action="pointerdown->docs-sidebar#startDrag"
+           class="docs-sidebar__handle"
+           role="separator"
+           aria-label="Resize left sidebar">
+        <button data-action="click->docs-sidebar#toggle"
+                data-docs-sidebar-target="toggleBtn"
+                class="docs-sidebar__toggle-btn"
+                type="button"></button>
+      </div>
+    </div>
+    <% end %>
+
+    <!-- Main Content Column -->
+    <div id="main-content-column" class="flex-grow min-w-0 max-w-6xl mx-auto">
+            <% if params[:action] == 'responsive_test' %>
+      <% compact_responsive_test_btn_classes = '!text-xs !px-2.5 !py-1.5' %>
+      <!-- Test Configuration Navigation - only shown on responsive_test page -->
+      <!-- Sticky sentinel positioned exactly where sticky trigger happens -->
+      <div id="sticky-sentinel" class="h-px mt-8 -mb-px"></div>
+      <div class="sticky top-11 z-30">
+        <div class="w-full max-w-5xl mx-auto px-2 md:px-4">
+          <div class="flex flex-col">
+            <div id="test-config-container" class="p-3 rounded rounded-lg flex flex-col lg:flex-row gap-3 bg-sage-200/60 dark:bg-sage-850/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50">
+              <!-- Screen Size Section -->
+              <div class="flex-1">
+                <div class="text-[10px] font-medium text-sage-500 dark:text-sage-400 uppercase tracking-wider mb-2 px-2">Screen Size</div>
+                <div class="flex gap-1">
+                  <button data-test-size="sm" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Small
+                  </button>
+                  <button data-test-size="md" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Medium
+                  </button>
+                  <button data-test-size="lg" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Large
+                  </button>
+                </div>
+              </div>
+
+              <div class="hidden lg:block w-px bg-sage-250 dark:bg-sage-700 self-stretch my-2"></div>
+
+              <!-- Orientation Section -->
+              <div class="flex-1">
+                <div class="text-[10px] font-medium text-sage-500 dark:text-sage-400 uppercase tracking-wider mb-2 px-2">Orientation</div>
+                <div class="flex gap-1">
+                  <button data-test-orientation="landscape" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Landscape
+                  </button>
+                  <button data-test-orientation="portrait" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Portrait
+                  </button>
+                </div>
+              </div>
+
+              <div class="hidden lg:block w-px bg-sage-250 dark:bg-sage-700 self-stretch my-2"></div>
+
+              <!-- Bit Depth Section -->
+              <div class="flex-1">
+                <div class="text-[10px] font-medium text-sage-500 dark:text-sage-400 uppercase tracking-wider mb-2 px-2">Bit Depth</div>
+                <div class="flex gap-1">
+                  <% framework_bit_depth_options.each do |label, value| %>
+                    <button data-test-bitdepth="<%= "#{value}bit" %>" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                      <%= label %>
+                    </button>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="hidden lg:block w-px bg-sage-250 dark:bg-sage-700 self-stretch my-2"></div>
+
+              <!-- Examples Section -->
+              <div class="flex-1">
+                <div class="text-[10px] font-medium text-sage-500 dark:text-sage-400 uppercase tracking-wider mb-2 px-2">Examples</div>
+                <div class="flex gap-1">
+                  <button data-example-size="sample" class="example-size-btn <%= button_sage_active_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Sample
+                  </button>
+                  <button data-example-size="original" class="example-size-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Original
+                  </button>
+                </div>
+              </div>
+
+              <div class="hidden lg:block w-px bg-sage-250 dark:bg-sage-700 self-stretch my-2"></div>
+
+              <!-- Theme Section -->
+              <div class="flex-1">
+                <div class="text-[10px] font-medium text-sage-500 dark:text-sage-400 uppercase tracking-wider mb-2 px-2">Theme</div>
+                <div class="flex gap-1">
+                  <button data-test-theme="light" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Light
+                  </button>
+                  <button data-test-theme="dark" class="test-config-btn <%= button_sage_classes %> <%= compact_responsive_test_btn_classes %>">
+                    Dark
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% end %>
+
+      <main id="main-content" class="flex justify-center">
+        <%= yield %>
+      </main>
+    </div>
+
+    <% unless ['index', 'docs_index', 'examples_index', 'releases_index'].include?(params[:action]) %>
+    <!-- Right Sidebar -->
+    <div id="right-sidebar-wrapper"
+         class="hidden md:flex shrink-0 sticky top-11 h-[calc(100vh-2.75rem)]"
+         data-controller="docs-sidebar"
+         data-docs-sidebar-side-value="right"
+         data-docs-sidebar-storage-key-value="fw-right-sidebar"
+         data-docs-sidebar-default-width-value="224"
+         data-docs-sidebar-min-width-value="180"
+         data-docs-sidebar-max-width-value="360"
+         data-docs-sidebar-collapse-below-value="1024">
+      <div data-docs-sidebar-target="handle"
+           data-action="pointerdown->docs-sidebar#startDrag"
+           class="docs-sidebar__handle"
+           role="separator"
+           aria-label="Resize right sidebar">
+        <button data-action="click->docs-sidebar#toggle"
+                data-docs-sidebar-target="toggleBtn"
+                class="docs-sidebar__toggle-btn"
+                type="button"></button>
+      </div>
+      <div id="right-sidebar"
+           data-docs-sidebar-target="panel"
+           class="flex-1 min-w-0 h-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+        <%= render legacy_docs ? "framework_v1/sidebar" : "framework/sidebar", sidebar_type: "right" %>
+      </div>
+    </div>
+    <% end %>
+  </div>
+
+  <% unless ['index', 'docs_index', 'examples_index', 'releases_index'].include?(params[:action]) %>
+  <!-- Mobile sidebars (outside the main layout for proper z-index) -->
+  <!-- Mobile Left Sidebar -->
+  <div id="left-sidebar-mobile" class="mobile-sidebar fixed inset-0 bg-black/50 hidden z-50 transition-opacity duration-300 ease-in-out opacity-0">
+    <div class="absolute inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-xl transition transform duration-300 ease-in-out -translate-x-full">
+      <div class="fixed top-0 left-0 right-0 z-50 pointer-events-none flex justify-end items-center p-1">
+        <button data-sidebar-close="left" class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-550 dark:hover:text-gray-400 pointer-events-auto">
+          <%= render "shared/icons/close" %>
+        </button>
+      </div>
+      <div class="overflow-y-auto h-full pb-20 pt-16">
+        <%= render legacy_docs ? "framework_v1/sidebar" : "framework/sidebar", sidebar_type: "left" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Right Sidebar -->
+  <div id="right-sidebar-mobile" class="mobile-sidebar fixed inset-0 bg-black/50 hidden z-50 transition-opacity duration-300 ease-in-out opacity-0">
+    <div class="absolute inset-y-0 right-0 w-64 bg-white dark:bg-gray-900 shadow-xl transition transform duration-300 ease-in-out translate-x-full">
+      <div class="fixed top-0 left-0 right-0 z-50 pointer-events-none flex justify-end items-center p-1">
+        <button data-sidebar-close="right" class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-550 dark:hover:text-gray-400 pointer-events-auto">
+          <%= render "shared/icons/close" %>
+        </button>
+      </div>
+      <div class="overflow-y-auto h-full pb-20 pt-4">
+        <%= render legacy_docs ? "framework_v1/sidebar" : "framework/sidebar", sidebar_type: "right" %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <script type="text/javascript">
+    var frameworkDocsRuntime = window.__frameworkDocsRuntime || (window.__frameworkDocsRuntime = {});
+    function isDocsOrExamplesPage() {
+      return window.location.pathname.indexOf('/framework/docs') === 0 ||
+             window.location.pathname.indexOf('/framework/examples') === 0;
+    }
+
+    function addPreviewClassToScreens(rootDocument) {
+      if (!isDocsOrExamplesPage() || !rootDocument) return;
+      try {
+        rootDocument.querySelectorAll('.screen').forEach((screen) => {
+          screen.classList.add('screen--preview');
+        });
+      } catch(_) {}
+    }
+
+    <% unless ['index', 'docs_index', 'examples_index', 'releases_index'].include?(params[:action]) %>
+    // Persist left sidebar scroll position across full page navigations
+    (function setupLeftSidebarScrollPersistence() {
+      if (frameworkDocsRuntime.sidebarScrollPersistence) return;
+      const STORAGE_KEY = 'frameworkLeftSidebarScroll';
+
+      function saveLeftSidebarScroll() {
+        try {
+          const el = document.getElementById('left-sidebar-nav');
+          if (el) sessionStorage.setItem(STORAGE_KEY, String(el.scrollTop));
+        } catch(_) {}
+      }
+
+      window.addEventListener('pagehide', saveLeftSidebarScroll);
+      window.addEventListener('beforeunload', saveLeftSidebarScroll);
+      frameworkDocsRuntime.sidebarScrollPersistence = true;
+    })();
+    <% end %>
+
+    function bootFramework() {
+      installParentTerminalizeGuard();
+      addPreviewClassToScreens(document);
+
+      // Initialize TOC generation
+      generateTableOfContents();
+
+      <% unless ['index', 'docs_index', 'examples_index', 'releases_index'].include?(params[:action]) %>
+      // Restore left sidebar scroll position after layout settles
+      (function restoreLeftSidebarScroll() {
+        try {
+          const saved = sessionStorage.getItem('frameworkLeftSidebarScroll');
+          if (saved) {
+            const el = document.getElementById('left-sidebar-nav');
+            if (el) {
+              requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                  el.scrollTop = parseInt(saved, 10) || 0;
+                });
+              });
+            }
+          }
+        } catch(_) {}
+      })();
+      <% end %>
+
+      <% if params[:action] == 'responsive_test' %>
+      // Initialize sticky border radius handler
+      initStickyBorderRadius();
+      <% end %>
+
+      // Update active state in left sidebar links
+      updateActiveSidebarLinks();
+
+      runTerminalizeWhenExamplesReady();
+
+      // Syntax highlighting for code examples
+      try {
+        if (typeof Prism !== 'undefined') {
+          const mainContent = document.getElementById('main-content');
+          if (mainContent) {
+            Prism.highlightAllUnder(mainContent);
+          } else {
+            Prism.highlightAll();
+          }
+        }
+      } catch(e) {}
+
+    }
+
+    function exampleViewportMargin() {
+      if (window.__TRMNL_EXAMPLE_VIEWPORT_MARGIN__ != null) return window.__TRMNL_EXAMPLE_VIEWPORT_MARGIN__;
+      const ua = navigator.userAgent;
+      window.__TRMNL_EXAMPLE_VIEWPORT_MARGIN__ = (/AppleWebKit/i.test(ua) && !/Chrom(e|ium)|CriOS|Edg|OPR|FxiOS/i.test(ua)) ? 120 : 400;
+      return window.__TRMNL_EXAMPLE_VIEWPORT_MARGIN__;
+    }
+
+    function hasPendingExampleWrappers() {
+      const margin = exampleViewportMargin();
+      return Array.from(document.querySelectorAll('.trmnl-example:not([data-trmnl-wrapped="true"])')).some((wrapper) => {
+        const rect = wrapper.getBoundingClientRect();
+        return rect.top < window.innerHeight + margin && rect.bottom > -margin;
+      });
+    }
+
+    function shouldRunParentTerminalize() {
+      if (window.__TRMNL_FRAMEWORK_PARENT_TERMINALIZE__ === false) return false;
+      if (hasPendingExampleWrappers()) return false;
+      return !!document.querySelector('#main-content .screen');
+    }
+
+    function installParentTerminalizeGuard() {
+      if (typeof window.executeTerminalize === 'function' && !window.executeTerminalize.__frameworkDocsGuard) {
+        const originalExecuteTerminalize = window.executeTerminalize;
+        window.executeTerminalize = function() {
+          if (isDocsOrExamplesPage() && !shouldRunParentTerminalize()) return;
+          return originalExecuteTerminalize.apply(this, arguments);
+        };
+        window.executeTerminalize.__frameworkDocsGuard = true;
+      }
+
+      if (typeof window.terminalize === 'function' && !window.terminalize.__frameworkDocsGuard) {
+        const originalTerminalize = window.terminalize;
+        window.terminalize = function() {
+          if (isDocsOrExamplesPage() && !shouldRunParentTerminalize()) return;
+          return originalTerminalize.apply(this, arguments);
+        };
+        window.terminalize.__frameworkDocsGuard = true;
+      }
+    }
+
+    function executeParentTerminalizeNow() {
+      if (!shouldRunParentTerminalize()) return;
+
+      try {
+        if (typeof markFrameworkReady === 'function') {
+          markFrameworkReady();
+        } else {
+          window.frameworkReady = true;
+        }
+      } catch(e) {}
+
+      const runTerminalizePipeline = () => {
+        try {
+          if (typeof executeTerminalize === 'function') {
+            executeTerminalize();
+          } else if (typeof terminalize === 'function') {
+            terminalize();
+          }
+        } catch(e) {}
+      };
+
+      <% if params[:action] == 'responsive_test' %>
+      // Ensure responsive_test.css is loaded before terminalize so mixin test
+      // selectors are active on first pass after Turbo navigation.
+      const responsiveTestStylesheet = document.querySelector('link[href*="responsive_test"]');
+      if (responsiveTestStylesheet && !responsiveTestStylesheet.sheet) {
+        responsiveTestStylesheet.addEventListener('load', runTerminalizePipeline, { once: true });
+        setTimeout(runTerminalizePipeline, 300);
+      } else {
+        runTerminalizePipeline();
+      }
+      <% else %>
+      runTerminalizePipeline();
+      <% end %>
+    }
+
+    function runTerminalizeWhenExamplesReady() {
+      if (frameworkDocsRuntime.examplesWrappedHandler) {
+        document.removeEventListener('trmnl:framework-examples:wrapped', frameworkDocsRuntime.examplesWrappedHandler);
+        frameworkDocsRuntime.examplesWrappedHandler = null;
+      }
+      if (frameworkDocsRuntime.examplesWrappedTimeout) {
+        clearTimeout(frameworkDocsRuntime.examplesWrappedTimeout);
+        frameworkDocsRuntime.examplesWrappedTimeout = null;
+      }
+
+      const run = () => {
+        if (frameworkDocsRuntime.examplesWrappedHandler) {
+          document.removeEventListener('trmnl:framework-examples:wrapped', frameworkDocsRuntime.examplesWrappedHandler);
+          frameworkDocsRuntime.examplesWrappedHandler = null;
+        }
+        if (frameworkDocsRuntime.examplesWrappedTimeout) {
+          clearTimeout(frameworkDocsRuntime.examplesWrappedTimeout);
+          frameworkDocsRuntime.examplesWrappedTimeout = null;
+        }
+        executeParentTerminalizeNow();
+      };
+
+      if (!hasPendingExampleWrappers()) {
+        run();
+        return;
+      }
+
+      frameworkDocsRuntime.examplesWrappedHandler = function() {
+        if (!hasPendingExampleWrappers()) run();
+      };
+      document.addEventListener('trmnl:framework-examples:wrapped', frameworkDocsRuntime.examplesWrappedHandler);
+      frameworkDocsRuntime.examplesWrappedTimeout = setTimeout(frameworkDocsRuntime.examplesWrappedHandler, 2000);
+    }
+
+    function updateActiveSidebarLinks() {
+      const leftSidebar = document.getElementById('left-sidebar');
+      if (!leftSidebar) return;
+      const links = leftSidebar.querySelectorAll('a[href]');
+      const currentPath = window.location.pathname;
+      links.forEach(a => {
+        try {
+          const isActive = a.pathname === currentPath;
+          a.classList.toggle('bg-primary-100', isActive);
+          a.classList.toggle('dark:bg-primary-900/30', isActive);
+          a.classList.toggle('text-primary-700', isActive);
+          a.classList.toggle('dark:text-primary-400', isActive);
+          a.classList.toggle('font-medium', isActive);
+          a.classList.toggle('text-gray-700', !isActive);
+          a.classList.toggle('dark:text-gray-300', !isActive);
+          a.classList.toggle('hover:bg-gray-200', !isActive);
+          a.classList.toggle('dark:hover:bg-gray-700', !isActive);
+        } catch(e) {}
+      });
+    }
+
+    if (frameworkDocsRuntime.bootFramework) {
+      document.removeEventListener('DOMContentLoaded', frameworkDocsRuntime.bootFramework);
+      document.removeEventListener('turbo:load', frameworkDocsRuntime.bootFramework);
+    }
+    installParentTerminalizeGuard();
+    frameworkDocsRuntime.bootFramework = bootFramework;
+    document.addEventListener('DOMContentLoaded', frameworkDocsRuntime.bootFramework);
+    document.addEventListener('turbo:load', frameworkDocsRuntime.bootFramework);
+
+    // Page transition hooks (Turbo)
+    (function setupPageTransitions() {
+      // The parity harness is read by eye, row against row, so it gets no fade or
+      // translate on visit and render. ERB writes the boolean itself: comparing it
+      // to the string 'true' left the flag false on every page including that one.
+      const disableMainTransitions = <%= params[:action] == 'responsive_test' %>;
+
+      if (frameworkDocsRuntime.transitions) {
+        document.removeEventListener('turbo:before-visit', frameworkDocsRuntime.transitions.beforeVisit);
+        document.removeEventListener('turbo:before-render', frameworkDocsRuntime.transitions.beforeRender);
+        document.removeEventListener('turbo:render', frameworkDocsRuntime.transitions.render);
+      }
+
+      // Fade out current content on visit start
+      const beforeVisit = function() {
+        if (disableMainTransitions) return;
+        try {
+          const main = document.getElementById('main-content');
+          if (main) {
+            main.classList.add('transition-all', 'duration-150', 'ease-in');
+            main.classList.add('opacity-0', 'translate-y-1');
+          }
+        } catch(_) {}
+      };
+
+      // Prepare new content and scroll to top before render
+      const beforeRender = function(event) {
+        try {
+          const newBody = event && event.detail && event.detail.newBody;
+          if (newBody && !disableMainTransitions) {
+            const newMain = newBody.querySelector('#main-content');
+            if (newMain) {
+              newMain.classList.add('opacity-0', 'translate-y-1');
+              newMain.classList.add('transition-all', 'duration-200', 'ease-out');
+            }
+          }
+        } catch(_) {}
+        try { window.scrollTo(0, 0); } catch(_) {}
+      };
+
+      // Fade in after render
+      const render = function() {
+        if (disableMainTransitions) return;
+        try {
+          const main = document.getElementById('main-content');
+          if (!main) return;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              main.classList.remove('opacity-0', 'translate-y-1');
+            });
+          });
+        } catch(_) {}
+      };
+
+      frameworkDocsRuntime.transitions = { beforeVisit, beforeRender, render };
+      document.addEventListener('turbo:before-visit', beforeVisit, { passive: true });
+      document.addEventListener('turbo:before-render', beforeRender);
+      document.addEventListener('turbo:render', render);
+    })();
+
+    // Generate table of contents from headings in the main content area
+    function generateTableOfContents() {
+      if (frameworkDocsRuntime.tocObserver) {
+        frameworkDocsRuntime.tocObserver.disconnect();
+        frameworkDocsRuntime.tocObserver = null;
+      }
+
+      // Select content area and TOC container
+      const mainContentArea = document.querySelector('#main-content');
+      if (!mainContentArea) return;
+
+      // Skip headings inside opted-out regions (related-page cards, prev/next
+      // navigation): they are not sections of the current page.
+      const headings = Array.from(mainContentArea.querySelectorAll('h2, h3, h4'))
+        .filter(heading => !heading.closest('[data-toc-exclude]'));
+      const tocContents = document.querySelectorAll('.js-toc-content');
+
+      if (tocContents.length === 0) return;
+
+      // Track used IDs to ensure uniqueness
+      const usedIds = new Set();
+
+      // Clear loading placeholder in all TOC containers
+      tocContents.forEach(tocContent => {
+        tocContent.innerHTML = '';
+
+        // No headings found
+        if (headings.length === 0) {
+          tocContent.innerHTML = '<div class="text-gray-400 italic">No sections found</div>';
+          return;
+        }
+
+        // Generate TOC items
+        headings.forEach(heading => {
+          // Skip headings without IDs or generate unique ones
+          if (!heading.id) {
+            const headingText = heading.textContent.trim();
+            let baseId = headingText.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+            let uniqueId = baseId;
+            let counter = 1;
+
+            // Ensure ID uniqueness by adding a counter if needed
+            while (usedIds.has(uniqueId)) {
+              uniqueId = `${baseId}-${counter}`;
+              counter++;
+            }
+
+            heading.id = uniqueId;
+            usedIds.add(uniqueId);
+          } else {
+            // Track existing IDs to avoid conflicts
+            usedIds.add(heading.id);
+          }
+
+          // Create TOC entry
+          const tocEntry = document.createElement('a');
+          tocEntry.href = `#${heading.id}`;
+
+          // Add appropriate indentation based on heading level
+          let indentClass = '';
+          if (heading.tagName === 'H3') indentClass = 'pl-2';
+          if (heading.tagName === 'H4') indentClass = 'pl-4';
+
+          tocEntry.className = `block py-1 text-xs tracking-[.01em] transition-colors duration-150 text-gray-600 dark:text-gray-500 hover:text-primary-500 dark:hover:text-primary-400 ${indentClass}`;
+          tocEntry.textContent = heading.textContent.trim();
+
+          // Add click behavior to smooth scroll
+          tocEntry.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetHeading = document.getElementById(heading.id);
+            if (targetHeading) {
+              targetHeading.scrollIntoView({ behavior: 'smooth' });
+              window.history.pushState(null, null, `#${heading.id}`);
+
+              // Remove active class from all links in all TOC containers
+              document.querySelectorAll('.js-toc-content a').forEach(link => {
+                link.classList.remove('font-bold', 'text-primary-500', 'dark:text-primary-400');
+              });
+
+              // Add active class to clicked link and corresponding links in other TOC containers
+              document.querySelectorAll(`.js-toc-content a[href="#${heading.id}"]`).forEach(link => {
+                link.classList.add('font-bold', 'text-primary-500', 'dark:text-primary-400');
+              });
+
+              // Close mobile sidebars if open
+              closeMobileSidebars();
+            }
+          });
+
+          tocContent.appendChild(tocEntry);
+        });
+      });
+
+      // Set up the IntersectionObserver for scrollspy
+      setupScrollspy(headings);
+
+      // Initial highlight based on hash
+      highlightCurrentSection();
+    }
+
+    // Setup scrollspy to highlight TOC items based on scroll position
+    function setupScrollspy(headings) {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px 0px -70% 0px',
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Remove active class from all links
+            document.querySelectorAll('.js-toc-content a').forEach(link => {
+              link.classList.remove('font-bold', 'text-primary-500', 'dark:text-primary-400');
+            });
+
+            // Add active class to current section link in all TOC containers
+            document.querySelectorAll(`.js-toc-content a[href="#${entry.target.id}"]`).forEach(link => {
+              link.classList.add('font-bold', 'text-primary-500', 'dark:text-primary-400');
+            });
+          }
+        });
+      }, observerOptions);
+
+      // Track all sections that have IDs
+      headings.forEach(section => {
+        observer.observe(section);
+      });
+      frameworkDocsRuntime.tocObserver = observer;
+    }
+
+    // Highlight the current section in TOC based on URL hash
+    function highlightCurrentSection() {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        document.querySelectorAll(`.js-toc-content a[href="#${hash}"]`).forEach(link => {
+          link.classList.add('font-bold', 'text-primary-500', 'dark:text-primary-400');
+        });
+
+        // Scroll to the element after a short delay to ensure page is fully loaded
+        setTimeout(() => {
+          const targetElement = document.getElementById(hash);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    }
+
+    window.getCurrentExamplePosition = function() {
+      // If user is near the top of the page, don't restore scroll position
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const isNearTop = scrollTop < 200; // Within 200px of the top
+
+      if (isNearTop) {
+        return null; // Don't restore position when at top of page
+      }
+
+      const examples = document.querySelectorAll('iframe[data-trmnl-example]');
+      if (examples.length === 0) return null;
+
+      const viewportHeight = window.innerHeight;
+      const viewportCenter = scrollTop + (viewportHeight / 2);
+
+      let closestExample = null;
+      let closestDistance = Infinity;
+      let exampleIndex = -1;
+
+      // Find the example closest to the center of the viewport
+      examples.forEach((example, index) => {
+        const rect = example.getBoundingClientRect();
+        const exampleTop = scrollTop + rect.top;
+        const exampleCenter = exampleTop + (rect.height / 2);
+        const distance = Math.abs(exampleCenter - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestExample = example;
+          exampleIndex = index;
+        }
+      });
+
+      if (!closestExample) return null;
+
+      // Calculate the offset from the top of the viewport to the top of the example
+      const exampleRect = closestExample.getBoundingClientRect();
+      const offsetFromViewportTop = exampleRect.top;
+
+      return {
+        index: exampleIndex,
+        offsetFromTop: offsetFromViewportTop
+      };
+    };
+
+    // Restore scroll position to maintain the same example (iframe) at the same relative position
+    window.restoreScrollPosition = function(examplePosition) {
+      if (!examplePosition) return;
+
+      // Use requestAnimationFrame to ensure we restore position as soon as layout is complete
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const examples = document.querySelectorAll('iframe[data-trmnl-example]');
+          if (examples.length > examplePosition.index) {
+            const targetExample = examples[examplePosition.index];
+            const targetRect = targetExample.getBoundingClientRect();
+            const currentOffsetFromTop = targetRect.top;
+
+            // Calculate how much we need to scroll to restore the original offset
+            const scrollAdjustment = currentOffsetFromTop - examplePosition.offsetFromTop;
+            const newScrollTop = window.pageYOffset + scrollAdjustment;
+
+            // Instantly scroll to the calculated position (no animation)
+            window.scrollTo(0, newScrollTop);
+          }
+        });
+      });
+    };
+
+    // Initialize sticky border radius functionality
+    function initStickyBorderRadius() {
+      const sentinel = document.getElementById('sticky-sentinel');
+      const container = document.getElementById('test-config-container');
+
+      if (!sentinel || !container) return;
+      if (frameworkDocsRuntime.stickyObserver) {
+        frameworkDocsRuntime.stickyObserver.disconnect();
+        frameworkDocsRuntime.stickyObserver = null;
+      }
+
+      // Create intersection observer to watch the sentinel element
+      const observer = new IntersectionObserver(
+        function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              // Sentinel is visible, sticky element is not stuck - show rounded corners
+              container.classList.remove('rounded-t-none');
+              container.classList.add('rounded-t-lg');
+            } else {
+              // Sentinel is not visible, sticky element is stuck - remove top rounded corners
+              container.classList.remove('rounded-t-lg');
+              container.classList.add('rounded-t-none');
+            }
+          });
+        },
+        {
+          root: null,
+          rootMargin: '-44px 0px 0px 0px',
+          threshold: 0
+        }
+      );
+
+      // Start observing the sentinel
+      observer.observe(sentinel);
+      frameworkDocsRuntime.stickyObserver = observer;
+    }
+
+    <% unless params[:action] == 'index' %>
+    // Function to show mobile sidebar with animation
+    function showMobileSidebar(sidebarId) {
+      const sidebar = document.getElementById(sidebarId);
+      if (!sidebar) return;
+
+      // First make it visible but transparent
+      sidebar.classList.remove('hidden');
+      // Force a reflow to ensure the transition works
+      sidebar.offsetHeight;
+      // Then fade in the overlay
+      sidebar.classList.remove('opacity-0');
+
+      // Slide in the sidebar content
+      const sidebarContent = sidebar.querySelector('div');
+      if (sidebarContent) {
+        sidebarContent.classList.remove(sidebarId === 'left-sidebar-mobile' ? '-translate-x-full' : 'translate-x-full');
+      }
+
+      document.body.classList.add('overflow-hidden');
+    }
+
+    // Function to hide mobile sidebar with animation
+    function hideMobileSidebar(sidebarId) {
+      const sidebar = document.getElementById(sidebarId);
+      if (!sidebar) return;
+
+      // First fade out the overlay
+      sidebar.classList.add('opacity-0');
+
+      // Slide out the sidebar content
+      const sidebarContent = sidebar.querySelector('div');
+      if (sidebarContent) {
+        sidebarContent.classList.add(sidebarId === 'left-sidebar-mobile' ? '-translate-x-full' : 'translate-x-full');
+      }
+
+      // Wait for the animation to complete before hiding
+      setTimeout(() => {
+        sidebar.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }, 300);
+    }
+
+    // Mobile sidebar helpers
+    window.closeMobileSidebars = function() {
+      var leftMobile = document.getElementById('left-sidebar-mobile');
+      var rightMobile = document.getElementById('right-sidebar-mobile');
+      if (leftMobile) leftMobile.classList.add('hidden');
+      if (rightMobile) rightMobile.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    };
+
+    (function initMobileSidebarControls() {
+      document.querySelectorAll('[data-sidebar-close]').forEach(function(btn) {
+        if (btn.dataset.frameworkSidebarCloseWired === 'true') return;
+        btn.dataset.frameworkSidebarCloseWired = 'true';
+        btn.addEventListener('click', function() {
+          var sidebarType = btn.getAttribute('data-sidebar-close');
+          hideMobileSidebar(sidebarType + '-sidebar-mobile');
+        });
+      });
+
+      document.querySelectorAll('.mobile-sidebar').forEach(function(sidebar) {
+        if (sidebar.dataset.frameworkOverlayWired === 'true') return;
+        sidebar.dataset.frameworkOverlayWired = 'true';
+        sidebar.addEventListener('click', function(e) {
+          if (e.target === sidebar) hideMobileSidebar(sidebar.id);
+        });
+      });
+    })();
+    <% end %>
+  </script>
+  <script type="text/javascript">
+    // Bridge terminalize stats + auto-resize from example iframes to the host window
+    (function bridgeIframeMessages(){
+      if (window.__frameworkIframeMessageHandler) {
+        window.removeEventListener('message', window.__frameworkIframeMessageHandler);
+      }
+
+      // The example iframe this message came from, or null. Example frames are srcdoc
+      // documents of this page, so a genuine message carries this page's origin and one
+      // of their windows. Any window that can reach this page could otherwise post a
+      // stats payload and have it re-dispatched as the page event the stats panel reads.
+      function exampleFrameFor(event){
+        if (event.origin !== window.location.origin) return null;
+        for (const frame of document.querySelectorAll('iframe[data-trmnl-example]')) {
+          if (frame.contentWindow === event.source) return frame;
+        }
+        return null;
+      }
+
+      function handleMessage(event){
+        const data = event && event.data || {};
+        if (!data || typeof data !== 'object') return;
+        const frame = exampleFrameFor(event);
+        if (!frame) return;
+        if (data.type === 'trmnl:terminalize:stats') {
+          try { window.dispatchEvent(new CustomEvent('trmnl:terminalize:stats', { detail: data.detail })); } catch(_) {}
+          return;
+        }
+        if (data.type === 'trmnl:example:resize' && typeof data.height === 'number') {
+          // Check if we are on a Docs page (where we want full width 100% and NO pixel minimization)
+          // If we are NOT on a docs page (e.g. examples/shopify), we allow pixel resizing.
+          const isDocsPage = window.location.pathname.indexOf('/framework/docs') !== -1;
+          const shouldResize = !isDocsPage;
+
+          // Always update height from resize message (content may have changed)
+          // Only update height on non-Docs pages (Examples), otherwise keep device model height
+          // Write only when the value actually changes: an identical write still
+          // resizes the iframe document and re-fires its ResizeObserver, feeding a loop.
+          if (shouldResize) {
+            const h = Math.max(0, data.height) + 'px';
+            if (frame.style.height !== h) frame.style.height = h;
+          }
+
+          // For width: respect resize message unless in sample size mode
+          // Only apply width resizing on non-docs pages (Examples)
+          if (shouldResize && typeof data.width === 'number' && !frame.dataset.sampleSize) {
+            const w = Math.max(0, data.width) + 'px';
+            if (frame.style.width !== w) frame.style.width = w;
+          }
+        }
+        if (data.type === 'trmnl:example:error') {
+          try { console.warn('[TRMNL iframe]', data.message, data.stack); } catch(_) {}
+        }
+      }
+      window.__frameworkIframeMessageHandler = handleMessage;
+      window.addEventListener('message', handleMessage);
+    })();
+  </script>
+  <script type="text/javascript">
+    // Forward Screen Picker changes to iframes and size them using device model data
+    (function bridgeScreenPickerToIframes(){
+      if (window.__frameworkScreenPickerBridge__) return; // guard
+      window.__frameworkScreenPickerBridge__ = true;
+      try {
+        const scope = (document.body && document.body.dataset && document.body.dataset.frameworkExamplesExamplesScopeValue) || 'framework';
+        const channel = new BroadcastChannel(`screen_picker_${scope}`);
+        const applyScreenState = (d) => {
+          if (!d || typeof d !== 'object') return;
+          if (d.type !== 'screenChanged') return;
+          // Legacy docs freeze at first render: the archived v1.2 engine is not
+          // safe to re-run, so picker broadcasts must not touch its iframes.
+          const bodyDataset = document.body && document.body.dataset;
+          if (bodyDataset && bodyDataset.frameworkExamplesFrozenRuntimeValue === 'true') return;
+          // For screen_picker payloads, width/height are already orientation-aware.
+          // Keep legacy swap logic only for non-screen_picker broadcasters.
+          const baseW = Number(d.width) || 0;
+          const baseH = Number(d.height) || 0;
+          const isScreenPickerSource = d.source === 'screen_picker';
+          const w = isScreenPickerSource ? baseW : (d.isPortrait ? baseH : baseW);
+          const h = isScreenPickerSource ? baseH : (d.isPortrait ? baseW : baseH);
+
+          // Helper: minimal fallback to apply classes inside iframe doc.
+          // The rewrite predicate lives in lib/screen_class_sync.js (loaded
+          // as a module by application.js, which sets the window global).
+          const applyClassesToIframeDoc = (doc, classesString) => {
+            try {
+              const sync = window.TRMNLScreenClassSync;
+              if (!doc || !sync) return;
+              const screens = doc.querySelectorAll('.screen, [class*="screen--"]');
+              const previewClass = isDocsOrExamplesPage() ? ['screen--preview'] : [];
+              screens.forEach((screen) => {
+                if (screen.closest('[data-screen-picker-ignore]')) return;
+                screen.className = sync.mergeScreenClasses(screen.className, classesString, previewClass);
+              });
+            } catch(_) {}
+          };
+
+          const iframes = document.querySelectorAll('iframe[data-trmnl-example]');
+          // Check if we are on a Docs page (where we want full width 100% and NO pixel minimization)
+          // If we are NOT on a docs page (e.g. examples/shopify), we allow pixel resizing.
+          const isDocsPage = window.location.pathname.indexOf('/framework/docs') !== -1;
+          const shouldResize = !isDocsPage;
+
+          for (const frame of iframes) {
+            // Apply base dimensions from screen picker
+            // The iframe will send resize messages with correct adjusted dimensions for example layouts
+            frame.dataset.preferModelSize = 'true';
+
+            // Apply width/height to ALL iframes (Example AND Docs pages) to respect device model size.
+            // Write only on change so we don't needlessly resize the iframe document (which re-fires
+            // its ResizeObserver and churns layout/paint).
+            if (!frame.dataset.sampleSize && w > 0) {
+              const wpx = w + 'px';
+              if (frame.style.width !== wpx) frame.style.width = wpx;
+            }
+            if (h > 0) {
+              const hpx = h + 'px';
+              if (frame.style.height !== hpx) frame.style.height = hpx;
+            }
+
+            // Fallback: apply classes directly in iframe if BC isn't shared
+            // This runs on ALL pages (docs & examples) to ensure correct device styling (monochrome/color/etc)
+            applyClassesToIframeDoc(frame.contentDocument, d.screenClasses);
+
+            // Attempt to re-run terminalize inside iframe
+            try {
+              const win = frame.contentWindow;
+              if (win && typeof win.executeTerminalize === 'function') win.executeTerminalize();
+              else if (win && typeof win.terminalize === 'function') win.terminalize();
+            } catch(_) {}
+          }
+        };
+
+        channel.onmessage = (event) => applyScreenState(event && event.data || {});
+
+        // The picker publishes its ready state here after its async setup is
+        // complete. Listening on the page-local channel lets initial iframe
+        // boxes receive the selected model dimensions without leaking state
+        // between open docs tabs.
+        if (!window.__trmnlScreenPickerPageId) {
+          window.__trmnlScreenPickerPageId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
+        const pageChannel = new BroadcastChannel(`screen_picker_${scope}_page_${window.__trmnlScreenPickerPageId}`);
+        pageChannel.onmessage = (event) => applyScreenState(event && event.data || {});
+      } catch(_) {}
+    })();
+  </script>
+  <%= sprite_icon_definitions %>
+</body>
+</html>

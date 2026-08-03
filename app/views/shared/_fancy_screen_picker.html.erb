@@ -1,0 +1,354 @@
+<%
+  theme ||= "system"
+  default_model_keyname ||= 'og_plus'
+  scope ||= 'framework'
+  refresh = !!refresh
+  variant ||= :desktop
+  summary_element_id ||= nil
+  default_palette_id = local_assigns.fetch(:default_palette_id, nil)
+  device_key = local_assigns.fetch(:device_key, nil)
+
+  if theme == "system"
+    text_color = "text-black dark:text-white"
+    hover_bg = "hover:bg-gray-100 dark:hover:bg-gray-800"
+    segment_group_classes = "bg-white dark:bg-gray-800/90 border-gray-300 dark:border-gray-700 divide-x divide-gray-300 dark:divide-gray-700"
+    segment_active_classes = "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-200"
+    segment_inactive_classes = "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100/60 dark:hover:bg-gray-700/60"
+  else
+    text_color = theme == "dark" ? "text-white" : "text-black"
+    hover_bg = theme == "dark" ? "hover:bg-gray-800" : "hover:bg-gray-100"
+    if theme == "dark"
+      segment_group_classes = "bg-gray-800/90 border-gray-700 divide-x divide-gray-700"
+      segment_active_classes = "bg-primary-900/40 text-primary-200"
+      segment_inactive_classes = "text-gray-400 hover:text-gray-200 hover:bg-gray-700/60"
+    else
+      segment_group_classes = "bg-white border-gray-300 divide-x divide-gray-300"
+      segment_active_classes = "bg-primary-100 text-primary-700"
+      segment_inactive_classes = "text-gray-500 hover:text-gray-700 hover:bg-gray-100/60"
+    end
+  end
+
+  container_class = case variant
+                    when :desktop then "flex items-center gap-2"
+                    when :dropdown then "flex flex-col gap-0.5 w-full"
+                    else "flex flex-col gap-6 items-center"
+                    end
+  icon_size = [:desktop, :dropdown].include?(variant) ? "w-4 h-4" : "w-5 h-5"
+  btn_padding = [:desktop, :dropdown].include?(variant) ? "p-1.5" : "p-2"
+  show_labels = [:mobile, :dropdown].include?(variant)
+  use_custom_dropdowns = [:desktop, :dropdown].include?(variant)
+  toggle_btn_classes = if variant == :dropdown
+    "flex items-center w-full gap-2 px-2 py-1.5 rounded-md text-xs cursor-pointer transition-colors #{hover_bg} #{text_color}"
+  else
+    "#{menubar_icon_button_classes(padding: btn_padding)} #{hover_bg} #{text_color}"
+  end
+  segment_btn_base = "flex-1 inline-flex items-center justify-center h-7 px-2 text-xs font-medium cursor-pointer transition-colors"
+  section_label_classes = menubar_dropdown_group_label_classes
+%>
+
+<div id="fancy-screen-picker-component"
+    class="<%= container_class %>"
+    data-controller="fancy-screen-picker"
+    <%# Standalone docs: the picker payloads come from the manifest core exports
+        (in core these are API::Public::{Models,Palettes}Controller). %>
+    data-fancy-screen-picker-models-value="<%= Framework::Devices.picker_models.to_json %>"
+    data-fancy-screen-picker-palettes-value="<%= Framework::Devices.picker_palettes.to_json %>"
+    data-fancy-screen-picker-themes-value="<%= framework_theme_options.to_json %>"
+    data-fancy-screen-picker-scope-value="<%= scope %>"
+    data-fancy-screen-picker-default-model-value="<%= default_model_keyname %>"
+    data-fancy-screen-picker-default-palette-value="<%= default_palette_id %>"
+    data-fancy-screen-picker-device-key-value="<%= device_key %>"
+    data-fancy-screen-picker-refresh-value="<%= refresh %>"
+    data-fancy-screen-picker-dropdown-item-base-value="<%= menubar_dropdown_item_base_classes %>"
+    data-fancy-screen-picker-dropdown-item-active-value="<%= menubar_dropdown_item_active_classes %>"
+    data-fancy-screen-picker-dropdown-item-inactive-value="<%= menubar_dropdown_item_inactive_classes %>"
+    data-fancy-screen-picker-dropdown-group-label-value="<%= menubar_dropdown_group_label_classes %>"
+    data-fancy-screen-picker-segment-active-value="<%= segment_active_classes %>"
+    data-fancy-screen-picker-segment-inactive-value="<%= segment_inactive_classes %>"
+    <% if summary_element_id.present? %>data-fancy-screen-picker-summary-element-id-value="<%= summary_element_id %>"<% end %>
+>
+    <% if variant == :dropdown %>
+        <!-- Dark mode segmented group -->
+        <span class="order-3 <%= section_label_classes %>">Theme</span>
+        <div class="inline-flex w-full rounded-lg border overflow-hidden order-3 <%= segment_group_classes %>">
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectDarkMode"
+                    data-fancy-screen-picker-target="lightSegment"
+                    class="<%= segment_btn_base %> <%= segment_active_classes %>">
+                Light
+            </button>
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectDarkMode"
+                    data-fancy-screen-picker-target="darkSegment"
+                    class="<%= segment_btn_base %> <%= segment_inactive_classes %>">
+                Dark
+            </button>
+        </div>
+        <button type="button" data-dark-mode-toggle class="hidden"></button>
+
+        <!-- Orientation segmented group -->
+        <span class="order-4 <%= section_label_classes %>">Orientation</span>
+        <div class="inline-flex w-full rounded-lg border overflow-hidden order-4 <%= segment_group_classes %>">
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectOrientation"
+                    data-fancy-screen-picker-target="landscapeSegment"
+                    class="<%= segment_btn_base %> <%= segment_active_classes %>">
+                Landscape
+            </button>
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectOrientation"
+                    data-fancy-screen-picker-target="portraitSegment"
+                    class="<%= segment_btn_base %> <%= segment_inactive_classes %>">
+                Portrait
+            </button>
+        </div>
+        <button type="button" data-orientation-toggle class="hidden"></button>
+
+        <!-- Color preview segmented group -->
+        <span class="order-5 <%= section_label_classes %>">Color Mode</span>
+        <div class="inline-flex w-full rounded-lg border overflow-hidden order-5 <%= segment_group_classes %>">
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectColorPreview"
+                    data-fancy-screen-picker-target="rawSegment"
+                    class="<%= segment_btn_base %> <%= segment_active_classes %>">
+                Raw
+            </button>
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectColorPreview"
+                    data-fancy-screen-picker-target="previewSegment"
+                    class="<%= segment_btn_base %> <%= segment_inactive_classes %>">
+                Preview
+            </button>
+        </div>
+
+        <!-- Font family segmented group -->
+        <span class="order-6 <%= section_label_classes %>">Font Family</span>
+        <div class="inline-flex w-full rounded-lg border overflow-hidden order-6 <%= segment_group_classes %>">
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectFontFamily"
+                    data-font-family="default"
+                    data-fancy-screen-picker-target="fontFamilyDefaultSegment"
+                    class="<%= segment_btn_base %> <%= segment_active_classes %>">
+                Default
+            </button>
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectFontFamily"
+                    data-font-family="classic"
+                    data-fancy-screen-picker-target="fontFamilyClassicSegment"
+                    class="<%= segment_btn_base %> <%= segment_inactive_classes %>">
+                Classic
+            </button>
+            <button type="button"
+                    data-action="click->fancy-screen-picker#selectFontFamily"
+                    data-font-family="trmnl"
+                    data-fancy-screen-picker-target="fontFamilyTrmnlSegment"
+                    class="<%= segment_btn_base %> <%= segment_inactive_classes %>">
+                TRMNL
+            </button>
+        </div>
+    <% else %>
+        <!-- Dark mode toggle -->
+        <button type="button"
+                data-dark-mode-toggle
+                class="<%= toggle_btn_classes %>"
+                aria-label="Toggle dark mode">
+            <div class="flex items-center gap-2">
+                <%= render 'shared/icons/light_mode', css_class: icon_size, data: { fancy_screen_picker_target: 'lightIcon' } %>
+                <%= render 'shared/icons/dark_mode', css_class: icon_size, data: { fancy_screen_picker_target: 'darkIcon' }, additional_classes: "hidden" %>
+                <% if show_labels %>
+                    <span data-dark-mode-text>Light Mode</span>
+                <% end %>
+                <div data-fancy-screen-picker-target="darkModeIndicator" class="absolute top-1 right-1 w-1.5 h-1.5 bg-primary-600 dark:bg-primary-400 rounded-full hidden"></div>
+            </div>
+        </button>
+
+        <!-- Orientation toggle -->
+        <button type="button"
+                data-orientation-toggle
+                class="<%= toggle_btn_classes %>"
+                aria-label="Toggle orientation">
+            <div class="flex items-center gap-2">
+                <%= render 'shared/icons/landscape', css_class: icon_size, data: { fancy_screen_picker_target: 'landscapeIcon' } %>
+                <%= render 'shared/icons/portrait', css_class: icon_size, data: { fancy_screen_picker_target: 'portraitIcon' }, additional_classes: "hidden" %>
+                <% if show_labels %>
+                    <span data-orientation-text>Landscape</span>
+                <% end %>
+                <div data-fancy-screen-picker-target="orientationIndicator" class="absolute top-1 right-1 w-1.5 h-1.5 bg-primary-600 dark:bg-primary-400 rounded-full hidden"></div>
+            </div>
+        </button>
+
+        <!-- Color preview mode toggle (Raw / Preview) -->
+        <button type="button"
+                data-color-preview-toggle
+                data-action="click->fancy-screen-picker#toggleColorPreview"
+                data-fancy-screen-picker-target="colorPreviewToggle"
+                class="<%= toggle_btn_classes %>"
+                aria-label="Toggle color preview (Raw / Preview)"
+                aria-pressed="false">
+            <div class="flex items-center gap-2">
+                <span data-fancy-screen-picker-target="colorPreviewText">Raw</span>
+            </div>
+        </button>
+
+        <!-- Font family toggle (Default / Classic / TRMNL) -->
+        <%= select_tag 'font_family_selector', [],
+                        {
+                            'data-font-family-select' => true,
+                            class: "inline-block py-2 px-3 pr-8 transition-all duration-200 text-sm font-medium tracking-tight rounded-full #{hover_bg} #{text_color} bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500",
+                        } %>
+    <% end %>
+
+    <% if variant == :desktop %>
+        <div class="w-px bg-gray-300 dark:bg-gray-650 self-stretch"></div>
+    <% elsif variant != :dropdown %>
+        <div class="h-px bg-gray-300 dark:bg-gray-650 w-full"></div>
+    <% end %>
+
+    <!-- Device selector: hidden native select for @trmnl/picker, custom dropdown for UI -->
+    <%# Built from picker_models, the same payload the component is handed above: the
+        component clears this select and rebuilds it from that list on connect, so any
+        other source renders options it is about to replace with different ones. %>
+    <%= select_tag 'device_selector',
+                    options_for_select(Framework::Devices.picker_models.map { |model| [model['label'] || model['name'], model['name']] }, default_model_keyname),
+                    {
+                        'data-model-select' => true,
+                        hidden: use_custom_dropdowns,
+                        class: "inline-block py-2 px-3 pr-8 transition-all duration-200 text-sm font-medium tracking-tight rounded-full #{hover_bg} #{text_color} bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500",
+                    } %>
+
+    <% if use_custom_dropdowns %>
+        <% if variant == :dropdown %>
+            <span class="order-1 <%= section_label_classes %>">Device</span>
+        <% end %>
+        <div class="relative <%= 'order-1' if variant == :dropdown %>" data-fancy-screen-picker-target="modelDropdown">
+            <button type="button"
+                    class="<%= variant == :dropdown ? 'w-full' : 'w-[140px]' %> <%= menubar_dropdown_trigger_classes %>"
+                    data-action="click->fancy-screen-picker#toggleModelDropdown"
+                    aria-haspopup="listbox"
+                    aria-expanded="false">
+                <span class="truncate" data-fancy-screen-picker-target="modelLabel">-</span>
+                <%= menubar_dropdown_chevron %>
+            </button>
+            <div class="top-full left-0 max-h-[300px] overflow-y-auto w-max min-w-full <%= menubar_dropdown_menu_classes %>"
+                 data-fancy-screen-picker-target="modelMenu"
+                 role="listbox"
+                 hidden>
+            </div>
+        </div>
+    <% end %>
+
+    <!-- Bit depth selector: hidden native select for @trmnl/picker, custom dropdown for UI -->
+    <%= select_tag 'palette_selector', [],
+                    {
+                        'data-palette-select' => true,
+                        hidden: use_custom_dropdowns,
+                        class: "inline-block py-2 px-3 pr-8 transition-all duration-200 text-sm font-medium tracking-tight rounded-full #{hover_bg} #{text_color} bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500",
+                    } %>
+
+    <% if use_custom_dropdowns %>
+        <% if variant == :dropdown %>
+            <span class="order-2 <%= section_label_classes %>">Palette</span>
+        <% end %>
+        <div class="relative <%= 'order-2' if variant == :dropdown %>" data-fancy-screen-picker-target="paletteDropdown">
+            <button type="button"
+                    class="<%= variant == :dropdown ? 'w-full' : 'w-[100px]' %> <%= menubar_dropdown_trigger_classes %>"
+                    data-action="click->fancy-screen-picker#togglePaletteDropdown"
+                    aria-haspopup="listbox"
+                    aria-expanded="false">
+                <span class="truncate" data-fancy-screen-picker-target="paletteLabel">-</span>
+                <%= menubar_dropdown_chevron %>
+            </button>
+            <div class="top-full left-0 max-h-[300px] overflow-y-auto w-max min-w-full <%= menubar_dropdown_menu_classes %>"
+                 data-fancy-screen-picker-target="paletteMenu"
+                 role="listbox"
+                 hidden>
+            </div>
+        </div>
+    <% end %>
+
+    <!-- Style (framework theme) selector: hidden native select, custom dropdown for UI -->
+    <%= select_tag 'theme_selector',
+                    options_for_select(framework_theme_options.map { |option| [option[:name], option[:id]] }, 'none'),
+                    {
+                        'data-theme-select' => true,
+                        'data-action' => 'change->fancy-screen-picker#selectTheme',
+                        hidden: use_custom_dropdowns,
+                        class: "inline-block py-2 px-3 pr-8 transition-all duration-200 text-sm font-medium tracking-tight rounded-full #{hover_bg} #{text_color} bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500",
+                    } %>
+
+    <% if use_custom_dropdowns %>
+        <% if variant == :dropdown %>
+            <span class="order-7 <%= section_label_classes %>">Style</span>
+        <% end %>
+        <div class="relative <%= 'order-7' if variant == :dropdown %>" data-fancy-screen-picker-target="themeDropdown">
+            <button type="button"
+                    class="<%= variant == :dropdown ? 'w-full' : 'w-[110px]' %> <%= menubar_dropdown_trigger_classes %>"
+                    data-action="click->fancy-screen-picker#toggleThemeDropdown"
+                    aria-haspopup="listbox"
+                    aria-expanded="false">
+                <span class="truncate" data-fancy-screen-picker-target="themeLabel">-</span>
+                <%= menubar_dropdown_chevron %>
+            </button>
+            <div class="top-full left-0 max-h-[300px] overflow-y-auto w-max min-w-full <%= menubar_dropdown_menu_classes %>"
+                 data-fancy-screen-picker-target="themeMenu"
+                 role="listbox"
+                 hidden>
+            </div>
+        </div>
+    <% end %>
+
+    <!-- Text Scale selector: hidden native select, custom dropdown for UI -->
+    <%= select_tag 'text_scale_selector',
+                    options_for_select(Framework::TextScale.options, 'regular'),
+                    {
+                        'data-text-scale-select' => true,
+                        'data-action' => 'change->fancy-screen-picker#selectTextScale',
+                        hidden: use_custom_dropdowns,
+                        class: "inline-block py-2 px-3 pr-8 transition-all duration-200 text-sm font-medium tracking-tight rounded-full #{hover_bg} #{text_color} bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500",
+                    } %>
+
+    <% if use_custom_dropdowns %>
+        <% if variant == :dropdown %>
+            <span class="order-8 <%= section_label_classes %>">Text Scale</span>
+        <% end %>
+        <div class="relative <%= 'order-8' if variant == :dropdown %>" data-fancy-screen-picker-target="textScaleDropdown">
+            <button type="button"
+                    class="<%= variant == :dropdown ? 'w-full' : 'w-[110px]' %> <%= menubar_dropdown_trigger_classes %>"
+                    data-action="click->fancy-screen-picker#toggleTextScaleDropdown"
+                    aria-haspopup="listbox"
+                    aria-expanded="false">
+                <span class="truncate" data-fancy-screen-picker-target="textScaleLabel">-</span>
+                <%= menubar_dropdown_chevron %>
+            </button>
+            <div class="top-full left-0 max-h-[300px] overflow-y-auto w-max min-w-full <%= menubar_dropdown_menu_classes %>"
+                 data-fancy-screen-picker-target="textScaleMenu"
+                 role="listbox"
+                 hidden>
+            </div>
+        </div>
+    <% end %>
+
+    <!-- Reset to defaults button -->
+    <% if variant == :dropdown %>
+        <button type="button"
+                data-reset-button
+                class="order-9 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer transition-colors text-center w-full"
+                aria-label="Reset to device defaults"
+                title="Reset to device defaults">
+            Reset to device defaults
+        </button>
+    <% else %>
+        <button type="button"
+                data-reset-button
+                class="<%= toggle_btn_classes %>"
+                aria-label="Reset to device defaults"
+                title="Reset to device defaults">
+            <div class="flex items-center gap-2">
+                <%= render 'shared/icons/reset', css_class: icon_size %>
+                <% if show_labels %>
+                    <span>Reset to Defaults</span>
+                <% end %>
+            </div>
+        </button>
+    <% end %>
+</div>

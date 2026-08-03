@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Rule-level diff of two CSS bundles: per selector, per at-rule context, the final
+# property map either matches or it does not. This is the gate every bundle-size change
+# to the released plugins.css has to pass.
+#
+#   bin/rule-diff <base.css> <candidate.css> [--rename-map <path>] [--base-rename-map <path>]
+#                 [--report <prefix>] [--allow-added]
+#
+# Both inputs must be minified the same way, or every value cssnano normalized reports
+# as a change. The pair to compare is the processed bundle from before and after a
+# change, each side with the rename map it was built with:
+#
+#   bin/rails framework:processed_bundle
+#   cp server/app/assets/builds/plugins.processed.css tmp/after.css
+#   cp server/app/assets/builds/plugins.processed.rename-map.json tmp/after.map.json
+#   git stash && bin/rails framework:processed_bundle && git stash pop
+#   bin/rule-diff server/app/assets/builds/plugins.processed.css tmp/after.css \
+#     --base-rename-map server/app/assets/builds/plugins.processed.rename-map.json \
+#     --rename-map tmp/after.map.json \
+#     --report tmp/rule-diff
+#
+# No node_modules: the tool uses only Node builtins, so it runs in a fresh checkout.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+exec node "$ROOT/lib/rulediff/rulediff.cjs" "$@"

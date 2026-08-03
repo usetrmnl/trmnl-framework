@@ -1,0 +1,103 @@
+// ============================================
+// TRMNL Framework - Spacing Utilities
+// ============================================
+
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use '../mixins/factorized_utilities' as fz;
+@use 'sass:list';
+
+// Each declaration reads the channel the token bindings above set, with
+// `revert-layer` as the fallback. The selectors these land on match the whole
+// `m--` / `p--` namespace, so they also catch a token nothing bound: a typo
+// (`p--999`) or an arbitrary value the family does not publish (`m--[10px]`).
+// Without the fallback that declaration lands with a guaranteed-invalid var and
+// resolves to the property's initial value, so a misspelled class actively
+// erased the spacing a lower layer had set. `revert-layer` makes the unbound
+// case inert instead. A bound token still resolves and still wins.
+@mixin emit-spacing-declarations($utility) {
+    @if $utility == 'm' {
+        margin: var(--tn-m, revert-layer);
+    } @else if $utility == 'mt' {
+        margin-top: var(--tn-mt, revert-layer);
+    } @else if $utility == 'mr' {
+        margin-right: var(--tn-mr, revert-layer);
+    } @else if $utility == 'mb' {
+        margin-bottom: var(--tn-mb, revert-layer);
+    } @else if $utility == 'ml' {
+        margin-left: var(--tn-ml, revert-layer);
+    } @else if $utility == 'mx' {
+        margin-left: var(--tn-mx, revert-layer);
+        margin-right: var(--tn-mx, revert-layer);
+    } @else if $utility == 'my' {
+        margin-top: var(--tn-my, revert-layer);
+        margin-bottom: var(--tn-my, revert-layer);
+    } @else if $utility == 'p' {
+        padding: var(--tn-p, revert-layer);
+    } @else if $utility == 'pt' {
+        padding-top: var(--tn-pt, revert-layer);
+    } @else if $utility == 'pr' {
+        padding-right: var(--tn-pr, revert-layer);
+    } @else if $utility == 'pb' {
+        padding-bottom: var(--tn-pb, revert-layer);
+    } @else if $utility == 'pl' {
+        padding-left: var(--tn-pl, revert-layer);
+    } @else if $utility == 'px' {
+        padding-left: var(--tn-px, revert-layer);
+        padding-right: var(--tn-px, revert-layer);
+    } @else if $utility == 'py' {
+        padding-top: var(--tn-py, revert-layer);
+        padding-bottom: var(--tn-py, revert-layer);
+    }
+}
+
+@mixin emit-factorized-spacing-variants {
+    $utilities: ('m', 'mt', 'mr', 'mb', 'ml', 'mx', 'my', 'p', 'pt', 'pr', 'pb', 'pl', 'px', 'py');
+    $sizes: ();
+    @each $size-token, $value in vars.$size-scale {
+        $sizes: list.append($sizes, ($size-token, vars.content-scaled($value)));
+    }
+    @each $size-token, $value in vars.$decimal-scale {
+        $sizes: list.append($sizes, ($size-token, vars.content-scaled($value)));
+    }
+
+    // One binding rule per (utility, size-token) covering every applicable
+    // gate (size + orientation; spacing intentionally skips bit-depth and
+    // dark variants). Property names go through interpolation so they
+    // compress without the post-`:` whitespace Sass normally preserves
+    // for literal custom-property declarations.
+    @each $utility in $utilities {
+        @each $pair in $sizes {
+            $size-token: list.nth($pair, 1);
+            $value: list.nth($pair, 2);
+            $selectors: fz.gate-selectors-for-token(
+                '#{$utility}--#{$size-token}',
+                $include-bit-depth: false,
+                $include-dark: false
+            );
+            $vars: ('--tn-#{$utility}': $value);
+
+            #{$selectors} {
+                @each $name, $val in $vars {
+                    #{$name}: #{$val};
+                }
+            }
+        }
+    }
+
+    // Per-gate paint rule (small enough that grouping wouldn't help).
+    @each $utility in $utilities {
+        @include fz.each-size-orientation-gate using ($prefix, $screen-selectors) {
+            @include fz.emit-class-apply(
+                fz.prefixed-class-selectors('#{$utility}--', $prefix),
+                $screen-selectors
+            ) {
+                @include emit-spacing-declarations($utility);
+            }
+        }
+    }
+}
+
+@include mixins.trmnl-namespace {
+    @include emit-factorized-spacing-variants;
+}

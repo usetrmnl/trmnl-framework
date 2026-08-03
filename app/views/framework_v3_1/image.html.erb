@@ -1,0 +1,114 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :image %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:image) %>
+
+    <div class="space-y-16">
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Dithering') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the class <code class="<%= framework_section_code_classes %>">image-dither</code> to dither an image.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div>
+                      <img class="image image-dither rounded hidden 1bit:visible" src="/images/framework/image/image--1bit.png" alt="Plugin icon">
+                      <img class="image image-dither rounded hidden 2bit:visible" src="/images/framework/image/image--2bit.png" alt="Plugin icon">
+                      <img class="image image-dither rounded hidden 4bit:visible" src="/images/framework/image/image--4bit.png" alt="Plugin icon">
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Image</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<img class="image image-dither rounded" src="path to the image file">'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Object Fit') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control how images are displayed when not shown in their original aspect ratio.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Options') %>
+            <ul class="<%= framework_section_description_classes %> space-y-1 list-disc list-inside">
+              <li><strong>Fill:</strong> The image is resized to fill the given dimension. If necessary, the image will be stretched or squished to fit.</li>
+              <li><strong>Contain:</strong> The image keeps its aspect ratio, but is resized to fit within the given dimension.</li>
+              <li><strong>Cover:</strong> The image keeps its aspect ratio and fills the given dimension. The image will be clipped to fit.</li>
+            </ul>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--center">
+                      <div class="grid grid--cols-3 gap w--full">
+                        <div class="flex flex--col flex--center-x gap--small">
+                          <img class="image image--fill w--full aspect--1/1 bg--gray-20 rounded" src="/images/framework/image/image--4bit.png" alt="Photo scaled with fill">
+                          <span class="label">Fill</span>
+                        </div>
+
+                        <div class="flex flex--col flex--center-x gap--small">
+                          <img class="image image--contain w--full aspect--1/1 bg--gray-20 rounded" src="/images/framework/image/image--4bit.png" alt="Photo scaled with contain">
+                          <span class="label">Contain</span>
+                        </div>
+
+                        <div class="flex flex--col flex--center-x gap--small">
+                          <img class="image image--cover w--full aspect--1/1 bg--gray-20 rounded" src="/images/framework/image/image--4bit.png" alt="Photo scaled with cover">
+                          <span class="label">Cover</span>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Object Fit Options</span>
+                  </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-2">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<img class="image image--fill" src="path to image">
+<img class="image image--contain" src="path to image">
+<img class="image image--cover" src="path to image">'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

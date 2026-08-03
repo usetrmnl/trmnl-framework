@@ -1,0 +1,92 @@
+// ============================================
+// TRMNL Framework - Title Bar Device Overrides
+// ============================================
+
+@use '../mixins' as mixins;
+
+@include mixins.trmnl-namespace {
+    .title_bar {
+        @include mixins.for-2bit {
+            background-color: var(--framework-slot-title-bar-bg-color, transparent);
+            background-image: var(--framework-slot-title-bar-bg-image, none);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+        }
+        
+        @include mixins.for-4bit {
+            background-image: none;
+            background-color: var(--framework-slot-title-bar-bg-color, transparent);
+        }
+
+        @include mixins.for-screen-modifier('2bit', '4bit') {
+            border-radius: var(--title-bar-border-radius);
+
+            .title, .instance {
+                font-weight: var(--title-bar-font-weight);
+                font-variation-settings: 'wght' var(--title-bar-font-weight);
+                font-size: var(--title-bar-font-size);
+            }
+
+            .instance {
+                color: var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary)));
+            }
+            
+            &::before {
+                display: none;
+            }
+
+            .image {
+                max-height: var(--title-bar-image-height);
+                height: var(--title-bar-image-height);
+            }
+        }
+    }
+
+    .view--full {
+        .title_bar {
+            @include mixins.for-screen-modifier('2bit', '4bit') {
+                &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    
+    .view--half_horizontal .title_bar,
+    .view--half_vertical .title_bar,
+    .view--quadrant .title_bar,
+    .mashup-cell .title_bar {
+        @include mixins.for-2bit {
+            border-radius: 0 0 var(--title-bar-border-radius) var(--title-bar-border-radius);
+        }
+
+        @include mixins.for-4bit {
+            background-image: none;
+            border-radius: 0 0 var(--title-bar-border-radius) var(--title-bar-border-radius);
+        }
+    }
+
+    .view--half_horizontal .title_bar .image,
+    .view--half_vertical .title_bar .image,
+    .view--quadrant .title_bar .image,
+    .mashup-cell .title_bar .image {
+        @include mixins.for-screen-modifier('2bit', '4bit') {
+            max-height: var(--title-bar-small-image-height);
+            height: var(--title-bar-small-image-height);
+        }
+    }
+
+    .view--half_horizontal .title_bar .title,
+    .view--half_horizontal .title_bar .instance,
+    .view--half_vertical .title_bar .title,
+    .view--half_vertical .title_bar .instance,
+    .view--quadrant .title_bar .title,
+    .view--quadrant .title_bar .instance,
+    .mashup-cell .title_bar .title,
+    .mashup-cell .title_bar .instance {
+        @include mixins.for-screen-modifier('2bit', '4bit') {
+            font-size: var(--title-bar-small-font-size);
+        }
+    }
+}

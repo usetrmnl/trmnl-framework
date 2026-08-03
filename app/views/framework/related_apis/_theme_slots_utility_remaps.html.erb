@@ -1,0 +1,12 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'Remapping the palette from a theme') %>
+  <p class="<%= framework_section_description_classes %>">
+    A theme can re-point the raw palette utilities
+    (<code class="<%= framework_section_code_classes %>">bg--*</code>,
+    <code class="<%= framework_section_code_classes %>">text--*</code>,
+    <code class="<%= framework_section_code_classes %>">text-stroke--*</code>) at its own hue, in bulk or one token
+    at a time, so plugin markup that names gray tokens follows the theme without edits. See
+    <%= render DocsRef.new(page: :theme_slots) %> for the remap mixins and the two shipped examples.
+  </p>
+  <%= render CodeExampleComponent.new(demo_code: '@include theme-slots.utility-remap-grayscale("red", $side: "bright");', language: 'scss') %>
+</div>

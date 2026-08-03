@@ -1,0 +1,43 @@
+<%# Renders an inline docs reference: icon + title, linking to the framework page %>
+<% page_key = @page.to_s %>
+<%# The chip is written once and rendered on every track that shares the page. A frozen
+    track that never published the target has no URL for it, and a labelled link to that
+    track's docs index reads as the page: it renders as plain text there instead. %>
+<% reachable = helpers.framework_page_reachable?(page_key) %>
+<%# Use the framework_page_path helper which handles docs vs examples routes correctly %>
+<% href = reachable ? (helpers.framework_page_path(page_key) rescue nil) : nil %>
+<% tooltip_id = "docs-ref-tooltip-#{page_key}-#{rand(1_000_000)}" %>
+<% title = helpers.page_titles[page_key] || page_key.titleize %>
+<% description = helpers.page_description(page_key).to_s.strip %>
+<% intro_raw = helpers.framework_intro_paragraphs[page_key.to_s] %>
+<% effective_description = description.presence || intro_raw.to_s.strip.presence || "See #{title} documentation" %>
+<%# Shared allowlist with render_framework_intro_paragraph: intros that intentionally include <code>, <strong>, links. %>
+<% intro_safe = helpers.framework_intro_html_safe?(page_key) %>
+<% chip_classes = "inline-flex items-center gap-1 align-baseline text-xs text-sage-500 dark:text-sage-200 bg-sage-150 dark:bg-sage-850 border border-sage-200 dark:border-sage-800 px-1 py-0.5 rounded transition-colors transform translate-y-[3px]" %>
+
+<% if href.nil? %>
+  <span class="<%= chip_classes %> opacity-60" title="Not documented in Framework <%= helpers.current_docs_version %>">
+    <span class="inline-flex self-center"><%= helpers.page_icon(page_key, "w-4 h-4") %></span>
+    <span class="inline-block leading-3"><%= title %></span>
+  </span>
+<% else %>
+<span class="relative inline-flex align-baseline group" data-controller="docs-ref-tooltip">
+  <%= link_to href, { data: { turbo: false, action: 'mouseenter->docs-ref-tooltip#show mouseleave->docs-ref-tooltip#scheduleHide' }, class: "#{chip_classes} hover:bg-sage-200 dark:hover:bg-sage-600", 'data-docs-ref-tooltip-target': 'trigger' } do %>
+    <span class="inline-flex self-center"><%= helpers.page_icon(page_key, "w-4 h-4") %></span>
+    <span class="inline-block leading-3"><%= title %></span>
+  <% end %>
+  <span id="<%= tooltip_id %>" role="tooltip" class="absolute z-50 inline-block px-4 py-3 text-xs text-left whitespace-normal break-words box-border text-sage-900 bg-sage-100/40 border border-sage-200/60 backdrop-blur-md rounded-lg shadow-sm dark:text-sage-200 dark:bg-sage-900/70 dark:border-sage-800/60 left-0 top-full mt-1 w-44 sm:w-52 md:w-96" data-docs-ref-tooltip-target="template" hidden>
+    <a href="<%= href %>" class="block no-underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-sage-400 rounded">
+      <span class="flex items-center gap-2 mb-1">
+        <span class="inline-flex self-center text-sage-600"><%= helpers.page_icon(page_key, "w-8 h-8") %></span>
+        <span class="inline-block text-sage-600 font-heading text-xl"><%= title %></span>
+      </span>
+      <span class="font-normal text-sage-500 dark:text-sage-300 block"><%= effective_description %></span>
+      <% if intro_raw.present? %>
+        <span class="mt-1 text-sage-400 dark:text-sage-400 block"><%= intro_safe ? intro_raw.html_safe : ERB::Util.html_escape(intro_raw) %></span>
+      <% end %>
+    </a>
+    <span class="tooltip-arrow" data-popper-arrow></span>
+  </span>
+</span>
+<% end %>

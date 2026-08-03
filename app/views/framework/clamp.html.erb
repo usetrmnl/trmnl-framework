@@ -1,0 +1,114 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :clamp %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:clamp) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Add <code class="<%= framework_section_code_classes %>">data-clamp="N"</code> to any text element to clamp it to N lines. The engine preserves the original text and re-applies clamping when layouts change.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <% overflow_demo_content[:extended_tasks].first(4).each_with_index do |task, i| %>
+                        <%= render_task_item(task.merge(
+                          description_attributes: { 'data-clamp': (i + 1).to_s }
+                        )) %>
+                      <% end %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Clamp</span>
+                      <span class="instance">Standalone: Descriptions 1 to 4 lines</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="description" data-clamp="2">Example description text that will be clamped to two lines</span>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the same size and orientation modifiers as other framework components. Specificity (most specific first): size + orientation (e.g. <code class="<%= framework_section_code_classes %>">data-clamp-md-portrait</code>), size only (<code class="<%= framework_section_code_classes %>">data-clamp-sm</code>, <code class="<%= framework_section_code_classes %>">-md</code>, <code class="<%= framework_section_code_classes %>">-lg</code>), orientation only (<code class="<%= framework_section_code_classes %>">data-clamp-portrait</code>), then base <code class="<%= framework_section_code_classes %>">data-clamp</code>.
+          </p>
+        </div>
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="description" data-clamp="2" data-clamp-md="4" data-clamp-portrait="1">Clamp to 2 lines by default, 4 on medium+ screens, 1 in portrait</span>'
+          ) %>
+        </div>
+      </section>
+
+      <!-- Backward compatibility live examples -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Backward Compatibility') %>
+          <p class="<%= framework_section_description_classes %>">
+            Legacy class tokens are supported and mapped to the Clamp engine automatically: 
+            <code class="<%= framework_section_code_classes %>">clamp--none</code> disables clamping, and 
+            <code class="<%= framework_section_code_classes %>">clamp--1</code> through 
+            <code class="<%= framework_section_code_classes %>">clamp--50</code> request N lines. 
+          </p>
+        </div>
+
+        <!-- Live: legacy clamp classes outside columns -->
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <% overflow_demo_content[:extended_tasks].first(4).each_with_index do |task, i| %>
+                        <% legacy_class = (i == 3) ? 'clamp--none' : "clamp--#{i + 1}" %>
+                        <%= render_task_item(task.merge(
+                          description_attributes: { class: legacy_class }
+                        )) %>
+                      <% end %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Clamp (Legacy)</span>
+                      <span class="instance">Descriptions: clamp--1, clamp--2, clamp--3, clamp--none</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="description clamp--2">Example description with legacy class clamped to two lines of text</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>
+

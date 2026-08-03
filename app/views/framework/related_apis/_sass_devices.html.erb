@@ -1,0 +1,10 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'Custom device profiles') %>
+  <p class="<%= framework_section_description_classes %>">
+    Each entry in the device map compiles into a
+    <code class="<%= framework_section_code_classes %>">screen--{name}</code> class with its dimensions, density,
+    and color depth baked in. Configure <code class="<%= framework_section_code_classes %>">$custom-devices</code>
+    to produce the same classes for your own panels without touching framework source. See
+    <%= render DocsRef.new(page: :sass_devices) %> for the profile schema.
+  </p>
+</div>

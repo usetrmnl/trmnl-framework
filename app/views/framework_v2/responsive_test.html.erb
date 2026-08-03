@@ -1,0 +1,455 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <div class="flex items-center justify-between">
+      <div>
+        <%= render 'framework_v2/page_header', page_name: :responsive_test %>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:responsive_test) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <!-- Utilities Group -->
+        <div class="space-y-8">
+          <%= framework_heading(3, 'Utilities') %>
+
+          <div class="space-y-12">
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Background') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_background_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Visibility') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_visibility_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Text') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_text_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Flex') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_flex_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Spacing') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_spacing_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Gap') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_gap_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Size') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_size_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Rounded') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_rounded_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Grid') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_grid_rows %>
+          </div>
+          </div>
+        </div>
+
+        <!-- Base Group -->
+        <div class="space-y-8">
+          <%= framework_heading(3, 'Base') %>
+
+          <div class="space-y-12">
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Layout') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_base_layout_rows %>
+          </div>
+          </div>
+        </div>
+
+        <!-- Elements Group -->
+        <div class="space-y-8">
+          <%= framework_heading(3, 'Elements') %>
+
+          <div class="space-y-12">
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Value') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_value_rows %>
+          </div>
+
+          <div class="space-y-6">
+            <%= framework_heading(4, 'Label') %>
+            <%= render 'framework_v2/responsive_examples_table', rows: framework_responsive_label_rows %>
+          </div>
+          </div>
+        </div>
+
+        <!-- Components Group -->
+        <div class="space-y-8">
+          <%= framework_heading(3, 'Components') %>
+
+          <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
+              No component tests have been implemented yet
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>
+
+<script>
+// Test configuration state
+let testConfig = {
+  size: 'md',
+  orientation: 'landscape',
+  bitDepth: '4bit',
+  densityClass: 'screen--density-1x'
+};
+
+// Map sizes to actual viewport dimensions
+const sizeMap = {
+  sm: { width: 480, height: 640 },
+  md: { width: 768, height: 1024 },
+  lg: { width: 1024, height: 768 }
+};
+
+// Global variable to track example size state
+let isExampleSizeSmall = true; // Default to "Sample" (small)
+
+function toggleScreenSizes(isSmall) {
+  document.querySelectorAll('iframe[data-trmnl-example]').forEach(frame => {
+    if (isSmall) {
+      frame.style.transformOrigin = 'top left';
+      frame.style.width = '120px';
+      frame.style.height = '120px';
+      frame.dataset.sampleSize = 'true';
+    } else {
+      frame.style.transform = '';
+      frame.style.transformOrigin = '';
+      frame.style.width = '';
+      frame.style.height = '';
+      delete frame.dataset.sampleSize;
+    }
+  });
+}
+
+// Update example size button states in the UI
+function updateExampleSizeUI() {
+  document.querySelectorAll('[data-example-size]').forEach(btn => {
+    const isSample = btn.dataset.exampleSize === 'sample';
+    const isActive = (isSample && isExampleSizeSmall) || (!isSample && !isExampleSizeSmall);
+    
+    if (isActive) {
+      // Add active state classes
+      btn.classList.remove('text-sage-500', 'bg-transparent', 'dark:text-sage-400');
+      btn.classList.add('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700');
+      // Update hover classes for active state
+      btn.classList.remove('hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+      btn.classList.add('hover:bg-sage-200', 'dark:hover:bg-sage-600');
+    } else {
+      // Remove active state classes
+      btn.classList.remove('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700', 'hover:bg-sage-200', 'dark:hover:bg-sage-600');
+      btn.classList.add('text-sage-500', 'bg-transparent', 'dark:text-sage-400', 'hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+    }
+  });
+}
+
+// Handle example size button clicks
+function handleExampleSizeClick(e) {
+  const btn = e.target.closest('.example-size-btn');
+  if (!btn) return;
+  
+  const isSample = btn.dataset.exampleSize === 'sample';
+  isExampleSizeSmall = isSample;
+  
+  updateExampleSizeUI();
+  toggleScreenSizes(isExampleSizeSmall);
+}
+
+// Load initial test configuration from framework's localStorage (one-time on page load)
+function loadTestConfig() {
+  // @trmnl/picker persists its own params under the ScreenPickerController prefsKey:
+  // { modelName, paletteId, isPortrait, isDarkMode, fontFamily }. Reading anything
+  // else here misses the saved device and boots the page on the defaults below.
+  const pickerConfig = JSON.parse(localStorage.getItem('framework_screen_picker') || '{}');
+  const models = <%= Framework::Devices.picker_models.to_json.html_safe %>;
+  const model = models.find(entry => entry.name === pickerConfig.modelName) ||
+    models.find(entry => entry.name === 'og_plus');
+  window.__responsiveTestModelKeyname__ = (model && model.name) || 'og_plus'
+  const isPortrait = pickerConfig.isPortrait
+
+  // Default values
+  let size = 'md';
+  let orientation = 'landscape';
+  let bitDepth = '4bit';
+
+  // Parse device configuration. The device class is the profile the model aliases
+  // (og_plus renders as screen--ogv2), not its registry keyname, and this track's
+  // bundle stops at the 4-bit grayscale rail.
+  const modelClasses = (model && model.css && model.css.classes) || {};
+  window.__responsiveTestModelClass__ = modelClasses.device || null;
+  const depth = Number(model && model.bit_depth) > 0 ? Math.min(Number(model.bit_depth), 4) : 0;
+  size = (modelClasses.size || '').replace('screen--', '') || size;
+  bitDepth = depth ? `${depth}bit` : bitDepth;
+  testConfig.densityClass = modelClasses.density || 'screen--density-1x';
+
+  // Handle orientation - framework stores 'true' for portrait, false/null for landscape
+  if (isPortrait) {
+    orientation = 'portrait';
+  }
+
+  testConfig = { size, orientation, bitDepth, densityClass: testConfig.densityClass || 'screen--density-1x' };
+
+  updateTestConfigUI();
+  // Don't broadcast on initial load to prevent feedback loops
+  applyTestConfig(false);
+}
+
+// Update button states in the UI
+function updateTestConfigUI() {
+  // Update size buttons
+  document.querySelectorAll('[data-test-size]').forEach(btn => {
+    const isActive = btn.dataset.testSize === testConfig.size;
+    if (isActive) {
+      // Add active state classes
+      btn.classList.remove('text-sage-500', 'bg-transparent', 'dark:text-sage-400');
+      btn.classList.add('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700');
+      // Update hover classes for active state
+      btn.classList.remove('hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+      btn.classList.add('hover:bg-sage-200', 'dark:hover:bg-sage-600');
+    } else {
+      // Remove active state classes
+      btn.classList.remove('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700', 'hover:bg-sage-200', 'dark:hover:bg-sage-600');
+      btn.classList.add('text-sage-500', 'bg-transparent', 'dark:text-sage-400', 'hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+    }
+  });
+  
+  // Update orientation buttons
+  document.querySelectorAll('[data-test-orientation]').forEach(btn => {
+    const isActive = btn.dataset.testOrientation === testConfig.orientation;
+    if (isActive) {
+      // Add active state classes
+      btn.classList.remove('text-sage-500', 'bg-transparent', 'dark:text-sage-400');
+      btn.classList.add('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700');
+      // Update hover classes for active state
+      btn.classList.remove('hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+      btn.classList.add('hover:bg-sage-200', 'dark:hover:bg-sage-600');
+    } else {
+      // Remove active state classes
+      btn.classList.remove('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700', 'hover:bg-sage-200', 'dark:hover:bg-sage-600');
+      btn.classList.add('text-sage-500', 'bg-transparent', 'dark:text-sage-400', 'hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+    }
+  });
+  
+  // Update bit depth buttons
+  document.querySelectorAll('[data-test-bitdepth]').forEach(btn => {
+    const isActive = btn.dataset.testBitdepth === testConfig.bitDepth;
+    if (isActive) {
+      // Add active state classes
+      btn.classList.remove('text-sage-500', 'bg-transparent', 'dark:text-sage-400');
+      btn.classList.add('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700');
+      // Update hover classes for active state
+      btn.classList.remove('hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+      btn.classList.add('hover:bg-sage-200', 'dark:hover:bg-sage-600');
+    } else {
+      // Remove active state classes
+      btn.classList.remove('text-sage-600', 'bg-sage-100', 'dark:text-sage-300', 'dark:bg-sage-700', 'hover:bg-sage-200', 'dark:hover:bg-sage-600');
+      btn.classList.add('text-sage-500', 'bg-transparent', 'dark:text-sage-400', 'hover:text-sage-700', 'hover:bg-sage-100', 'dark:hover:text-sage-200', 'dark:hover:bg-sage-800');
+    }
+  });
+}
+
+// Apply configuration to all test screens
+function applyTestConfig(shouldBroadcast = true) {
+  // Only broadcast if this is a local change, not a response to external broadcast
+  if (shouldBroadcast) {
+    // Broadcast the screen state so example iframes update themselves
+    try {
+      const channel = new BroadcastChannel('screen_picker_framework');
+      const keyname = window.__responsiveTestModelKeyname__ || 'og_plus';
+      const deviceClass = window.__responsiveTestModelClass__ || null;
+      const bit = String(testConfig.bitDepth || '').replace(/bit$/, '') || '1';
+      const classes = [
+        ...(deviceClass ? [deviceClass] : []),
+        `screen--${bit}bit`,
+        ...(testConfig.densityClass ? [testConfig.densityClass] : []),
+        `screen--${testConfig.size}`,
+        `screen--${testConfig.orientation}`,
+        'screen--1x'
+      ].join(' ');
+      const dims = (sizeMap[testConfig.size] || { width: 800, height: 480 });
+      channel.postMessage({
+        type: 'screenChanged',
+        source: 'responsive_test',
+        screenClasses: classes,
+        width: dims.width,
+        height: dims.height,
+        keyname: keyname,
+        bitDepth: bit,
+        isPortrait: testConfig.orientation === 'portrait',
+        isDarkMode: document.documentElement.classList.contains('dark')
+      });
+    } catch (_) {}
+  }
+}
+
+// Apply classes coming from the global Screen Picker controller (single source of truth)
+function setScreenClassesFromPicker(screenClassesString) {
+  const classes = String(screenClassesString || '').split(/\s+/).filter(Boolean);
+  const screens = document.querySelectorAll('.screen');
+  screens.forEach(screen => {
+    const currentClasses = screen.className.split(' ').filter(Boolean);
+    const withoutScreenMods = currentClasses.filter(c => !/^screen--/.test(c));
+    const preservePreview = currentClasses.includes('screen--preview') || classes.includes('screen--preview');
+    const nextClasses = preservePreview ? [...classes, 'screen--preview'] : classes;
+    screen.className = [...withoutScreenMods, ...nextClasses].join(' ');
+  });
+}
+
+// Handle button clicks
+function handleTestConfigClick(e) {
+  const btn = e.target.closest('.test-config-btn');
+  if (!btn) return;
+  
+  if (btn.dataset.testSize) {
+    testConfig.size = btn.dataset.testSize;
+  } else if (btn.dataset.testOrientation) {
+    testConfig.orientation = btn.dataset.testOrientation;
+  } else if (btn.dataset.testBitdepth) {
+    testConfig.bitDepth = btn.dataset.testBitdepth;
+  }
+  
+  updateTestConfigUI();
+  applyTestConfig();
+}
+
+
+
+
+
+// Global variable to store the polling interval (legacy - kept for cleanup)
+let responsiveTestPollingInterval = null;
+let responsiveTestChannel = null;
+
+// Function to initialize all responsive test functionality
+function initializeResponsiveTest() {
+  // Clear any existing interval
+  if (responsiveTestPollingInterval) {
+    clearInterval(responsiveTestPollingInterval);
+  }
+  
+  // Clean up existing channel if any
+  if (responsiveTestChannel) {
+    responsiveTestChannel.close();
+  }
+  
+  // Set up BroadcastChannel listener for updates from nav screen picker
+  responsiveTestChannel = new BroadcastChannel('screen_picker_framework');
+  responsiveTestChannel.onmessage = (event) => {
+    const { data } = event;
+    
+    // Only process messages from the nav screen picker, not from ourselves
+    if (data.source === 'responsive_test') {
+      return;
+    }
+    
+    // Only process messages from screen_picker source
+    if (data.source !== 'screen_picker') {
+      return;
+    }
+    
+    // Update local config based on the broadcast
+    if (data.type === 'screenChanged') {
+      // Parse the incoming data
+      const bitDepth = data.bitDepth ? `${data.bitDepth}bit` : '1bit';
+      const orientation = data.isPortrait ? 'portrait' : 'landscape';
+      
+      // Update local config
+      testConfig.bitDepth = bitDepth;
+      testConfig.orientation = orientation;
+      
+      // Update model keyname if changed
+      if (data.keyname) {
+        window.__responsiveTestModelKeyname__ = data.keyname;
+        
+        // Try to determine size from keyname
+        const deviceConfigs = <%= framework_model_screen_picker_options.to_json.html_safe %>;
+        const deviceConfig = deviceConfigs.find(config => config.keyname === data.keyname);
+        if (deviceConfig && deviceConfig.size) {
+          testConfig.size = deviceConfig.size;
+        }
+        if (deviceConfig && deviceConfig.densityClass) {
+          testConfig.densityClass = deviceConfig.densityClass;
+        }
+      }
+      
+      // Update UI without broadcasting back
+      updateTestConfigUI();
+      // Don't broadcast to prevent feedback loop
+      applyTestConfig(false);
+      
+      // Apply the screen classes if provided
+      if (data.screenClasses) {
+        setScreenClassesFromPicker(data.screenClasses);
+      }
+    }
+  };
+  
+  // Set up test configuration buttons
+  document.querySelectorAll('.test-config-btn').forEach(btn => {
+    btn.addEventListener('click', handleTestConfigClick);
+  });
+  
+  // Set up example size buttons
+  document.querySelectorAll('.example-size-btn').forEach(btn => {
+    btn.addEventListener('click', handleExampleSizeClick);
+  });
+  
+  // Load initial configuration from framework and initialize
+  loadTestConfig();
+  updateExampleSizeUI();
+  toggleScreenSizes(isExampleSizeSmall);
+}
+
+// Clean up function
+function cleanupResponsiveTest() {
+  if (responsiveTestPollingInterval) {
+    clearInterval(responsiveTestPollingInterval);
+    responsiveTestPollingInterval = null;
+  }
+  
+  if (responsiveTestChannel) {
+    responsiveTestChannel.close();
+    responsiveTestChannel = null;
+  }
+}
+
+// Initialize on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  initializeResponsiveTest();
+});
+
+// Re-initialize on Turbo load
+document.addEventListener('turbo:load', function() {
+  initializeResponsiveTest();
+});
+
+// Clean up before navigating away
+document.addEventListener('turbo:before-visit', function() {
+  cleanupResponsiveTest();
+});
+</script>

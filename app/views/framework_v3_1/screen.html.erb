@@ -1,0 +1,354 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :screen %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:screen) %>
+
+    <div class="space-y-16">
+      <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">You don't specify the <code class="<%= framework_section_code_classes %>">screen</code>. The platform provides the correct <code class="<%= framework_section_code_classes %>">screen</code> container based on the target device.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">You provide the <code class="<%= framework_section_code_classes %>">screen</code> yourself. Include it with the appropriate device class (<code class="<%= framework_section_code_classes %>">screen--og</code>, <code class="<%= framework_section_code_classes %>">screen--v2</code>) and optional modifiers like <code class="<%= framework_section_code_classes %>">screen--portrait</code>, <code class="<%= framework_section_code_classes %>">screen--no-bleed</code>, or <code class="<%= framework_section_code_classes %>">screen--dark-mode</code>.</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip,
+              <!-- screen (platform-provided) -->
+              <!-- view view--full (platform-provided) -->
+              <div class="layout">...</div>
+              <div class="title_bar">...</div>
+              <!-- /view -->
+              <!-- /screen -->
+            HTML
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="screen">
+  <div class="view view--full">
+    <div class="layout">...</div>
+    <div class="title_bar">...</div>
+  </div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Screen component serves as the root container for all content. It establishes the viewport dimensions,
+            padding, and provides CSS variables that cascade throughout the framework.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default Screen') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The base <code class="<%= framework_section_code_classes %>">screen</code> class creates a container with default dimensions (800x480px landscape).
+              It includes padding controlled by the <code class="<%= framework_section_code_classes %>">--gap</code> variable.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                      <span class="label text-stroke">Default Screen</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen">
+  <div class="view view--full">
+    <div class="layout">
+      <!-- Your content here -->
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'CSS Variables') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Screen component provides CSS variables that cascade throughout the framework. These variables automatically
+            recalculate when device variants or orientation modifiers are applied.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Available Variables') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              These variables are set on the <code class="<%= framework_section_code_classes %>">screen</code> element and available to all nested components.
+            </p>
+          </div>
+
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Variable</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Description</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Default Value</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--screen-w</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Screen width</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">800px</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--screen-h</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Screen height</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">480px</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--full-w</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Full width minus padding</td>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">calc(--screen-w - --gap * 2)</code></td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--full-h</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Full height minus padding</td>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">calc(--screen-h - --gap * 2)</code></td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--device-ui-scale</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Device-native UI density factor</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--modifier-scale</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Selected Scale modifier</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--ui-scale</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Composed device and modifier scale for framework UI</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                </tr>
+                <% if current_docs_version == '3.1' %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--content-scale</code></td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Scale modifier for plugin-authored content</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--modifier-text-scale</code></td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Selected Text Scale modifier</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--text-ui-scale</code></td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Composed UI Scale and Text Scale factor for framework typography</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                  </tr>
+                <% end %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--gap-scale</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Gap scaling factor</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap"><code class="text-sm font-mono text-syntax-string">--color-depth</code></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Display color depth (bits)</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1</td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Orientation') %>
+          <p class="<%= framework_section_description_classes %>">
+            Screens can be displayed in landscape (default) or portrait orientation.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Orientation Toggle') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">screen--portrait</code> modifier swaps the width and height dimensions.
+              All layout calculations automatically adjust to the new dimensions.
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Landscape (default) -->
+<div class="screen">
+  <!-- 800x480 dimensions -->
+</div>
+
+<!-- Portrait orientation -->
+<div class="screen screen--portrait">
+  <!-- 480x800 dimensions (swapped) -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Device Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Screen component supports device-specific configurations that adjust dimensions, scaling, and color depth.
+            These variants ensure content displays correctly across different TRMNL devices.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Available Devices') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Each device variant sets specific dimensions and scaling factors. Combine with orientation and bit-depth modifiers for complete control.
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Original TRMNL -->
+<div class="screen screen--og screen--1bit">
+  <!-- 800x480, 1-bit depth -->
+</div>
+
+<!-- TRMNL V2 -->
+<div class="screen screen--v2 screen--4bit">
+  <!-- 1040x780, 4-bit depth -->
+</div>
+
+<!-- Amazon Kindle 2024 -->
+<div class="screen screen--amazon_kindle_2024 screen--4bit">
+  <!-- 718x540, 4-bit depth -->
+</div>
+
+<!-- Combined modifiers -->
+<div class="screen screen--v2 screen--portrait screen--4bit">
+  <!-- All modifiers work together -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Screen modifiers provide additional control over display properties and behavior.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'No Bleed Modifier') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The screen container that wraps your views has a no-bleed option that removes padding. This can be controlled through Private and Public Plugin settings,
+              or applied directly in your code when developing locally.
+              The <code class="<%= framework_section_code_classes %>">screen--no-bleed</code> modifier removes the default padding around the screen container,
+              allowing content to extend fully to the edges.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--no-bleed">
+                  <div class="view view--full">
+                    <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                      <span class="label text-stroke">Screen No Bleed / Layout</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--no-bleed">
+  <div class="view view--full">
+    <div class="layout">
+      <!-- Your content here -->
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2 mt-6">
+            <%= framework_heading(4, 'Dark Mode') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> modifier remaps framework color tokens and utility output
+              for dark rendering (background, text, border, and stroke utilities included).
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--dark-mode">
+  <!-- Framework tokens/utilities render in dark mode -->
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2 mt-6">
+            <%= framework_heading(4, 'Backdrop Mashups') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              By default, mashups display with a white background and bordered views.
+              The <code class="<%= framework_section_code_classes %>">screen--backdrop</code> modifier changes this to a patterned
+              background (1-bit) or solid gray background (2-bit/4-bit) with plain white views.
+              See the <%= render DocsRef.new(page: :outline) %> utility for more details.
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Backdrop mashup (patterned / gray background) -->
+<div class="screen screen--backdrop">
+  <div class="mashup mashup--1Lx1R">
+    <div class="view view--half_vertical">
+      <div class="layout">...</div>
+    </div>
+    <div class="view view--half_vertical">
+      <div class="layout">...</div>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div> 

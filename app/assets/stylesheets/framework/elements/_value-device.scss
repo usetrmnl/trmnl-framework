@@ -1,0 +1,52 @@
+// ============================================
+// TRMNL Framework - Value Device Overrides
+// ============================================
+// Device-specific styles for the value component
+// This file is imported in the device-overrides layer
+
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+@use 'sass:map';
+
+// Map of class names to their font-weight CSS variables. Every size the element
+// layer publishes belongs here: the loop below pins the wght axis for the whole
+// .value element on these depths, and a size left out of the map keeps the base
+// weight instead of its own tuned one, which is what mega through peta did.
+//
+// Bare `value` is here and not in a base-only map, unlike title, label,
+// description and content: elements/_value.scss runs the variant ladder over the
+// bare class too, so sm:value and 4bit:value are real classes the device layer
+// has to track. `value--base` is the spelling every family publishes, so prefer
+// it in authored markup.
+$value-sizes: (
+    'value': '--value-font-weight',
+    'value--base': '--value-font-weight',
+    'value--xxsmall': '--value-xxsmall-font-weight',
+    'value--xsmall': '--value-xsmall-font-weight',
+    'value--small': '--value-small-font-weight',
+    'value--large': '--value-large-font-weight',
+    'value--xlarge': '--value-xlarge-font-weight',
+    'value--xxlarge': '--value-xxlarge-font-weight',
+    'value--xxxlarge': '--value-xxxlarge-font-weight',
+    'value--mega': '--value-mega-font-weight',
+    'value--giga': '--value-giga-font-weight',
+    'value--tera': '--value-tera-font-weight',
+    'value--peta': '--value-peta-font-weight'
+);
+
+// Generate all device overrides for value classes
+@each $class-name, $weight-var in $value-sizes {
+    @each $bit-depth in (2, 4) {
+        // Base bit-depth styles
+        .trmnl .screen--#{$bit-depth}bit .#{helpers.escape-class-token($class-name)} {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+
+        // Every prefixed gate the class itself is published under, including the
+        // bit-prefixed ones: `md:portrait:4bit:value--large` is taught on the
+        // responsive page and used to render at the base weight.
+        @include responsive.device-variants-for-bit-depth($class-name, $bit-depth) {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}

@@ -1,0 +1,58 @@
+// ============================================
+// TRMNL Framework - Table Component Device Overrides
+// ============================================
+// Row border rendering is handled by --border-{level}-{dir}-* CSS variables.
+// This file retains non-border device-specific overrides (meta, index styling).
+
+@use '../mixins' as mixins;
+@use '../config/tokens' as vars;
+
+@include mixins.trmnl-namespace {
+    .table {
+        @include mixins.for-2bit {
+            thead tr th .meta { width: var(--item-meta-width); }
+            tbody tr td .meta {
+                width: var(--item-meta-width);
+                background-color: var(--framework-slot-table-meta-device-bg-color, transparent);
+                background-image: var(--framework-slot-table-meta-device-bg-image, none);
+                background-repeat: repeat;
+                background-size: var(--dither-bg-size, auto);
+                border-radius: vars.ui-scaled(3px);
+            }
+        }
+
+        @include mixins.for-4bit {
+            thead tr th .meta { width: var(--item-meta-width); }
+            tbody tr td .meta {
+                width: var(--item-meta-width);
+                background-color: var(--framework-slot-table-meta-device-bg-color, transparent);
+                background-image: none;
+                border-radius: vars.ui-scaled(4px);
+            }
+        }
+
+        @include mixins.for-screen-modifier('2bit', '4bit') {
+            tbody tr td .meta .index {
+                @include mixins.shadow-text-stroke(vars.ui-scaled(2px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1px));
+                font-family: var(--item-index-font-family);
+                font-weight: var(--item-index-font-weight);
+                -webkit-font-smoothing: var(--item-index-font-smoothing);
+                font-size: var(--item-index-font-size);
+                line-height: var(--item-index-line-height);
+                @include mixins.semantic-text-paint('text-secondary', var(--framework-text-secondary));
+                text-align: center;
+            }
+        }
+
+        &.table--indexed {
+            @include mixins.for-screen-modifier('2bit', '4bit') {
+                tbody tr td {
+                    &:has(.meta) {
+                        padding-left: calc(var(--item-meta-width) + var(--gap-small));
+                    }
+                }
+                tbody tr td .meta { top: vars.ui-scaled(4px); bottom: vars.ui-scaled(4px); left: 0; transform: none; }
+            }
+        }
+    }
+}

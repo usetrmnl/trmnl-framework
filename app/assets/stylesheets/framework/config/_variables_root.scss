@@ -1,0 +1,406 @@
+// ============================================
+// TRMNL Framework - Root variables
+// ============================================
+// Color palette variables (generated from db/data/framework_colors.yml)
+@use 'variables_colors';
+
+:root {
+    // Screen dimensions
+    --screen-w: 800px;
+    --screen-h: 480px;
+    
+    // Store original dimensions for portrait mode
+    --screen-w-original: 800px;
+    --screen-h-original: 480px;
+    
+    // Device density and explicit screen modifiers compose on `.screen`.
+    // Keep --ui-scale and --content-scale as the public resolved outputs.
+    --device-ui-scale: 1;
+    --modifier-scale: 1;
+    --ui-scale: 1;
+    --content-scale: 1;
+    --modifier-text-scale: 1;
+    --text-ui-scale: 1;
+    --gap-scale: 1;
+    
+    // Spacing scale
+    --gap-xsmall: 5px;
+    --gap-small: 7px;
+    --gap: 10px;
+    --gap-medium: 16px;
+    --gap-large: 20px;
+    --gap-xlarge: 30px;
+    --gap-xxlarge: 40px;
+
+    // Border radius scale
+    --rounded-none: 0px;
+    --rounded-xsmall: 5px;
+    --rounded-small: 7px;
+    --rounded: 10px;
+    --rounded-medium: 15px;
+    --rounded-large: 20px;
+    --rounded-xlarge: 25px;
+    --rounded-xxlarge: 30px;
+    --rounded-full: 9999px;
+
+    // List spacing
+    --list-gap-small: 8px;
+
+    // Calculated dimensions
+    --full-w: calc(var(--screen-w) - var(--gap) * 2);
+    --full-h: calc(var(--screen-h) - var(--gap) * 2);
+
+    --quadrant-w: calc((var(--screen-w) - var(--gap) * 2) / 2 - var(--gap) / 2);
+    --quadrant-h: calc((var(--screen-h) - var(--gap) * 2) / 2 - var(--gap) / 2);
+
+    --half_vertical-w: calc((var(--screen-w) - var(--gap) * 2) / 2 - var(--gap) / 2);
+    --half_vertical-h: calc((var(--screen-h) - var(--gap) * 2));
+    
+    --half_horizontal-w: calc((var(--screen-w) - var(--gap) * 2));
+    --half_horizontal-h: calc((var(--screen-h) - var(--gap) * 2) / 2 - var(--gap) / 2);
+
+    // Palette shades
+    --black: #000000;
+    --gray-1: #111111;  // same as gray-10
+    --gray-2: #333333;  // same as gray-20
+    --gray-3: #555555;  // same as gray-30
+    --gray-4: #777777;  // same as gray-40
+    --gray-5: #999999;  // same as gray-50
+    --gray-6: #BBBBBB;  // same as gray-60
+    --gray-7: #DDDDDD;  // same as gray-70
+    --white: #FFFFFF;
+    
+    // Extended palette shades
+    --gray-10: #111111;
+    --gray-15: #222222;
+    --gray-20: #333333;
+    --gray-25: #444444;
+    --gray-30: #555555;
+    --gray-35: #666666;
+    --gray-40: #777777;
+    --gray-45: #888888;
+    --gray-50: #999999;
+    --gray-55: #AAAAAA;
+    --gray-60: #BBBBBB;
+    --gray-65: #CCCCCC;
+    --gray-70: #DDDDDD;
+    --gray-75: #EEEEEE;
+
+    // Semantic color roles (themeable)
+    --color-primary: var(--blue);
+    --color-success: var(--green);
+    --color-error: var(--red);
+    --color-warning: var(--orange);
+
+    // Framework semantic smart-render outputs (light defaults)
+    --framework-semantic-canvas-bg-color: var(--bg-white-color, var(--white));
+    --framework-semantic-canvas-bg-image: var(--bg-white-image, none);
+    --framework-semantic-surface-bg-color: var(--bg-white-color, var(--white));
+    --framework-semantic-surface-bg-image: var(--bg-white-image, none);
+    --framework-semantic-backdrop-bg-color: var(--bg-gray-55-color, var(--gray-55));
+    --framework-semantic-backdrop-bg-image: var(--bg-gray-55-image, none);
+    --framework-semantic-fill-strong-bg-color: var(--bg-black-color, var(--black));
+    --framework-semantic-fill-strong-bg-image: var(--bg-black-image, none);
+    --framework-semantic-fill-muted-bg-color: var(--bg-gray-60-color, var(--gray-60));
+    --framework-semantic-fill-muted-bg-image: var(--bg-gray-60-image, none);
+    --framework-semantic-fill-soft-bg-color: var(--bg-gray-70-color, var(--gray-70));
+    --framework-semantic-fill-soft-bg-image: var(--bg-gray-70-image, none);
+    --framework-semantic-text-primary-text-color: var(--text-black-color, var(--black));
+    --framework-semantic-text-primary-text-image: var(--text-black-image, none);
+    --framework-semantic-text-primary-text-clip: var(--text-black-clip, border-box);
+    --framework-semantic-text-primary-text-under: var(--text-black-under, transparent);
+    --framework-semantic-text-primary-text-solid: var(--stroke-black-color, var(--black));
+    --framework-semantic-text-secondary-text-color: var(--text-gray-30-color, var(--gray-30));
+    --framework-semantic-text-secondary-text-image: var(--text-gray-30-image, none);
+    --framework-semantic-text-secondary-text-clip: var(--text-gray-30-clip, border-box);
+    --framework-semantic-text-secondary-text-under: var(--text-gray-30-under, transparent);
+    --framework-semantic-text-secondary-text-solid: var(--stroke-gray-30-color, var(--gray-30));
+    --framework-semantic-text-inverse-text-color: var(--text-white-color, var(--white));
+    --framework-semantic-text-inverse-text-image: var(--text-white-image, none);
+    --framework-semantic-text-inverse-text-clip: var(--text-white-clip, border-box);
+    --framework-semantic-text-inverse-text-under: var(--text-white-under, transparent);
+    --framework-semantic-text-inverse-text-solid: var(--stroke-white-color, var(--white));
+    --framework-semantic-stroke-contrast-stroke-color: var(--stroke-white-color, var(--white));
+    --framework-semantic-border-strong-border-color: var(--stroke-black-color, var(--bg-black-color, var(--black)));
+    --framework-semantic-border-strong-border-image: var(--bg-black-image, none);
+    --framework-semantic-border-strong-border-size: var(--dither-bg-size, auto);
+    --framework-semantic-border-muted-border-color: var(--stroke-gray-65-color, var(--bg-gray-65-color, var(--gray-65)));
+    --framework-semantic-border-muted-border-image: var(--bg-gray-65-image, none);
+    --framework-semantic-border-muted-border-size: var(--dither-bg-size, auto);
+
+    // Backward-compatible role aliases
+    --framework-canvas-bg: var(--framework-semantic-canvas-bg-color, var(--white));
+    --framework-surface-bg: var(--framework-semantic-surface-bg-color, var(--white));
+    --framework-backdrop-bg: var(--framework-semantic-backdrop-bg-color, var(--gray-55));
+    --framework-text-primary: var(--framework-semantic-text-primary-text-color, var(--black));
+    --framework-text-secondary: var(--framework-semantic-text-secondary-text-color, var(--gray-30));
+    --framework-text-inverse: var(--framework-semantic-text-inverse-text-color, var(--white));
+    --framework-border-strong: var(--framework-semantic-border-strong-border-color, var(--black));
+    --framework-border-muted: var(--framework-semantic-border-muted-border-color, var(--gray-65));
+    --framework-stroke-contrast: var(--framework-semantic-stroke-contrast-stroke-color, var(--white));
+    --framework-fill-strong: var(--framework-semantic-fill-strong-bg-color, var(--black));
+    --framework-fill-muted: var(--framework-semantic-fill-muted-bg-color, var(--gray-60));
+    --framework-fill-soft: var(--framework-semantic-fill-soft-bg-color, var(--gray-70));
+    --framework-internal-title-bar-bg-color: var(--framework-slot-title-bar-bg-color, var(--bg-gray-70-color, transparent));
+    --framework-internal-title-bar-bg-image: var(--framework-slot-title-bar-bg-image, var(--bg-gray-70-image, none));
+
+    // Component variables
+    // Title bar component variables
+    --title-bar-height: calc(40px * var(--ui-scale));
+    --title-bar-small-height: calc(32px * var(--ui-scale));
+    --title-bar-font-size: calc(16px * var(--text-ui-scale));
+    --title-bar-font-family: "NicoClean";
+    --title-bar-font-smoothing: none;
+    --title-bar-font-weight: 400;
+    --title-bar-line-height: 1;
+    --title-bar-padding-top: calc(5px * var(--ui-scale));
+    --title-bar-text-stroke-width: calc(3.5px * var(--ui-scale));
+    --title-bar-image-height: calc(28px * var(--ui-scale));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale));
+    --title-bar-border-radius: calc(10px * var(--ui-scale));
+    --title-bar-small-font-size: calc(16px * var(--text-ui-scale));
+    
+    // Label component variables
+    --label-font-size: calc(16px * var(--text-ui-scale));
+    --label-font-family: "NicoClean";
+    --label-font-smoothing: none;
+    --label-font-weight: 400;
+    --label-line-height: 1.25;
+    --label-small-font-size: calc(16px * var(--text-ui-scale));
+    --label-small-font-family: "NicoPups";
+    --label-small-font-smoothing: none;
+    --label-small-font-weight: 400;
+    --label-small-line-height: 1;
+    --label-large-font-size: calc(21px * var(--text-ui-scale));
+    --label-large-font-family: "Inter Variable", Inter;
+    --label-large-font-smoothing: auto;
+    --label-large-font-weight: 500;
+    --label-large-line-height: 1.2;
+    --label-xlarge-font-size: calc(26px * var(--text-ui-scale));
+    --label-xlarge-font-family: "Inter Variable", Inter;
+    --label-xlarge-font-smoothing: auto;
+    --label-xlarge-font-weight: 475;
+    --label-xlarge-line-height: 1.2;
+    --label-xxlarge-font-size: calc(30px * var(--text-ui-scale));
+    --label-xxlarge-font-family: "Inter Variable", Inter;
+    --label-xxlarge-font-smoothing: auto;
+    --label-xxlarge-font-weight: 450;
+    --label-xxlarge-line-height: 1.2;
+
+    // Description component variables
+    --description-font-size: calc(16px * var(--text-ui-scale));
+    --description-font-family: "NicoPups";
+    --description-font-smoothing: none;
+    --description-font-weight: 400;
+    --description-line-height: 1;
+    --description-large-font-size: calc(16px * var(--text-ui-scale));
+    --description-large-font-family: "NicoClean";
+    --description-large-font-smoothing: none;
+    --description-large-font-weight: 400;
+    --description-large-line-height: 1.25;
+    --description-xlarge-font-size: calc(21px * var(--text-ui-scale));
+    --description-xlarge-font-family: "Inter Variable", Inter;
+    --description-xlarge-font-smoothing: auto;
+    --description-xlarge-font-weight: 500;
+    --description-xlarge-line-height: 1.2;
+    --description-xxlarge-font-size: calc(24px * var(--text-ui-scale));
+    --description-xxlarge-font-family: "Inter Variable", Inter;
+    --description-xxlarge-font-smoothing: auto;
+    --description-xxlarge-font-weight: 475;
+    --description-xxlarge-line-height: 1.2;
+
+    // Title component variables
+    --title-font-size: calc(26px * var(--text-ui-scale));
+    --title-font-family: "BlockKie";
+    --title-font-smoothing: none;
+    --title-font-weight: 400;
+    --title-line-height: 1;
+    --title-small-font-size: calc(16px * var(--text-ui-scale));
+    --title-small-font-family: "NicoClean";
+    --title-small-font-smoothing: none;
+    --title-small-font-weight: 400;
+    --title-small-line-height: 1;
+    --title-large-font-size: calc(30px * var(--text-ui-scale));
+    --title-large-font-family: "Inter Variable", Inter;
+    --title-large-font-smoothing: auto;
+    --title-large-font-weight: 425;
+    --title-large-line-height: 1.2;
+    --title-xlarge-font-size: calc(35px * var(--text-ui-scale));
+    --title-xlarge-font-family: "Inter Variable", Inter;
+    --title-xlarge-font-smoothing: auto;
+    --title-xlarge-font-weight: 400;
+    --title-xlarge-line-height: 1.2;
+    --title-xxlarge-font-size: calc(40px * var(--text-ui-scale));
+    --title-xxlarge-font-family: "Inter Variable", Inter;
+    --title-xxlarge-font-smoothing: auto;
+    --title-xxlarge-font-weight: 375;
+    --title-xxlarge-line-height: 1.2;
+
+    // Value component variables
+    --value-font-family: "Inter Variable", Inter;
+    --value-font-size: calc(38px * var(--text-ui-scale));
+    --value-line-height: calc(42px * var(--text-ui-scale));
+    --value-font-weight: 450;
+    --value-font-smoothing: auto;
+    
+    --value-xxsmall-font-family: "NicoClean";
+    --value-xxsmall-font-size: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-line-height: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-font-weight: 400;
+    --value-xxsmall-font-smoothing: none;
+    
+    --value-xsmall-font-size: calc(20px * var(--text-ui-scale));
+    --value-xsmall-line-height: calc(24px * var(--text-ui-scale));
+    --value-xsmall-font-weight: 600;
+    
+    --value-small-font-size: calc(26px * var(--text-ui-scale));
+    --value-small-line-height: calc(29px * var(--text-ui-scale));
+    --value-small-font-weight: 500;
+    
+    --value-large-font-size: calc(58px * var(--text-ui-scale));
+    --value-large-line-height: calc(70px * var(--text-ui-scale));
+    --value-large-font-weight: 400;
+    
+    --value-xlarge-font-size: calc(74px * var(--text-ui-scale));
+    --value-xlarge-line-height: calc(86px * var(--text-ui-scale));
+    --value-xlarge-font-weight: 375;
+    
+    --value-xxlarge-font-size: calc(96px * var(--text-ui-scale));
+    --value-xxlarge-line-height: calc(108px * var(--text-ui-scale));
+    --value-xxlarge-font-weight: 350;
+    
+    --value-xxxlarge-font-size: calc(128px * var(--text-ui-scale));
+    --value-xxxlarge-line-height: calc(128px * var(--text-ui-scale));
+    --value-xxxlarge-font-weight: 300;
+    
+    --value-mega-font-size: calc(170px * var(--text-ui-scale));
+    --value-mega-line-height: calc(180px * var(--text-ui-scale));
+    --value-mega-font-weight: 275;
+    
+    --value-giga-font-size: calc(220px * var(--text-ui-scale));
+    --value-giga-line-height: calc(230px * var(--text-ui-scale));
+    --value-giga-font-weight: 250;
+    
+    --value-tera-font-size: calc(290px * var(--text-ui-scale));
+    --value-tera-line-height: calc(300px * var(--text-ui-scale));
+    --value-tera-font-weight: 225;
+    
+    --value-peta-font-size: calc(380px * var(--text-ui-scale));
+    --value-peta-line-height: calc(390px * var(--text-ui-scale));
+    --value-peta-font-weight: 200;
+
+    // Rich text component variables
+    --richtext-content-max-width: calc(640px * var(--ui-scale));
+    --richtext-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-font-family: "NicoClean";
+    --richtext-font-smoothing: none;
+    --richtext-font-weight: 400;
+    --richtext-line-height: calc(22px * var(--text-ui-scale));
+    --richtext-large-font-size: calc(26px * var(--text-ui-scale));
+    --richtext-large-font-family: "BlockKie";
+    --richtext-large-font-smoothing: none;
+    --richtext-large-font-weight: 400;
+    --richtext-large-line-height: 1;
+    --richtext-small-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-small-font-family: "NicoPups";
+    --richtext-small-font-smoothing: none;
+    --richtext-small-font-weight: 400;
+    --richtext-small-line-height: calc(16px * var(--text-ui-scale));
+    --richtext-xlarge-font-size: calc(30px * var(--text-ui-scale));
+    --richtext-xlarge-font-family: "Inter Variable", Inter;
+    --richtext-xlarge-font-smoothing: auto;
+    --richtext-xlarge-font-weight: 425;
+    --richtext-xlarge-line-height: 1.2;
+    --richtext-xxlarge-font-size: calc(35px * var(--text-ui-scale));
+    --richtext-xxlarge-font-family: "Inter Variable", Inter;
+    --richtext-xxlarge-font-smoothing: auto;
+    --richtext-xxlarge-font-weight: 400;
+    --richtext-xxlarge-line-height: 1.2;
+    --richtext-xxxlarge-font-size: calc(40px * var(--text-ui-scale));
+    --richtext-xxxlarge-font-family: "Inter Variable", Inter;
+    --richtext-xxxlarge-font-smoothing: auto;
+    --richtext-xxxlarge-font-weight: 375;
+    --richtext-xxxlarge-line-height: 1.2;
+
+    // Table component variables
+    --table-thead-height: calc(36px * var(--ui-scale));
+    --table-tbody-height: calc(46px * var(--ui-scale));
+    --table-large-thead-height: calc(44px * var(--ui-scale));
+    --table-large-tbody-height: calc(56px * var(--ui-scale));
+    --table-xlarge-thead-height: calc(56px * var(--ui-scale));
+    --table-xlarge-tbody-height: calc(72px * var(--ui-scale));
+    --table-small-thead-height: calc(24px * var(--ui-scale));
+    --table-small-tbody-height: calc(31px * var(--ui-scale));
+    --table-xsmall-thead-height: calc(18px * var(--ui-scale));
+    --table-xsmall-tbody-height: calc(22px * var(--ui-scale));
+
+    // Item component variables
+    --item-meta-width: calc(10px * var(--ui-scale));
+    --item-index-font-size: calc(16px * var(--text-ui-scale));
+    --item-index-font-family: "NicoPups";
+    --item-index-font-smoothing: none;
+    --item-index-font-weight: 400;
+    --item-index-line-height: 1;
+
+    // Progress component variables
+    --progress-bar-height: calc(24px * var(--ui-scale));
+    --progress-bar-height-small: calc(12px * var(--ui-scale));
+    --progress-bar-height-xsmall: calc(6px * var(--ui-scale));
+    --progress-bar-height-large: calc(32px * var(--ui-scale));
+    --progress-bar-radius: calc(10px * var(--ui-scale));
+    --progress-dot-size: calc(16px * var(--ui-scale));
+    --progress-dot-size-small: calc(12px * var(--ui-scale));
+    --progress-dot-size-xsmall: calc(8px * var(--ui-scale));
+    --progress-dot-size-large: calc(20px * var(--ui-scale));
+
+    // Font utility variables (classic defaults; overridden per font bundle on screen root)
+    --font-small-font-family: "NicoPups";
+    --font-small-font-size: calc(16px * var(--text-ui-scale));
+    --font-small-line-height: 1;
+    --font-small-font-smoothing: none;
+
+    --font-base-font-family: "NicoClean";
+    --font-base-font-size: calc(16px * var(--text-ui-scale));
+    --font-base-line-height: 1.25;
+    --font-base-font-smoothing: none;
+
+    --font-large-font-family: "BlockKie";
+    --font-large-font-size: calc(26px * var(--text-ui-scale));
+    --font-large-line-height: 1;
+    --font-large-font-smoothing: none;
+
+    --font-xlarge-font-family: "Inter Variable", Inter;
+    --font-xlarge-font-size: calc(26px * var(--text-ui-scale));
+    --font-xlarge-line-height: calc(29px * var(--text-ui-scale));
+    --font-xlarge-font-smoothing: auto;
+
+    --font-xxlarge-font-family: "Inter Variable", Inter;
+    --font-xxlarge-font-size: calc(38px * var(--text-ui-scale));
+    --font-xxlarge-line-height: calc(42px * var(--text-ui-scale));
+    --font-xxlarge-font-smoothing: auto;
+
+    --font-xxxlarge-font-family: "Inter Variable", Inter;
+    --font-xxxlarge-font-size: calc(58px * var(--text-ui-scale));
+    --font-xxxlarge-line-height: calc(70px * var(--text-ui-scale));
+    --font-xxxlarge-font-smoothing: auto;
+
+    --font-mega-font-family: "Inter Variable", Inter;
+    --font-mega-font-size: calc(74px * var(--text-ui-scale));
+    --font-mega-line-height: calc(86px * var(--text-ui-scale));
+    --font-mega-font-smoothing: auto;
+
+    --font-giga-font-family: "Inter Variable", Inter;
+    --font-giga-font-size: calc(96px * var(--text-ui-scale));
+    --font-giga-line-height: calc(108px * var(--text-ui-scale));
+    --font-giga-font-smoothing: auto;
+
+    --font-tera-font-family: "Inter Variable", Inter;
+    --font-tera-font-size: calc(128px * var(--text-ui-scale));
+    --font-tera-line-height: calc(128px * var(--text-ui-scale));
+    --font-tera-font-smoothing: auto;
+
+    --font-peta-font-family: "Inter Variable", Inter;
+    --font-peta-font-size: calc(170px * var(--text-ui-scale));
+    --font-peta-line-height: calc(180px * var(--text-ui-scale));
+    --font-peta-font-smoothing: auto;
+}

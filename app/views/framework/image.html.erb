@@ -1,0 +1,342 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :image %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:image) %>
+
+    <div class="space-y-16">
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Dithering') %>
+          <p class="<%= framework_section_description_classes %>">
+            Add <code class="<%= framework_section_code_classes %>">image-dither</code> to a raster image to have it
+            dithered to the screen's palette. The dithering itself is a platform behavior: TRMNL applies it when it
+            renders the screen, and no rule in <code class="<%= framework_section_code_classes %>">plugins.css</code>
+            or <code class="<%= framework_section_code_classes %>">plugins.js</code> reads the class.
+          </p>
+        </div>
+
+        <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+          <% c.with_left_message do %>
+            <p class="text-sm font-medium">You mark the image and the platform dithers it to the target device's palette at render time.</p>
+          <% end %>
+          <% c.with_right_message do %>
+            <p class="text-sm font-medium">You dither the image yourself before you serve it. A released build from the CDN and a build compiled from this source both ship the same CSS, and neither one dithers.</p>
+          <% end %>
+          <% c.with_left_code do %>
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Full-color source, dithered by the platform -->
+<img class="image image-dither rounded" src="path to the image file">',
+              extra_classes: '!rounded-t-none'
+            ) %>
+          <% end %>
+          <% c.with_right_code do %>
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Pre-dithered source, served as-is -->
+<img class="image rounded" src="path to the dithered image file">',
+              extra_classes: '!rounded-t-none'
+            ) %>
+          <% end %>
+        <% end %>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            The demo below picks a source photo per bit depth with visibility utilities; every other mode falls back
+            to the full-color source. The docs preview simulates the dithered look with a docs-only helper, so it
+            approximates what the platform renders.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div>
+                      <img class="image image-dither rounded hidden 1bit:visible" src="/images/framework/image/image--1bit.png" alt="Dithered photo, 1-bit source">
+                      <img class="image image-dither rounded hidden 2bit:visible" src="/images/framework/image/image--2bit.png" alt="Dithered photo, 2-bit source">
+                      <img class="image image-dither rounded 1bit:hidden 2bit:hidden" src="/images/framework/image/image--4bit.png" alt="Dithered photo, full-color source">
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Dithering</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Two utilities cap the width of an <code class="<%= framework_section_code_classes %>">img</code> that
+            carries the <code class="<%= framework_section_code_classes %>">image</code> class:
+            <code class="<%= framework_section_code_classes %>">image--small</code> at 80px and
+            <code class="<%= framework_section_code_classes %>">image--xsmall</code> at 40px. Both follow the screen's
+            content scale, and both set a maximum, so a narrower source keeps its own width and the aspect ratio is
+            never touched.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            For any other dimension, use a width or height utility from <%= render DocsRef.new(page: :size) %>.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div class="flex flex--row flex--center gap--large">
+                      <div class="flex flex--col flex--center-x gap--small">
+                        <img class="image image--small" src="/images/framework/image/image--4bit.png" alt="Photo capped at 80px">
+                        <span class="label">image--small</span>
+                      </div>
+
+                      <div class="flex flex--col flex--center-x gap--small">
+                        <img class="image image--xsmall" src="/images/framework/image/image--4bit.png" alt="Photo capped at 40px">
+                        <span class="label">image--xsmall</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Image</span>
+                    <span class="instance">Sizes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<img class="image image--small" src="path to image">
+<img class="image image--xsmall" src="path to image">'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Object Fit') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control how images are displayed when not shown in their original aspect ratio.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Options') %>
+            <ul class="<%= framework_section_description_classes %> space-y-1 list-disc list-inside">
+              <li><strong>Fill:</strong> The image is resized to fill the given dimension. If necessary, the image will be stretched or squished to fit.</li>
+              <li><strong>Contain:</strong> The image keeps its aspect ratio, but is resized to fit within the given dimension.</li>
+              <li><strong>Cover:</strong> The image keeps its aspect ratio and fills the given dimension. The image will be clipped to fit.</li>
+            </ul>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--center">
+                      <div class="grid grid--cols-3 gap w--full">
+                        <div class="flex flex--col flex--center-x gap--small">
+                          <img class="image image--fill w--full aspect--1/1 bg--gray-20 rounded" src="/images/framework/image/image--4bit.png" alt="Photo scaled with fill">
+                          <span class="label">Fill</span>
+                        </div>
+
+                        <div class="flex flex--col flex--center-x gap--small">
+                          <img class="image image--contain w--full aspect--1/1 bg--gray-20 rounded" src="/images/framework/image/image--4bit.png" alt="Photo scaled with contain">
+                          <span class="label">Contain</span>
+                        </div>
+
+                        <div class="flex flex--col flex--center-x gap--small">
+                          <img class="image image--cover w--full aspect--1/1 bg--gray-20 rounded" src="/images/framework/image/image--4bit.png" alt="Photo scaled with cover">
+                          <span class="label">Cover</span>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Object Fit Options</span>
+                  </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-2">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<img class="image image--fill" src="path to image">
+<img class="image image--contain" src="path to image">
+<img class="image image--cover" src="path to image">'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Invert') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use <code class="<%= framework_section_code_classes %>">invert</code> to flip every pixel to its
+            opposite: black becomes white, white becomes black. It rescues artwork authored for the opposite
+            background, such as a white-on-black glyph placed on a light screen.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            It composes with <%= render DocsRef.new(page: :image_stroke) %>. The pixels flip first, so the ring
+            keeps the color its shade modifier names.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div class="grid grid--cols-2 gap w--full">
+                      <div class="flex flex--col flex--center-x gap--small">
+                        <img class="image image--contain w--full aspect--1/1 rounded" src="/images/framework/image/image--4bit.png" alt="Photo, original">
+                        <span class="label">Original</span>
+                      </div>
+
+                      <div class="flex flex--col flex--center-x gap--small">
+                        <img class="image image--contain invert w--full aspect--1/1 rounded" src="/images/framework/image/image--4bit.png" alt="Photo, inverted">
+                        <span class="label">Inverted</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Invert</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<img class="image invert" src="path to the image file">'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Adaptive Icons') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use <code class="<%= framework_section_code_classes %>">image--adaptive</code> to repaint a monochrome
+            silhouette icon with the screen's icon paint. Only the icon's alpha channel is used: the shape stays,
+            the source pixels' own colors are ignored. The paint follows the same bit-depth, dark-mode, Raw/Preview,
+            and theme cascade as framework text, so one set of icons works everywhere.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The icons below are SVG silhouettes from the plugin weather set, originally solid black glyphs on a
+            transparent background. A PNG with transparency works the same way, since only the alpha shape is read.
+            To watch them adapt, switch the device, dark mode, or Style in the screen picker (top right): the icons
+            repaint to match the screen, while a plain <code class="<%= framework_section_code_classes %>">image</code>
+            would keep its original pixels.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div class="item">
+                      <div class="icon">
+                        <%= image_tag plugin_image_path("weather/wi-thermometer.svg"), class: "image--adaptive w--[6cqw] portrait:w--[10cqw]", alt: "Temperature icon" %>
+                      </div>
+                      <div class="content">
+                        <span class="value value--small">72&deg;</span>
+                        <span class="label">Adaptive icon</span>
+                      </div>
+                    </div>
+                    <div class="item">
+                      <div class="icon">
+                        <%= image_tag plugin_image_path("weather/wi-day-sunny.svg"), class: "image--adaptive w--[6cqw] portrait:w--[10cqw]", alt: "Sunny icon" %>
+                      </div>
+                      <div class="content">
+                        <span class="value value--small">Sunny</span>
+                        <span class="label">Adaptive icon</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Adaptive Icons</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Monochrome silhouette icon (shape on a transparent background; SVG or PNG) -->
+<img class="image--adaptive" src="path/to/icon.svg">
+
+<!-- Without the framework JS runtime, arm the icon manually -->
+<img class="image--adaptive" data-adaptive="true"
+     style="--framework-icon-src: url(\'path/to/icon.svg\')"
+     src="path/to/icon.svg">'
+          ) %>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'How it works') %>
+          <ul class="<%= framework_section_description_classes %> space-y-1 list-disc list-inside">
+            <li>The framework runtime (<code class="<%= framework_section_code_classes %>">plugins.js</code>) reads the icon and hands it to the stylesheet as a mask; CSS supplies the paint.</li>
+            <li>The public icon paint channel is <code class="<%= framework_section_code_classes %>">--framework-semantic-icon-{color,image,under}</code>. It mirrors semantic text-primary by default; themes override it with <code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>.</li>
+            <li>Silhouettes only. The image is flattened to its alpha shape, so never use it on photos or multi-color logos; use <%= render DocsRef.new(page: :image_stroke) %> to keep those legible instead.</li>
+            <li>Composes with <code class="<%= framework_section_code_classes %>">image-stroke</code> (the stroke outlines the recolored shape). Not meaningful with <code class="<%= framework_section_code_classes %>">image-dither</code> or <code class="<%= framework_section_code_classes %>">invert</code>.</li>
+          </ul>
+        </div>
+
+        <div class="<%= message_warning_classes %>">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/warning' %>
+            </div>
+            <div class="w-full ml-3">
+              <p class="text-sm font-medium">
+                <strong>Icon must be readable.</strong> Recoloring uses a CSS mask, which the browser only permits
+                for same-origin icons or hosts that send
+                <code class="<%= framework_section_code_classes %>">Access-Control-Allow-Origin</code>. An icon on an
+                arbitrary third-party host stays a plain image in its own colors, so serve recolorable icons from
+                your own origin, or inline the SVG with
+                <code class="<%= framework_section_code_classes %>">fill="currentColor"</code> to recolor with no
+                classes and no hosting constraint.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

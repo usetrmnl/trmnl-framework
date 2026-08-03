@@ -1,0 +1,196 @@
+name: Release
+
+# Pushing a v<version> tag publishes the matching GitHub Release. Publishing is the last
+# step and every gate runs first: a tag that disagrees with Framework::VERSION, with
+# framework_versions.yml, or with the committed artifacts fails loudly and publishes
+# nothing, and so does a red test suite, a bundle that no longer matches its source, or a
+# browser that does not paint the published bytes correctly. CI itself never runs on a tag
+# push (it triggers on pull requests and main), which is why the suites are called in here
+# rather than assumed. See RELEASE.md for the full runbook.
+
+on:
+  push:
+    tags: ["v*"]
+
+# Read-only by default. Only publish raises it, on itself, and only to create the
+# Release.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify the tag against the released version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify the tag matches the released version
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          if [ "$version" = "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' must look like v<major>.<minor>.<patch>."
+            exit 1
+          fi
+
+          gem_version="$(sed -n 's/.*VERSION = "\([^"]*\)".*/\1/p' lib/trmnl_framework/version.rb)"
+          if [ "$gem_version" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match Framework::VERSION ($gem_version)."
+            exit 1
+          fi
+
+          latest="$(sed -n 's/^latest: //p' db/data/framework_versions.yml | head -1)"
+          if [ "$latest" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match framework_versions.yml latest ($latest)."
+            exit 1
+          fi
+
+          npm_version="$(sed -n 's/^  "version": "\([^"]*\)".*/\1/p' package.json | head -1)"
+          if [ "$npm_version" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version ($npm_version)."
+            exit 1
+          fi
+
+          missing=0
+          for file in \
+            "public/css/$version/plugins.css" \
+            "public/css/$version/plugins.min.css" \
+            "public/js/$version/plugins.js" \
+            "public/js/$version/plugins.min.js" \
+            "public/framework/trmnl-framework--$version.zip" \
+            "public/framework/releases/$version.md" \
+            "public/framework/colors/$version/framework_colors.resolved.json"
+          do
+            if [ ! -f "$file" ]; then
+              echo "::error::Missing released file: $file"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      # The zip is the artifact the Release hands out, and nothing else inspects it. Its
+      # entry list is derived from the same directories the release task packed, so a
+      # truncated or partial archive stops matching what the version actually shipped.
+      - name: Verify the release zip carries every released file
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          zip="public/framework/trmnl-framework--$version.zip"
+
+          {
+            for name in plugins.css plugins.css.gz plugins.css.br plugins.min.css plugins.min.css.gz plugins.min.css.br; do
+              echo "css/$name"
+            done
+            for name in plugins.js plugins.js.gz plugins.js.br plugins.min.js plugins.min.js.gz plugins.min.js.br; do
+              echo "js/$name"
+            done
+            for theme in "public/css/$version/themes/"*.css; do
+              echo "css/themes/$(basename "$theme")"
+              echo "css/themes/$(basename "$theme").gz"
+              echo "css/themes/$(basename "$theme").br"
+            done
+            echo "RELEASE_NOTES.md"
+            echo "framework_colors.resolved.json"
+          } | sort > /tmp/expected-entries.txt
+
+          unzip -Z1 "$zip" | sort > /tmp/actual-entries.txt
+
+          if ! diff -u /tmp/expected-entries.txt /tmp/actual-entries.txt; then
+            echo "::error::$zip does not carry exactly the files released for $version."
+            exit 1
+          fi
+
+  # The suites that guard the framework itself. CI is called rather than copied so the
+  # RSpec shard matrix stays defined in one place; its Playwright jobs carry their own
+  # visibility gate, which is why the browser gate a release must not skip lives in
+  # processed-bytes below rather than here.
+  ci:
+    name: CI
+    needs: verify
+    uses: ./.github/workflows/ci.yml
+
+  # A tag freezes a version, so this is the last moment the committed bundles can be
+  # proven to match the source they were cut from. On main the same check only runs when
+  # public/css or public/js move (main carries source ahead of the bundles between
+  # re-cuts); on a tag the two must agree by definition.
+  bundle-parity:
+    name: Bundle parity
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the minified bundles are compared byte for byte, and
+      # only the lockfile pins the cssnano and terser builds that produced them.
+      - run: npm ci
+      - run: bin/parity-check
+
+  # A browser loading the exact bytes the tag publishes. Everything else in this
+  # workflow reads the processed bundle statically, and the one risk class the merge
+  # pass carries is invisible that way: mergeverify proves each selector still declares
+  # what it declared, rulediff proves the property maps match, and both are documented
+  # blind to cascade order between two different selectors, which is what a wrong merge
+  # changes. Only paint answers that, so a release now runs the suites against the
+  # processed artifact rather than trusting that someone ran them by hand.
+  #
+  # No visibility gate: a tag publishes a frozen version, and that is not the moment to
+  # save Actions minutes.
+  processed-bytes:
+    name: Processed bundle in a browser
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the bytes under test are cssnano and terser output,
+      # and only the lockfile pins the builds that produced them.
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Ahead of the suite, which serves the artifact rather than building it. The
+      # suite's own web server recompiles the Sass afterwards, which leaves the
+      # sources untouched and so keeps the freshness guard satisfied.
+      - run: bundle exec rake framework:processed_bundle
+      - run: npm run test:runtime:processed
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-processed-results
+          path: tmp/playwright/runtime-results
+          retention-days: 7
+
+  publish:
+    name: Publish the GitHub Release
+    needs: [verify, ci, bundle-parity, processed-bytes]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          if gh release view "$GITHUB_REF_NAME" --json name > /dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; leaving it untouched."
+            exit 0
+          fi
+          gh release create "$GITHUB_REF_NAME" \
+            "public/framework/trmnl-framework--$version.zip" \
+            --verify-tag \
+            --title "Framework $version" \
+            --notes-file "public/framework/releases/$version.md"

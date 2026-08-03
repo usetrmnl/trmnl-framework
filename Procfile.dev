@@ -1,0 +1,4 @@
+web: sh -c 'exec bin/rails server -p "${PORT:-3001}" -b "${HOST:-127.0.0.1}" -P server/tmp/pids/server.pid'
+css: bin/watch-css
+# watch[always] keeps watching without a TTY; needs tailwindcss-ruby >= 4.3.2 (4.3.1's watcher crashed on @config)
+tailwind: bin/rails "tailwindcss:watch[always]"

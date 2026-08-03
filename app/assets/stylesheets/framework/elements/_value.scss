@@ -1,0 +1,152 @@
+// ============================================
+// TRMNL Framework - Value Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+
+@include mixins.trmnl-namespace {
+    .value {
+        @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+
+        // The bare element class takes the full ladder here, which title, label,
+        // description and content deliberately do not: sm:value and 4bit:value
+        // are real classes on this element only. `value--base` says the same
+        // thing at every gate and is the spelling every family publishes, so
+        // prefer it in authored markup; the bare ladder stays for the plugins
+        // already on it.
+        @include responsive.with-all-variants {
+            font-family: var(--value-font-family);
+            -webkit-font-smoothing: var(--value-font-smoothing);
+            font-size: var(--value-font-size);
+            line-height: var(--value-line-height);
+            font-weight: var(--value-font-weight);
+        }
+
+        &--base {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-font-size);
+                line-height: var(--value-line-height);
+                font-weight: var(--value-font-weight);
+            }
+        }
+
+        &--xxsmall {
+            @include responsive.with-all-variants {
+                font-family: var(--value-xxsmall-font-family);
+                -webkit-font-smoothing: var(--value-xxsmall-font-smoothing);
+                font-size: var(--value-xxsmall-font-size);
+                line-height: var(--value-xxsmall-line-height);
+                font-weight: var(--value-xxsmall-font-weight);
+            }
+        }
+
+        &--xsmall {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-xsmall-font-size);
+                line-height: var(--value-xsmall-line-height);
+                font-weight: var(--value-xsmall-font-weight);
+            }
+        }
+
+        &--small {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-small-font-size);
+                line-height: var(--value-small-line-height);
+                font-weight: var(--value-small-font-weight);
+            }
+        }
+
+        &--large {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-large-font-size);
+                line-height: var(--value-large-line-height);
+                font-weight: var(--value-large-font-weight);
+            }
+        }
+
+        &--xlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-xlarge-font-size);
+                line-height: var(--value-xlarge-line-height);
+                font-weight: var(--value-xlarge-font-weight);
+            }
+        }
+
+        &--xxlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-xxlarge-font-size);
+                line-height: var(--value-xxlarge-line-height);
+                font-weight: var(--value-xxlarge-font-weight);
+            }
+        }
+
+        &--xxxlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-xxxlarge-font-size);
+                line-height: var(--value-xxxlarge-line-height);
+                font-weight: var(--value-xxxlarge-font-weight);
+            }
+        }
+
+        &--mega {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-mega-font-size);
+                line-height: var(--value-mega-line-height);
+                font-weight: var(--value-mega-font-weight);
+            }
+        }
+
+        &--giga {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-giga-font-size);
+                line-height: var(--value-giga-line-height);
+                font-weight: var(--value-giga-font-weight);
+            }
+        }
+
+        &--tera {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-tera-font-size);
+                line-height: var(--value-tera-line-height);
+                font-weight: var(--value-tera-font-weight);
+            }
+        }
+
+        &--peta {
+            @include responsive.with-all-variants {
+                font-family: var(--value-font-family);
+                -webkit-font-smoothing: var(--value-font-smoothing);
+                font-size: var(--value-peta-font-size);
+                line-height: var(--value-peta-line-height);
+                font-weight: var(--value-peta-font-weight);
+            }
+        }
+
+        &--tnums {
+            @include responsive.with-all-variants {
+                font-variant-numeric: tabular-nums;
+            }
+        }
+    }
+} 

@@ -1,0 +1,597 @@
+// ============================================
+// TRMNL Framework - Responsive Mixins
+// ============================================
+
+@use 'sass:map';
+@use 'sass:string';
+@use 'sass:list';
+@use 'screen' as screen;
+@use 'selector-helpers' as helpers;
+
+// Modern replacement for with-responsive-and-orientation-variants using newer systems
+@mixin with-size-and-orientation-variants {
+    // Regular class (no modifiers)
+    @content;
+    
+    // Generate size variants using newer system
+    @include screen.generate-size-variants {
+        @content;
+    }
+    
+    // Generate orientation variants using newer system
+    @include screen.generate-orientation-variants {
+        @content;
+    }
+
+    // Generate combined size + orientation variants
+    @include generate-responsive-orientation-variants {
+        @content;
+    }
+}
+
+
+
+// Generate responsive variants for classes
+// This creates classes like: sm:value--large, md:value--large, etc.
+@mixin generate-responsive-variants($class-name: null) {
+    $current-selector: #{&};
+    
+    // If no class name provided, extract from current selector
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+    
+    // Only generate variants if we have a valid class name
+    @if $class-name == null {
+        @error "generate-responsive-variants: Could not extract class name from selector '#{$current-selector}'";
+    }
+    
+    // Generate responsive versions for each breakpoint; the screen sizes that
+    // activate a breakpoint collapse into one :is() scope.
+    @each $breakpoint-name in helpers.$size-hierarchy {
+        @if $breakpoint-name != 'xs' { // Skip xs as it's the default
+            @at-root {
+                $ep: helpers.escape-class-token($breakpoint-name);
+                $ec: helpers.escape-class-token($class-name);
+                .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name))} .#{$ep}\:#{$ec} {
+                    @content;
+                }
+            }
+        }
+    }
+}
+
+// Universal mixin that combines bit-depth and responsive variants
+// Usage: @include with-all-variants { ... }
+// 
+// This mixin generates ALL variant types including:
+// - Standalone bit-depth variants (1bit:, 2bit:, 4bit:)
+// - Responsive variants (sm:, md:, lg:)
+// - Orientation variants (portrait:, landscape:)
+// - Combined variants (md:2bit:, portrait:4bit:, md:portrait:2bit:, etc.)
+//
+// Example usage in a component:
+//   .label {
+//     &--small {
+//       @include with-all-variants {
+//         font-size: 12px;
+//       }
+//     }
+//   }
+//
+// This will generate classes like:
+//   - 2bit:label--small (standalone bit-depth)
+//   - md:label--small (responsive)
+//   - portrait:label--small (orientation)
+//   - md:2bit:label--small (combined)
+//
+@mixin with-all-variants($include-base: true) {
+    $current-selector: #{&};
+
+    // Regular class (skip when caller emits base at lower specificity, e.g. rich text content)
+    @if $include-base {
+        @content;
+    }
+
+    // Generate bit-depth variants
+    @include screen.generate-bit-depth-variants {
+        @content;
+    }
+    
+    // Generate responsive variants
+    @include generate-responsive-variants {
+        @content;
+    }
+    
+    // Generate orientation variants using newer system
+    @include screen.generate-orientation-variants {
+        @content;
+    }
+    
+    // Generate combined responsive + bit-depth variants
+    // This handles classes like "md:4bit:value--large"
+    @include generate-combined-variants {
+        @content;
+    }
+    
+    // Generate combined responsive + orientation variants
+    // This handles classes like "md:portrait:value--large"
+    @include generate-responsive-orientation-variants {
+        @content;
+    }
+    
+    // Generate combined orientation + bit-depth variants
+    // This handles classes like "portrait:2bit:value--large"
+    @include generate-orientation-bit-depth-variants {
+        @content;
+    }
+    
+    // Generate triple combinations
+    // This handles classes like "md:portrait:2bit:value--large"
+    @include generate-triple-variants {
+        @content;
+    }
+}
+
+// Generate dark-first variants for classes.
+// Pattern: dark:size:orientation:bit-depth:utility
+// Example: dark:md:portrait:2bit:hidden
+@mixin generate-dark-first-variants($include-bit-depth: true, $class-name: null) {
+    $current-selector: #{&};
+
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+
+    @if $class-name != null {
+        $size-options: (null, 'sm', 'md', 'lg');
+        $orientation-options: (null, 'portrait', 'landscape');
+        $bit-depth-options: (null);
+
+        @if $include-bit-depth {
+            $bit-depth-options: (null, 1, 2, 4);
+        }
+
+        @each $size in $size-options {
+            @each $orientation in $orientation-options {
+                @each $bit-depth in $bit-depth-options {
+                    @at-root {
+                        $tokens: ('dark');
+                        @if $size != null {
+                            $tokens: list.append($tokens, $size);
+                        }
+                        @if $orientation != null {
+                            $tokens: list.append($tokens, $orientation);
+                        }
+                        @if $bit-depth != null {
+                            $tokens: list.append($tokens, '#{$bit-depth}bit');
+                        }
+
+                        // Build escaped class token prefix: dark[:size][:orientation][:bit]
+                        $variant-prefix: '';
+                        @for $i from 1 through list.length($tokens) {
+                            $escaped-token: helpers.escape-class-token(list.nth($tokens, $i));
+                            @if $i == 1 {
+                                $variant-prefix: $escaped-token;
+                            } @else {
+                                $variant-prefix: #{$variant-prefix}#{'\\:'}#{$escaped-token};
+                            }
+                        }
+
+                        $ec: helpers.escape-class-token($class-name);
+
+                        // Build active screen list (mobile-first when size is present).
+                        // Orientation goes last so the landscape :not() suffix trails
+                        // a real class anchor.
+                        $extra-classes: '';
+                        @if $bit-depth != null {
+                            $extra-classes: $extra-classes + '.screen--#{$bit-depth}bit';
+                        }
+                        @if $orientation != null {
+                            $extra-classes: $extra-classes + helpers.orientation-suffix($orientation);
+                        }
+
+                        $screens: ();
+                        @if $size == null {
+                            $screens: (string.unquote('.screen--dark-mode#{$extra-classes}'),);
+                        } @else {
+                            @each $sized-screen in helpers.active-size-screens($size, $extra-classes) {
+                                $screens: list.append($screens, string.unquote('.screen--dark-mode#{$sized-screen}'), comma);
+                            }
+                        }
+
+                        .trmnl #{helpers.dark-scope($screens)} .#{$variant-prefix}\:#{$ec} { @content; }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Scoped opt-in mixin for utilities that support dark-first classes.
+// Generates all existing variants plus dark-first variants.
+@mixin with-dark-all-variants($include-base: true) {
+    @include with-all-variants($include-base) {
+        @content;
+    }
+
+    @include generate-dark-first-variants(true) {
+        @content;
+    }
+}
+
+// Scoped opt-in mixin for utilities that only support size/orientation + dark mode.
+@mixin with-dark-size-and-orientation-variants {
+    @include with-size-and-orientation-variants {
+        @content;
+    }
+
+    @include generate-dark-first-variants(false) {
+        @content;
+    }
+}
+
+// Generate combined responsive and bit-depth variants
+@mixin generate-combined-variants($class-name: null) {
+    $current-selector: #{&};
+    
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+    
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        // Generate all combinations of responsive + bit-depth
+        @each $breakpoint-name in helpers.$size-hierarchy {
+            @if $breakpoint-name != 'xs' {
+                // Pattern 1: breakpoint:bitdepth:class (e.g., md:4bit:value--large)
+                @at-root {
+                    $ep: helpers.escape-class-token($breakpoint-name);
+                    $ec: helpers.escape-class-token($class-name);
+
+                    @each $bit-depth in (1, 2, 4) {
+                        $eb: helpers.escape-class-token('#{$bit-depth}bit');
+                        .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, '.screen--#{$bit-depth}bit'))} .#{$ep}\:#{$eb}\:#{$ec} {
+                            @content;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Generate combined responsive and orientation variants
+@mixin generate-responsive-orientation-variants($class-name: null) {
+    $current-selector: #{&};
+    
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+    
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        // Generate all combinations of responsive + orientation
+        @each $breakpoint-name in helpers.$size-hierarchy {
+            @if $breakpoint-name != 'xs' {
+                @each $orientation in helpers.$orientations {
+                    @at-root {
+                        // Group all active sizes for this breakpoint + orientation
+                        $ep: helpers.escape-class-token($breakpoint-name);
+                        $eo: helpers.escape-class-token($orientation);
+                        $ec: helpers.escape-class-token($class-name);
+                        .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, helpers.orientation-suffix($orientation)))} .#{$ep}\:#{$eo}\:#{$ec} {
+                            @content;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Generate combined orientation and bit-depth variants
+@mixin generate-orientation-bit-depth-variants($class-name: null) {
+    $current-selector: #{&};
+    
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+    
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        // Generate all combinations of orientation + bit-depth
+        @each $orientation in helpers.$orientations {
+            @each $bit-depth in helpers.$bit-depths {
+                @at-root {
+                    // Match: portrait:2bit:bg--gray-50
+                    $eo: helpers.escape-class-token($orientation);
+                    $eb: helpers.escape-class-token('#{$bit-depth}bit');
+                    $ec: helpers.escape-class-token($class-name);
+                    .trmnl .screen--#{$bit-depth}bit#{helpers.orientation-suffix($orientation)} .#{$eo}#{'\\:'}#{$eb}#{'\\:'}#{$ec} {
+                        @content;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Generate triple combinations (responsive + orientation + bit-depth)
+@mixin generate-triple-variants($class-name: null) {
+    $current-selector: #{&};
+    
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+    
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        // Generate all combinations of responsive + orientation + bit-depth
+        @each $breakpoint-name in helpers.$size-hierarchy {
+            @if $breakpoint-name != 'xs' {
+                @each $orientation in helpers.$orientations {
+                    @each $bit-depth in helpers.$bit-depths {
+                        @at-root {
+                            // Group all active sizes for this breakpoint + orientation + bit-depth
+                            $ep: helpers.escape-class-token($breakpoint-name);
+                            $eo: helpers.escape-class-token($orientation);
+                            $eb: helpers.escape-class-token('#{$bit-depth}bit');
+                            $ec: helpers.escape-class-token($class-name);
+                            .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, '.screen--#{$bit-depth}bit' + helpers.orientation-suffix($orientation)))} .#{$ep}\:#{$eo}\:#{$eb}\:#{$ec} {
+                                @content;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================
+// Targeted generators (bit-depth filtered)
+// ============================================
+
+// Generate size + bit-depth combinations for a specific bit-depth only
+// Usage: @include generate-combined-variants-for-bit-depth(1) { ... }
+@mixin generate-combined-variants-for-bit-depth($bit-depth, $class-name: null, $ancestor: null) {
+    $current-selector: #{&};
+    $scope: helpers.ancestor-scope($ancestor);
+
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        // Generate all combinations of responsive + specific bit-depth
+        @each $breakpoint-name in helpers.$size-hierarchy {
+            @if $breakpoint-name != 'xs' {
+                @at-root {
+                    $ep: helpers.escape-class-token($breakpoint-name);
+                    $eb: helpers.escape-class-token('#{$bit-depth}bit');
+                    $ec: helpers.escape-class-token($class-name);
+
+                    .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, '.screen--#{$bit-depth}bit'))} #{$scope}.#{$ep}\:#{$eb}\:#{$ec} {
+                        @content;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Generate orientation + bit-depth combinations for a specific bit-depth only
+// Usage: @include generate-orientation-bit-depth-variants-for(2) { ... }
+@mixin generate-orientation-bit-depth-variants-for($bit-depth, $class-name: null, $ancestor: null) {
+    $current-selector: #{&};
+    $scope: helpers.ancestor-scope($ancestor);
+
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        @each $orientation in helpers.$orientations {
+            @at-root {
+                $eo: helpers.escape-class-token($orientation);
+                $eb: helpers.escape-class-token('#{$bit-depth}bit');
+                $ec: helpers.escape-class-token($class-name);
+                .trmnl .screen--#{$bit-depth}bit#{helpers.orientation-suffix($orientation)} #{$scope}.#{$eo}#{'\\:'}#{$eb}#{'\\:'}#{$ec} { @content; }
+            }
+        }
+    }
+}
+
+// Generate responsive + orientation + bit-depth combinations for a specific bit-depth only
+// Usage: @include generate-triple-variants-for-bit-depth(4) { ... }
+@mixin generate-triple-variants-for-bit-depth($bit-depth, $class-name: null, $ancestor: null) {
+    $current-selector: #{&};
+    $scope: helpers.ancestor-scope($ancestor);
+
+    // Extract class name if not provided
+    @if $class-name == null {
+        $components: helpers.parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+
+    // Only generate variants if we have a valid class name
+    @if $class-name != null {
+        @each $breakpoint-name in helpers.$size-hierarchy {
+            @if $breakpoint-name != 'xs' {
+                @each $orientation in helpers.$orientations {
+                    @at-root {
+                        $ep: helpers.escape-class-token($breakpoint-name);
+                        $eo: helpers.escape-class-token($orientation);
+                        $eb: helpers.escape-class-token('#{$bit-depth}bit');
+                        $ec: helpers.escape-class-token($class-name);
+                        .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, '.screen--#{$bit-depth}bit' + helpers.orientation-suffix($orientation)))} #{$scope}.#{$ep}\:#{$eo}\:#{$eb}\:#{$ec} {
+                            @content;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================
+// Device-Specific Responsive Generators
+// ============================================
+// These mixins generate responsive variants that only apply on specific bit-depth screens.
+// Unlike the combined variants above (which generate classes like "md:2bit:value"),
+// these generate responsive classes (like "md:value") that only activate on bit-depth screens.
+
+// Generate responsive variants on specific bit-depth screens
+// This creates selectors like: .trmnl .screen--md.screen--2bit .sm\:value
+// Usage: @include responsive-for-bit-depth('value--large', 2) { font-variation-settings: 'wght' 700; }
+@mixin responsive-for-bit-depth($class-name, $bit-depth, $ancestor: null) {
+    $scope: helpers.ancestor-scope($ancestor);
+    @each $breakpoint-name in helpers.$size-hierarchy {
+        @if $breakpoint-name != 'xs' {
+            @at-root {
+                $ep: helpers.escape-class-token($breakpoint-name);
+                $ec: helpers.escape-class-token($class-name);
+                .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, '.screen--#{$bit-depth}bit'))} #{$scope}.#{$ep}\:#{$ec} {
+                    @content;
+                }
+            }
+        }
+    }
+}
+
+// Generate bare orientation variants on specific bit-depth screens.
+// This creates selectors like: .trmnl .screen--2bit.screen--portrait .portrait\:value
+// Usage: @include orientation-for-bit-depth('value--large', 2) { font-variation-settings: 'wght' 700; }
+//
+// Without this gate a device override reaches md:portrait:value--large but not
+// portrait:value--large, so the bare orientation variant renders at the wrong
+// weight on the very devices the override exists for.
+@mixin orientation-for-bit-depth($class-name, $bit-depth, $ancestor: null) {
+    $scope: helpers.ancestor-scope($ancestor);
+    @each $orientation in helpers.$orientations {
+        @at-root {
+            $eo: helpers.escape-class-token($orientation);
+            $ec: helpers.escape-class-token($class-name);
+            .trmnl .screen--#{$bit-depth}bit#{helpers.orientation-suffix($orientation)} #{$scope}.#{$eo}#{'\\:'}#{$ec} {
+                @content;
+            }
+        }
+    }
+}
+
+// Generate responsive + orientation variants on specific bit-depth screens
+// This creates selectors like: .trmnl .screen--md.screen--portrait.screen--2bit .sm\:portrait\:value
+// Usage: @include responsive-orientation-for-bit-depth('value--large', 2) { font-variation-settings: 'wght' 700; }
+@mixin responsive-orientation-for-bit-depth($class-name, $bit-depth, $ancestor: null) {
+    $scope: helpers.ancestor-scope($ancestor);
+    @each $breakpoint-name in helpers.$size-hierarchy {
+        @if $breakpoint-name != 'xs' {
+            @each $orientation in helpers.$orientations {
+                @at-root {
+                    $ep: helpers.escape-class-token($breakpoint-name);
+                    $eo: helpers.escape-class-token($orientation);
+                    $ec: helpers.escape-class-token($class-name);
+                    .trmnl #{helpers.scope-selector(helpers.active-size-screens($breakpoint-name, '.screen--#{$bit-depth}bit' + helpers.orientation-suffix($orientation)))} #{$scope}.#{$ep}\:#{$eo}\:#{$ec} {
+                        @content;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Generate the bare bit-depth-prefixed variant on its own bit-depth screens.
+// This creates selectors like: .trmnl .screen--4bit .4bit\:value--large
+// Usage: @include bit-depth-prefixed-for-bit-depth('value--large', 4) { ... }
+@mixin bit-depth-prefixed-for-bit-depth($class-name, $bit-depth, $ancestor: null) {
+    @at-root {
+        $scope: helpers.ancestor-scope($ancestor);
+        $eb: helpers.escape-class-token('#{$bit-depth}bit');
+        $ec: helpers.escape-class-token($class-name);
+        .trmnl .screen--#{$bit-depth}bit #{$scope}.#{$eb}#{'\\:'}#{$ec} {
+            @content;
+        }
+    }
+}
+
+// Every prefixed gate a device override has to reach for one class at one bit
+// depth: the size, orientation and size+orientation variants that carry no bit
+// prefix, plus the four bit-prefixed shapes that only ever apply on this depth.
+//
+// A device override that reaches some of a class's gates and not others renders
+// the right size at the wrong weight, because the unprefixed device rule pins
+// the wght axis and font-weight cannot move it back on a variable font.
+//
+// The caller keeps the unprefixed rule: its selector shape differs per element.
+//
+// $ancestor is the scope that rule sits in, written as it appears after the
+// screen compound ('.richtext', '.item .content'). It has to match, or the
+// gates land one class lighter than the unprefixed device rule and lose to it:
+// the element-wide `.richtext .content` pin outranked every bare
+// `2bit:content--*` gate that way, and font-variation-settings on a variable
+// font cannot be moved back by font-weight.
+@mixin device-variants-for-bit-depth($class-name, $bit-depth, $ancestor: null) {
+    @include responsive-for-bit-depth($class-name, $bit-depth, $ancestor) {
+        @content;
+    }
+
+    @include orientation-for-bit-depth($class-name, $bit-depth, $ancestor) {
+        @content;
+    }
+
+    @include responsive-orientation-for-bit-depth($class-name, $bit-depth, $ancestor) {
+        @content;
+    }
+
+    @include bit-depth-prefixed-for-bit-depth($class-name, $bit-depth, $ancestor) {
+        @content;
+    }
+
+    @include generate-combined-variants-for-bit-depth($bit-depth, $class-name, $ancestor) {
+        @content;
+    }
+
+    @include generate-orientation-bit-depth-variants-for($bit-depth, $class-name, $ancestor) {
+        @content;
+    }
+
+    @include generate-triple-variants-for-bit-depth($bit-depth, $class-name, $ancestor) {
+        @content;
+    }
+}

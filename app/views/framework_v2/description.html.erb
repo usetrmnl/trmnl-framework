@@ -1,0 +1,342 @@
+<%
+  # DRY text content for multi-line wrapping examples
+  wrapping_example_text = "This longer description will wrap to multiple lines when it exceeds the available width"
+  
+  # DRY text content for clamping examples
+  clamping_example_text = "This is a very long description text that would normally wrap to many lines but demonstrates how clamping behavior works with different variants and line limits to show ellipsis overflow"
+%>
+
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :description %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:description) %>
+
+    <div class="space-y-16">
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            Descriptions come in four size variants to suit different use cases. Each variant provides a distinct visual style
+            that can be used for various content hierarchies.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch">
+                      <div class="flex flex--col gap--space-between">
+                        <!-- Row 1: headers -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">Base</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">Large</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">XLarge</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">XXLarge</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 2: Examples -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="description">Description</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="description description--large">Description</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="description description--xlarge">Description</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="description description--xxlarge">Description</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Description</span>
+                    <span class="instance">Size Variants</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Base (default) -->
+<span class="description">Base Description</span>
+
+<!-- Large: larger text for emphasis -->
+<span class="description description--large">Large Description</span>
+
+<!-- Extra Large: prominent descriptions -->
+<span class="description description--xlarge">XLarge Description</span>
+
+<!-- Extra Extra Large: maximum emphasis -->
+<span class="description description--xxlarge">XXLarge Description</span>
+
+<!-- Using base modifier to reset to default size at breakpoint -->
+<span class="description description--large md:description--base">
+  Large by default, base on medium+ screens
+</span>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Overflow Behavior') %>
+          <p class="<%= framework_section_description_classes %>">
+            Descriptions can handle longer text content through natural wrapping or text clamping. Understanding how descriptions behave with 
+            overflow content helps ensure your interface remains readable and visually balanced.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Multi-line Wrapping') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              By default, descriptions will wrap to multiple lines when content exceeds the available width,
+              maintaining readability for longer text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch">
+                      <div class="flex flex--col gap--space-between">
+                        <!-- Row 1: headers -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">Base</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">Large</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">XLarge</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">XXLarge</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 2: Examples -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--large"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xlarge"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xxlarge"><%= wrapping_example_text %></span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Description</span>
+                      <span class="instance">Multi-line</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Descriptions with longer text will wrap naturally -->
+<span class="description">This longer description will wrap to multiple lines when it exceeds the width</span>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Text Clamping') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use the framework's <code class="<%= framework_section_code_classes %>">data-clamp</code> attribute to limit descriptions to a specific number of lines with ellipsis overflow.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch">
+                      <div class="flex flex--col gap--space-between">
+                        <!-- Row 1: headers -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">Base</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">Large</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">XLarge</span></div>
+                          <div class="flex flex--row flex--y-center flex--left grow"><span class="label label--small label--gray">XXLarge</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 2: 1-line clamp -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--large" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xlarge" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xxlarge" data-clamp="1"><%= clamping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 3: 2-line clamp -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--large" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xlarge" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xxlarge" data-clamp="2"><%= clamping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 4: 3-line clamp -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description" data-clamp="3"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--large" data-clamp="3"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xlarge" data-clamp="3"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--y-start flex--left grow"><span class="description description--xxlarge" data-clamp="3"><%= clamping_example_text %></span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Description</span>
+                      <span class="instance">Clamped</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- data-clamp applies to any description size (base, large, xlarge, xxlarge) -->
+
+<!-- Single line clamping with data attribute -->
+<span class="description" data-clamp="1">
+  This text will be clamped to one line
+</span>
+
+<!-- Two line clamping -->
+<span class="description" data-clamp="2">
+  This text will be clamped to exactly two lines with ellipsis
+</span>
+
+<!-- Three line clamping with large size -->
+<span class="description description--large" data-clamp="3">
+  This larger text will be clamped to three lines
+</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Responsive Features Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Features') %>
+          <p class="<%= framework_section_description_classes %>">
+            Description components support all three responsive systems: size-based, orientation-based, and bit-depth variants. 
+            This enables precise control over description appearance across different device configurations.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Size-Based Responsive -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Breakpoint Prefixes') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Use breakpoint prefixes like <code class="<%= framework_section_code_classes %>">sm:</code>,
+                <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">lg:</code>
+                to apply different sizes at different screen widths.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col items--start gap">
+                        <span class="description lg:description--xlarge">Responsive Description</span>
+                        <span class="label label--small">Base by default, xlarge on lg screens</span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Description</span>
+                        <span class="instance">Responsive</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Base by default, xlarge on lg screens -->
+<span class="description lg:description--xlarge">
+  Responsive Description
+</span>
+
+<!-- Caption describing the responsive behavior (optional) -->
+<span class="label label--small">Base by default, xlarge on lg screens</span>
+
+<!-- Using base modifier to reset to default size at breakpoint -->
+<span class="description description--large md:description--base">
+  Large by default, base on medium+ screens
+</span>
+
+<!-- Progressive size scaling -->
+<span class="description sm:description--large md:description--xlarge lg:description--xxlarge">
+  Progressive Description Sizing
+</span>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Orientation and Size+Orientation -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Orientation and Size+Orientation') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Description sizes can adapt to orientation with <code class="<%= framework_section_code_classes %>">portrait:</code> and can be combined
+                with size breakpoints (e.g., <code class="<%= framework_section_code_classes %>">md:portrait:</code>).
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col items--start gap">
+                        <span class="description description--large portrait:description--base">Orientation Variant</span>
+                        <span class="label label--small">Large by default, base in portrait.</span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Description</span>
+                        <span class="instance">Orientation</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Large by default, base in portrait -->
+<span class="description description--large portrait:description--base">Orientation Variant</span>
+
+<!-- Caption describing the responsive behavior (optional) -->
+<span class="label label--small">Large by default, base in portrait.</span>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

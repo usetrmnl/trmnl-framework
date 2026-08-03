@@ -1,0 +1,23 @@
+<header class="<%= header_classes %>">
+  <% if @contained %>
+  <div class="flex w-full items-center justify-between max-w-[1680px] mx-auto">
+  <% end %>
+
+    <div class="flex flex-1 items-center gap-4">
+      <%= left if left? %>
+    </div>
+
+    <% if center? %>
+      <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
+        <%= center %>
+      </div>
+    <% end %>
+
+    <div class="flex items-center gap-2">
+      <%= right if right? %>
+    </div>
+
+  <% if @contained %>
+  </div>
+  <% end %>
+</header>

@@ -1,0 +1,594 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :size %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:size) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Setting Width and Height') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control element dimensions using fixed sizes from the design scale, arbitrary pixel values, or dynamic sizes that adapt to their container.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Fixed Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Use predefined size classes from the design scale. Apply <code class="<%= framework_section_code_classes %>">w--{size}</code> for width and <code class="<%= framework_section_code_classes %>">h--{size}</code> for height with these size values:
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <% size_values = {
+              '0' => '0px',
+              '0.5' => '2px',
+              '1' => '4px',
+              '1.5' => '6px',
+              '2' => '8px',
+              '2.5' => '10px',
+              '3' => '12px',
+              '3.5' => '14px',
+              '4' => '16px',
+              '5' => '20px',
+              '6' => '24px',
+              '7' => '28px',
+              '8' => '32px',
+              '9' => '36px',
+              '10' => '40px',
+              '11' => '44px',
+              '12' => '48px',
+              '14' => '56px',
+              '16' => '64px',
+              '20' => '80px',
+              '24' => '96px',
+              '28' => '112px',
+              '32' => '128px',
+              '36' => '144px',
+              '40' => '160px',
+              '44' => '176px',
+              '48' => '192px',
+              '52' => '208px',
+              '56' => '224px',
+              '60' => '240px',
+              '64' => '256px',
+              '72' => '288px',
+              '80' => '320px',
+              '96' => '384px'
+            } %>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="trmnl flex flex-row gap--medium my-2">
+                  <div class="flex flex-col gap">
+                    <% size_values.each do |class_name, _| %>
+                      <div class="flex flex--row flex--start h--2 w--32">
+                        <code class="<%= framework_section_code_classes %>">w/h--<%= class_name %></code>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <% size_values.each do |_, pixel_value| %>
+                      <div class="flex flex--row flex--start h--2 w--32">
+                        <code class="<%= framework_section_code_classes %>"><%= pixel_value %></code>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <% size_values.each do |class_name, _| %>
+                      <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 h--2 w--<%= class_name %> rounded--small"></div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Arbitrary Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Need a specific dimension? Use arbitrary size classes for precise pixel values with <code class="<%= framework_section_code_classes %>">w--[Npx]</code> and <code class="<%= framework_section_code_classes %>">h--[Npx]</code> syntax, where N can be any value from 0 to 128.
+              Responsive prefixes work here (<code class="<%= framework_section_code_classes %>">md:w--[96px]</code>), unlike the arbitrary values on <%= render DocsRef.new(page: :gap) %> and <%= render DocsRef.new(page: :rounded) %>.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="trmnl flex flex-row gap--medium my-2">
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w/h--[60px]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w/h--[90px]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w/h--[120px]</code>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">60px</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">90px</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">120px</code>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 h--2 w--[60px] rounded--small"></div>
+                    <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 h--2 w--[90px] rounded--small"></div>
+                    <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 h--2 w--[120px] rounded--small"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Dynamic Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Use dynamic sizes to set dimensions relative to the container or content. <code class="<%= framework_section_code_classes %>">w--full</code> and <code class="<%= framework_section_code_classes %>">h--full</code> set dimensions to 100% of the container, while <code class="<%= framework_section_code_classes %>">w--auto</code> and <code class="<%= framework_section_code_classes %>">h--auto</code> let the browser calculate dimensions based on content.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap">
+                        <div class="p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium w--full flex flex--col gap">
+                          <div class="flex flex--row flex--center w--full">
+                            <div class="w--full p--2.5 rounded--small bg--white text--center">
+                              <span class="label">Full Width</span>
+                            </div>
+                          </div>
+                          <div class="flex flex--row flex--center w--full">
+                            <div class="w--auto p--2.5 rounded--small bg--white text--center">
+                              <span class="label">Auto Width</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Size</span>
+                        <span class="instance">Dynamic Widths</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="w--full">Full width</div>
+<div class="w--auto">Auto width</div>
+<div class="h--full">Full height</div>
+<div class="h--auto">Auto height</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Container Query Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Container query sizes let you size elements as a percentage of the <code class="<%= framework_section_code_classes %>">.layout</code> container. Use <code class="<%= framework_section_code_classes %>">w--[Ncqw]</code> for width and <code class="<%= framework_section_code_classes %>">h--[Ncqh]</code> for height, where N is 0 to 100 (0% to 100% of the layout's dimensions).
+            </p>
+            <p class="<%= framework_section_description_classes %>">
+              This works automatically because <code class="<%= framework_section_code_classes %>">.layout</code> is configured as a CSS container query context. Any element inside a layout can use these units to size itself relative to the layout's width or height. This is useful for responsive images, flexible columns, or proportional spacing.
+            </p>
+            <p class="<%= framework_section_description_classes %>">
+              For advanced cases where you need to reference a different container (e.g., a specific column), add <code class="<%= framework_section_code_classes %>">style="container-type: size;"</code> to that element. It must have explicit dimensions set.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="trmnl flex flex-row gap--medium my-2">
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--[50cqw]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--[75cqw]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--[50cqh]</code>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">50% container width</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">75% container width</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">50% container height</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="view view--full">
+  <div class="layout">
+    <div class="w--[50cqw]">50% of layout width</div>
+    <div class="h--[33cqh]">33% of layout height</div>
+  </div>
+</div>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Min/Max Dimensions') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control minimum and maximum element dimensions independently using min and max classes. These constraints work with all sizing methods: fixed sizes, arbitrary sizes, container query units, and dynamic sizes.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Fixed Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">w--min-{size}</code>, <code class="<%= framework_section_code_classes %>">w--max-{size}</code>, <code class="<%= framework_section_code_classes %>">h--min-{size}</code>, and <code class="<%= framework_section_code_classes %>">h--max-{size}</code> to constrain dimensions using fixed size values.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap">
+                        <div class="p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium w--full flex flex--col gap">
+                          <div class="flex flex--row flex--center w--full">
+                            <div class="w--auto w--min-72 p--2.5 rounded--small bg--white text--center">
+                              <span class="label">Min Width 72 (288px)</span>
+                            </div>
+                          </div>
+                          <div class="flex flex--row flex--center w--full">
+                            <div class="w--full w--max-32 p--2.5 rounded--small bg--white text--center">
+                              <span class="label">Max Width 32 (128px)</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Size</span>
+                        <span class="instance">Fixed Sizes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="w--auto w--min-72">Min Width 72 (288px)</div>
+<div class="w--full w--max-32">Max Width 32 (128px)</div>
+<div class="h--min-72">Min Height 72 (288px)</div>
+<div class="h--max-8">Max Height 8 (32px)</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Arbitrary Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">w--min-[Npx]</code>, <code class="<%= framework_section_code_classes %>">w--max-[Npx]</code>, <code class="<%= framework_section_code_classes %>">h--min-[Npx]</code>, and <code class="<%= framework_section_code_classes %>">h--max-[Npx]</code> to constrain dimensions using precise pixel values.
+              N can be any value from 0 to 128, the same range as the arbitrary width and height classes.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="flex flex-row gap my-2">
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--min-[100px]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--max-[120px]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--min-[50px]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--max-[100px]</code>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">min-width: 100px</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">max-width: 120px</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">min-height: 50px</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">max-height: 100px</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Dynamic Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">w--min-full</code>, <code class="<%= framework_section_code_classes %>">w--max-full</code>, <code class="<%= framework_section_code_classes %>">h--min-full</code>, <code class="<%= framework_section_code_classes %>">h--max-full</code>, <code class="<%= framework_section_code_classes %>">w--min-auto</code>, <code class="<%= framework_section_code_classes %>">w--max-auto</code>, <code class="<%= framework_section_code_classes %>">h--min-auto</code>, and <code class="<%= framework_section_code_classes %>">h--max-auto</code> to constrain dynamic dimensions.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="flex flex-row gap my-2">
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--min-full</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--max-full</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--min-auto</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--max-auto</code>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">min-width: 100%</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">max-width: 100%</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">min-height: auto</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">max-height: none</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Container Query Sizes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">w--min-[Ncqw]</code>, <code class="<%= framework_section_code_classes %>">w--max-[Ncqw]</code>, <code class="<%= framework_section_code_classes %>">h--min-[Ncqh]</code>, and <code class="<%= framework_section_code_classes %>">h--max-[Ncqh]</code> to constrain dimensions relative to the container.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="flex flex-row gap my-2">
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--min-[100cqw]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w--max-[50cqw]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--min-[75cqh]</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">h--max-[90cqh]</code>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap">
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">min-width: 100cqw</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">max-width: 50cqw</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">min-height: 75cqh</code>
+                    </div>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">max-height: 90cqh</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Responsive Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Size utilities support responsive variants, allowing you to set different dimensions at different screen breakpoints. Use the pattern <code class="<%= framework_section_code_classes %>">breakpoint:size-class</code> to apply sizes conditionally.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Responsive Examples') %>
+            <p class="<%= framework_section_description_classes %>">
+              Apply different width and height values at different screen sizes using responsive prefixes. The framework follows a mobile-first approach where styles apply to the target breakpoint and larger.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <div class="p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium w--full flex flex--col gap">
+                          <div class="w--8 md:w--16 lg:w--24 p--2.5 rounded--small bg--white text--center">
+                            <span class="label">Responsive Width</span>
+                          </div>
+                          <div class="h--8 md:h--16 lg:h--24 w--full p--2.5 rounded--small bg--white text--center flex flex--center">
+                            <span class="label">Responsive Height</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Size</span>
+                        <span class="instance">Responsive Sizes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Width: 8 (32px) by default, 16 (64px) on md and up, 24 (96px) on lg and up -->
+<div class="w--8 md:w--16 lg:w--24">Responsive Width</div>
+
+<!-- Height: 8 (32px) by default, 16 (64px) on md and up, 24 (96px) on lg and up -->
+<div class="h--8 md:h--16 lg:h--24">Responsive Height</div>
+
+<!-- Min/Max with responsive -->
+<div class="w--min-8 md:w--min-16 lg:w--min-24">Responsive Min Width</div>
+
+<!-- Container query units with responsive -->
+<div class="w--[25cqw] md:w--[50cqw] lg:w--[75cqw]">Responsive Container Query</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Supported Responsive Classes') %>
+            <p class="<%= framework_section_description_classes %>">
+              Responsive variants are available for most size utilities. Use prefixes like <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">portrait:</code>, and <code class="<%= framework_section_code_classes %>">md:portrait:</code> to target different breakpoints and orientations.
+            </p>
+          </div>
+
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Category</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Responsive Support</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Example Usage</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Fixed Sizes
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      ✓ Supported
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:w--16, lg:h--24</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Full/Auto Dimensions
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      ✓ Supported
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:w--full, lg:h--auto</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Min/Max Dimensions
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      ✓ Supported
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:w--min-16, lg:h--max-full</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Arbitrary Dimensions
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      ✓ Supported
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:w--[128px], lg:h--[96px]</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Container Query Sizes
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      ✓ Supported
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:w--[50cqw], lg:h--[75cqh]</code>
+                  </td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

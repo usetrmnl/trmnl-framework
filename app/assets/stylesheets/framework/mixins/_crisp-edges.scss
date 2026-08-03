@@ -1,0 +1,25 @@
+// ============================================
+// TRMNL Framework - Crisp Edges Mixin
+// ============================================
+
+// Ensures pixel-perfect rendering for retro/pixelated graphics
+@mixin crisp-edges {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+// Scales dither pattern to align with physical pixel grid.
+// --dither-bg-size divides by --dither-ratio so tiles map 1:1 to physical pixels
+// regardless of whether scaling is via browser DPR (render) or CSS transform (preview).
+@mixin dither-pattern-size {
+    background-size: var(--dither-bg-size, auto);
+}
+
+// Shorthand for elements that display dither-based backgrounds:
+// sets repeat tiling, pixel-grid-aligned size, and crisp rendering.
+@mixin dither-ready {
+    background-repeat: repeat;
+    @include dither-pattern-size;
+    @include crisp-edges;
+}

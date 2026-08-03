@@ -1,0 +1,130 @@
+<%#
+  Summary cards rendered atop /framework/releases. The cards themselves are
+  informational; only version rows and bundle actions are links.
+%>
+<% download_icon = capture do %>
+  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+  </svg>
+<% end %>
+<% document_icon = capture do %>
+  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9l-6-6H7a2 2 0 00-2 2v14a2 2 0 002 2zM13 3v6h6" />
+  </svg>
+<% end %>
+<%
+  css_latest_by_major = latest_per_major(:css)
+  js_latest_by_major = latest_per_major(:js)
+  release_majors = (css_latest_by_major.keys + js_latest_by_major.keys).uniq.sort.reverse
+  css_total = total_releases_with(:css)
+  js_total = total_releases_with(:js)
+  fonts_released_at = framework_fonts_config.released_at
+  bundle_count = framework_fonts_config.bundle_ids.count
+%>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <section class="flex flex-col h-full p-5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
+        <%= render 'shared/icons/curly_brackets', css_class: 'w-6 h-6 text-primary-500 dark:text-primary-400' %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">CSS and JavaScript</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Stylesheet and runtime for every release
+            </p>
+          </div>
+          <span class="hidden sm:inline-flex flex-shrink-0 rounded-full bg-gray-100 dark:bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+            <%= pluralize([css_total, js_total].max, 'release') %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-[auto_auto_1fr_auto] gap-y-2">
+      <% release_majors.each do |major| %>
+        <% css_release = css_latest_by_major[major] %>
+        <% js_release = js_latest_by_major[major] %>
+        <% latest_version = [css_release, js_release].compact.map { |release| Gem::Version.new(release[:version]) }.max&.to_s %>
+        <% released_at = css_release&.dig(:released_at) || js_release&.dig(:released_at) %>
+        <div class="col-span-4 grid grid-cols-subgrid items-center gap-x-4 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-3">
+          <span class="font-mono text-sm font-semibold text-gray-900 dark:text-gray-100">v<%= major %>.x</span>
+          <span class="font-mono text-xs text-gray-500 dark:text-gray-400">
+            <%= "v#{latest_version}" if latest_version %>
+          </span>
+          <span class="text-xs text-gray-400 dark:text-gray-500 tabular-nums text-right">
+            <%= relative_release_date(released_at) if released_at %>
+          </span>
+          <% is_latest = major == release_majors.first %>
+          <a href="<%= is_latest ? '#framework-release-latest' : "#framework-release-major-#{major}" %>" data-turbo="false"
+             class="justify-self-end <%= "#{button_small_classes} #{is_latest ? button_secondary_classes : button_gray_light_classes}" %>">
+            <%= is_latest ? 'Go to Latest' : "Go to v#{major}.x" %>
+            <%= render 'shared/icons/arrow_right' %>
+          </a>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="flex flex-col h-full p-5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
+        <%= render 'shared/icons/font', classes: 'w-6 h-6 text-primary-500 dark:text-primary-400' %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Font Bundles</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Font families used across releases
+            </p>
+          </div>
+          <span class="hidden sm:inline-flex flex-shrink-0 rounded-full bg-gray-100 dark:bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+            <%= pluralize(bundle_count, 'bundle') %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <%
+      preferred_bundle_order = %i[trmnl classic]
+      ordered_bundles = framework_fonts_config.bundles.sort_by { |id, _| preferred_bundle_order.index(id) || preferred_bundle_order.size }
+      shared_fonts = framework_fonts_config.shared
+    %>
+    <div class="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+      <% ordered_bundles.each do |bundle_id, bundle| %>
+        <% font_names = bundle[:fonts].map { |font| font[:family] } + shared_fonts.map { |font| font[:family] } %>
+        <% font_styles = %w[italic oblique] %>
+        <% weights = (bundle[:fonts] + shared_fonts).flat_map { |font| Array(font[:weights]) }.uniq.reject { |w| font_styles.include?(w.to_s) } %>
+        <div class="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-3">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 min-w-0"><%= bundle[:label] %></h3>
+            <% if fonts_released_at %>
+              <span class="flex-shrink-0 text-xs text-gray-400 dark:text-gray-500 tabular-nums"><%= relative_release_date(fonts_released_at) %></span>
+            <% end %>
+          </div>
+          <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs leading-5 text-gray-600 dark:text-gray-400">
+            <dt class="text-gray-500 dark:text-gray-500">Families</dt>
+            <dd class="text-gray-900 dark:text-gray-100"><%= font_names.to_sentence %></dd>
+            <dt class="text-gray-500 dark:text-gray-500">Weights</dt>
+            <dd class="font-mono text-gray-900 dark:text-gray-100"><%= weights.join(', ') %></dd>
+          </dl>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <a href="<%= framework_fonts_config.bundle_zip_url(bundle_id) %>" download data-turbo="false"
+               class="<%= "#{button_small_classes} #{button_secondary_classes}" %>">
+              <%= download_icon %>
+              Download ZIP
+            </a>
+            <a href="<%= framework_fonts_config.bundle_markdown_url(bundle_id) %>" data-turbo="false"
+               class="<%= "#{button_small_classes} #{button_gray_light_classes}" %>">
+              <%= document_icon %>
+              View README
+            </a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

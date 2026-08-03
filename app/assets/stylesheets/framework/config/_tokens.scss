@@ -1,0 +1,291 @@
+// ============================================
+// TRMNL Framework - Design tokens (Sass maps/scales/helpers).
+// No CSS output, only used for Sass variables.
+// ============================================
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+@forward 'tokens_colors_generated';
+
+// Undefined var() voids the whole declaration; the ", 1" fallback keeps plugin CSS working on older pinned framework bundles.
+@function -scale-value($value, $scale-variable) {
+  @if meta.type-of($value) == 'list' {
+    $scaled: ();
+    @each $item in $value {
+      $scaled: list.append($scaled, -scale-value($item, $scale-variable), $separator: space);
+    }
+    @return $scaled;
+  }
+
+  @if meta.type-of($value) == 'number' and math.unit($value) == 'px' and $value != 0px {
+    @return calc(#{$value} * var(#{$scale-variable}, 1));
+  }
+
+  @return $value;
+}
+
+@function content-scaled($value) {
+  @return -scale-value($value, '--content-scale');
+}
+
+@function ui-scaled($value) {
+  @return -scale-value($value, '--ui-scale');
+}
+
+@function text-ui-scaled($value) {
+  @return -scale-value($value, '--text-ui-scale');
+}
+
+// Basic palette (original 9 shades)
+$palette-shades: (
+  'black': #000000,
+  'gray-1': #111111,
+  'gray-2': #333333,
+  'gray-3': #555555,
+  'gray-4': #777777,
+  'gray-5': #999999,
+  'gray-6': #BBBBBB,
+  'gray-7': #DDDDDD,
+  'white': #FFFFFF
+);
+
+// Extended palette (16 shades)
+$palette-shades-extended: (
+  'black': #000000,
+  'gray-10': #111111,
+  'gray-15': #222222,
+  'gray-20': #333333,
+  'gray-25': #444444,
+  'gray-30': #555555,
+  'gray-35': #666666,
+  'gray-40': #777777,
+  'gray-45': #888888,
+  'gray-50': #999999,
+  'gray-55': #AAAAAA,
+  'gray-60': #BBBBBB,
+  'gray-65': #CCCCCC,
+  'gray-70': #DDDDDD,
+  'gray-75': #EEEEEE,
+  'white': #FFFFFF
+);
+
+// Ordered grayscale rails. The token order is the source of truth for
+// capability iteration and inversion; pairing either rail with its reverse
+// produces the exact counterpoint for every shade.
+$grayscale-steps: (
+  '10',
+  '15',
+  '20',
+  '25',
+  '30',
+  '35',
+  '40',
+  '45',
+  '50',
+  '55',
+  '60',
+  '65',
+  '70',
+  '75'
+);
+
+$grayscale-ramp: (
+  'black',
+  'gray-10',
+  'gray-15',
+  'gray-20',
+  'gray-25',
+  'gray-30',
+  'gray-35',
+  'gray-40',
+  'gray-45',
+  'gray-50',
+  'gray-55',
+  'gray-60',
+  'gray-65',
+  'gray-70',
+  'gray-75',
+  'white'
+);
+
+$grayscale-ramp-legacy: (
+  'black',
+  'gray-1',
+  'gray-2',
+  'gray-3',
+  'gray-4',
+  'gray-5',
+  'gray-6',
+  'gray-7',
+  'white'
+);
+
+// Compatibility aliases used throughout the paint generators.
+$one-bit-shades: $grayscale-ramp;
+$one-bit-legacy-shades: $grayscale-ramp-legacy;
+$two-bit-shades: $grayscale-ramp;
+
+@function _mirror-list-map($values) {
+  $mirrored: ();
+
+  @for $index from 1 through list.length($values) {
+    $mirrored: map.set(
+      $mirrored,
+      list.nth($values, $index),
+      list.nth($values, -$index)
+    );
+  }
+
+  @return $mirrored;
+}
+
+// Fallback mappings
+$extended-to-deprecated-mapping: (
+  'gray-10': 'gray-1',
+  'gray-15': 'gray-1',
+  'gray-20': 'gray-2',
+  'gray-25': 'gray-2',
+  'gray-30': 'gray-3',
+  'gray-35': 'gray-3',
+  'gray-40': 'gray-4',
+  'gray-45': 'gray-4',
+  'gray-50': 'gray-5',
+  'gray-55': 'gray-5',
+  'gray-60': 'gray-6',
+  'gray-65': 'gray-6',
+  'gray-70': 'gray-7',
+  'gray-75': 'gray-7'
+);
+
+$deprecated-to-enhanced-mapping: (
+  'gray-1': 'gray-10',
+  'gray-2': 'gray-20',
+  'gray-3': 'gray-30',
+  'gray-4': 'gray-40',
+  
+  'gray-5': 'gray-50',
+  'gray-6': 'gray-60',
+  'gray-7': 'gray-70'
+);
+
+// Spacing scales
+$size-scale: (
+  '0': 0px,
+  '1': 4px,
+  '2': 8px,
+  '3': 12px,
+  '4': 16px,
+  '5': 20px,
+  '6': 24px,
+  '7': 28px,
+  '8': 32px,
+  '9': 36px,
+  '10': 40px,
+  '11': 44px,
+  '12': 48px,
+  '14': 56px,
+  '16': 64px,
+  '20': 80px,
+  '24': 96px,
+  '28': 112px,
+  '32': 128px,
+  '36': 144px,
+  '40': 160px,
+  '44': 176px,
+  '48': 192px,
+  '52': 208px,
+  '56': 224px,
+  '60': 240px,
+  '64': 256px,
+  '72': 288px,
+  '80': 320px,
+  '96': 384px
+);
+
+$decimal-scale: (
+  '0.5': 2px,
+  '1.5': 6px,
+  '2.5': 10px,
+  '3.5': 14px
+ );
+
+// Semantic color roles → base hue token (themeable via --color-{role} CSS variables)
+$semantic-colors: (
+  'primary': 'blue',
+  'success': 'green',
+  'error': 'red',
+  'warning': 'orange'
+);
+
+// Dark mode grayscale remap (utility-level semantic inversion)
+// Used to remap explicit grayscale tokens under .screen--dark-mode.
+$dark-mode-grayscale-remap: map.merge(
+  _mirror-list-map($grayscale-ramp-legacy),
+  _mirror-list-map($grayscale-ramp)
+);
+
+// Dark mode chromatic remap
+// Base hue inversion is disabled by policy; hues remain unchanged.
+$dark-mode-chromatic-hue-remap: ();
+
+// Mirror color/grayscale shade steps in dark mode.
+$dark-mode-step-mirror: _mirror-list-map($grayscale-steps);
+
+// ============================================
+// Chart series ramp: full-color screens
+// ============================================
+// Chart series encode identity, not magnitude, so a screen that can render hues
+// gets a categorical ramp: the ink, then seven hues in a fixed order. The
+// grayscale ladder base/_screen.scss binds stays the default for every rail that
+// cannot show a hue.
+//
+// Slot 0 stays the ink, so a one-series chart looks the same as it always has and
+// the ramp still opens on the highest-contrast tone against the canvas. The seven
+// hues after it are ordered, not graded: series() spreads N series across the
+// span, and every pair of slots it can put side by side clears OKLab ΔE×100 14.6
+// under protanopia and deuteranopia (Machado 2009, severity 1.0) and 18.8 under
+// unsimulated vision. Every slot sits inside the OKLCH lightness band for its
+// ground, holds chroma >= 0.10, and clears 3:1 against the canvas.
+//
+// The span is 7 because 8 is the ceiling on mutually distinguishable categorical
+// fills: past it the palette would repeat a hue rather than name a new series.
+// Slots 8 to 15 stay cleared, which is what chart-series-ramp does with a list
+// shorter than the slot count, and ramp() reports them as empty Fills.
+//
+// The tokens are quoted, like $grayscale-ramp and unlike the theme ramps:
+// `black` and `white` are CSS color keywords, so unquoted they reach
+// dark-remap-token() as colors rather than as token names.
+//
+// The lists live here rather than beside their binding in
+// base/_screen-mode-vars.scss because themes/dark-theme.scss binds the dark one
+// too, and a theme file cannot @use a module that emits CSS.
+$color-full-chart-series: (
+  'black',
+  'violet-35',
+  'red-30',
+  'pink-40',
+  'blue-45',
+  'purple-25',
+  'yellow-20',
+  'green-30'
+);
+
+// The dark ground is a separate selection, not a flip of the one above: the paint
+// rail mirrors each step around its pure hue, which pushes the light ramp's tints
+// to OKLCH L 0.73 and up, well past the dark band, where they lose the chroma
+// that does the identity work. These steps hold the same hue per slot and never
+// darken it, and clear ΔE 14.1 CVD / 17.4 normal on the same pairs.
+$color-full-chart-series-dark: (
+  'white',
+  'violet-45',
+  'red-35',
+  'pink-45',
+  'blue-60',
+  'purple-30',
+  'yellow-20',
+  'green-30'
+);
+
+$color-full-chart-series-span: 7;

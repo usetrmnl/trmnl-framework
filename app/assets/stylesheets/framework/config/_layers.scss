@@ -1,0 +1,16 @@
+// ============================================
+// TRMNL Framework - Cascade layer order
+// ============================================
+// The single source for the framework's @layer ordering statement. The bundle
+// emits it, and so does every standalone theme file, because layer order is
+// fixed by whichever stylesheet the browser parses first. A theme <link> placed
+// ahead of plugins.css would otherwise register tn--themes before tn--base and
+// lose every semantic channel it sets at equal specificity.
+//
+// Repeating the statement is safe: the first one fixes the order, later copies
+// are no-ops.
+
+@mixin order {
+    // Using tn-- prefix to avoid conflicts with other frameworks (e.g. Tailwind)
+    @layer tn--normalize, tn--elements, tn--components, tn--base, tn--device-overrides, tn--themes, tn--utilities;
+}

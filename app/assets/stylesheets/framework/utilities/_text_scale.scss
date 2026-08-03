@@ -1,0 +1,20 @@
+// ============================================
+// TRMNL Framework - Text Scale Utility
+// ============================================
+
+@use '../mixins' as mixins;
+
+$text-scale-values: (
+    'small': 0.8,
+    'regular': 1,
+    'large': 1.25,
+    'xlarge': 1.5
+);
+
+@include mixins.trmnl-namespace {
+    @each $size-name, $scale-value in $text-scale-values {
+        .screen--text-scale-#{$size-name} {
+            --modifier-text-scale: #{$scale-value};
+        }
+    }
+}

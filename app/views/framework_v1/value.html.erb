@@ -1,0 +1,377 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :value %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Value system provides consistent text styling for displaying numerical and textual values, with various size options
+      and support for tabular numbers. It ensures readability and visual hierarchy across different contexts.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Value system offers eight size variants, from XXSmall to XXXLarge, allowing for flexible typography scaling
+            across different use cases. Each size is carefully crafted for optimal readability and visual balance.
+          </p>
+        </div>
+
+        <!-- XXSmall -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XXSmall') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xxsmall</code> class creates the smallest text size,
+              ideal for compact displays and supporting information.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--xxsmall">Example</span>
+                    <span class="value value--xxsmall value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">XXSmall</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxsmall">Example</span>
+<span class="value value--xxsmall value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XSmall -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XSmall') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xsmall</code> class provides a size slightly larger than XXSmall,
+              suitable for secondary information and compact interfaces.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--xsmall">Example</span>
+                    <span class="value value--xsmall value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">XSmall</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xsmall">Example</span>
+<span class="value value--xsmall value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Small -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Small') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--small</code> class creates a size suitable
+              for general body text and regular content.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--small">Example</span>
+                    <span class="value value--small value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">Small</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--small">Example</span>
+<span class="value value--small value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Default -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default Size') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The base <code class="<%= framework_section_code_classes %>">value</code> class without size modifiers
+              provides the standard display size.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value">Example</span>
+                    <span class="value value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">Default</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value">Example</span>
+<span class="value value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Large -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Large') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--large</code> class creates emphasized text,
+              suitable for important information and headings.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--large">Example</span>
+                    <span class="value value--large value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">Large</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large">Example</span>
+<span class="value value--large value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XLarge -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xlarge</code> class provides prominent display
+              text, ideal for section headers and key metrics.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--xlarge">Example</span>
+                    <span class="value value--xlarge value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">XLarge</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xlarge">Example</span>
+<span class="value value--xlarge value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XXLarge -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XXLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xxlarge</code> class creates very large display
+              text, perfect for major headings and hero sections.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--xxlarge">Example</span>
+                    <span class="value value--xxlarge value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">XXLarge</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxlarge">Example</span>
+<span class="value value--xxlarge value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XXXLarge -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XXXLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xxxlarge</code> class provides the largest
+              text size, designed for maximum impact in hero sections and key displays.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--xxxlarge">Example</span>
+                    <span class="value value--xxxlarge value--tnums">48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">XXXLarge</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge">Example</span>
+<span class="value value--xxxlarge value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Numerical Display') %>
+          <p class="<%= framework_section_description_classes %>">
+            For numerical values, the Value system includes special formatting options to ensure clear and consistent display
+            of numbers, particularly in financial or data-heavy contexts.
+          </p>
+        </div>
+
+        <!-- Tabular Numbers -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Tabular Numbers') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add the <code class="<%= framework_section_code_classes %>">value--tnums</code> modifier to enable
+              tabular numbers, ensuring consistent width for better alignment in tables and lists.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large">
+                    <span class="value value--large">Regular: 48,206.62</span>
+                    <span class="value value--large value--tnums">Tabular: 48,206.62</span>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Value</span>
+                    <span class="instance">Tabular Numbers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large">Regular: 48,206.62</span>
+<span class="value value--large value--tnums">Tabular: 48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

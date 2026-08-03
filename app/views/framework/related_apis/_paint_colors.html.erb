@@ -1,0 +1,12 @@
+<%# locals: heading, resolver ('bg'/'text'), utility (e.g. 'bg--{token}'), example %>
+<div class="space-y-4">
+  <%= framework_heading(4, heading) %>
+  <p class="<%= framework_section_description_classes %>">
+    The <code class="<%= framework_section_code_classes %>"><%= resolver %>(token, { el })</code> resolver returns
+    the exact paint a <code class="<%= framework_section_code_classes %>"><%= utility %></code> utility would apply,
+    as a canonical Fill read from the live cascade with bit depth, dark mode, and theme resolved. Apply it to
+    canvases, SVGs, or chart options. See <%= render DocsRef.new(page: :paint_colors) %> for every resolver and the
+    Fill shape.
+  </p>
+  <%= render CodeExampleComponent.new(demo_code: example, language: 'javascript') %>
+</div>

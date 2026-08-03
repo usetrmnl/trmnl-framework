@@ -1,0 +1,7 @@
+[
+  {
+    "type": "css",
+    "content": ".trmnl #github_commit_graph {\n  --rows: 7;\n  --columns: 52;\n  --gap: 3px;\n  width:100%;\n  height:100%;\n  padding:0px;\n  flex:1 1 0;\n  justify-content:center;\n  display:grid;\n  grid-template-columns:repeat(var(--columns), round(down, (100% - var(--gap) * (var(--columns) - 1)) / var(--columns), 1px));\n  grid-template-rows:repeat(var(--rows), round(down, (100% - var(--gap) * (var(--rows) - 1)) / var(--rows), 1px));\n  grid-auto-flow:column;\n  gap:var(--gap);\n}\n\n.trmnl #github_commit_graph .day {\n  display:block;\n  border-radius:4px;\n  width:100%;\n  height:100%;\n}\n\n.trmnl .view--quadrant #github_commit_graph {\n  --gap: 1px;\n}\n\n.trmnl .view--half_vertical #github_commit_graph {\n  --gap: 1px;\n}\n\n.trmnl .view--half_horizontal #github_commit_graph {\n  --gap: 2px;\n}\n\n.trmnl .view--full #github_commit_graph {\n  --gap: 3px;\n}",
+    "language": "css"
+  }
+]

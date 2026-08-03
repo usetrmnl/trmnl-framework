@@ -1,0 +1,13 @@
+<%# mobile device 'add to home screen' icons %>
+
+<% %w(76 120 152 167 180).each do |size| %>
+  <%= favicon_link_tag "/images/favicons/apple-touch-icon-#{size}x#{size}.png", rel: 'apple-touch-icon', type: 'image/png', sizes: "#{size}x#{size}" %>
+<% end %>
+
+<% %w(16 32).each do |size| %>
+  <%= favicon_link_tag "/images/favicons/favicon-#{size}x#{size}.png", rel: 'icon', type: 'image/png', sizes: "#{size}x#{size}" %>
+<% end %>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TRMNL">

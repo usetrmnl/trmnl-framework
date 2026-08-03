@@ -1,0 +1,140 @@
+/* PrismJS theme, MIT License, (c) Lea Verou and contributors, https://prismjs.com/ */
+/**
+ * Prism.js theme: TRMNL
+ * Custom theme for Framework docs code examples, derived from the PrismJS default
+ * theme (its layout block, token selector set, and `cursor: help` entity rule).
+ * Colors defined via --syntax-* CSS variables in app/assets/tailwind/application.css,
+ * which auto-switch between light/dark via .dark class on document root.
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  background: none;
+  font-family: "Space Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  color: var(--syntax-base);
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: var(--syntax-bg);
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: 0.2em 0.3em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+/* ===== Token colors (auto-switch light/dark via CSS variables) ===== */
+
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--syntax-comment);
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: var(--syntax-punctuation);
+}
+
+.token.tag {
+  color: var(--syntax-tag);
+}
+
+.token.attr-name,
+.token.namespace {
+  color: var(--syntax-attr);
+  font-style: italic;
+}
+
+.token.deleted {
+  color: var(--syntax-deleted);
+}
+
+.token.function-name,
+.token.function {
+  color: var(--syntax-function);
+}
+
+.token.boolean,
+.token.constant {
+  color: var(--syntax-boolean);
+}
+
+.token.number {
+  color: var(--syntax-number);
+}
+
+.token.property,
+.token.symbol {
+  color: var(--syntax-property);
+}
+
+.token.class-name {
+  color: var(--syntax-class);
+}
+
+.token.selector,
+.token.atrule,
+.token.keyword,
+.token.builtin {
+  color: var(--syntax-keyword);
+}
+
+.token.important {
+  color: var(--syntax-keyword);
+  font-weight: bold;
+}
+
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex,
+.token.variable {
+  color: var(--syntax-string);
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: var(--syntax-keyword);
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.inserted {
+  color: var(--syntax-inserted);
+}

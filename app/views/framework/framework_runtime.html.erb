@@ -1,0 +1,197 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :framework_runtime %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:framework_runtime) %>
+
+    <div class="space-y-16">
+      <section class="space-y-6">
+        <%= framework_heading(3, 'What it does') %>
+        <p class="<%= framework_section_description_classes %>">At a high level, it measures the space you have and then plans columns, clamps text, formats and fits values, and adjusts gaps and index widths, so everything fits neatly without manual tweaking.</p>
+        <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
+          <li>Normalizes screen context (size, orientation, bit depth, scale)</li>
+          <li>Maps legacy responsive classes to data attributes for consistency</li>
+          <li>Formats values and fits numbers into their containers</li>
+          <li>Adjusts gaps so columns/grids land on integer pixel widths</li>
+          <li>Plans multi-column layouts, re-clamps text per column, and can add a trailing "and N more" label when enabled</li>
+          <li>Applies standalone clamping where needed outside columns</li>
+          <li>Limits overly tall content and schedules pixel-perfect text processing</li>
+        </ul>
+      </section>
+
+      <section class="space-y-6">
+        <%= framework_heading(3, 'Runtime steps and stats') %>
+        <p class="<%= framework_section_description_classes %>">When the runtime executes, it performs these steps in the order below. Column Gaps runs twice: once before Overflow for the columns Overflow does not own, and once at the end.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <%= render FrameworkDocCardComponent.new(icon: :image, title: 'Images', docs_page: :image) do %>
+            <p class="<%= framework_subsection_description_classes %>">Waits for every image to settle, then recolors the adaptive ones for the current mode.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Holds the pass until images have loaded, so later steps measure real heights</li>
+              <li>Repaints <code class="<%= framework_section_code_classes %>">image--adaptive</code> sources for the screen's bit depth, dark mode, and theme</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :label, title: 'Index Widths', docs_page: :item) do %>
+            <p class="<%= framework_subsection_description_classes %>">Ensures item index badges render at even widths to avoid artifacts.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Runs as one pass per terminalize, for indices outside <code class="<%= framework_section_code_classes %>">.columns</code></li>
+              <li>Runs again inside each <code class="<%= framework_section_code_classes %>">.columns</code> container after its layout commits</li>
+              <li>Skipped on 2-bit and higher, where any width it pinned is cleared</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :format_value, title: 'Value Formatting', docs_page: :format_value) do %>
+            <p class="<%= framework_subsection_description_classes %>">Formats numbers to fit available space and abbreviates as needed (k, M, B).</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Accepts <code class="<%= framework_section_code_classes %>">data-value-format="true"</code> or <code class="<%= framework_section_code_classes %>">data-value-type="number"</code></li>
+              <li>Respects <code class="<%= framework_section_code_classes %>">data-value-locale</code></li>
+              <li>Works with <code class="<%= framework_section_code_classes %>">data-fit-value</code> for auto-sizing</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :fit_value, title: 'Fit Value', docs_page: :fit_value) do %>
+            <p class="<%= framework_subsection_description_classes %>">Adjusts font size, line-height, and weight to fit numbers within their containers.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Minimum font size safeguard (default 8px)</li>
+              <li>Accepts <code class="<%= framework_section_code_classes %>">data-fit-value</code> or <code class="<%= framework_section_code_classes %>">data-value-fit</code></li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :grid, title: 'Grid Gaps', docs_page: :grid) do %>
+            <p class="<%= framework_subsection_description_classes %>">Tweaks CSS gaps so grid column widths resolve to integer pixels.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Disable with <code class="<%= framework_section_code_classes %>">data-adjust-grid-gaps="false"</code></li>
+              <li>Falls back to measuring child positions when <code class="<%= framework_section_code_classes %>">gap</code> is not explicitly set</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :columns, title: 'Column Gaps', docs_page: :columns) do %>
+            <p class="<%= framework_subsection_description_classes %>">Normalizes gaps between <code class="<%= framework_section_code_classes %>">.column</code> elements so column widths are integers.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Disable with <code class="<%= framework_section_code_classes %>">data-adjust-column-gaps="false"</code></li>
+              <li>Runs as a pre-pass for non-overflow columns and a final pass after Overflow</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :overflow, title: 'Overflow', docs_page: :overflow) do %>
+            <p class="<%= framework_subsection_description_classes %>">Plans 1..N columns with off-screen staging and commits the best fit, then re-clamps per real column width.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Duplicates group headers across columns when needed</li>
+              <li>Optional trailing "and N more" label for hidden items (enable with <code class="<%= framework_section_code_classes %>">data-overflow-counter="true"</code>)</li>
+              <li>Enforces final fit by hiding trailing items if necessary</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :clamp, title: 'Clamp', docs_page: :clamp) do %>
+            <p class="<%= framework_subsection_description_classes %>">Clamps text to N lines.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Word-based ellipsis</li>
+              <li>Preserves original text</li>
+              <li>Re-clamps when widths change</li>
+              <li>Supports responsive data attributes (size/orientation)</li>
+              <li>Maps legacy class utilities to <code class="<%= framework_section_code_classes %>">data-clamp</code></li>
+              <li>Applies outside and inside columns (per-column re-clamp handled by Overflow)</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :table_overflow, title: 'Table Overflow', docs_page: :table_overflow) do %>
+            <p class="<%= framework_subsection_description_classes %>">Trims table rows that do not fit the space the table has.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Opt in with <code class="<%= framework_section_code_classes %>">data-table-limit="true"</code> on the table</li>
+              <li>Runs after Clamp, so it measures rows at their final line count</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :content_limiter, title: 'Content Limiter', docs_page: :content_limiter) do %>
+            <p class="<%= framework_subsection_description_classes %>">Caps content at an explicit height budget, or at the space it measures as available, and flags small content.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Set the budget with <code class="<%= framework_section_code_classes %>">data-content-max-height</code>, otherwise the limiter measures the view's layout</li>
+              <li>Adds <code class="<%= framework_section_code_classes %>">content--small</code>, then sets <code class="<%= framework_section_code_classes %>">data-clamp</code> and <code class="<%= framework_section_code_classes %>">data-clamp-max-height-px</code> on the block it has to trim</li>
+            </ul>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :pixel_perfect, title: 'Pixel-Perfect Fonts', docs_page: :pixel_perfect) do %>
+            <p class="<%= framework_subsection_description_classes %>">Wraps lines in spans and enforces even/odd widths for crisp rendering; scheduled in idle time.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li>Skipped on higher bit-depth modes</li>
+              <li>Respects centered alignment</li>
+            </ul>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <%= framework_heading(3, 'Driving the runtime from JavaScript') %>
+        <p class="<%= framework_section_description_classes %>">The runtime starts itself. It runs one pass after the page load event, then runs again whenever a <code class="<%= framework_section_code_classes %>">screen--*</code> class changes on a <code class="<%= framework_section_code_classes %>">.screen</code> element. Content injected after that needs an explicit re-run.</p>
+
+        <%= framework_heading(4, 'Functions') %>
+        <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+          <li>
+            <code class="<%= framework_section_code_classes %>">terminalize()</code>: runs the full pipeline and returns a Promise that resolves once the screen has settled, including the deferred pixel-perfect pass. Call it after you inject or replace content.
+          </li>
+          <li>
+            <code class="<%= framework_section_code_classes %>">executeTerminalize()</code>: queues a run two animation frames out instead of starting one immediately. Repeated calls before it fires collapse into a single pass.
+          </li>
+          <li>
+            <code class="<%= framework_section_code_classes %>">markFrameworkReady()</code>: sets <code class="<%= framework_section_code_classes %>">window.frameworkReady</code> and dispatches <code class="<%= framework_section_code_classes %>">trmnl:framework:ready</code> on <code class="<%= framework_section_code_classes %>">window</code>. A host page calls it once its own setup is done.
+          </li>
+        </ul>
+
+        <%= framework_heading(4, 'Ready signals') %>
+        <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+          <li>
+            <code class="<%= framework_section_code_classes %>">window.TRMNL_PLUGINS_READY</code>: <code class="<%= framework_section_code_classes %>">false</code> while a pass runs and <code class="<%= framework_section_code_classes %>">true</code> once it settles. A screenshot pipeline waits for <code class="<%= framework_section_code_classes %>">true</code> before it captures.
+          </li>
+          <li>
+            <code class="<%= framework_section_code_classes %>">window.frameworkReady</code>: <code class="<%= framework_section_code_classes %>">false</code> until <code class="<%= framework_section_code_classes %>">markFrameworkReady()</code> runs.
+          </li>
+          <li>
+            <code class="<%= framework_section_code_classes %>">window.__TRMNL_BUILD__</code>: the build stamp of the loaded <code class="<%= framework_section_code_classes %>">plugins.js</code>. A released bundle reports its own version (<code class="<%= framework_section_code_classes %>">plugins.js v3.2.0</code>) and a working checkout reports <code class="<%= framework_section_code_classes %>">plugins.js source</code>. Read it when an edit does not show up and you suspect a pinned or cached file.
+          </li>
+        </ul>
+
+        <%= framework_heading(4, 'The stats event') %>
+        <p class="<%= framework_section_description_classes %>">Every pass dispatches <code class="<%= framework_section_code_classes %>">trmnl:terminalize:stats</code> on <code class="<%= framework_section_code_classes %>">window</code>. Its <code class="<%= framework_section_code_classes %>">detail</code> carries three fields.</p>
+        <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+          <li>
+            <code class="<%= framework_section_code_classes %>">steps</code>: every step the pass ran, each with a <code class="<%= framework_section_code_classes %>">name</code>, a <code class="<%= framework_section_code_classes %>">durationMs</code>, and its own counters.
+          </li>
+          <li>
+            <code class="<%= framework_section_code_classes %>">engines</code> and <code class="<%= framework_section_code_classes %>">engineCount</code>: the subset of steps that changed something.
+          </li>
+          <li>
+            <code class="<%= framework_section_code_classes %>">errors</code>: present only when an engine threw, as <code class="<%= framework_section_code_classes %>">{ engine, message }</code> entries. The pass runs the remaining engines and readiness still flips to <code class="<%= framework_section_code_classes %>">true</code>.
+          </li>
+        </ul>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// Re-run after injecting content into a screen.
+terminalize().then(function () {
+  console.log("screen settled");
+});
+
+// Inspect what each pass did.
+window.addEventListener("trmnl:terminalize:stats", function (event) {
+  console.log(event.detail.engineCount, "engines changed something");
+});', language: 'javascript') %>
+        </div>
+
+        <%= framework_heading(4, 'Debug logging') %>
+        <p class="<%= framework_section_description_classes %>">Set <code class="<%= framework_section_code_classes %>">window.__TRMNL_DEBUG__ = true</code> before a pass to log what each engine decided. Renders are quiet by default. Engine failures always reach the console, debug flag or not.</p>
+
+        <p class="<%= framework_section_description_classes %>"><code class="<%= framework_section_code_classes %>">plugins.js</code> also puts <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> on <code class="<%= framework_section_code_classes %>">window</code>. Those are documented on <%= render DocsRef.new(page: :paint_api) %>.</p>
+      </section>
+
+      <section class="space-y-6">
+        <%= framework_heading(3, 'Why this exists') %>
+        <p class="<%= framework_section_description_classes %>">Plugins need to fit source data into a static layout space that is device-defined and varies by model, orientation, and density. While this resembles responsive web design, the runtime provides purpose-built tools (overflow planning, per-column clamping, integer pixel alignment, and value fitting) tailored specifically for TRMNL devices.</p>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>
+

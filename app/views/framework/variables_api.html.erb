@@ -1,0 +1,145 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :variables_api %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:variables_api) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Who reads, who writes') %>
+          <p class="<%= framework_section_description_classes %>">
+            The public <code class="<%= framework_section_code_classes %>">--*</code> variables are where the
+            framework's API surfaces meet. Each surface plays one role and never crosses into another.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><strong>Sass generates them.</strong> The SCSS source emits every variable with its per-device values, and a custom build can extend the set. See <%= render DocsRef.new(page: :sass_api) %>.</li>
+            <li><strong>Themes re-point them.</strong> A theme sets token references through the slot mixins and never writes paint values directly. See <%= render DocsRef.new(page: :themes) %> and <%= render DocsRef.new(page: :theme_authoring) %>.</li>
+            <li><strong>Paint reads them.</strong> TRMNLPaint resolves the live cascade into canonical Fill, BorderFill, and TypeSpec objects for JavaScript. See <%= render DocsRef.new(page: :paint_api) %>.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The palette behind the variables is defined on <%= render DocsRef.new(page: :colors) %>. Every variable
+            with its per-mode values is listed on <%= render DocsRef.new(page: :tokens) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Public variables') %>
+          <p class="<%= framework_section_description_classes %>">
+            A variable is public unless its name marks it as internal, and a release keeps every public name in
+            every published bundle. Read public variables with
+            <code class="<%= framework_section_code_classes %>">var()</code> in custom CSS or
+            <code class="<%= framework_section_code_classes %>">cssVar()</code> in JavaScript, and reference them
+            from theme slots.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><strong>Palette:</strong> <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--white</code>, the <code class="<%= framework_section_code_classes %>">--gray-*</code> ladder, and one ladder per hue: <code class="<%= framework_section_code_classes %>">--red-*</code>, <code class="<%= framework_section_code_classes %>">--orange-*</code>, <code class="<%= framework_section_code_classes %>">--yellow-*</code>, <code class="<%= framework_section_code_classes %>">--lime-*</code>, <code class="<%= framework_section_code_classes %>">--green-*</code>, <code class="<%= framework_section_code_classes %>">--cyan-*</code>, <code class="<%= framework_section_code_classes %>">--blue-*</code>, <code class="<%= framework_section_code_classes %>">--violet-*</code>, <code class="<%= framework_section_code_classes %>">--purple-*</code>, <code class="<%= framework_section_code_classes %>">--pink-*</code>.</li>
+            <li><strong>Semantic roles:</strong> the <code class="<%= framework_section_code_classes %>">--color-*</code> family, which holds the roles (<code class="<%= framework_section_code_classes %>">--color-primary</code>, <code class="<%= framework_section_code_classes %>">--color-success</code>, <code class="<%= framework_section_code_classes %>">--color-error</code>, <code class="<%= framework_section_code_classes %>">--color-warning</code>) and the palette-mode ids, not hues.</li>
+            <li><strong>Geometry and scale:</strong> <code class="<%= framework_section_code_classes %>">--screen-*</code>, <code class="<%= framework_section_code_classes %>">--gap-*</code>, <code class="<%= framework_section_code_classes %>">--rounded-*</code>, and the resolved <code class="<%= framework_section_code_classes %>">--ui-scale</code>, <code class="<%= framework_section_code_classes %>">--content-scale</code>, and <code class="<%= framework_section_code_classes %>">--text-ui-scale</code> factors.</li>
+            <li><strong>Component tokens:</strong> the families components read, from <code class="<%= framework_section_code_classes %>">--title-bar-*</code> to <code class="<%= framework_section_code_classes %>">--progress-*</code>, all listed on <%= render DocsRef.new(page: :tokens) %>.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">--framework-*</code> channels are public too. They
+            get their own section below because the theme layer and the runtime write them.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '/* Custom plugin CSS: reference public variables freely. */
+.stat-card {
+  padding: var(--gap);
+  border-radius: var(--rounded);
+}', language: 'css') %>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// JavaScript: read the same contract from the live cascade.
+var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Framework channels and slots') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">--framework-*</code> families carry resolved paint
+            between the theme layer, the components, and the runtime. They are public names: the minifier renames only
+            the internal families below, so a theme, a plugin stylesheet, or
+            <code class="<%= framework_section_code_classes %>">cssVar()</code> can read them in any build.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><strong>Semantic channels:</strong> <code class="<%= framework_section_code_classes %>">--framework-semantic-{channel}-*</code> for canvas, surface, backdrop, fill-strong, fill-muted, fill-soft, text-primary, text-secondary, text-inverse, stroke-contrast, border-strong, border-muted, and icon. A channel carries its whole paint: backgrounds have <code class="<%= framework_section_code_classes %>">-bg-color</code> and <code class="<%= framework_section_code_classes %>">-bg-image</code>, text adds <code class="<%= framework_section_code_classes %>">-text-under</code> and <code class="<%= framework_section_code_classes %>">-text-clip</code> to its color and image, and borders carry <code class="<%= framework_section_code_classes %>">-border-color</code>, <code class="<%= framework_section_code_classes %>">-border-image</code>, and <code class="<%= framework_section_code_classes %>">-border-size</code>.</li>
+            <li><strong>Role aliases:</strong> one flat color per role, resolved from the matching channel: <code class="<%= framework_section_code_classes %>">--framework-canvas-bg</code>, <code class="<%= framework_section_code_classes %>">--framework-surface-bg</code>, <code class="<%= framework_section_code_classes %>">--framework-backdrop-bg</code>, <code class="<%= framework_section_code_classes %>">--framework-text-primary</code>, <code class="<%= framework_section_code_classes %>">--framework-text-secondary</code>, <code class="<%= framework_section_code_classes %>">--framework-text-inverse</code>, <code class="<%= framework_section_code_classes %>">--framework-border-strong</code>, <code class="<%= framework_section_code_classes %>">--framework-border-muted</code>, <code class="<%= framework_section_code_classes %>">--framework-outline-strong</code>, <code class="<%= framework_section_code_classes %>">--framework-stroke-contrast</code>, <code class="<%= framework_section_code_classes %>">--framework-fill-strong</code>, <code class="<%= framework_section_code_classes %>">--framework-fill-muted</code>, <code class="<%= framework_section_code_classes %>">--framework-fill-soft</code>. They drop the dither image, so use them only where a single color is what you want.</li>
+            <li><strong>Component slots:</strong> <code class="<%= framework_section_code_classes %>">--framework-slot-{slot}-*</code>, one group per component surface (title bar, screen backdrop, item meta, progress, table, label). A slot repaints one surface without moving a whole channel. See <%= render DocsRef.new(page: :theme_slots) %>.</li>
+            <li><strong>Chart ramp:</strong> <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-color</code> and <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-image</code> for series indexes 0 to 15, plus <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> for the legible front of the ramp. See <%= render DocsRef.new(page: :paint_charts) %>.</li>
+            <li><strong>Border render contract:</strong> <code class="<%= framework_section_code_classes %>">--framework-border-render-*</code> (<code class="<%= framework_section_code_classes %>">width</code>, <code class="<%= framework_section_code_classes %>">height</code>, <code class="<%= framework_section_code_classes %>">view-box</code>, <code class="<%= framework_section_code_classes %>">stroke</code>, <code class="<%= framework_section_code_classes %>">path-1</code>, <code class="<%= framework_section_code_classes %>">path-2</code>, <code class="<%= framework_section_code_classes %>">color-1</code>, <code class="<%= framework_section_code_classes %>">color-2</code>): the border program the border pipeline declares and the Paint API copies into SVG. See <%= render DocsRef.new(page: :paint_borders) %>.</li>
+            <li><strong>Icon source:</strong> <code class="<%= framework_section_code_classes %>">--framework-icon-src</code> holds the URL an <code class="<%= framework_section_code_classes %>">image--adaptive</code> element is masked with. The runtime writes it as an inline style, and markup can set it directly. See <%= render DocsRef.new(page: :image) %>.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Themes write these through the slot mixins, where one call fills a whole channel or slot. Setting a single
+            name by hand leaves the rest of its group behind, so plugin markup sets only
+            <code class="<%= framework_section_code_classes %>">--framework-icon-src</code>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Internal variables') %>
+          <p class="<%= framework_section_description_classes %>">
+            Six name families are implementation details. The minified bundle
+            (<code class="<%= framework_section_code_classes %>">plugins.min.css</code>, the file production serves)
+            renames them to <code class="<%= framework_section_code_classes %>">--_tn*</code> names. Do not read or
+            set them; they can change or disappear in any release.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">--_*</code>: module-private helpers scoped to one component's rules.</li>
+            <li><code class="<%= framework_section_code_classes %>">--framework-internal-*</code>: plumbing that carries resolved values between framework layers.</li>
+            <li><code class="<%= framework_section_code_classes %>">--tile-*</code>: the generated dither tile assets.</li>
+            <li><code class="<%= framework_section_code_classes %>">--bline-{n}</code>: deduplicated border line gradients the border pipeline references.</li>
+            <li><code class="<%= framework_section_code_classes %>">--border-*</code>: the border pipeline, except the theme-contract names below.</li>
+            <li><code class="<%= framework_section_code_classes %>">--tn-*</code>: engine plumbing, except <code class="<%= framework_section_code_classes %>">--tn-text-stroke-color</code>, <code class="<%= framework_section_code_classes %>">--tn-text-stroke-width</code> and <code class="<%= framework_section_code_classes %>">--tn-text-stroke-radius</code>, which the runtime reads.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The development build and the readable <code class="<%= framework_section_code_classes %>">plugins.css</code>
+            keep the source names, so you will see them in devtools. Treat them as off-limits anyway.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Framework-owned paint variables') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">--bg-*</code> and
+            <code class="<%= framework_section_code_classes %>">--text-*</code> families keep their names in every
+            build, but the screen-mode engine owns them. They encode device-capability rendering: dither patterns on
+            1-bit, palette images on limited color, solid colors on full color.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Three border families survive the rename because the theme contract preserves them: the numbered slots
+            <code class="<%= framework_section_code_classes %>">--border-1-h-*</code> through
+            <code class="<%= framework_section_code_classes %>">--border-7-v-*</code>, the
+            <code class="<%= framework_section_code_classes %>">--border-token-*</code> names a shipped theme
+            references, and <code class="<%= framework_section_code_classes %>">--border-line-dark</code> /
+            <code class="<%= framework_section_code_classes %>">--border-line-light</code>. Everything else under
+            <code class="<%= framework_section_code_classes %>">--border-*</code>, including the whole
+            <code class="<%= framework_section_code_classes %>">--border-step-*</code> rail, is renamed in released
+            bundles.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Never set them from a plugin or a theme; the theme linter rejects any theme that tries. To consume the
+            resolved paint from JavaScript, go through <%= render DocsRef.new(page: :paint_api) %> instead of reading
+            them raw.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+// ============================================
+// TRMNL Framework - Normalize/Reset Styles
+// ============================================
+
+.trmnl,
+.trmnl * {
+    box-sizing: border-box;
+}
+
+body.trmnl,
+.trmnl :where(h1, h2, h3, h4, h5, h6, p, blockquote, pre, dl, dd, ol, ul, figure, hr, fieldset, legend) {
+    margin: 0;
+    padding: 0;
+    line-height: normal;
+}
+
+.trmnl table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.trmnl :where(tr, td, th) {
+    position: relative;
+    border-spacing: 0;
+    padding: 0;
+}

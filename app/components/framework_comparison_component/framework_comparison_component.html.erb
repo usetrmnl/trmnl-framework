@@ -1,0 +1,32 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0">
+  <div class="order-1 md:order-none <%= left_tab_classes %>">
+    <% if platform_vs_custom? %>
+      <%= render 'shared/icons/trmnl_small', classes: 'h-5 w-5' %> TRMNL Platform <span class="font-normal opacity-50">trmnl.com</span>
+    <% elsif classic_vs_trmnl? %>
+      <%= render 'shared/icons/font_family', classes: 'h-5 w-5' %> Classic <span class="font-normal opacity-50 font-mono">screen--fonts-classic</span>
+    <% else %>
+      <%= render 'shared/icons/emoji_happy', classes: 'h-5 w-5' %> Do
+    <% end %>
+  </div>
+  <div class="order-4 md:order-none <%= right_tab_classes %>">
+    <% if platform_vs_custom? %>
+      <%= render 'shared/icons/custom', classes: 'h-5 w-5' %> Custom Stack <span class="font-normal opacity-50">BYOS, trmnlp, ...</span>
+    <% elsif classic_vs_trmnl? %>
+      <%= render 'shared/icons/font_family', classes: 'h-5 w-5' %> TRMNL <span class="font-normal opacity-50 font-mono">screen--fonts-trmnl</span>
+    <% else %>
+      <%= render 'shared/icons/emoji_sad', classes: 'h-5 w-5' %> Don't
+    <% end %>
+  </div>
+  <div class="order-2 md:order-none <%= left_message_classes %> min-h-0" data-framework-message="sage">
+    <%= left_message %>
+  </div>
+  <div class="order-5 md:order-none <%= right_message_classes %> min-h-0" data-framework-message="<%= platform_vs_custom? ? 'gray' : 'clay' %>">
+    <%= right_message %>
+  </div>
+  <div class="order-3 md:order-none flex flex-col min-h-0 [&>div]:flex-1 [&>div]:min-h-0">
+    <%= left_code %>
+  </div>
+  <div class="order-6 md:order-none flex flex-col min-h-0 [&>div]:flex-1 [&>div]:min-h-0">
+    <%= right_code %>
+  </div>
+</div>

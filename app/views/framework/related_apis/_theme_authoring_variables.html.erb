@@ -1,0 +1,10 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'Variables a theme may re-point') %>
+  <p class="<%= framework_section_description_classes %>">
+    A theme re-points token references through the slot mixins and never sets paint values directly. The
+    framework-owned paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>,
+    <code class="<%= framework_section_code_classes %>">--text-*</code>,
+    <code class="<%= framework_section_code_classes %>">--border-*</code>) stay untouched, and the theme linter
+    enforces that boundary. See <%= render DocsRef.new(page: :theme_authoring) %> for the contract and workflow.
+  </p>
+</div>

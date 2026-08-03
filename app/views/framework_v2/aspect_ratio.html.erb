@@ -1,0 +1,154 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :aspect_ratio %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:aspect_ratio) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use predefined aspect ratio classes to constrain element dimensions to specific proportions. 
+            These utilities apply the CSS <code class="<%= framework_section_code_classes %>">aspect-ratio</code> property directly to elements.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row gap--large">
+                      <div class="aspect--1/1 bg--gray-25 rounded w--32">
+                        <div class="bg--gray-75 rounded flex flex--center h--full">
+                          <span class="label">1:1</span>
+                        </div>
+                      </div>
+                      <div class="aspect--16/9 bg--gray-25 rounded w--48">
+                        <div class="bg--gray-75 rounded flex flex--center h--full">
+                          <span class="label">16:9</span>
+                        </div>
+                      </div>
+                      <div class="aspect--3/4 bg--gray-25 rounded w--32">
+                        <div class="bg--gray-75 rounded flex flex--center h--full">
+                          <span class="label">3:4</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Aspect Ratio</span>
+                      <span class="instance">Basic Usage</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Square aspect ratio -->
+<div class="aspect--1/1">...</div>
+
+<!-- Widescreen aspect ratio -->
+<div class="aspect--16/9">...</div>
+
+<!-- Portrait aspect ratio -->
+<div class="aspect--3/4">...</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Available Aspect Ratios') %>
+          <p class="<%= framework_section_description_classes %>">
+            Complete reference of all available aspect ratio utilities.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-800">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Class</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ratio</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--auto</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">No constraints</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--1/1</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">1:1</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--4/3</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">4:3</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--3/2</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">3:2</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--16/9</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">16:9</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--21/9</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">21:9</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--3/4</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">3:4</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--2/3</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2:3</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--9/16</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">9:16</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">aspect--9/21</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">9:21</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div> 

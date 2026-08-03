@@ -1,0 +1,3158 @@
+# Resolved device/palette manifest exported from core (source: db/data/device_models.yml).
+# Core dictates devices - do not edit here; re-export with `rake framework:export_devices` in core.
+exported_from: trmnl-core
+devices:
+- id: 4
+  name: Amazon Kindle 2024
+  screen_picker_name: Amazon Kindle 2024
+  keyname: amazon_kindle_2024
+  visible: true
+  scale_factor: 1.75
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_2024
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 0.8
+    gap_scale: 1.0
+    size: sm
+    bit_depth: 4
+    pixel_ratio: 1.75
+    dither_pixel_ratio: 2.0
+- id: 8
+  name: Amazon Kindle 7
+  screen_picker_name: Amazon Kindle 7
+  keyname: amazon_kindle_7
+  visible: true
+  scale_factor: 1.0
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_7
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 13
+  name: Amazon Kindle Oasis 2
+  screen_picker_name: Amazon Kindle Oasis 2
+  keyname: amazon_kindle_oasis_2
+  visible: true
+  scale_factor: 2.1
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_oasis_2
+    screen_w: 800
+    screen_h: 602
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 2.1
+    dither_pixel_ratio: 2.0
+- id: 5
+  name: Amazon Kindle PW 6th Gen
+  screen_picker_name: Amazon Kindle PW 6th Gen
+  keyname: amazon_kindle_paperwhite_6th_gen
+  visible: true
+  scale_factor: 1.28
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_paperwhite_6th_gen
+    screen_w: 800
+    screen_h: 592
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.28
+    dither_pixel_ratio: 1.0
+- id: 6
+  name: Amazon Kindle PW 7th Gen
+  screen_picker_name: Amazon Kindle PW 7th Gen
+  keyname: amazon_kindle_paperwhite_7th_gen
+  visible: true
+  scale_factor: 1.6
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_paperwhite_7th_gen
+    screen_w: 905
+    screen_h: 670
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.6
+    dither_pixel_ratio: 2.0
+- id: 45
+  name: Amazon Kindle PW Signature 11th Gen
+  screen_picker_name: Amazon Kindle PW Signature 11th Gen
+  keyname: amazon_kindle_paperwhite_signature_11th_gen
+  visible: true
+  scale_factor: 2.06
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: amazon_kindle_paperwhite_signature_11th_gen
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 2.06
+    dither_pixel_ratio: 2.0
+- id: 20
+  name: Amazon Kindle Scribe
+  screen_picker_name: Amazon Kindle Scribe
+  keyname: amazon_kindle_scribe
+  visible: true
+  scale_factor: 2.5
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_scribe
+    screen_w: 992
+    screen_h: 744
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 2.5
+    dither_pixel_ratio: 2.0
+- id: 37
+  name: Amazon Kindle Voyage
+  screen_picker_name: Amazon Kindle Voyage
+  keyname: amazon_kindle_voyage
+  visible: true
+  scale_factor: 1.4008
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: amazon_kindle_voyage
+    screen_w: 1034
+    screen_h: 765
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.4008
+    dither_pixel_ratio: 1.0
+- id: 41
+  name: Avalue EPD-42S 42" Display Board
+  screen_picker_name: Avalue EPD-42S 42" Display Board
+  keyname: avalue_epd_42s
+  visible: true
+  scale_factor: 2.7692
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: avalue_epd_42s
+    screen_w: 1040
+    screen_h: 780
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 2.7692
+    dither_pixel_ratio: 2.0
+- id: 40
+  name: ED133UT2 Active Matrix
+  screen_picker_name: ED133UT2 Active Matrix
+  keyname: ed133ut2
+  visible: true
+  scale_factor: 1.5385
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: ed133ut2
+    screen_w: 1040
+    screen_h: 780
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.5385
+    dither_pixel_ratio: 2.0
+- id: 26
+  name: Generic 16:9 Display
+  screen_picker_name: Generic 16:9 Display
+  keyname: generic_16_9
+  visible: true
+  scale_factor: 2.4
+  color_depth: 24
+  density_class: screen--density-2x
+  palette_ids:
+  - color-24bit
+  - color-12bit
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: generic_16_9
+    screen_w: 800
+    screen_h: 450
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 2.4
+    dither_pixel_ratio: 2.0
+- id: 7
+  name: Inkplate 10
+  screen_picker_name: Inkplate 10
+  keyname: inkplate_10
+  visible: true
+  scale_factor: 1.5
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: inkplate_10
+    screen_w: 800
+    screen_h: 550
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.5
+    dither_pixel_ratio: 2.0
+- id: 56
+  name: Inkplate 13 Spectra
+  screen_picker_name: Inkplate 13 Spectra
+  keyname: inkplate_13_spectra
+  visible: true
+  scale_factor: 2.0
+  color_depth: 1
+  density_class: screen--density-2x
+  palette_ids:
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  css:
+    keyname: inkplate_13_spectra
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 2.0
+    dither_pixel_ratio: 2.0
+- id: 38
+  name: Inkplate 5.2
+  screen_picker_name: Inkplate 5.2
+  keyname: inkplate_5_2
+  visible: true
+  scale_factor: 1.1996
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: inkplate_5_2
+    screen_w: 1067
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.1996
+    dither_pixel_ratio: 1.0
+- id: 46
+  name: Inkplate 6 Plus
+  screen_picker_name: Inkplate 6 Plus
+  keyname: inkplate_6_plus
+  visible: true
+  scale_factor: 0.9846
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: inkplate_6_plus
+    screen_w: 1040
+    screen_h: 770
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 0.9846
+    dither_pixel_ratio: 1.0
+- id: 48
+  name: Inkplate 6COLOR
+  screen_picker_name: Inkplate 6COLOR
+  keyname: inkplate_6_color
+  visible: true
+  scale_factor: 0.75
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  css:
+    keyname: inkplate_6_color
+    screen_w: 800
+    screen_h: 597
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 0.75
+    dither_pixel_ratio: 1.0
+- id: 17
+  name: Inky Impression 13.3
+  screen_picker_name: Inky Impression 13.3
+  keyname: inky_impression_13_3
+  visible: true
+  scale_factor: 2.0
+  color_depth: 1
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  css:
+    keyname: inky_impression_13_3
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 2.0
+    dither_pixel_ratio: 2.0
+- id: 11
+  name: Inky Impression 7.3
+  screen_picker_name: Inky Impression 7.3
+  keyname: inky_impression_7_3
+  visible: true
+  scale_factor: 1.0
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  css:
+    keyname: inky_impression_7_3
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 47
+  name: Kobo Aura H2O Edition 2
+  screen_picker_name: Kobo Aura H2O Edition 2
+  keyname: kobo_aura_h2o_2
+  visible: true
+  scale_factor: 1.375
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_aura_h2o_2
+    screen_w: 1040
+    screen_h: 785
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.375
+    dither_pixel_ratio: 1.0
+- id: 16
+  name: Kobo Aura HD
+  screen_picker_name: Kobo Aura HD
+  keyname: kobo_aura_hd
+  visible: true
+  scale_factor: 1.8
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_aura_hd
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.8
+    dither_pixel_ratio: 2.0
+- id: 15
+  name: Kobo Aura One
+  screen_picker_name: Kobo Aura One
+  keyname: kobo_aura_one
+  visible: true
+  scale_factor: 1.8
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_aura_one
+    screen_w: 1040
+    screen_h: 780
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.8
+    dither_pixel_ratio: 2.0
+- id: 43
+  name: Kobo Forma
+  screen_picker_name: Kobo Forma
+  keyname: kobo_forma
+  visible: true
+  scale_factor: 1.4004
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_forma
+    screen_w: 1371
+    screen_h: 1028
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.4004
+    dither_pixel_ratio: 1.0
+- id: 29
+  name: Kobo Glo
+  screen_picker_name: Kobo Glo
+  keyname: kobo_glo
+  visible: true
+  scale_factor: 1.2995
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_glo
+    screen_w: 788
+    screen_h: 591
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.2995
+    dither_pixel_ratio: 1.0
+- id: 12
+  name: Kobo Libra 2
+  screen_picker_name: Kobo Libra 2
+  keyname: kobo_libra_2
+  visible: true
+  scale_factor: 2.0
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_libra_2
+    screen_w: 840
+    screen_h: 632
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 2.0
+    dither_pixel_ratio: 2.0
+- id: 35
+  name: Kobo Sage
+  screen_picker_name: Kobo Sage
+  keyname: kobo_sage
+  visible: true
+  scale_factor: 1.4004
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_sage
+    screen_w: 1371
+    screen_h: 1028
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.4004
+    dither_pixel_ratio: 1.0
+- id: 42
+  name: Kobo Touch
+  screen_picker_name: Kobo Touch
+  keyname: kobo_touch
+  visible: true
+  scale_factor: 1.0
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: kobo_touch
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 19
+  name: M5PaperS3
+  screen_picker_name: M5PaperS3
+  keyname: m5_paper_s3
+  visible: true
+  scale_factor: 1.0
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: m5_paper_s3
+    screen_w: 960
+    screen_h: 540
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 34
+  name: Nook Simple Touch
+  screen_picker_name: Nook Simple Touch
+  keyname: nook_simple_touch
+  visible: true
+  scale_factor: 1.0
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  - gray-256
+  css:
+    keyname: nook_simple_touch
+    screen_w: 800
+    screen_h: 600
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 28
+  name: Onyx BOOX Go 7
+  screen_picker_name: Onyx BOOX Go 7
+  keyname: onyx_boox_go_7
+  visible: true
+  scale_factor: 1.8008
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: onyx_boox_go_7
+    screen_w: 933
+    screen_h: 702
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.8008
+    dither_pixel_ratio: 2.0
+- id: 27
+  name: Onyx BOOX Palma
+  screen_picker_name: Onyx BOOX Palma
+  keyname: palma
+  visible: true
+  scale_factor: 2.0
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: palma
+    screen_w: 824
+    screen_h: 412
+    ui_scale: 0.8
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 2.0
+    dither_pixel_ratio: 2.0
+- id: 51
+  name: Onyx BOOX Poke 5
+  screen_picker_name: Onyx BOOX Poke 5
+  keyname: onyx_boox_poke_5
+  visible: true
+  scale_factor: 1.34
+  color_depth: 4
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: onyx_boox_poke_5
+    screen_w: 800
+    screen_h: 1081
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 4
+    pixel_ratio: 1.34
+    dither_pixel_ratio: 1.0
+- id: 21
+  name: Seeed E1001 Monochrome
+  screen_picker_name: Seeed E1001
+  keyname: seeed_e1001
+  visible: true
+  scale_factor: 1.0
+  color_depth: 2
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  css:
+    keyname: ogv2
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 2
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 22
+  name: Seeed E1002
+  screen_picker_name: Seeed E1002
+  keyname: seeed_e1002
+  visible: true
+  scale_factor: 1.0
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - color-6a
+  - bw
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  css:
+    keyname: ogv2
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 49
+  name: Seeed E1003 (4-bit)
+  screen_picker_name: Seeed E1003 (4-bit)
+  keyname: seeed_e1003
+  visible: true
+  scale_factor: 1.8
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: seeed_e1003
+    screen_w: 1040
+    screen_h: 780
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.8
+    dither_pixel_ratio: 2.0
+- id: 50
+  name: Seeed E1004
+  screen_picker_name: Seeed E1004
+  keyname: seeed_e1004
+  visible: true
+  scale_factor: 1.5385
+  color_depth: 1
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  css:
+    keyname: seeed_e1004
+    screen_w: 1040
+    screen_h: 780
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 1
+    pixel_ratio: 1.5385
+    dither_pixel_ratio: 2.0
+- id: 14
+  name: TRMNL OG (2-bit)
+  screen_picker_name: TRMNL
+  keyname: og_plus
+  visible: true
+  scale_factor: 1.0
+  color_depth: 2
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  css:
+    keyname: ogv2
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 2
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 36
+  name: TRMNL OG (B/W/R/Y)
+  screen_picker_name: TRMNL OG (B/W/R/Y)
+  keyname: og_bwry
+  visible: true
+  scale_factor: 1.0
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  css:
+    keyname: og
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 2
+  name: TRMNL X
+  screen_picker_name: TRMNL X
+  keyname: v2
+  visible: true
+  scale_factor: 1.8
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - gray-16
+  - gray-4
+  - bw
+  css:
+    keyname: v2
+    screen_w: 1040
+    screen_h: 780
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.8
+    dither_pixel_ratio: 2.0
+- id: 23
+  name: Waveshare 4.26" (2-bit)
+  screen_picker_name: Waveshare 4.26"
+  keyname: waveshare_4_26
+  visible: true
+  scale_factor: 1.0
+  color_depth: 2
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  css:
+    keyname: ogv2
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 2
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 55
+  name: Waveshare 5.83" (Steam Machine)
+  screen_picker_name: Waveshare 5.83" (Steam Machine)
+  keyname: waveshare_5_8_bw
+  visible: true
+  scale_factor: 0.81
+  color_depth: 2
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  css:
+    keyname: waveshare_5_8_bw
+    screen_w: 800
+    screen_h: 593
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 2
+    pixel_ratio: 0.81
+    dither_pixel_ratio: 1.0
+- id: 24
+  name: Waveshare 7.5" B/W
+  screen_picker_name: Waveshare 7.5"
+  keyname: waveshare_7_5_bw
+  visible: true
+  scale_factor: 1.0
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  css:
+    keyname: og
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 30
+  name: Waveshare 7.5" B/W/R
+  screen_picker_name: Waveshare 7.5" B/W/R
+  keyname: waveshare_7_5_bwr
+  visible: true
+  scale_factor: 1.0
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - color-3bwr
+  - bw
+  css:
+    keyname: og
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 31
+  name: Waveshare 7.5" B/W/R/Y
+  screen_picker_name: Waveshare 7.5" B/W/R/Y
+  keyname: waveshare_7_5_bwry
+  visible: true
+  scale_factor: 1.0
+  color_depth: 1
+  density_class: screen--density-1x
+  palette_ids:
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  css:
+    keyname: og
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 1
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 33
+  name: Xteink X4
+  screen_picker_name: Xteink X4
+  keyname: xteink_x4
+  visible: true
+  scale_factor: 1.0
+  color_depth: 2
+  density_class: screen--density-1x
+  palette_ids:
+  - bw
+  - gray-4
+  css:
+    keyname: ogv2
+    screen_w: 800
+    screen_h: 480
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: md
+    bit_depth: 2
+    pixel_ratio: 1.0
+    dither_pixel_ratio: 1.0
+- id: 52
+  name: reMarkable 2
+  screen_picker_name: reMarkable 2
+  keyname: remarkable_paper_2
+  visible: true
+  scale_factor: 1.8
+  color_depth: 4
+  density_class: screen--density-2x
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  css:
+    keyname: remarkable_paper_2
+    screen_w: 780
+    screen_h: 1040
+    ui_scale: 1.0
+    gap_scale: 1.0
+    size: lg
+    bit_depth: 4
+    pixel_ratio: 1.8
+    dither_pixel_ratio: 2.0
+palettes:
+- id: bw
+  name: Black & White (1-bit)
+  grays: 2
+  colors:
+  framework_class: screen--1bit
+- id: gray-4
+  name: 4 Grays (2-bit)
+  grays: 4
+  colors:
+  framework_class: screen--2bit
+- id: gray-16
+  name: 16 Grays (4-bit)
+  grays: 16
+  colors:
+  framework_class: screen--4bit
+- id: gray-256
+  name: Smooth Grayscale (device-quantized)
+  grays: 256
+  colors:
+  framework_class: screen--4bit
+- id: color-3bwr
+  name: Color (3 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FF0000"
+  - "#FFFFFF"
+  framework_class: screen--color-3bwr
+  grayscale_bit_depth: 1
+- id: color-3bwy
+  name: Color (3 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FFFF00"
+  - "#FFFFFF"
+  framework_class: screen--color-3bwy
+  grayscale_bit_depth: 1
+- id: color-4bwry
+  name: Color (4 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FF0000"
+  - "#FFFFFF"
+  - "#FFFF00"
+  framework_class: screen--color-4bwry
+  grayscale_bit_depth: 1
+- id: color-6a
+  name: Color (6 colors)
+  grays: 2
+  colors:
+  - "#FF0000"
+  - "#00FF00"
+  - "#0000FF"
+  - "#FFFF00"
+  - "#000000"
+  - "#FFFFFF"
+  framework_class: screen--color-6a
+  grayscale_bit_depth: 1
+- id: color-7a
+  name: Color (7 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FFFFFF"
+  - "#FF0000"
+  - "#00FF00"
+  - "#0000FF"
+  - "#FFFF00"
+  - "#FFA500"
+  framework_class: screen--color-7a
+  grayscale_bit_depth: 1
+- id: color-12bit
+  name: Color (4096 colors)
+  grays: 2
+  colors: []
+  framework_class: screen--color-full
+  grayscale_bit_depth: 4
+- id: color-24bit
+  name: Color (16777216 colors)
+  grays: 2
+  colors: []
+  framework_class: screen--color-full
+  grayscale_bit_depth: 4
+picker_models:
+- name: v2
+  label: TRMNL X
+  description: TRMNL X
+  width: 1872
+  height: 1404
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.8
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: trmnl
+  palette_ids:
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--v2
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '1.8'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: og_png
+  label: TRMNL OG (1-bit)
+  description: TRMNL OG (1-bit)
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: trmnl
+  palette_ids:
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--og_png
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_2024
+  label: Amazon Kindle 2024
+  description: Amazon Kindle 2024
+  width: 1400
+  height: 840
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.75
+  rotation: 90
+  mime_type: image/png
+  offset_x: 116
+  offset_y: 25
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_2024
+      size: screen--sm
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.75'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '0.8'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_paperwhite_6th_gen
+  label: Amazon Kindle PW 6th Gen
+  description: Amazon Kindle PW 6th Gen
+  width: 1024
+  height: 758
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.28
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_paperwhite_6th_gen
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 592px
+    - - "--pixel-ratio"
+      - '1.28'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_paperwhite_7th_gen
+  label: Amazon Kindle PW 7th Gen
+  description: Amazon Kindle PW 7th Gen
+  width: 1448
+  height: 1072
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.6
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_paperwhite_7th_gen
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 905px
+    - - "--screen-h"
+      - 670px
+    - - "--pixel-ratio"
+      - '1.6'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inkplate_10
+  label: Inkplate 10
+  description: Inkplate 10
+  width: 1200
+  height: 825
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.5
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inkplate_10
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 550px
+    - - "--pixel-ratio"
+      - '1.5'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_7
+  label: Amazon Kindle 7
+  description: Amazon Kindle 7
+  width: 800
+  height: 600
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.0
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_7
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inky_impression_7_3
+  label: Inky Impression 7.3
+  description: Inky Impression 7.3
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inky_impression_7_3
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_libra_2
+  label: Kobo Libra 2
+  description: Kobo Libra 2
+  width: 1680
+  height: 1264
+  colors: 16
+  bit_depth: 4
+  scale_factor: 2.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_libra_2
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 840px
+    - - "--screen-h"
+      - 632px
+    - - "--pixel-ratio"
+      - '2.0'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_oasis_2
+  label: Amazon Kindle Oasis 2
+  description: Amazon Kindle Oasis 2
+  width: 1680
+  height: 1264
+  colors: 16
+  bit_depth: 4
+  scale_factor: 2.1
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_oasis_2
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 602px
+    - - "--pixel-ratio"
+      - '2.1'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: og_plus
+  label: TRMNL OG (2-bit)
+  description: TRMNL OG (2-bit)
+  width: 800
+  height: 480
+  colors: 4
+  bit_depth: 2
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: trmnl
+  palette_ids:
+  - bw
+  - gray-4
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--ogv2
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_aura_one
+  label: Kobo Aura One
+  description: Kobo Aura One
+  width: 1872
+  height: 1404
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.8
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_aura_one
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '1.8'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_aura_hd
+  label: Kobo Aura HD
+  description: Kobo Aura HD
+  width: 1440
+  height: 1080
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.8
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_aura_hd
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '1.8'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inky_impression_13_3
+  label: Inky Impression 13.3
+  description: Inky Impression 13.3
+  width: 1600
+  height: 1200
+  colors: 2
+  bit_depth: 1
+  scale_factor: 2.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inky_impression_13_3
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '2.0'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: m5_paper_s3
+  label: M5PaperS3
+  description: M5PaperS3
+  width: 960
+  height: 540
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--m5_paper_s3
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 960px
+    - - "--screen-h"
+      - 540px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_scribe
+  label: Amazon Kindle Scribe
+  description: Amazon Kindle Scribe
+  width: 2480
+  height: 1860
+  colors: 16
+  bit_depth: 4
+  scale_factor: 2.5
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_scribe
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 992px
+    - - "--screen-h"
+      - 744px
+    - - "--pixel-ratio"
+      - '2.5'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: seeed_e1001
+  label: Seeed E1001 Monochrome
+  description: Seeed E1001 Monochrome
+  width: 800
+  height: 480
+  colors: 4
+  bit_depth: 2
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--ogv2
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: seeed_e1002
+  label: Seeed E1002
+  description: Seeed E1002
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-6a
+  - bw
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--ogv2
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: waveshare_4_26
+  label: Waveshare 4.26" (2-bit)
+  description: Waveshare 4.26" (2-bit)
+  width: 800
+  height: 480
+  colors: 4
+  bit_depth: 2
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--ogv2
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: waveshare_7_5_bw
+  label: Waveshare 7.5" B/W
+  description: Waveshare 7.5" B/W
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--og
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: tidbyt
+  label: Tidbyt
+  description: Tidbyt
+  width: 64
+  height: 32
+  colors: 16777216
+  bit_depth: 24
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/webp
+  offset_x: 0
+  offset_y: 0
+  kind: tidbyt
+  palette_ids:
+  - color-24bit
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: false
+- name: generic_16_9
+  label: Generic 16:9 Display
+  description: Generic 16:9 Display
+  width: 1920
+  height: 1080
+  colors: 16777216
+  bit_depth: 24
+  scale_factor: 2.4
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-24bit
+  - color-12bit
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--generic_16_9
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 450px
+    - - "--pixel-ratio"
+      - '2.4'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: palma
+  label: Onyx BOOX Palma
+  description: Onyx BOOX Palma
+  width: 1648
+  height: 824
+  colors: 16
+  bit_depth: 4
+  scale_factor: 2.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--palma
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 824px
+    - - "--screen-h"
+      - 412px
+    - - "--pixel-ratio"
+      - '2.0'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '0.8'
+    - - "--gap-scale"
+      - '1.0'
+- name: onyx_boox_go_7
+  label: Onyx BOOX Go 7
+  description: Onyx BOOX Go 7
+  width: 1680
+  height: 1264
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.8008
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--onyx_boox_go_7
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 933px
+    - - "--screen-h"
+      - 702px
+    - - "--pixel-ratio"
+      - '1.8008'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_glo
+  label: Kobo Glo
+  description: Kobo Glo
+  width: 1024
+  height: 768
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.2995
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_glo
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 788px
+    - - "--screen-h"
+      - 591px
+    - - "--pixel-ratio"
+      - '1.2995'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: waveshare_7_5_bwr
+  label: Waveshare 7.5" B/W/R
+  description: Waveshare 7.5" B/W/R
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-3bwr
+  - bw
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--og
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: waveshare_7_5_bwry
+  label: Waveshare 7.5" B/W/R/Y
+  description: Waveshare 7.5" B/W/R/Y
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--og
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: onxy_boox_nova_air_c
+  label: Onyx BOOX Nova Air C
+  description: Onyx BOOX Nova Air C
+  width: 1872
+  height: 1404
+  colors: 4096
+  bit_depth: 12
+  scale_factor: 1.8
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  - gray-256
+  - color-12bit
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--onxy_boox_nova_air_c
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '1.8'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: xteink_x4
+  label: Xteink X4
+  description: Xteink X4
+  width: 800
+  height: 480
+  colors: 4
+  bit_depth: 2
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--ogv2
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: nook_simple_touch
+  label: Nook Simple Touch
+  description: Nook Simple Touch
+  width: 800
+  height: 600
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.0
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  - gray-256
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--nook_simple_touch
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_sage
+  label: Kobo Sage
+  description: Kobo Sage
+  width: 1920
+  height: 1440
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.4004
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_sage
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1371px
+    - - "--screen-h"
+      - 1028px
+    - - "--pixel-ratio"
+      - '1.4004'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: og_bwry
+  label: TRMNL OG (B/W/R/Y)
+  description: TRMNL OG (B/W/R/Y)
+  width: 800
+  height: 480
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: trmnl
+  palette_ids:
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--og
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_voyage
+  label: Amazon Kindle Voyage
+  description: Amazon Kindle Voyage
+  width: 1448
+  height: 1072
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.4008
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_voyage
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1034px
+    - - "--screen-h"
+      - 765px
+    - - "--pixel-ratio"
+      - '1.4008'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inkplate_5_2
+  label: Inkplate 5.2
+  description: Inkplate 5.2
+  width: 1280
+  height: 720
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.1996
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inkplate_5_2
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1067px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '1.1996'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: raspberry_pi_touch_2
+  label: Raspberry Pi Touch 2
+  description: Raspberry Pi Touch 2
+  width: 1280
+  height: 720
+  colors: 16777216
+  bit_depth: 24
+  scale_factor: 1.1996
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-24bit
+  - color-12bit
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--raspberry_pi_touch_2
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1067px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '1.1996'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: ed133ut2
+  label: ED133UT2 Active Matrix
+  description: ED133UT2 Active Matrix
+  width: 1600
+  height: 1200
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.5385
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--ed133ut2
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '1.5385'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: avalue_epd_42s
+  label: Avalue EPD-42S 42" Display Board
+  description: Avalue EPD-42S 42" Display Board
+  width: 2880
+  height: 2160
+  colors: 16
+  bit_depth: 4
+  scale_factor: 2.7692
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--avalue_epd_42s
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '2.7692'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_touch
+  label: Kobo Touch
+  description: Kobo Touch
+  width: 800
+  height: 600
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_touch
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_forma
+  label: Kobo Forma
+  description: Kobo Forma
+  width: 1920
+  height: 1440
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.4004
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_forma
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1371px
+    - - "--screen-h"
+      - 1028px
+    - - "--pixel-ratio"
+      - '1.4004'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: openframe
+  label: OpenPeak OpenFrame
+  description: OpenPeak OpenFrame
+  width: 800
+  height: 480
+  colors: 16777216
+  bit_depth: 24
+  scale_factor: 1.0
+  rotation: 0
+  mime_type: image/webp
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-24bit
+  - color-12bit
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - gray-256
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--openframe
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 480px
+    - - "--pixel-ratio"
+      - '1.0'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: amazon_kindle_paperwhite_signature_11th_gen
+  label: Amazon Kindle PW Signature 11th Gen
+  description: Amazon Kindle PW Signature 11th Gen
+  width: 1648
+  height: 1236
+  colors: 16
+  bit_depth: 4
+  scale_factor: 2.06
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: kindle
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 512000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--amazon_kindle_paperwhite_signature_11th_gen
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '2.06'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inkplate_6_plus
+  label: Inkplate 6 Plus
+  description: Inkplate 6 Plus
+  width: 1024
+  height: 758
+  colors: 16
+  bit_depth: 4
+  scale_factor: 0.9846
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inkplate_6_plus
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 770px
+    - - "--pixel-ratio"
+      - '0.9846'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: kobo_aura_h2o_2
+  label: Kobo Aura H2O Edition 2
+  description: Kobo Aura H2O Edition 2
+  width: 1430
+  height: 1080
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.375
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--kobo_aura_h2o_2
+      size: screen--lg
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 785px
+    - - "--pixel-ratio"
+      - '1.375'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inkplate_6_color
+  label: Inkplate 6COLOR
+  description: Inkplate 6COLOR
+  width: 600
+  height: 448
+  colors: 2
+  bit_depth: 1
+  scale_factor: 0.75
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-7a
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inkplate_6_color
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 597px
+    - - "--pixel-ratio"
+      - '0.75'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: seeed_e1003
+  label: Seeed E1003 (4-bit)
+  description: Seeed E1003 (4-bit)
+  width: 1872
+  height: 1404
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.8
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - gray-16
+  - gray-4
+  - bw
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--seeed_e1003
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '1.8'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: seeed_e1004
+  label: Seeed E1004
+  description: Seeed E1004
+  width: 1600
+  height: 1200
+  colors: 2
+  bit_depth: 1
+  scale_factor: 1.5385
+  rotation: 90
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--seeed_e1004
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 1040px
+    - - "--screen-h"
+      - 780px
+    - - "--pixel-ratio"
+      - '1.5385'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: onyx_boox_poke_5
+  label: Onyx BOOX Poke 5
+  description: Onyx BOOX Poke 5
+  width: 1072
+  height: 1448
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.34
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--onyx_boox_poke_5
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 1081px
+    - - "--pixel-ratio"
+      - '1.34'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: remarkable_paper_2
+  label: reMarkable 2
+  description: reMarkable 2
+  width: 1404
+  height: 1872
+  colors: 16
+  bit_depth: 4
+  scale_factor: 1.8
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  - gray-16
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--remarkable_paper_2
+      size: screen--lg
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 780px
+    - - "--screen-h"
+      - 1040px
+    - - "--pixel-ratio"
+      - '1.8'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: waveshare_5_8_bw
+  label: Waveshare 5.83" (Steam Machine)
+  description: Waveshare 5.83" (Steam Machine)
+  width: 648
+  height: 480
+  colors: 4
+  bit_depth: 2
+  scale_factor: 0.81
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - bw
+  - gray-4
+  preview_white_point: true_white
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--waveshare_5_8_bw
+      size: screen--md
+      density: screen--density-1x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 593px
+    - - "--pixel-ratio"
+      - '0.81'
+    - - "--dither-pixel-ratio"
+      - '1.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+- name: inkplate_13_spectra
+  label: Inkplate 13 Spectra
+  description: Inkplate 13 Spectra
+  width: 1600
+  height: 1200
+  colors: 2
+  bit_depth: 1
+  scale_factor: 2.0
+  rotation: 0
+  mime_type: image/png
+  offset_x: 0
+  offset_y: 0
+  kind: byod
+  palette_ids:
+  - color-6a
+  - color-4bwry
+  - color-3bwr
+  - color-3bwy
+  - bw
+  preview_white_point: limited
+  image_size_limit: 90000
+  image_upload_supported: true
+  css:
+    classes:
+      device: screen--inkplate_13_spectra
+      size: screen--md
+      density: screen--density-2x
+    variables:
+    - - "--screen-w"
+      - 800px
+    - - "--screen-h"
+      - 600px
+    - - "--pixel-ratio"
+      - '2.0'
+    - - "--dither-pixel-ratio"
+      - '2.0'
+    - - "--device-ui-scale"
+      - '1.0'
+    - - "--gap-scale"
+      - '1.0'
+picker_palettes:
+- id: bw
+  name: Black & White (1-bit)
+  grays: 2
+  framework_class: screen--1bit
+- id: gray-4
+  name: 4 Grays (2-bit)
+  grays: 4
+  framework_class: screen--2bit
+- id: gray-16
+  name: 16 Grays (4-bit)
+  grays: 16
+  framework_class: screen--4bit
+- id: gray-256
+  name: Smooth Grayscale (device-quantized)
+  grays: 256
+  framework_class: screen--4bit
+- id: color-3bwr
+  name: Color (3 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FF0000"
+  - "#FFFFFF"
+  framework_class: screen--color-3bwr
+  grayscale_bit_depth: 1
+- id: color-3bwy
+  name: Color (3 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FFFF00"
+  - "#FFFFFF"
+  framework_class: screen--color-3bwy
+  grayscale_bit_depth: 1
+- id: color-4bwry
+  name: Color (4 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FF0000"
+  - "#FFFFFF"
+  - "#FFFF00"
+  framework_class: screen--color-4bwry
+  grayscale_bit_depth: 1
+- id: color-6a
+  name: Color (6 colors)
+  grays: 2
+  colors:
+  - "#FF0000"
+  - "#00FF00"
+  - "#0000FF"
+  - "#FFFF00"
+  - "#000000"
+  - "#FFFFFF"
+  framework_class: screen--color-6a
+  grayscale_bit_depth: 1
+- id: color-7a
+  name: Color (7 colors)
+  grays: 2
+  colors:
+  - "#000000"
+  - "#FFFFFF"
+  - "#FF0000"
+  - "#00FF00"
+  - "#0000FF"
+  - "#FFFF00"
+  - "#FFA500"
+  framework_class: screen--color-7a
+  grayscale_bit_depth: 1
+- id: color-12bit
+  name: Color (4096 colors)
+  grays: 2
+  framework_class: screen--color-full
+  grayscale_bit_depth: 4
+- id: color-24bit
+  name: Color (16777216 colors)
+  grays: 2
+  framework_class: screen--color-full
+  grayscale_bit_depth: 4
+example_plugins:
+  days_left_year:
+    name: Days Left This Year
+    description: Focus on what matters
+    image_url: "/images/plugins/days_left_year.svg"
+    image_dark_url: "/images/plugins/days_left_year.svg"
+  wiki_random_article:
+    name: Wikipedia Articles
+    description: Read something interesting
+    image_url: "/images/plugins/wikipedia.svg"
+    image_dark_url: "/images/plugins/wikipedia.svg"
+  shopify:
+    name: Shopify
+    description: Shopify store sales dashboard
+    image_url: "/images/plugins/shopify.svg"
+    image_dark_url: "/images/plugins/shopify.svg"
+  lunar_calendar:
+    name: Lunar Calendar
+    description: Track lunar phases and moon cycles
+    image_url: "/images/plugins/lunar_calendar.svg"
+    image_dark_url: "/images/plugins/lunar_calendar.svg"
+  github_commit_graph:
+    name: GitHub Commit Graph
+    description: Flex your coding frequency
+    image_url: "/images/plugins/github.svg"
+    image_dark_url: "/images/plugins/github--dark.svg"
+  stock_price:
+    name: Stock Price
+    description: Stock, Metal & Forex prices
+    image_url: "/images/plugins/stock_price.svg"
+    image_dark_url: "/images/plugins/stock_price.svg"
+  reddit:
+    name: Reddit
+    description: Top posts from your favorite subs
+    image_url: "/images/plugins/reddit.svg"
+    image_dark_url: "/images/plugins/reddit.svg"
+  todo_list:
+    name: Todo List
+    description: Stuff to focus on
+    image_url: "/images/plugins/todo_list.svg"
+    image_dark_url: "/images/plugins/todo_list.svg"
+  weather:
+    name: Weather
+    description: Local weather now
+    image_url: "/images/plugins/weather.svg"
+    image_dark_url: "/images/plugins/weather.svg"

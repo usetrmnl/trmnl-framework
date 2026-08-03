@@ -1,0 +1,585 @@
+<%
+  # DRY text content for multi-line wrapping examples
+  wrapping_example_text = "This longer label will wrap to multiple lines when it exceeds the width"
+  
+  # DRY text content for clamping examples
+  clamping_example_text = "This is a very long label text that would normally wrap to many lines but demonstrates how clamping behavior works with different variants and line limits to show ellipsis overflow"
+%>
+
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :label %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:label) %>
+
+    <div class="space-y-16">
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size and Style Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            Labels come in several style variants. Each one combines with any size modifier.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch">
+                      <div class="flex flex--col gap--space-between">
+                        <!-- Row 1: headers (no style label) -->
+                        <div class="grid grid--cols-6 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Small</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Base</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Large</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">XLarge</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">XXLarge</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 2: Default -->
+                        <div class="grid grid--cols-6 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Default</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--large">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xlarge">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xxlarge">Label</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 3: Outline -->
+                        <div class="grid grid--cols-6 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Outline</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--outline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--outline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--large label--outline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xlarge label--outline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xxlarge label--outline">Label</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 4: Underline -->
+                        <div class="grid grid--cols-6 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Underline</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--underline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--underline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--large label--underline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xlarge label--underline">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xxlarge label--underline">Label</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 5: Gray -->
+                        <div class="grid grid--cols-6 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Gray</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--gray">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--large label--gray">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xlarge label--gray">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xxlarge label--gray">Label</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 6: Filled (black background) -->
+                        <div class="grid grid--cols-6 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Filled</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--filled">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--filled">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--large label--filled">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xlarge label--filled">Label</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--xxlarge label--filled">Label</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Label</span>
+                    <span class="instance">Style Variants</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Default (plain) -->
+<span class="label">Default Label</span>
+
+<!-- Outline: bordered label -->
+<span class="label label--outline">Outline Label</span>
+
+<!-- Underline: underlined label -->
+<span class="label label--underline">Underline Label</span>
+
+<!-- Gray: muted/secondary label -->
+<span class="label label--gray">Gray Label</span>
+
+<!-- Filled: black (darkest) background -->
+<span class="label label--filled">Filled</span>
+
+<!-- Semantic: primary, success, error, warning -->
+<span class="label label--primary">Primary</span>
+<span class="label label--success">Success</span>
+<span class="label label--error">Error</span>
+
+<!-- Backwards compatible: label--inverted = label--filled -->
+<span class="label label--inverted">Inverted (alias)</span>
+
+<!-- Combine sizes with styles -->
+<span class="label label--large label--outline">Large Outline Label</span>
+<span class="label label--xlarge label--filled">XLarge Filled Label</span>'
+          ) %>
+        </div>
+
+        <div class="mt-8">
+          <%= framework_heading(4, 'Semantic variants') %>
+          <p class="<%= framework_section_description_classes %> mb-4">
+            Use <code class="<%= framework_section_code_classes %>">label--primary</code>, <code class="<%= framework_section_code_classes %>">label--success</code>, <code class="<%= framework_section_code_classes %>">label--error</code>, <code class="<%= framework_section_code_classes %>">label--warning</code> for intent-based colors. <code class="<%= framework_section_code_classes %>">label--filled</code> uses black (darkest), success and warning use black text, and warning uses a yellow background. See <%= link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline' %> for the semantic mapping.
+          </p>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--left gap">
+                      <div class="flex flex--row flex--wrap gap--small">
+                        <span class="label label--filled">Filled</span>
+                        <span class="label label--primary">Primary</span>
+                        <span class="label label--success">Success</span>
+                        <span class="label label--error">Error</span>
+                        <span class="label label--warning">Warning</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Label</span>
+                      <span class="instance">Semantic Colors</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Overflow Behavior') %>
+          <p class="<%= framework_section_description_classes %>">
+            Labels can handle longer text content through natural wrapping or text clamping. Understanding how labels behave with 
+            overflow content helps ensure your interface remains readable and visually balanced.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Multi-line Wrapping') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              By default, labels will wrap to multiple lines when content exceeds the available width,
+              maintaining readability for longer text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch">
+                      <div class="flex flex--col gap--space-between">
+                        <!-- Row 1: headers -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Small</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Base</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Large</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 2: Default -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Default</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large"><%= wrapping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 3: Underline -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Underline</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small label--underline"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--underline"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large label--underline"><%= wrapping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 4: Filled -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Filled</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small label--filled"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--filled"><%= wrapping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large label--filled"><%= wrapping_example_text %></span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Label</span>
+                      <span class="instance">Multi-line</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Labels with longer text will wrap naturally -->
+<span class="label">This longer label will wrap to multiple lines when it exceeds the width</span>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Text Clamping') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use the framework's <code class="<%= framework_section_code_classes %>">data-clamp</code> attribute to limit labels to a specific number of lines with ellipsis overflow.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch">
+                      <div class="flex flex--col gap--space-between">
+                        <!-- Row 1: headers -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Small</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Base</span></div>
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Large</span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 2: Default (1-line) -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">1-line</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large" data-clamp="1"><%= clamping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 3: Default (2-line) -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">2-line</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large" data-clamp="2"><%= clamping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 4: Underline (1-line) -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Underline 1</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small label--underline" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--underline" data-clamp="1"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large label--underline" data-clamp="1"><%= clamping_example_text %></span></div>
+                        </div>
+                        <div class="divider"></div>
+                        <!-- Row 5: Underline (2-line) -->
+                        <div class="grid grid--cols-4 gap--medium">
+                          <div class="flex flex--row flex--center-y flex--left grow"><span class="label label--small label--gray">Underline 2</span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--small label--underline" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--underline" data-clamp="2"><%= clamping_example_text %></span></div>
+                          <div class="flex flex--row flex--top flex--left grow"><span class="label label--large label--underline" data-clamp="2"><%= clamping_example_text %></span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Label</span>
+                      <span class="instance">Clamped</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- data-clamp applies to any label size (small, base, large, xlarge, xxlarge) -->
+
+<!-- Single line clamping with data attribute -->
+<span class="label" data-clamp="1">
+  This text will be clamped to one line
+</span>
+
+<!-- Two line clamping -->
+<span class="label" data-clamp="2">
+  This text will be clamped to exactly two lines with ellipsis
+</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Responsive Features Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Features') %>
+          <p class="<%= framework_section_description_classes %>">
+            Label components support all three responsive systems: size-based, orientation-based, and bit-depth variants. 
+            This enables precise control over label appearance across different device configurations.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Size-Based Responsive -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Breakpoint Prefixes') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Use breakpoint prefixes like <code class="<%= framework_section_code_classes %>">sm:</code>,
+                <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">lg:</code>
+                to apply different sizes and styles per device size class.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col layout--left gap">
+                        <span class="label label--small lg:label--xlarge">Responsive Label</span>
+                        <span class="label label--small">Small by default, xlarge on lg screens</span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Label</span>
+                        <span class="instance">Responsive</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Small by default, xlarge on lg screens -->
+<span class="label label--small lg:label--xlarge">
+  Responsive Label
+</span>
+
+<!-- Caption describing the responsive behavior (optional) -->
+<span class="label label--small">Small by default, xlarge on lg screens</span>
+
+<!-- Using base modifier to reset to default size at breakpoint -->
+<span class="label label--small md:label--base">
+  Small by default, base on medium+ screens
+</span>
+
+<!-- Progressive size scaling -->
+<span class="label label--small sm:label--base md:label--large lg:label--xlarge">
+  Progressive Label Sizing
+</span>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Orientation and Size+Orientation -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Orientation and Size+Orientation') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Label sizes can adapt to orientation with <code class="<%= framework_section_code_classes %>">portrait:</code> and can be combined
+                with size breakpoints (e.g., <code class="<%= framework_section_code_classes %>">md:portrait:</code>).
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col layout--left gap">
+                        <span class="label label--large portrait:label--small">Orientation Variant</span>
+                        <span class="label label--small">Large by default, small in portrait.</span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Label</span>
+                        <span class="instance">Orientation</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Large by default, small in portrait -->
+<span class="label label--large portrait:label--small">Orientation Variant</span>
+
+<!-- Caption describing the responsive behavior (optional) -->
+<span class="label label--small">Large by default, small in portrait.</span>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Bit-Depth Responsive -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Bit-Depth Responsive') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Use bit-depth prefixes like <code class="<%= framework_section_code_classes %>">1bit:</code>, 
+                <code class="<%= framework_section_code_classes %>">2bit:</code>, and 
+                <code class="<%= framework_section_code_classes %>">4bit:</code> to optimize label appearance 
+                for different display color capabilities.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <div class="flex flex--col gap--medium flex--center">
+                          <div class="flex flex--col flex--center">
+                            <span class="label 1bit:label--filled 2bit:label--underline 4bit:label--underline">Display Optimized</span>
+                            <span class="label label--small">Filled (1bit) → Outline (2bit) → Underline (4bit)</span>
+                          </div>
+                          <div class="w--full border--h-6"></div>
+                          <div class="flex flex--col flex--center">
+                            <span class="label 1bit:label--outline 4bit:label--gray">Selective Styling</span>
+                            <span class="label label--small">Outline (1bit) → Gray (4bit)</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Label</span>
+                        <span class="instance">Bit-Depth Responsive</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Different styles for different bit-depth displays -->
+<span class="label 1bit:label--filled 2bit:label--outline 4bit:label--underline">
+  Display Optimized
+</span>
+
+<!-- Selective bit-depth targeting -->
+<span class="label 1bit:label--outline 4bit:label--gray">
+  Selective Styling
+</span>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Combined Responsive -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Combined Responsive Features') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Combine multiple responsive systems for highly targeted label styling. Use size, orientation, 
+                and bit-depth modifiers together following the pattern: 
+                <code class="<%= framework_section_code_classes %>">size:orientation:bit-depth:utility</code>.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <div class="flex flex--col gap--medium flex--center">
+                          <div class="flex flex--col flex--center">
+                            <span class="label md:portrait:2bit:label--filled lg:4bit:label--outline">Advanced Targeting</span>
+                            <span class="label label--small">Complex responsive combinations</span>
+                          </div>
+                          <div class="w--full border--h-6"></div>
+                          <div class="flex flex--col flex--center">
+                            <span class="label sm:1bit:label--underline md:portrait:label--outline lg:4bit:label--gray">Multi-Condition</span>
+                            <span class="label label--small">Multiple responsive conditions</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Label</span>
+                        <span class="instance">Combined Responsive</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Highly targeted responsive combinations -->
+<span class="label md:portrait:2bit:label--filled lg:4bit:label--outline">
+  Advanced Targeting
+</span>
+
+<!-- Multiple responsive conditions -->
+<span class="label sm:1bit:label--underline md:portrait:label--outline lg:4bit:label--gray">
+  Multi-Condition
+</span>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Backward compatibility -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Backward Compatibility') %>
+          <p class="<%= framework_section_description_classes %>">
+            The gray-out label variant has been renamed from <code class="<%= framework_section_code_classes %>">label--gray-out</code> to
+            <code class="<%= framework_section_code_classes %>">label--gray</code>. The legacy class name still works and maps to the
+            same bit-depth responsive styling. Prefer the new name going forward.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The inverted label has been renamed to <code class="<%= framework_section_code_classes %>">label--filled</code> (black background).
+            Use <code class="<%= framework_section_code_classes %>">label--primary</code>, <code class="<%= framework_section_code_classes %>">label--success</code>, etc. for semantic colors.
+            <code class="<%= framework_section_code_classes %>">label--inverted</code> remains as an alias for <code class="<%= framework_section_code_classes %>">label--filled</code>.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Deprecated (but still works) -->
+<span class="label label--gray-out">Gray label (deprecated)</span>
+<span class="label label--inverted">Inverted (alias)</span>
+
+<!-- Preferred (new naming) -->
+<span class="label label--gray">Gray label (preferred)</span>
+<span class="label label--filled">Filled label (preferred)</span>'
+          ) %>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

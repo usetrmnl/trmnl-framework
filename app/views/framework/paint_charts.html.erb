@@ -1,0 +1,375 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :paint_charts %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:paint_charts) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Chart series') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every resolver takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
+            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code> ancestor
+            supplies the paint. Each returns a canonical
+            <code class="<%= framework_section_code_classes %>">Fill</code>; see
+            <%= render DocsRef.new(page: :paint_api) %> for the shape.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">series(i, count, { el })</code>: the fill for series
+              <em>i</em> of <em>count</em> from the screen's chart-series ramp, which opens on the screen's ink.
+              Series are spread across the legible front of the ramp; the span is the public
+              <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> var, so a theme
+              narrows it from CSS.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">ramp({ el })</code>: every chart-series slot as an
+              array of Fills. CSS publishes how many there are in
+              <code class="<%= framework_section_code_classes %>">--framework-chart-series-count</code>, so a longer
+              ramp reaches JavaScript without a framework release. Slots past the end of a shorter ramp come back
+              empty.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Full-color screens draw their series from a color ramp: the ink, then seven hues in a fixed order, with
+            steps picked for the light and dark ground separately. Grayscale and limited-palette screens keep the
+            shade ladder, and a theme still overrides both with its own ramp.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// A single ramp step for series 1 of 4.
+var s = TRMNLPaint.series(1, 4, { el: "my-chart" });
+
+// Every ramp slot at once.
+var fills = TRMNLPaint.ramp({ el: "my-chart" });', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Highcharts adapters') %>
+          <p class="<%= framework_section_description_classes %>">
+            Adapters shape a resolved <code class="<%= framework_section_code_classes %>">Fill</code>,
+            <code class="<%= framework_section_code_classes %>">BorderFill</code> or
+            <code class="<%= framework_section_code_classes %>">TypeSpec</code> for one specific renderer. They copy
+            resolved values into the renderer's native form; no adapter adds contrast heuristics, thresholds or
+            substitute design rules.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">toHighcharts(fill)</code>: a solid Fill returns a
+              flat color string; a tile Fill returns a
+              <code class="<%= framework_section_code_classes %>">{ pattern: { image, width, height, backgroundColor } }</code>
+              object for the Highcharts pattern-fill module. The field color is composited into the pattern image
+              beneath the ink paths, matching CSS layer order, so the tile is self-contained. An empty Fill returns
+              <code class="<%= framework_section_code_classes %>">null</code>.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The axis and label adapters live with their resolvers:
+            <code class="<%= framework_section_code_classes %>">toHighchartsAxis()</code> on
+            <%= render DocsRef.new(page: :paint_borders) %>,
+            <code class="<%= framework_section_code_classes %>">toHighchartsText()</code> on
+            <%= render DocsRef.new(page: :paint_typography) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> (see the next section) is the
+            Highcharts composition layer over TRMNLPaint: its
+            <code class="<%= framework_section_code_classes %>">grid()</code>,
+            <code class="<%= framework_section_code_classes %>">axisLine()</code> and
+            <code class="<%= framework_section_code_classes %>">textStyle()</code> methods select the documented chart
+            roles and delegate resolution and conversion here. Adapters for other libraries (a Chart.js
+            <code class="<%= framework_section_code_classes %>">CanvasPattern</code>, a D3
+            <code class="<%= framework_section_code_classes %>">&lt;pattern&gt;</code>) are a natural sibling shape.
+            Until one ships, resolve a Fill and translate it yourself; the Fill already carries everything a library
+            needs.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// Highcharts: flat color on solid panels, a self-contained pattern tile
+// on 1- and 2-bit screens.
+var hc = TRMNLPaint.toHighcharts(TRMNLPaint.series(0, 4, { el: "my-chart" }));
+
+// Any other library: resolve a Fill and translate it however you like.
+var fill = TRMNLPaint.bg("gray-30", { el: "my-chart" });
+var css = fill.image
+  ? fill.image + " repeat"   // dither tile
+  : fill.color;              // solid', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The TRMNLCharts API') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> ships in the same
+            <code class="<%= framework_section_code_classes %>">plugins.js</code> runtime as
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and composes Highcharts options out
+            of it. It resolves no paint of its own: every value it returns comes from a TRMNLPaint resolver and
+            adapter. <%= render DocsRef.new(page: :chart) %> puts it to work in line, bar, and gauge charts.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Every method takes the same optional <code class="<%= framework_section_code_classes %>">{ el }</code> as
+            the resolvers: the chart container id or element whose nearest
+            <code class="<%= framework_section_code_classes %>">.screen</code> supplies the paint. Omit it on a
+            single-screen plugin.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Resolving chart paint') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">paint(token, { el })</code>: one palette token as a
+                Highcharts fill, flat color in solid modes and a pattern object in dither modes.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">series(i, count, { el })</code>: the Highcharts fill
+                for series <em>i</em> of <em>count</em> from the screen's chart-series ramp.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints every element
+                under the screen carrying <code class="<%= framework_section_code_classes %>">data-chart-series="i"</code>
+                from that same ramp, so legend markers and series stay in lockstep. An optional
+                <code class="<%= framework_section_code_classes %>">data-chart-series-count</code> sets the series total;
+                it defaults to the number of tagged elements. Call it every time the chart builds.
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Building the options') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">options({ el })</code>: the recommended Highcharts
+                options for the TRMNL aesthetic, with a transparent background, no animation, no chrome, and
+                framework-resolved axes and type.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">merge(base, overrides)</code>: a deep merge of two
+                plain objects, where arrays and scalars replace. Layer your chart's own config over
+                <code class="<%= framework_section_code_classes %>">options()</code> with it.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">grid({ el, dir })</code>: the grid-line options
+                (<code class="<%= framework_section_code_classes %>">gridLineColor</code>,
+                <code class="<%= framework_section_code_classes %>">gridLineWidth</code>,
+                <code class="<%= framework_section_code_classes %>">gridLineDashStyle</code>) from the muted themed
+                hairline, border step 65. <code class="<%= framework_section_code_classes %>">dir: 'h'</code> (the
+                default) is the horizontal yAxis grid,
+                <code class="<%= framework_section_code_classes %>">'v'</code> the vertical xAxis grid.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">axisLine({ el })</code>: the
+                <code class="<%= framework_section_code_classes %>">lineColor</code> and
+                <code class="<%= framework_section_code_classes %>">tickColor</code> options from the black border
+                rail, which axis and ticks share.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">textStyle(role, { el })</code>: a Highcharts text
+                style for one framework typography role. It carries the resolved font properties and an opaque ink
+                color, and sets <code class="<%= framework_section_code_classes %>">textOutline: 'none'</code> to kill
+                the default white halo on data labels. Pass
+                <code class="<%= framework_section_code_classes %>">{ stroke: '&lt;token&gt;' }</code> for an
+                intentional outline.
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Keeping the chart current') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">watch(el, buildFn)</code>: builds the chart now and
+                again whenever the device, scale, mode, dark-mode or theme classes change on the screen or on a
+                wrapper above it.
+                <code class="<%= framework_section_code_classes %>">buildFn</code> creates and returns the chart
+                instance; the previous one is destroyed before each rebuild. Returns a stop function.
+              </li>
+            </ul>
+            <p class="<%= framework_subsection_description_classes %>">
+              Highcharts numbers do not read CSS, so resolve heights, spacing, and offsets with
+              <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> inside the build function. See
+              <%= render DocsRef.new(page: :paint_api) %>.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'var el = "my-chart";
+
+// watch() rebuilds on every device, mode, dark-mode and theme change.
+TRMNLCharts.watch(el, function () {
+  var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
+    chart: { type: "column", height: TRMNLPaint.px(180, { el: el }) },
+    xAxis: { categories: ["Mon", "Tue", "Wed"] },
+    series: [
+      { name: "Sent", data: [3, 5, 8], color: TRMNLCharts.series(0, 2, { el: el }) },
+      { name: "Read", data: [2, 4, 6], color: TRMNLCharts.series(1, 2, { el: el }) }
+    ]
+  }));
+  // Legend markers marked data-chart-series="0" / "1" pick up the same ramp.
+  TRMNLCharts.applySwatches({ el: el });
+  return chart;
+});', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Live example') %>
+          <p class="<%= framework_section_description_classes %>">
+            The bar rows below are painted with
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.series()</code> and
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.apply()</code>, wrapped in
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.watch()</code>, with no charting library
+            involved. Change the device mode or Style in the screen picker and the bars repaint from the live
+            cascade: flat colors on solid panels, dither tiles on 1- and 2-bit screens.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--space-between">
+                    <div class="grid">
+                      <div class="item col--span-3">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--large value--tnums" data-fit-value="true">$48.6k</span>
+                          <span class="label">Paper Sales</span>
+                        </div>
+                      </div>
+                      <div class="item col--span-3">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--large value--tnums" data-fit-value="true">6</span>
+                          <span class="label">Branches</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div id="paint-strip" class="flex flex--col gap--small w--full"></div>
+                  </div>
+
+                  <div class="title_bar">
+                    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                    <span class="title">Paint API</span>
+                    <span class="instance">TRMNLPaint.apply</span>
+                  </div>
+                </div>
+
+                <script type="text/javascript">
+                  // Docs example iframes load plugins.js AFTER inline scripts, so wait
+                  // for TRMNLPaint before painting.
+                  function whenReady(cb) {
+                    if (window.TRMNLPaint) return cb();
+                    window.addEventListener("load", function () {
+                      if (window.TRMNLPaint) cb();
+                    }, { once: true });
+                  }
+
+                  whenReady(function () {
+                    var el = "paint-strip";
+                    var DATA = [["Scranton", 12.4], ["Stamford", 9.8], ["Nashua", 8.6],
+                                ["Utica", 7.4], ["Albany", 6.2], ["Buffalo", 4.2]];
+                    // watch() repaints whenever the screen device/scale/mode/dark/theme classes change,
+                    // re-reading paint from the live cascade each time.
+                    TRMNLPaint.watch(el, function () {
+                      var box = document.getElementById(el);
+                      if (!box) return;
+                      box.innerHTML = "";
+                      DATA.forEach(function (d, i) {
+                        var row = document.createElement("div");
+                        row.className = "flex flex--row flex--center-y gap--small";
+                        var cap = document.createElement("span");
+                        cap.className = "label label--small";
+                        cap.style.cssText = "width:88px;flex:none;";
+                        cap.textContent = d[0];
+                        var rail = document.createElement("div");
+                        rail.style.cssText = "flex:1;height:16px;";
+                        var bar = document.createElement("div");
+                        bar.style.cssText = "height:100%;border-radius:4px;width:" + (d[1] / DATA[0][1] * 100) + "%;";
+                        // series(i, n) resolves the fill for series i from the screen's
+                        // chart ramp; apply() composites field + tile like the CSS pipeline.
+                        TRMNLPaint.apply(bar, TRMNLPaint.series(i, DATA.length, { el: el }));
+                        rail.appendChild(bar);
+                        var val = document.createElement("span");
+                        val.className = "label label--small";
+                        val.style.cssText = "width:48px;flex:none;text-align:right;";
+                        val.textContent = "$" + d[1].toFixed(1) + "k";
+                        row.appendChild(cap);
+                        row.appendChild(rail);
+                        row.appendChild(val);
+                        box.appendChild(row);
+                      });
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<!-- an empty, ID\'d container to paint into -->
+<div id="paint-strip" class="flex flex--col gap--small w--full"></div>
+
+<script type="text/javascript">
+  // plugins.js bundles TRMNLPaint; wait for it before painting.
+  function whenReady(cb) {
+    if (window.TRMNLPaint) return cb();
+    window.addEventListener("load", function () {
+      if (window.TRMNLPaint) cb();
+    }, { once: true });
+  }
+
+  whenReady(function () {
+    var el = "paint-strip";
+    var DATA = [["Scranton", 12.4], ["Stamford", 9.8], ["Nashua", 8.6],
+                ["Utica", 7.4], ["Albany", 6.2], ["Buffalo", 4.2]];
+    // watch() repaints whenever the screen device/scale/mode/dark/theme classes change,
+    // re-reading paint from the live cascade each time.
+    TRMNLPaint.watch(el, function () {
+      var box = document.getElementById(el);
+      if (!box) return;
+      box.innerHTML = "";
+      DATA.forEach(function (d, i) {
+        var row = document.createElement("div");
+        row.className = "flex flex--row flex--center-y gap--small";
+        var cap = document.createElement("span");
+        cap.className = "label label--small";
+        cap.style.cssText = "width:88px;flex:none;";
+        cap.textContent = d[0];
+        var rail = document.createElement("div");
+        rail.style.cssText = "flex:1;height:16px;";
+        var bar = document.createElement("div");
+        bar.style.cssText = "height:100%;border-radius:4px;width:" + (d[1] / DATA[0][1] * 100) + "%;";
+        // series(i, n) resolves the fill for series i from the screen\'s chart
+        // ramp; apply() composites field + tile like the CSS pipeline.
+        TRMNLPaint.apply(bar, TRMNLPaint.series(i, DATA.length, { el: el }));
+        rail.appendChild(bar);
+        row.appendChild(cap);
+        row.appendChild(rail);
+        box.appendChild(row);
+      });
+    });
+  });
+</script>', language: 'html') %>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

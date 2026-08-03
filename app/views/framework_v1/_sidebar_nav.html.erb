@@ -1,0 +1,160 @@
+<nav class="<%= nav_classes %>" aria-label="Sidebar Controls">
+  <ul class="flex flex-row p-2 sm:p-2 sm:gap-2">
+    <!-- Left Sidebar Toggle Button -->
+    <button id="toggle-left-sidebar" class="flex flex-grow items-center justify-center p-1.5 sm:p-3 rounded-lg text-sm tracking-wide font-medium text-gray-700 hover:text-primary-500 dark:text-gray-500 dark:hover:text-primary-500 hover:bg-primary-100 dark:hover:bg-primary-900 transition duration-150 sidebar-toggle" data-sidebar-type="left" data-tooltip-target="tooltip-left-sidebar">
+      <svg xmlns="http://www.w3.org/2000/svg" class="<%= nav_icon_classes %>" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+      <span class="<%= nav_link_text_classes %>">Components</span>
+    </button>
+    <div id="tooltip-left-sidebar" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+      Components
+      <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+
+    <!-- Right Sidebar Toggle Button -->
+    <button id="toggle-right-sidebar" class="flex flex-grow items-center justify-center p-1.5 sm:p-3 rounded-lg text-sm tracking-wide font-medium text-gray-700 hover:text-primary-500 dark:text-gray-500 dark:hover:text-primary-500 hover:bg-primary-100 dark:hover:bg-primary-900 transition duration-150 sidebar-toggle" data-sidebar-type="right" data-tooltip-target="tooltip-right-sidebar">
+      <svg xmlns="http://www.w3.org/2000/svg" class="<%= nav_icon_classes %>" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h8M4 12h16M12 18h8" />
+      </svg>
+      <span class="<%= nav_link_text_classes %>">On This Page</span>
+    </button>
+    <div id="tooltip-right-sidebar" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+      On This Page
+      <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+  </ul>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initSidebarNavControls();
+  });
+  
+  document.addEventListener('turbo:load', function() {
+    initSidebarNavControls();
+  });
+  
+  function initSidebarNavControls() {
+    // Constants for sidebar widths - Centralized configuration
+    const SIDEBAR_WIDTH_CLASS = 'w-64'; // 16rem width for both sidebars
+    const COLLAPSED_CLASS = 'w-0';
+    
+    const leftBtn = document.getElementById('toggle-left-sidebar');
+    const rightBtn = document.getElementById('toggle-right-sidebar');
+    const leftSidebar = document.getElementById('left-sidebar');
+    const rightSidebar = document.getElementById('right-sidebar');
+    
+    if (!leftBtn || !rightBtn || !leftSidebar || !rightSidebar) return;
+    
+    // More robust sidebar visibility check
+    function checkSidebarVisibility() {
+      const isMobile = window.innerWidth < 768;
+      
+      // Check visibility based on Tailwind classes and responsive state
+      const leftVisible = !isMobile && 
+                         !leftSidebar.classList.contains(COLLAPSED_CLASS) && 
+                         leftSidebar.classList.contains(SIDEBAR_WIDTH_CLASS);
+      
+      const rightVisible = !isMobile &&
+                          !rightSidebar.classList.contains(COLLAPSED_CLASS) &&
+                          rightSidebar.classList.contains(SIDEBAR_WIDTH_CLASS);
+      
+      updateButtonActiveState(leftBtn, leftVisible);
+      updateButtonActiveState(rightBtn, rightVisible);
+    }
+    
+    // Function to check screen size and set right sidebar inactive at medium breakpoint
+    function checkScreenSizeForSidebar() {
+      // Check if we're at medium breakpoint (Tailwind md is typically 768px)
+      const isMediumScreen = window.innerWidth >= 768 && window.innerWidth < 1024;
+      
+      if (isMediumScreen) {
+        // At medium breakpoint, ensure right sidebar is collapsed
+        if (!rightSidebar.classList.contains(COLLAPSED_CLASS)) {
+          rightSidebar.classList.add(COLLAPSED_CLASS);
+          rightSidebar.classList.remove(SIDEBAR_WIDTH_CLASS);
+          localStorage.setItem('rightSidebarVisible', false);
+        }
+      }
+      
+      // Then update button states
+      checkSidebarVisibility();
+    }
+    
+    // Run initial check after a short delay to ensure styles are applied
+    setTimeout(checkSidebarVisibility, 100);
+    setTimeout(checkScreenSizeForSidebar, 100);
+    
+    // Set up mutation observer for changes to the sidebar wrapper
+    const leftSidebarWrapper = document.getElementById('left-sidebar-wrapper');
+    const rightSidebarWrapper = document.getElementById('right-sidebar-wrapper');
+    
+    // Watch for attribute changes on both sidebar and wrapper elements
+    const observerConfig = { attributes: true, attributeFilter: ['style', 'class'], subtree: true };
+    
+    const mutationObserver = new MutationObserver((mutations) => {
+      // Some style change happened, check visibility
+      checkSidebarVisibility();
+    });
+    
+    if (leftSidebarWrapper) mutationObserver.observe(leftSidebarWrapper, observerConfig);
+    if (rightSidebarWrapper) mutationObserver.observe(rightSidebarWrapper, observerConfig);
+    mutationObserver.observe(leftSidebar, observerConfig);
+    mutationObserver.observe(rightSidebar, observerConfig);
+    
+    // Also observe main content column for changes
+    const mainContentColumn = document.getElementById('main-content-column');
+    if (mainContentColumn) {
+      mutationObserver.observe(mainContentColumn, observerConfig);
+    }
+    
+    // Handle window resize - use a debounced version to avoid too many checks
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        checkScreenSizeForSidebar();
+        checkSidebarVisibility();
+      }, 250);
+    });
+    
+    // Poll for visibility changes as a fallback method
+    const visibilityInterval = setInterval(checkSidebarVisibility, 1000);
+    
+    // Cleanup function to remove interval on page navigation
+    document.addEventListener('turbo:before-visit', function() {
+      clearInterval(visibilityInterval);
+    });
+    
+    // Event listeners for toggle buttons
+    leftBtn.addEventListener('click', function() {
+      // Add a slight delay to check after the toggle animation
+      setTimeout(checkSidebarVisibility, 300);
+    });
+    
+    rightBtn.addEventListener('click', function() {
+      // Only allow toggling if not at medium breakpoint
+      const isMediumScreen = window.innerWidth >= 768 && window.innerWidth < 1024;
+      if (!isMediumScreen) {
+        // Add a slight delay to check after the toggle animation
+        setTimeout(checkSidebarVisibility, 300);
+      } else {
+        // Don't allow toggling on medium screens
+        return false;
+      }
+    });
+  }
+  
+  function updateButtonActiveState(button, isActive) {
+    if (isActive) {
+      // Apply the same class transformations as in the nav_link_classes helper
+      button.classList.add('text-primary-500', 'dark:text-primary-500', 'bg-primary-100', 'dark:bg-primary-900');
+      button.classList.remove('text-gray-700', 'dark:text-gray-500', 'bg-transparent', 'dark:bg-transparent');
+    } else {
+      // Revert to default classes
+      button.classList.add('text-gray-700', 'dark:text-gray-500', 'bg-transparent', 'dark:bg-transparent');
+      button.classList.remove('text-primary-500', 'dark:text-primary-500', 'bg-primary-100', 'dark:bg-primary-900');
+    }
+  }
+</script> 

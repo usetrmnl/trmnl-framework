@@ -1,0 +1,440 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :progress %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:progress) %>
+
+    <div class="space-y-16">
+      <!-- Progress Bar Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Progress Bar') %>
+          <p class="<%= framework_section_description_classes %>">
+            Progress bars display continuous progress with a filled track. They support multiple sizes and emphasis levels for different visual weights and contexts.
+          </p>
+        </div>
+
+        <!-- Sizes Subsection -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Sizes') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Progress bars come in four sizes: xsmall, small, base (the default, which a bare <code class="<%= framework_section_code_classes %>">progress-bar</code> already renders), and large. Use the <code class="<%= framework_section_code_classes %>">fill</code> element with inline width styling to set the progress percentage. The <code class="<%= framework_section_code_classes %>">progress-bar--base</code> modifier spells the default out, which is what a responsive layout needs to switch back to it: <code class="<%= framework_section_code_classes %>">progress-bar--large md:progress-bar--base</code>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column gap--large w--max-72">
+                          <!-- Xsmall bar -->
+                          <div class="progress-bar progress-bar--xsmall">
+                            <div class="content">
+                              <span class="label label--small">Xsmall Progress</span>
+                              <span class="label label--small">25%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 25%"></div>
+                            </div>
+                          </div>
+
+                          <!-- Small bar -->
+                          <div class="progress-bar progress-bar--small">
+                            <div class="content">
+                              <span class="label label--small">Small Progress</span>
+                              <span class="label label--small">25%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 25%"></div>
+                            </div>
+                          </div>
+
+                          <!-- Base bar -->
+                          <div class="progress-bar progress-bar--base">
+                            <div class="content">
+                              <span class="label">Base Progress</span>
+                              <span class="label">50%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 50%"></div>
+                            </div>
+                          </div>
+
+                          <!-- Regular bar -->
+                          <div class="progress-bar">
+                            <div class="content">
+                              <span class="label">Regular Progress</span>
+                              <span class="label">50%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 50%"></div>
+                            </div>
+                          </div>
+
+                          <!-- Large bar -->
+                          <div class="progress-bar progress-bar--large">
+                            <div class="content">
+                              <span class="label">Large Progress</span>
+                              <span class="label">75%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 75%"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Progress</span>
+                      <span class="instance">Bar Sizes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Xsmall bar -->
+<div class="progress-bar progress-bar--xsmall">
+  <div class="content">
+    <span class="label label--small">Xsmall Progress</span>
+    <span class="value value--xxsmall">25%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 25%"></div>
+  </div>
+</div>
+
+<!-- Small bar -->
+<div class="progress-bar progress-bar--small">
+  <div class="content">
+    <span class="label label--small">Small Progress</span>
+    <span class="value value--xxsmall">25%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 25%"></div>
+  </div>
+</div>
+
+<!-- Base bar (equivalent to default, useful for responsive) -->
+<div class="progress-bar progress-bar--base">
+  <div class="content">
+    <span class="label">Base Progress</span>
+    <span class="value value--xxsmall">50%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 50%"></div>
+  </div>
+</div>
+
+<!-- Regular bar -->
+<div class="progress-bar">
+  <div class="content">
+    <span class="label">Regular Progress</span>
+    <span class="value value--xxsmall">50%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 50%"></div>
+  </div>
+</div>
+
+<!-- Large bar -->
+<div class="progress-bar progress-bar--large">
+  <div class="content">
+    <span class="label">Large Progress</span>
+    <span class="value value--xxsmall">75%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 75%"></div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Emphasis Subsection -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Emphasis') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Progress bars support three emphasis levels: default, emphasis-2, and emphasis-3 for different visual weights.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column gap--large w--max-72">
+                          <!-- Default emphasis -->
+                          <div class="progress-bar">
+                            <div class="content">
+                              <span class="label">Default Emphasis</span>
+                              <span class="value value--xxsmall">60%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- Emphasis 2 -->
+                          <div class="progress-bar progress-bar--emphasis-2">
+                            <div class="content">
+                              <span class="label">Emphasis 2</span>
+                              <span class="value value--xxsmall">60%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- Emphasis 3 -->
+                          <div class="progress-bar progress-bar--emphasis-3">
+                            <div class="content">
+                              <span class="label">Emphasis 3</span>
+                              <span class="value value--xxsmall">60%</span>
+                            </div>
+                            <div class="track">
+                              <div class="fill" style="width: 60%"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Progress</span>
+                      <span class="instance">Bar Emphasis</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Default emphasis -->
+<div class="progress-bar">
+  <div class="content">
+    <span class="label">Default Emphasis</span>
+    <span class="value value--xxsmall">60%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 60%"></div>
+  </div>
+</div>
+
+<!-- Emphasis 2 -->
+<div class="progress-bar progress-bar--emphasis-2">
+  <div class="content">
+    <span class="label">Emphasis 2</span>
+    <span class="value value--xxsmall">60%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 60%"></div>
+  </div>
+</div>
+
+<!-- Emphasis 3 -->
+<div class="progress-bar progress-bar--emphasis-3">
+  <div class="content">
+    <span class="label">Emphasis 3</span>
+    <span class="value value--xxsmall">60%</span>
+  </div>
+  <div class="track">
+    <div class="fill" style="width: 60%"></div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Progress Dots Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Progress Dots') %>
+          <p class="<%= framework_section_description_classes %>">
+            Progress dots display discrete steps or stages in a process. They come in five sizes and show different states: filled (completed), current (active), and empty (upcoming).
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Sizes') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Progress dots come in four sizes: xsmall, small, base (the default, which a bare <code class="<%= framework_section_code_classes %>">progress-dots</code> already renders), and large. Each size maintains the same dot states and functionality. The <code class="<%= framework_section_code_classes %>">progress-dots--base</code> modifier spells the default out, which is what a responsive layout needs to switch back to it: <code class="<%= framework_section_code_classes %>">progress-dots--large md:progress-dots--base</code>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column gap--large w--max-72">
+                          <!-- Xsmall dots -->
+                          <div class="progress-dots progress-dots--xsmall">
+                            <div class="content">
+                              <span class="label label--small">Xsmall Progress</span>
+                            </div>
+                            <div class="track">
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--current"></div>
+                              <div class="dot"></div>
+                              <div class="dot"></div>
+                            </div>
+                          </div>
+
+                          <!-- Small dots -->
+                          <div class="progress-dots progress-dots--small">
+                            <div class="content">
+                              <span class="label label--small">Small Progress</span>
+                            </div>
+                            <div class="track">
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--current"></div>
+                              <div class="dot"></div>
+                              <div class="dot"></div>
+                            </div>
+                          </div>
+
+                          <!-- Base dots -->
+                          <div class="progress-dots progress-dots--base">
+                            <div class="content">
+                              <span class="label label--small">Base Progress</span>
+                            </div>
+                            <div class="track">
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--current"></div>
+                              <div class="dot"></div>
+                              <div class="dot"></div>
+                            </div>
+                          </div>
+
+                          <!-- Regular dots -->
+                          <div class="progress-dots">
+                            <div class="content">
+                              <span class="label label--small">Regular Progress</span>
+                            </div>
+                            <div class="track">
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--current"></div>
+                              <div class="dot"></div>
+                              <div class="dot"></div>
+                            </div>
+                          </div>
+
+                          <!-- Large dots -->
+                          <div class="progress-dots progress-dots--large">
+                            <div class="content">
+                              <span class="label label--small">Large Progress</span>
+                            </div>
+                            <div class="track">
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--filled"></div>
+                              <div class="dot dot--current"></div>
+                              <div class="dot"></div>
+                              <div class="dot"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Progress</span>
+                      <span class="instance">Dots Sizes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Xsmall dots -->
+<div class="progress-dots progress-dots--xsmall">
+  <div class="track">
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<!-- Small dots -->
+<div class="progress-dots progress-dots--small">
+  <div class="track">
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<!-- Base dots (equivalent to default, useful for responsive) -->
+<div class="progress-dots progress-dots--base">
+  <div class="track">
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<!-- Regular dots -->
+<div class="progress-dots">
+  <div class="track">
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<!-- Large dots -->
+<div class="progress-dots progress-dots--large">
+  <div class="track">
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--filled"></div>
+    <div class="dot dot--current"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div> 

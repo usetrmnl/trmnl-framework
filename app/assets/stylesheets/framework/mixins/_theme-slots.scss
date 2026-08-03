@@ -1,0 +1,359 @@
+// ============================================
+// TRMNL Framework - Theme Slot Helpers
+// ============================================
+// Theme files should map component slots to framework tokens via these mixins.
+// This preserves the screen-mode rendering pipeline while allowing appearance remaps.
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:string';
+@use '../config/tokens' as tokens;
+@use 'border-levels';
+
+// How many chart-series slots the ramp publishes. The same constant emits the
+// slots and the --framework-chart-series-count var TRMNLPaint.ramp() and
+// series() read, so JS carries no ceiling of its own and there is nothing to
+// drift: raising this number lengthens the ramp everywhere at once.
+$chart-series-slots: 16;
+
+@mixin bg-slot($slot, $token, $fallback: transparent) {
+    --framework-slot-#{$slot}-bg-color: var(--bg-#{$token}-color, #{$fallback});
+    --framework-slot-#{$slot}-bg-image: var(--bg-#{$token}-image, none);
+}
+
+@mixin text-slot($slot, $token, $fallback: transparent, $clip-fallback: border-box) {
+    --framework-slot-#{$slot}-text-color: var(--text-#{$token}-color, #{$fallback});
+    --framework-slot-#{$slot}-text-image: var(--text-#{$token}-image, none);
+    --framework-slot-#{$slot}-text-clip: var(--text-#{$token}-clip, #{$clip-fallback});
+    --framework-slot-#{$slot}-text-under: var(--text-#{$token}-under, transparent);
+}
+
+// A level pointed at a slot, as the three background longhands its consumers
+// read. The theme layer comes first, the same order border-level-vars reads a
+// level in. A slot points at a level, so it has to follow that level wherever
+// the screen puts it: a theme that restates the level with utility-border-level
+// moves the table rails with it, exactly as the dark axis does by remapping the
+// art underneath them.
+//
+// No background-position and no renderer program: the two consumers (the table
+// head and body rails in components/_table.scss) place their line themselves
+// with `background-position: bottom left` and paint it with the longhands, so
+// both were published and read nowhere. A slot whose consumer runs the renderer
+// takes border-token-slot, which carries the eight-field program with it.
+@mixin border-level-slot($slot, $level, $dir: h) {
+    --framework-slot-#{$slot}-border-color: var(--theme-border-#{$level}-#{$dir}-color, var(--border-#{$level}-#{$dir}-color, transparent));
+    --framework-slot-#{$slot}-border-image: var(--theme-border-#{$level}-#{$dir}-image, var(--border-#{$level}-#{$dir}-image, none));
+    --framework-slot-#{$slot}-border-size: var(--theme-border-#{$level}-#{$dir}-size, var(--border-#{$level}-#{$dir}-size, auto));
+}
+
+// A border token is a dash or tile line with no renderer program of its own, so
+// the slot publishes the flat line the stroke chain resolves for that token.
+// That chain is the same mode-correct solid the bulk line remap below feeds into
+// the level art: preview hexes and dark remaps included.
+@mixin border-token-slot($slot, $token, $dir: h) {
+    --framework-slot-#{$slot}-border-color: var(--border-token-#{$token}-#{$dir}-color, var(--bg-#{$token}-solid, var(--bg-#{$token}-color, transparent)));
+    --framework-slot-#{$slot}-border-image: var(--border-token-#{$token}-#{$dir}-image, var(--bg-#{$token}-image, none));
+    --framework-slot-#{$slot}-border-size: var(--border-token-#{$token}-#{$dir}-size, var(--dither-bg-size, auto));
+    --framework-slot-#{$slot}-border-position: var(--border-token-#{$token}-#{$dir}-position, 0 0);
+    @include border-levels.border-render-solid('framework-slot-#{$slot}-border', var(--stroke-#{$token}-color, var(--#{$token})));
+}
+
+// Semantic full-stack helpers (preferred API)
+// $raw: true bypasses the paint pipeline (--bg-*-color / --text-*-color) and
+// references root palette vars (--black, --white, --gray-*) directly. Use in
+// dark-mode overrides where the semantic layer already expresses inverted intent
+// and must not be double-inverted by the paint layer's dark-mode remap.
+@mixin semantic-bg($semantic, $token, $fallback: transparent, $raw: false) {
+    @if $raw {
+        --framework-semantic-#{$semantic}-bg-color: var(--#{$token}, #{$fallback});
+        --framework-semantic-#{$semantic}-bg-image: none;
+    } @else {
+        --framework-semantic-#{$semantic}-bg-color: var(--bg-#{$token}-color, #{$fallback});
+        --framework-semantic-#{$semantic}-bg-image: var(--bg-#{$token}-image, none);
+    }
+}
+
+// The -solid companion is the channel's ink for consumers that can only set
+// `color`: inherited text on .screen and .inverse, filled label glyphs, and
+// underline decorations. A tile token's -color longhand is transparent (the
+// clip machinery paints the tile), and a container cannot clip its background
+// to descendant glyphs, so those consumers read the stroke chain instead, the
+// one chain that resolves every token to a mode-correct solid on every rail.
+@mixin semantic-text($semantic, $token, $fallback: inherit, $clip-fallback: border-box, $raw: false) {
+    @if $raw {
+        --framework-semantic-#{$semantic}-text-color: var(--#{$token}, #{$fallback});
+        --framework-semantic-#{$semantic}-text-image: none;
+        --framework-semantic-#{$semantic}-text-clip: border-box;
+        --framework-semantic-#{$semantic}-text-under: transparent;
+        --framework-semantic-#{$semantic}-text-solid: var(--#{$token}, #{$fallback});
+    } @else {
+        --framework-semantic-#{$semantic}-text-color: var(--text-#{$token}-color, #{$fallback});
+        --framework-semantic-#{$semantic}-text-image: var(--text-#{$token}-image, none);
+        --framework-semantic-#{$semantic}-text-clip: var(--text-#{$token}-clip, #{$clip-fallback});
+        --framework-semantic-#{$semantic}-text-under: var(--text-#{$token}-under, transparent);
+        --framework-semantic-#{$semantic}-text-solid: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
+    }
+}
+
+// Icon channel: the paint for mask-recolored adaptive images
+// (img.image--adaptive). Optional: when unset, adaptive images follow the
+// screen's semantic text-primary paint, including Raw/Preview token changes.
+// Set it only when icons should diverge from the text color.
+@mixin semantic-icon($token, $fallback: currentColor, $raw: false) {
+    @if $raw {
+        --framework-semantic-icon-color: var(--#{$token}, #{$fallback});
+        --framework-semantic-icon-image: none;
+        --framework-semantic-icon-under: transparent;
+    } @else {
+        --framework-semantic-icon-color: var(--text-#{$token}-color, var(--#{$token}, #{$fallback}));
+        --framework-semantic-icon-image: var(--text-#{$token}-image, none);
+        --framework-semantic-icon-under: var(--text-#{$token}-under, transparent);
+    }
+}
+
+@mixin semantic-stroke($semantic, $token, $fallback: currentColor, $raw: false) {
+    @if $raw {
+        --framework-semantic-#{$semantic}-stroke-color: var(--#{$token}, #{$fallback});
+    } @else {
+        --framework-semantic-#{$semantic}-stroke-color: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
+    }
+}
+
+@mixin semantic-border($semantic, $token, $fallback: transparent, $raw: false) {
+    @if $raw {
+        --framework-semantic-#{$semantic}-border-color: var(--#{$token}, #{$fallback});
+        --framework-semantic-#{$semantic}-border-image: none;
+        --framework-semantic-#{$semantic}-border-size: auto;
+    } @else {
+        // Stroke chain first: border-color longhands can only paint solids,
+        // and the stroke chain is the mode-correct solid for every token
+        // (preview hexes, dark remaps, color-to-gray fallbacks included).
+        // Pattern-family blocks set --bg-*-solid to transparent, which is
+        // right for the background pair underneath an ink tile but erases a
+        // 1px `border` outright. The bg pair stays behind the stroke for the
+        // image/size fields and for tokens with no stroke entry.
+        --framework-semantic-#{$semantic}-border-color: var(--stroke-#{$token}-color, var(--bg-#{$token}-solid, var(--bg-#{$token}-color, #{$fallback})));
+        --framework-semantic-#{$semantic}-border-image: var(--bg-#{$token}-image, none);
+        --framework-semantic-#{$semantic}-border-size: var(--dither-bg-size, auto);
+    }
+}
+
+// Utility token remap helpers
+// Remap raw palette utility classes (bg--*, text--*, text-stroke--*) to resolve
+// as a different token. Set on .screen--theme-* so CSS inheritance cascades to
+// all descendants regardless of variant prefixes (size, orientation, bit-depth).
+@mixin utility-bg($token, $remap-to) {
+    --theme-bg-#{$token}-color: var(--bg-#{$remap-to}-color, transparent);
+    --theme-bg-#{$token}-image: var(--bg-#{$remap-to}-image, none);
+}
+
+@mixin utility-text($token, $remap-to) {
+    --theme-text-#{$token}-color: var(--text-#{$remap-to}-color, inherit);
+    --theme-text-#{$token}-image: var(--text-#{$remap-to}-image, none);
+    --theme-text-#{$token}-clip: var(--text-#{$remap-to}-clip, border-box);
+    --theme-text-#{$token}-under: var(--text-#{$remap-to}-under, transparent);
+}
+
+@mixin utility-stroke($token, $remap-to) {
+    --theme-stroke-#{$token}-color: var(--stroke-#{$remap-to}-color, currentColor);
+}
+
+// Repointing a level at a token repaints .border--* and .divider, so it must
+// repoint their renderer program too. The token line has no program of its own;
+// the stroke chain supplies the mode-correct solid, exactly as it does for the
+// bulk line remap below.
+@mixin utility-border-token($level, $dir, $token, $fallback: transparent) {
+    --theme-border-#{$level}-#{$dir}-color: var(--border-token-#{$token}-#{$dir}-color, var(--bg-#{$token}-solid, var(--bg-#{$token}-color, #{$fallback})));
+    --theme-border-#{$level}-#{$dir}-image: var(--border-token-#{$token}-#{$dir}-image, var(--bg-#{$token}-image, none));
+    --theme-border-#{$level}-#{$dir}-size: var(--border-token-#{$token}-#{$dir}-size, var(--dither-bg-size, auto));
+    --theme-border-#{$level}-#{$dir}-position: var(--border-token-#{$token}-#{$dir}-position, 0 0);
+    @include border-levels.border-render-solid('theme-border-#{$level}-#{$dir}', var(--stroke-#{$token}-color, var(--#{$token})));
+}
+
+// Repointing a level at another level: the target renders the source level's art,
+// field for field, exactly as border-level-slot forwards a level into a component
+// slot. Every level consumer reads the theme layer first, so one call moves
+// .border--{dir}-{level}, the step borders that collapse onto that level, the
+// divider variants and the component slots pointing at it.
+//
+// This is the handle the 2-bit rail needs. Its four tones are literal hexes in
+// the line data, with no token indirection the way the 4-bit family has, so the
+// only way to say "level 1 paints what level 7 paints" is to name the level.
+// $from-level is a level, never a step: a step keeps its own per-shade art on the
+// rails that publish one.
+//
+// Restating a level onto itself ($from-level == $level) is not a no-op: it also
+// says the level keeps the family's own line polarity, which is what the one
+// self-mirroring level needs when the rest of the rail swaps its two tones.
+// Forwarding another level's art carries that level's polarity along with it.
+@mixin utility-border-level($level, $dir, $from-level) {
+    --theme-border-#{$level}-#{$dir}-color: var(--border-#{$from-level}-#{$dir}-color, transparent);
+    --theme-border-#{$level}-#{$dir}-image: var(--border-#{$from-level}-#{$dir}-image, none);
+    --theme-border-#{$level}-#{$dir}-size: var(--border-#{$from-level}-#{$dir}-size, auto);
+    --theme-border-#{$level}-#{$dir}-position: var(--border-#{$from-level}-#{$dir}-position, 0 0);
+    @each $field, $fallback in border-levels.$border-render-fields {
+        --theme-border-#{$level}-#{$dir}-render-#{$field}: #{'var(--border-#{$from-level}-#{$dir}-render-#{$field}, #{$fallback})'};
+    }
+    @if $from-level == $level {
+        --theme-border-#{$level}-#{$dir}-line-dark: var(--border-line-dark, #000000);
+        --theme-border-#{$level}-#{$dir}-line-light: var(--border-line-light, #FFFFFF);
+    }
+}
+
+// Border remap: themes recolor the classic staggered patterns instead of
+// swapping their geometry. The rail keeps the exact unthemed pattern per
+// step/level. The base art's `dark` segments are always its ink positions:
+// dark-canvas themes paint them black; bright-canvas themes paint them white.
+// The `light` segments become the theme canvas hue in both cases. Reversing
+// those two assignments on a bright canvas complements every border pattern.
+// The stroke chain supplies mode-correct solids (preview hexes, dark remaps).
+@mixin utility-remap-border-grayscale($to-hue, $side: 'dark') {
+    @if $side == 'dark' {
+        --theme-border-line-dark: var(--stroke-black-color, var(--black));
+        --theme-border-line-light: var(--stroke-#{$to-hue}-color, var(--#{$to-hue}));
+    } @else {
+        --theme-border-line-dark: var(--stroke-white-color, var(--white));
+        --theme-border-line-light: var(--stroke-#{$to-hue}-color, var(--#{$to-hue}));
+    }
+}
+
+// 2:1 compression maps: pairs of extended gray steps map to single hue steps.
+// Dark side: maps into 10 to 40 (saturated darks). black stays, white goes to the base hue.
+// Bright side: maps into 45 to 75 (light tints). black goes to the base hue, white stays.
+$_compressed-dark: (
+    'gray-10': 10, 'gray-15': 10,
+    'gray-20': 15, 'gray-25': 15,
+    'gray-30': 20, 'gray-35': 20,
+    'gray-40': 25, 'gray-45': 25,
+    'gray-50': 30, 'gray-55': 30,
+    'gray-60': 35, 'gray-65': 35,
+    'gray-70': 40, 'gray-75': 40
+);
+
+$_compressed-bright: (
+    'gray-10': 45, 'gray-15': 45,
+    'gray-20': 50, 'gray-25': 50,
+    'gray-30': 55, 'gray-35': 55,
+    'gray-40': 60, 'gray-45': 60,
+    'gray-50': 65, 'gray-55': 65,
+    'gray-60': 70, 'gray-65': 70,
+    'gray-70': 75, 'gray-75': 75
+);
+
+// Bulk remap: all grayscale utility tokens go to a target hue.
+// Covers legacy shades (gray-1..gray-7), extended shades (gray-10..gray-75),
+// and black/white. Emits utility-bg, utility-text, and utility-stroke for each.
+//
+// $side: 'dark'  (default) compresses grays into 10 to 40 plus the base hue.
+//   black stays black, white goes to the base hue.
+//
+// $side: 'bright' compresses grays into 45 to 75.
+//   black goes to the base hue, white stays white.
+//
+// $side: 'linear' is a 1:1 step mapping (gray-10 to hue-10, gray-75 to hue-75).
+//   Uses the full hue ramp. white goes to the base hue.
+@mixin utility-remap-grayscale($to-hue, $side: 'dark') {
+    $_map: if($side == 'bright', $_compressed-bright, $_compressed-dark);
+
+    @each $name, $_ in tokens.$palette-shades-extended {
+        @if $name != 'black' and $name != 'white' {
+            @if $side == 'linear' {
+                $step: string.slice($name, 6);
+                @include utility-bg($name, '#{$to-hue}-#{$step}');
+                @include utility-text($name, '#{$to-hue}-#{$step}');
+                @include utility-stroke($name, '#{$to-hue}-#{$step}');
+            } @else {
+                $target-step: map.get($_map, $name);
+                @include utility-bg($name, '#{$to-hue}-#{$target-step}');
+                @include utility-text($name, '#{$to-hue}-#{$target-step}');
+                @include utility-stroke($name, '#{$to-hue}-#{$target-step}');
+            }
+        }
+    }
+
+    @each $legacy, $enhanced in tokens.$deprecated-to-enhanced-mapping {
+        @if $side == 'linear' {
+            $step: string.slice($enhanced, 6);
+            @include utility-bg($legacy, '#{$to-hue}-#{$step}');
+            @include utility-text($legacy, '#{$to-hue}-#{$step}');
+            @include utility-stroke($legacy, '#{$to-hue}-#{$step}');
+        } @else {
+            $target-step: map.get($_map, $enhanced);
+            @include utility-bg($legacy, '#{$to-hue}-#{$target-step}');
+            @include utility-text($legacy, '#{$to-hue}-#{$target-step}');
+            @include utility-stroke($legacy, '#{$to-hue}-#{$target-step}');
+        }
+    }
+
+    // Stroke exception: bg and text may collapse an extreme into the base hue,
+    // but the stroke channel is the outline and halo solid that text-stroke--*,
+    // image-stroke--*, and the border token lines read, and both compressed
+    // sides put the base hue on the canvas, where a canvas-colored outline
+    // would vanish. The remapped extreme's stroke lands on the nearest hue
+    // step instead and keeps its polarity: 45 under bright, 40 under dark,
+    // 75 under linear.
+    @if $side == 'bright' {
+        @include utility-bg('black', $to-hue);
+        @include utility-text('black', $to-hue);
+        @include utility-stroke('black', '#{$to-hue}-45');
+    } @else {
+        @include utility-bg('white', $to-hue);
+        @include utility-text('white', $to-hue);
+        $white-stroke: if($side == 'dark', '#{$to-hue}-40', '#{$to-hue}-75');
+        @include utility-stroke('white', $white-stroke);
+    }
+}
+
+// Chart series ramp: an ordered list of fill slots consumed by
+// TRMNLCharts.series(). $tokens runs from the highest-contrast tone against the
+// screen's canvas (index 0, used for the first/primary series) toward the
+// canvas tone (last index). Each slot aliases a token's own paint, so it
+// inherits per-mode dither tiles / solids and the dark remap for free. JS just
+// reads the resolved slot.
+//
+// The base ramp is the grayscale ladder (black to white); a theme overrides it
+// with a ramp anchored on its own ink so series stay legible on the themed
+// canvas, e.g. chart-series-ramp((white, red-70, red-55, ...)). Because a single
+// hue can only separate into a handful of distinguishable fills, order the most
+// distinct tones first; TRMNLCharts.series() spreads N series across the front
+// of the ramp.
+//
+// A ramp may also be categorical rather than graded: base/_screen-mode-vars.scss
+// binds one hue per slot on full-color screens, where a ladder of one tone is the
+// weaker way to tell series apart. The ordering rule still holds, since index 0
+// stays the ink and the slots run toward the canvas.
+// $span is the legible front of the ramp (how many slots TRMNLCharts.series()
+// spreads N series across), published as --framework-chart-series-span so JS
+// reads it instead of sniffing theme classes. Themes default to 6 (a single hue
+// separates into only a handful of distinguishable fills); the base grayscale
+// ramp passes $span: 11 (the near-full ladder is usable against a lightness
+// extreme) and the full-color ramp passes 7 (the ceiling on categorical fills a
+// reader can hold apart).
+// The ramp is always the full $chart-series-slots, so a theme's tail cannot
+// inherit the base grayscale: the base ramp binds all of them on `.screen`, the
+// same element a theme root binds to, and a shorter list would leave the rest
+// holding black..white on a screen with no grayscale in it. Slots past the last
+// token are cleared, and $span never points past it either.
+// The slot count rides with the slots as --framework-chart-series-count, so
+// TRMNLPaint.ramp() and series() walk the ramp CSS declared rather than a
+// number of their own.
+@mixin chart-series-ramp($tokens, $span: 6) {
+    $length: list.length($tokens);
+    @if $length > $chart-series-slots {
+        @error 'chart-series-ramp takes at most #{$chart-series-slots} tokens, got #{$length}.';
+    }
+    --framework-chart-series-count: #{$chart-series-slots};
+    --framework-chart-series-span: #{math.min($span, $length - 1)};
+    $i: 0;
+    @each $token in $tokens {
+        --framework-chart-series-#{$i}-color: var(--bg-#{$token}-color, transparent);
+        --framework-chart-series-#{$i}-image: var(--bg-#{$token}-image, none);
+        $i: $i + 1;
+    }
+    @while $i < $chart-series-slots {
+        --framework-chart-series-#{$i}-color: transparent;
+        --framework-chart-series-#{$i}-image: none;
+        $i: $i + 1;
+    }
+}

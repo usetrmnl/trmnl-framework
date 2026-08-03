@@ -1,0 +1,707 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :item %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:item) %>
+
+    <div class="space-y-16">
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Item Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            Items can be displayed in four variants: with meta and index, with meta only, with meta emphasis levels, or in a simple format.
+            Each variant provides different levels of visual hierarchy and information density.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'With Meta') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              This variant includes a meta section without an index, providing space for optional metadata while maintaining a clean appearance.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column">
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Code Review</span>
+                              <span class="description">Review pull requests for Project Beta</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">3:30 PM - 4:30 PM</span>
+                                <span class="label label--small label--underline">High Priority</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="column">
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Item</span>
+                      <span class="instance">With Meta</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="item">
+  <div class="meta"></div>
+  <div class="content">
+    <span class="title title--small">Team Meeting</span>
+    <span class="description">Weekly team sync-up</span>
+    <div class="flex gap--small">
+      <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+      <span class="label label--small label--underline">Confirmed</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'With Meta Emphasis') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Apply <code class="<%= framework_section_code_classes %>">item--emphasis-1</code>, <code class="<%= framework_section_code_classes %>">item--emphasis-2</code> or <code class="<%= framework_section_code_classes %>">item--emphasis-3</code> to progressively darken the meta bar and draw attention. Level&nbsp;1 is the default styling.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column">
+                          <div class="item item--emphasis-1">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item item--emphasis-2">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item item--emphasis-3">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Code Review</span>
+                              <span class="description">Review pull requests for Project Beta</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">3:30 PM - 4:30 PM</span>
+                                <span class="label label--small label--underline">High Priority</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="column">
+                          <div class="item item--emphasis-1">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item item--emphasis-2">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item item--emphasis-3">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Item</span>
+                      <span class="instance">Emphasis Levels</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="item item--emphasis-1">
+  <div class="meta"></div>
+  <div class="content">
+    <span class="title title--small">Team Meeting</span>
+    <span class="description">Weekly team sync-up</span>
+    <div class="flex gap--small">
+      <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+      <span class="label label--small label--underline">Confirmed</span>
+    </div>
+  </div>
+</div>
+
+<div class="item item--emphasis-2">
+  <div class="meta"></div>
+  <div class="content">
+    <span class="title title--small">Client Presentation</span>
+    <span class="description">Quarterly review with XYZ Corp</span>
+    <div class="flex gap--small">
+      <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+      <span class="label label--small label--underline">Tentative</span>
+    </div>
+  </div>
+</div>
+
+<div class="item item--emphasis-3">
+  <div class="meta"></div>
+  <div class="content">
+    <span class="title title--small">Project Deadline</span>
+    <span class="description">Submit final deliverables for Project Alpha</span>
+    <div class="flex gap--small">
+      <span class="label label--small label--underline">11:59 PM</span>
+      <span class="label label--small label--underline">Important</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'With Meta and Index') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The most detailed variant includes both a meta section and an index number, useful for ordered lists or when additional context is needed.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column">
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">1</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">2</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">3</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">4</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Code Review</span>
+                              <span class="description">Review pull requests for Project Beta</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">3:30 PM - 4:30 PM</span>
+                                <span class="label label--small label--underline">High Priority</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="column">
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">1</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">2</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta">
+                              <span class="index">3</span>
+                            </div>
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Item</span>
+                      <span class="instance">With Meta and Index</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="item">
+  <div class="meta">
+    <span class="index">1</span>
+  </div>
+  <div class="content">
+    <span class="title title--small">Team Meeting</span>
+    <span class="description">Weekly team sync-up</span>
+    <div class="flex gap--small">
+      <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+      <span class="label label--small label--underline">Confirmed</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Simple') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The simplest variant focuses purely on content, ideal for basic lists or when metadata isn't needed.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column">
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Code Review</span>
+                              <span class="description">Review pull requests for Project Beta</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">3:30 PM - 4:30 PM</span>
+                                <span class="label label--small label--underline">High Priority</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="column">
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Team Meeting</span>
+                              <span class="description">Weekly team sync-up</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+                                <span class="label label--small label--underline">Confirmed</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Client Presentation</span>
+                              <span class="description">Quarterly review with XYZ Corp</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">2:00 PM - 3:30 PM</span>
+                                <span class="label label--small label--underline">Tentative</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="content">
+                              <span class="title title--small">Project Deadline</span>
+                              <span class="description">Submit final deliverables for Project Alpha</span>
+                              <div class="flex gap--small">
+                                <span class="label label--small label--underline">11:59 PM</span>
+                                <span class="label label--small label--underline">Important</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Item</span>
+                      <span class="instance">Simple</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="item">
+  <div class="content">
+    <span class="title title--small">Team Meeting</span>
+    <span class="description">Weekly team sync-up</span>
+    <div class="flex gap--small">
+      <span class="label label--small label--underline">9:00 AM - 10:00 AM</span>
+      <span class="label label--small label--underline">Confirmed</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'With Icon') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add an <code class="<%= framework_section_code_classes %>">icon</code> div between meta and content to display an icon alongside the item.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="columns">
+                        <div class="column gap--medium">
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="icon">
+                              <%= image_tag plugin_image_path("weather/wi-thermometer.svg"), class: "w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" %>
+                            </div>
+                            <div class="content">
+                              <span class="value value--small">72°</span>
+                              <span class="label">Temperature</span>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="icon">
+                              <%= image_tag plugin_image_path("weather/wi-strong-wind.svg"), class: "w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" %>
+                            </div>
+                            <div class="content">
+                              <span class="value value--small">12 mph</span>
+                              <span class="label">Wind Speed</span>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="icon">
+                              <%= image_tag plugin_image_path("weather/wi-hot.svg"), class: "w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" %>
+                            </div>
+                            <div class="content">
+                              <span class="value value--small">6</span>
+                              <span class="label">UV Index</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="column gap--medium">
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="icon">
+                              <%= image_tag plugin_image_path("weather/wi-day-sunny.svg"), class: "w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" %>
+                            </div>
+                            <div class="content">
+                              <span class="value value--small">Sunny</span>
+                              <span class="label">Today</span>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="icon">
+                              <%= image_tag plugin_image_path("weather/wi-day-cloudy.svg"), class: "w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" %>
+                            </div>
+                            <div class="content">
+                              <span class="value value--small">Partly Cloudy</span>
+                              <span class="label">Tomorrow</span>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="icon">
+                              <%= image_tag plugin_image_path("weather/wi-rain.svg"), class: "w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" %>
+                            </div>
+                            <div class="content">
+                              <span class="value value--small">Rainy</span>
+                              <span class="label">Wednesday</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Item</span>
+                      <span class="instance">With Icon</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout">
+  <div class="item">
+    <div class="meta"></div>
+    <div class="icon">
+      <img src="path/to/icon.svg" class="w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" />
+    </div>
+    <div class="content">
+      <span class="value value--small">72°</span>
+      <span class="label">Temperature</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'List component (deprecated)') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">.list</code> class is deprecated. Prefer a column component, flex column, grid column, or a layout wrapper with a <%= render DocsRef.new(page: :gap) %> utility instead. The <%= render DocsRef.new(page: :overflow) %> engine still supports legacy <code class="<%= framework_section_code_classes %>">.list</code> for backward compatibility.
+          </p>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

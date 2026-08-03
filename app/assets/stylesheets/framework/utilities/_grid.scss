@@ -1,0 +1,259 @@
+// ============================================
+// TRMNL Framework - Grid Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+@use '../config/tokens' as vars;
+
+// Base grid container. Named here rather than written inline because the
+// bit-depth and dark gates of the same class are emitted from _visibility.scss
+// and have to carry the identical body.
+// grid-auto-rows: min-content would make rows size to content, keeping Safari
+// from using min-height on children for row height; align-items: start would
+// keep grid items from stretching to match the tallest item. Both stay off.
+$grid-base-styles: (
+    display: grid,
+    gap: var(--gap),
+    '--tn-gap-default': var(--gap),
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)),
+    width: 100%
+);
+
+@include mixins.trmnl-namespace {
+    .grid {
+        // The same gate set _visibility.scss publishes `display: grid` under, so
+        // `hidden 2bit:grid` and `dark:grid` get the template, the gap and the
+        // width that `md:grid` gets instead of a display switch alone. The
+        // modifiers below stay after it, so grid--cols-2 still wins the base
+        // gate the way it always has.
+        @include responsive.with-dark-all-variants {
+            @include mixins.apply-styles($grid-base-styles);
+        }
+
+        // No gap modifier
+        &--no-gap {
+            @include responsive.with-size-and-orientation-variants {
+                gap: 0;
+            }
+        }
+
+        // Auto-fit wrapping grid with configurable minimum track size
+        // Usage:
+        //   .grid grid--wrap           -> enables wrapping with default min track
+        //   .grid grid--wrap grid--min-32 -> sets min track size via tokens (e.g., 128px)
+        &--wrap {
+            @include responsive.with-size-and-orientation-variants {
+                grid-template-columns: repeat(auto-fit, minmax(var(--grid-col-min, calc(160px * var(--content-scale))), 1fr));
+            }
+        }
+
+        // Token-based minimum track size utilities
+        @each $size, $value in vars.$size-scale {
+            &--min-#{$size} {
+                @include responsive.with-size-and-orientation-variants {
+                    --grid-col-min: #{vars.content-scaled($value)};
+                }
+            }
+        }
+        
+        // Explicit column definitions with equal widths
+        @for $i from 1 through 12 {
+            &--cols-#{$i} {
+                @include responsive.with-size-and-orientation-variants {
+                    grid-template-columns: repeat($i, minmax(0, 1fr));
+                }
+            }
+        }
+
+        // Column spans.
+        //
+        // The .grid parent is a context guard, not a weight: it rides :where()
+        // so a span rule weighs its own class and its gate, exactly what the
+        // matching display utility weighs. Written bare it weighed one class
+        // more, which put `display: flex` above `.hidden` in the same layer and
+        // made grid children unhideable: `class="col--span-6 hidden"` stayed
+        // visible, and every variant tier repeated the defeat one tier up.
+        // Equal weight hands the decision back to source order, which is the
+        // contract _visibility.scss states and the same :where() guard the grid
+        // child defaults below already use.
+        @for $i from 1 through 12 {
+            @at-root {
+                .trmnl :where(.grid) .col--span-#{$i} {
+                    grid-column: span $i;
+                    display: flex;
+                }
+            }
+        }
+
+        // Generate all variants for col--span with .grid parent preserved
+        // This ensures portrait:col--span-* and other variants work correctly within .grid containers
+        @for $i from 1 through 12 {
+            // Size variants (mobile-first)
+            @each $size in helpers.$size-hierarchy {
+                @each $screen-size in helpers.$size-hierarchy {
+                    @if helpers.is-size-active($size, $screen-size) {
+                        @at-root {
+                            .trmnl .screen--#{$screen-size} :where(.grid) .#{$size}\:col--span-#{$i} {
+                                grid-column: span $i;
+                                display: flex;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Orientation variants (portrait, landscape)
+            @each $orientation in helpers.$orientations {
+                @each $screen in helpers.orientation-screens($orientation) {
+                    @at-root {
+                        .trmnl #{$screen} :where(.grid) .#{$orientation}\:col--span-#{$i} {
+                            grid-column: span $i;
+                            display: flex;
+                        }
+                    }
+                }
+            }
+
+            // Combined size + orientation variants (mobile-first)
+            @each $size in helpers.$size-hierarchy {
+                @each $orientation in helpers.$orientations {
+                    @each $screen-size in helpers.$size-hierarchy {
+                        @if helpers.is-size-active($size, $screen-size) {
+                            @at-root {
+                                .trmnl .screen--#{$screen-size}#{helpers.orientation-suffix($orientation)} :where(.grid) .#{$size}\:#{$orientation}\:col--span-#{$i} {
+                                    grid-column: span $i;
+                                    display: flex;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // Responsive Grid Parent Variants
+        // ============================================
+        // When the grid parent itself has a responsive variant class (e.g., portrait:grid, sm:grid),
+        // we need additional selectors so nested child classes work correctly.
+        // Uses the DRY mixin from selector-helpers.
+        // The parent context stays weightless for the same reason the plain
+        // .grid parent does: it gates the parent's variant, not the child's, so
+        // `col--span-6 hidden` inside a `portrait:grid` has to resolve the way
+        // it resolves inside a plain `.grid`.
+        @for $i from 1 through 12 {
+            @include helpers.with-responsive-parent-child-variants(
+                'grid',
+                'col--span-#{$i}',
+                $neutral-parent-scope: true
+            ) {
+                grid-column: span $i;
+                display: flex;
+            }
+        }
+    }
+
+    // Low-specificity defaults for grid children. Uses :where() so explicit utility
+    // classes (w--min-*, h--min-*) can override. Grid items default to min-width: auto,
+    // which prevents shrinking below content size and breaks overflow/truncation.
+    :where(.grid) > * {
+        min-width: 0;
+    }
+    // min-height: 0 only when this grid is NOT the overflow target (see flexbox comment).
+    :where(.grid:not([data-overflow="true"])) > * {
+        min-height: 0;
+    }
+
+    .col {
+        @include responsive.with-size-and-orientation-variants {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 100%;
+            max-height: 100%;
+            width: 100%;
+        }
+
+        &--start {
+            @include responsive.with-size-and-orientation-variants {
+                justify-content: flex-start;
+            }
+        }
+
+        &--center {
+            @include responsive.with-size-and-orientation-variants {
+                justify-content: center;
+            }
+        }
+
+        &--end {
+            @include responsive.with-size-and-orientation-variants {
+                justify-content: flex-end;
+            }
+        }
+
+        // `.col.gap--auto` and `.col.gap--space-between` used to reset the
+        // column's vertical padding. Nothing in the bundle gives .col padding,
+        // and a padding utility outranks the pair anyway (Spacing is forwarded
+        // last), so all 24 rules were inert and are gone.
+    }
+
+    .row {
+        @include responsive.with-size-and-orientation-variants {
+            display: flex;
+            flex-direction: row;
+            // width: 100%; // TODO check if omitting this breaks anything
+            // min-width: 100%; // TODO check if omitting this breaks anything
+            // max-width: 100%; // TODO check if omitting this breaks anything
+            // align-items: flex-start; // Prevent children from stretching row height (fixes Safari min-height issue)
+            // height: fit-content; // Size row to content, not children's min-height
+        }
+
+        &--start {
+            @include responsive.with-size-and-orientation-variants {
+                justify-content: flex-start;
+            }
+        }
+
+        &--center {
+            @include responsive.with-size-and-orientation-variants {
+                justify-content: center;
+            }
+        }
+
+        &--end {
+            @include responsive.with-size-and-orientation-variants {
+                justify-content: flex-end;
+            }
+        }
+
+        // The .row twin of the .col pair above, and inert for the same reason.
+    }
+
+    // Constrain images in grid rows/columns to prevent Safari row height expansion
+    // Safari handles min-height on images differently than Chrome, causing grid rows
+    // to expand excessively. The row's height: fit-content prevents this, but we
+    // also ensure images don't overflow their containers.
+    //
+    // No variant emitter here. The subject is a tag, so there is no class to
+    // prefix, and the emitter used to publish the prefix on its own: five rules
+    // for `.sm\:`, `.md\:`, `.lg\:`, `.portrait\:` and `.landscape\:`, classes
+    // no author can write. The grid parent's own variants carry this body, from
+    // the parent-child emitter directly below.
+    .grid .row img,
+    .grid .col img {
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    // Image constraints for responsive grid parent variants
+    // Uses DRY mixin - generates selectors for .row img and .col img within responsive grid parents
+    @each $container in ('row', 'col') {
+        @include helpers.with-responsive-parent-child-variants('grid', '#{$container} img', $include-variant-children: false) {
+            max-height: 100%;
+            object-fit: contain;
+        }
+    }
+}

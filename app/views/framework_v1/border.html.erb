@@ -1,0 +1,104 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :border %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Border system creates the illusion of grayscale borders through carefully designed dither patterns. When rendered on 1-bit displays, these patterns create varying border intensities using alternating black and white pixels.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply borders using <code class="<%= framework_section_code_classes %>">border--h-{n}</code> for horizontal borders
+            and <code class="<%= framework_section_code_classes %>">border--v-{n}</code> for vertical borders,
+            where n ranges from 1 (lightest) to 7 (darkest).
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Horizontal Borders') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <% (1..7).each do |i| %>
+                        <div class="item border--h-<%= i %>">
+                          <span class="label mb-2"><%= i %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Horizontal Borders</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="border--h-1">Horizontal Border 1</div>
+<div class="border--h-2">Horizontal Border 2</div>
+<div class="border--h-3">Horizontal Border 3</div>
+<div class="border--h-4">Horizontal Border 4</div>
+<div class="border--h-5">Horizontal Border 5</div>
+<div class="border--h-6">Horizontal Border 6</div>
+<div class="border--h-7">Horizontal Border 7</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Vertical Borders') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <div class="grid grid--cols-7 h-full">
+                        <% (1..7).each do |i| %>
+                          <div class="h-full border--v-<%= i %> flex items-end justify-start">
+                            <span class="label ml-2"><%= i %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Vertical Borders</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="border--v-1">Vertical Border 1</div>
+<div class="border--v-2">Vertical Border 2</div>
+<div class="border--v-3">Vertical Border 3</div>
+<div class="border--v-4">Vertical Border 4</div>
+<div class="border--v-5">Vertical Border 5</div>
+<div class="border--v-6">Vertical Border 6</div>
+<div class="border--v-7">Vertical Border 7</div>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

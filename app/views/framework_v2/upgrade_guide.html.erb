@@ -1,0 +1,71 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :upgrade_guide %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Framework v2 builds on everything you've already created, enriching your work while keeping most of your existing logic functional. The only two areas that require your attention are borders and clamping, and both can be addressed with just a few quick changes.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Borders') %>
+          <p class="<%= framework_section_description_classes %>">Initially, the border utility was designed to work in a 1-bit space on white backgrounds.</p>
+        </div>
+        <p class="<%= framework_section_description_classes %>">
+          We’ve expanded it to adapt across 1, 2, and 4-bit spaces, covering the full grayscale spectrum and working on both light and dark backgrounds. Borders are now versatile and support a range of devices with different display capabilities.
+        </p>
+        <div class="<%= message_gray_classes %> max-w-[800px]">
+          <div class="flex items-center w-full">
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm leading-7">
+                Search your markup for a class name like <code class="<%= framework_section_code_classes %>">border--h-5</code> and re-evaluate the intensity using the updated <%= render DocsRef.new(page: :border) %> scale. You may choose a different level (e.g., <code class="<%= framework_section_code_classes %>">border--h-3</code>) to match the intended appearance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Clamping') %>
+          <p class="<%= framework_section_description_classes %>">Previously, <%= render DocsRef.new(page: :title) %>, <%= render DocsRef.new(page: :label) %>, and <%= render DocsRef.new(page: :description) %> were clamped to a single line by default.</p>
+        </div>
+        <p class="<%= framework_section_description_classes %>">
+          We’ve rebuilt the clamp engine in JavaScript at the DOM level, making it more robust and fully integrated with other modulation utilities like <%= render DocsRef.new(page: :overflow) %>. Clamping is no longer enforced automatically - the content is now displayed in its entirety by default. You decide whether clamping is needed and set sensible limits. The legacy <code class="<%= framework_section_code_classes %>">clamp--N</code> classes remain supported for compatibility, but the new <code class="<%= framework_section_code_classes %>">data-clamp</code> attribute is the preferred approach going forward.
+        </p>
+        <div class="<%= message_gray_classes %> max-w-[800px]">
+          <div class="flex items-center w-full">
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm leading-7">
+                Search your markup for parts like <code class="<%= framework_section_code_classes %>">&lt;span class=&quot;label&quot;&gt;</code> and add the clamping attribute <code class="<%= framework_section_code_classes %>">&lt;span class=&quot;label&quot; data-clamp=&quot;2&quot;&gt;</code> (or whichever clamp value fits your layout).
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Troubleshooting') %>
+          <p class="<%= framework_section_description_classes %>">
+            Framework v2 is also more precise than earlier versions, which may expose issues if your markup doesn't follow intended usage. If you run into problems beyond borders or clamping, check the <%= render DocsRef.new(page: :troubleshooting_guide) %> for solutions.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Next Steps') %>
+          <p class="<%= framework_section_description_classes %>">
+            Once you've updated borders and clamping, your project is ready for Framework v2. From here, head to the <%= render DocsRef.new(page: :enhancement_guide) %> to explore new utilities, components, and techniques for building even more capable interfaces.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<%# locals: component (display name), slots (array of slot names), example (@include line) %>
+<div class="space-y-4">
+  <%= framework_heading(4, "Theming the #{component}") %>
+  <p class="<%= framework_section_description_classes %>">
+    A theme can re-point the <%= component %>'s paint through its named
+    <%= 'slot'.pluralize(slots.size) %>
+    (<%= safe_join(slots.map { |slot| content_tag(:code, slot, class: framework_section_code_classes) }, ', ') %>)
+    without touching geometry. Slots take palette token references, so the surface still resolves through the
+    device mode at render time. See <%= render DocsRef.new(page: :theme_slots) %> for every slot and mixin.
+  </p>
+  <%= render CodeExampleComponent.new(demo_code: example, language: 'scss') %>
+</div>

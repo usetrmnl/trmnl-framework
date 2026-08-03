@@ -1,0 +1,141 @@
+// ============================================
+// TRMNL Framework - Black and Yellow Theme
+// ============================================
+// Engine-safe theme model:
+// - Sets role/slot token refs only.
+// - Does not override root palette vars (--white, --gray-*, --color-*).
+// - Does not override framework-owned paint vars (--bg-*, --text-*, --border-*).
+//
+// Standalone theme file that compiles to its own CSS file.
+// Usage: <link rel="stylesheet" href="black-and-yellow-theme.css">
+// Apply: <div class="screen screen--theme-black-and-yellow">
+
+@use '../config/layers' as layers;
+@use '../mixins/theme-slots' as theme-slots;
+
+// Emit the framework's layer order before the theme's own layer, so the theme
+// lands after tn--base whichever stylesheet the browser parses first.
+@include layers.order;
+
+@layer tn--themes {
+    // Safe theme API: semantic channel helpers + slot token refs only.
+    .trmnl .screen--theme-black-and-yellow {
+        // Semantic full-stack refs
+        @include theme-slots.semantic-bg('canvas', 'yellow');
+        @include theme-slots.semantic-bg('surface', 'yellow');
+        @include theme-slots.semantic-bg('backdrop', 'yellow-15');
+        @include theme-slots.semantic-bg('fill-strong', 'black');
+        @include theme-slots.semantic-bg('fill-muted', 'yellow-60');
+        @include theme-slots.semantic-bg('fill-soft', 'yellow-70');
+        @include theme-slots.semantic-text('text-primary', 'black');
+        @include theme-slots.semantic-text('text-secondary', 'yellow-30');
+        @include theme-slots.semantic-text('text-inverse', 'yellow-75');
+        // Stroke-contrast tracks the canvas hue (default model: white canvas, white stroke).
+        @include theme-slots.semantic-stroke('stroke-contrast', 'yellow');
+        @include theme-slots.semantic-border('border-strong', 'black');
+        // Muted borders follow this theme's black ink onto the dark side of
+        // the canvas; a lighter-than-canvas tint (yellow-65) washed out the
+        // progress pill outline on rich color modes.
+        @include theme-slots.semantic-border('border-muted', 'yellow-30');
+
+        // Slot token remaps (component paint intent)
+        @include theme-slots.bg-slot('item-meta', 'yellow-40');
+        @include theme-slots.bg-slot('item-meta-emphasis-2', 'yellow-30');
+        @include theme-slots.bg-slot('item-meta-emphasis-3', 'yellow-20');
+        @include theme-slots.bg-slot('title-bar', 'yellow-40');
+        @include theme-slots.bg-slot('screen-backdrop', 'yellow-15');
+        // This theme's ink is black, so progress paint must sit on the dark
+        // side of the mid-brightness yellow canvas: a lighter-than-canvas
+        // track reads as a glowing pill. The track lands just below the
+        // canvas (mirroring the default white canvas / gray-70 track); fill
+        // and emphasis steps run darker.
+        @include theme-slots.bg-slot('progress-track', 'yellow-35');
+        @include theme-slots.bg-slot('progress-fill', 'yellow-20');
+        @include theme-slots.bg-slot('progress-fill-emphasis-2', 'yellow-15');
+        @include theme-slots.bg-slot('progress-fill-emphasis-3', 'yellow-10');
+        @include theme-slots.bg-slot('progress-dot', 'yellow-35');
+        @include theme-slots.bg-slot('progress-dot-current', 'yellow-20');
+        @include theme-slots.bg-slot('table-meta', 'yellow-55');
+        @include theme-slots.bg-slot('table-meta-device', 'yellow-65');
+        @include theme-slots.text-slot('label-gray', 'yellow-40');
+        // The marker box: this theme's black ink as the field, with the same
+        // yellow-75 on it that text-inverse carries, so filled labels and chips
+        // read alike on the yellow canvas.
+        @include theme-slots.bg-slot('chip', 'black');
+        @include theme-slots.text-slot('chip', 'yellow-75');
+        // Border levels anchor level 4 to the base hue (yellow-on-yellow on
+        // this canvas), so the underline needs its own contrasting token.
+        @include theme-slots.border-token-slot('label-underline', 'yellow-30');
+
+        // Utility palette remaps (all grays + white → yellow)
+        @include theme-slots.utility-remap-grayscale('yellow');
+        @include theme-slots.utility-remap-border-grayscale('yellow', $side: 'dark');
+
+        // Chart series ramp anchored on the black ink: series run from black
+        // through the dark-yellow tints toward the yellow canvas, so they stay
+        // legible on this canvas instead of washing out into it the way the raw
+        // grayscale ramp (white → canvas) would.
+        @include theme-slots.chart-series-ramp((black, yellow-10, yellow-15, yellow-20, yellow-25, yellow-30, yellow-35, yellow-40, yellow-45, yellow-50, yellow-55, yellow-60, yellow-65, yellow-70, yellow-75, yellow));
+    }
+
+    // An explicit inverse subtree swaps this theme's yellow canvas and black
+    // ink: black ground, yellow ink. Tokens are literal: the framework leaves
+    // the screen's own paint rail under a themed inverse subtree, so each one
+    // resolves exactly as it does on the screen root, dither tiles and gray
+    // fallbacks included.
+    .trmnl .screen--theme-black-and-yellow .inverse {
+        @include theme-slots.semantic-bg('canvas', 'black');
+        @include theme-slots.semantic-bg('surface', 'black');
+        @include theme-slots.semantic-bg('backdrop', 'yellow-15');
+        @include theme-slots.semantic-bg('fill-strong', 'yellow');
+        @include theme-slots.semantic-bg('fill-muted', 'yellow-30');
+        @include theme-slots.semantic-bg('fill-soft', 'yellow-20');
+        @include theme-slots.semantic-text('text-primary', 'yellow');
+        // The same token as the screen block on purpose: yellow-30 sits between
+        // black and the yellow ink from either side, so it reads dimmer than
+        // primary on both grounds.
+        @include theme-slots.semantic-text('text-secondary', 'yellow-30');
+        @include theme-slots.semantic-text('text-inverse', 'black');
+        // Stroke-contrast tracks the canvas, which is black on this ground.
+        @include theme-slots.semantic-stroke('stroke-contrast', 'black');
+        @include theme-slots.semantic-border('border-strong', 'yellow');
+        @include theme-slots.semantic-border('border-muted', 'yellow-30');
+
+        // Component slots sit on the dark side of the scale: dark,
+        // yellow-forward fields with the same near-canvas subtlety on the
+        // black ground that the screen block's yellow-40 accents have on
+        // yellow. Emphasis steps run lighter, toward the ink.
+        @include theme-slots.bg-slot('item-meta', 'yellow-25');
+        @include theme-slots.bg-slot('item-meta-emphasis-2', 'yellow-30');
+        @include theme-slots.bg-slot('item-meta-emphasis-3', 'yellow-35');
+        @include theme-slots.bg-slot('title-bar', 'yellow-30');
+        @include theme-slots.bg-slot('screen-backdrop', 'yellow-15');
+        @include theme-slots.bg-slot('progress-track', 'yellow-25');
+        @include theme-slots.bg-slot('progress-fill', 'yellow-30');
+        @include theme-slots.bg-slot('progress-fill-emphasis-2', 'yellow-35');
+        @include theme-slots.bg-slot('progress-fill-emphasis-3', 'yellow-40');
+        @include theme-slots.bg-slot('progress-dot', 'yellow-25');
+        @include theme-slots.bg-slot('progress-dot-current', 'yellow-35');
+        @include theme-slots.bg-slot('table-meta', 'yellow-30');
+        @include theme-slots.bg-slot('table-meta-device', 'yellow-20');
+        // A step toward the black ground from text-secondary (yellow-30), the
+        // grayed-out distance the screen block keeps toward its yellow canvas.
+        @include theme-slots.text-slot('label-gray', 'yellow-20');
+        // On this ground the ink is yellow, so the marker box flips with it: a
+        // yellow field with black text, the same swap the black background
+        // utility takes a few lines below.
+        @include theme-slots.bg-slot('chip', 'yellow');
+        @include theme-slots.text-slot('chip', 'black');
+        // The underline is the contrasting accent: light on the black ground,
+        // mirroring the screen block's dark yellow-30 on yellow.
+        @include theme-slots.border-token-slot('label-underline', 'yellow-55');
+
+        @include theme-slots.utility-remap-grayscale('yellow');
+        // Filled labels use the black background utility. In inverse contexts
+        // that surface is theme ink, so keep it yellow with black label text.
+        @include theme-slots.utility-bg('black', 'yellow');
+        @include theme-slots.utility-remap-border-grayscale('yellow', $side: 'dark');
+        // Ink first, then the light tints descending toward the black ground.
+        @include theme-slots.chart-series-ramp((yellow, yellow-75, yellow-70, yellow-65, yellow-60, yellow-55, yellow-50, yellow-45, yellow-40, yellow-35, yellow-30, yellow-25, yellow-20, yellow-15, yellow-10, black));
+    }
+}

@@ -1,0 +1,58 @@
+// ============================================
+// TRMNL Framework - Image Component
+// ============================================
+
+@use '../mixins' as mixins;
+
+@include mixins.trmnl-namespace {
+    img.image {
+        &.image--small {
+            max-width: calc(80px * var(--content-scale));
+        }
+
+        &.image--xsmall {
+            max-width: calc(40px * var(--content-scale));
+        }
+
+        // Object-fit options for aspect ratio handling
+        &.image--fill {
+            object-fit: fill;
+        }
+
+        &.image--contain {
+            object-fit: contain;
+        }
+
+        &.image--cover {
+            object-fit: cover;
+        }
+    }
+
+    // Adaptive images: repaint a silhouette icon in the screen's icon paint.
+    // The icon's alpha channel becomes the shape (mask), background-color
+    // plus background-image paint it, and object-position pushes the source
+    // pixels out of the content box (replaced content clips to it, so only the
+    // masked paint shows). Rendered paint follows the semantic icon channel,
+    // which defaults to semantic text-primary, so Raw/Preview, bit-depth and
+    // themes are resolved once by CSS before the mask is applied.
+    //
+    // Armed by the data-adaptive marker + --framework-icon-src, normally set
+    // by the plugins.js runtime (CSS cannot read an img's own src). Without
+    // JS the class is inert and the original image renders. Both custom
+    // properties are public API: the runtime writes them as inline-style
+    // literals, so the minifier must not rename them.
+    img.image--adaptive[data-adaptive] {
+        background-color: var(--framework-semantic-icon-color, var(--framework-semantic-text-primary-text-color, currentColor));
+        background-image:
+            var(--framework-semantic-icon-image, none),
+            linear-gradient(
+                var(--framework-semantic-icon-under, transparent),
+                var(--framework-semantic-icon-under, transparent)
+            );
+        background-repeat: repeat, repeat;
+        background-size: var(--dither-bg-size, auto), auto;
+        -webkit-mask: var(--framework-icon-src) center / contain no-repeat;
+        mask: var(--framework-icon-src) center / contain no-repeat;
+        object-position: -9999px 0;
+    }
+}

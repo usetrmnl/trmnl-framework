@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Docker Compose wrapper: supports both `docker compose` (plugin) and `docker-compose` (standalone).
+set -euo pipefail
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "error: docker is not installed or not on PATH" >&2
+  echo "Install Docker Desktop: https://docs.docker.com/desktop/" >&2
+  exit 1
+fi
+
+if ! docker info >/dev/null 2>&1; then
+  echo "error: Docker daemon is not running (cannot connect to /var/run/docker.sock)" >&2
+  echo "Start Docker Desktop and wait until it reports Running, then retry." >&2
+  echo "If you use Colima instead: colima start" >&2
+  exit 1
+fi
+
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+if docker buildx version >/dev/null 2>&1; then
+  export DOCKER_BUILDKIT=1
+  export COMPOSE_DOCKER_CLI_BUILD=1
+fi
+
+if docker compose version >/dev/null 2>&1; then
+  exec docker compose "$@"
+fi
+
+if command -v docker-compose >/dev/null 2>&1; then
+  exec docker-compose "$@"
+fi
+
+echo "error: neither 'docker compose' nor 'docker-compose' is available" >&2
+echo "Install Docker Desktop: https://docs.docker.com/desktop/" >&2
+exit 1

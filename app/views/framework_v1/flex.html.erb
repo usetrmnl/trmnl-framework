@@ -1,0 +1,643 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :flex %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Flex system provides utility classes for creating flexible layouts using Flexbox.
+      It supports both row and column directions with various alignment, centering, and stretching options.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Flex system provides two fundamental ways to organize content: horizontal (row) and vertical (column) arrangements.
+            These base structures can be combined with alignment and stretch modifiers for complex layouts.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Row Direction') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">flex flex--row</code> to create a horizontal layout:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="flex flex--row border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Item 1</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Item 2</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Item 3</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Row Direction</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--row">
+  {{ Item 1 }}
+  {{ Item 2 }}
+  {{ Item 3 }}
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Direction') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">flex flex--col</code> to create a vertical layout:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--row gap">
+                    <div class="flex flex--col border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Item 1</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Item 2</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Item 3</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Column Direction</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col">
+  {{ Item 1 }}
+  {{ Item 2 }}
+  {{ Item 3 }}
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Alignment Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Once you've chosen a base direction, you can apply alignment modifiers to control how items are positioned
+            within their container. The system provides directional alignment (left/right/top/bottom) and centering options.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Row Horizontal Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For row layouts, use <code class="<%= framework_section_code_classes %>">flex--left</code>,
+              <code class="<%= framework_section_code_classes %>">flex--center-x</code>, or
+              <code class="<%= framework_section_code_classes %>">flex--right</code> to control horizontal alignment:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--stretch gap">
+                    <div class="flex flex--row flex--left border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label">Left</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                    </div>
+                    <div class="flex flex--row flex--center-x border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label">Center X</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                    </div>
+                    <div class="flex flex--row flex--right border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label">Right</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Row Horizontal Alignment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--row flex--left">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--row flex--center-x">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--row flex--right">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Row Vertical Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For row layouts, use <code class="<%= framework_section_code_classes %>">flex--top</code>,
+              <code class="<%= framework_section_code_classes %>">flex--center-y</code>, or
+              <code class="<%= framework_section_code_classes %>">flex--bottom</code> to control vertical alignment:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--stretch gap">
+                    <div class="flex flex--row flex--top border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label">Top</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                    </div>
+                    <div class="flex flex--row flex--center-y border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label">Center Y</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                    </div>
+                    <div class="flex flex--row flex--bottom border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label">Bottom</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 text-center w-28 h-12"><span class="label"></span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Row Vertical Alignment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--row flex--top">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--row flex--center-y">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--row flex--bottom">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Horizontal Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For column layouts, use <code class="<%= framework_section_code_classes %>">flex--left</code>,
+              <code class="<%= framework_section_code_classes %>">flex--center-x</code>, or
+              <code class="<%= framework_section_code_classes %>">flex--right</code> to control horizontal alignment:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--row layout--stretch gap">
+                    <div class="flex flex--col flex--left border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"><span class="label text--center">Left</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                    </div>
+                    <div class="flex flex--col flex--center-x border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"><span class="label text--center">Center X</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                    </div>
+                    <div class="flex flex--col flex--right border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"><span class="label text--center">Right</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Column Horizontal Alignment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col flex--left">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--col flex--center-x">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--col flex--right">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Vertical Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For column layouts, use <code class="<%= framework_section_code_classes %>">flex--top</code>,
+              <code class="<%= framework_section_code_classes %>">flex--center-y</code>, or
+              <code class="<%= framework_section_code_classes %>">flex--bottom</code> to control vertical alignment:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--row layout--stretch gap">
+                    <div class="flex flex--col flex--top border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"><span class="label text--center">Top</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                    </div>
+                    <div class="flex flex--col flex--center-y border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"><span class="label text--center">Center Y</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                    </div>
+                    <div class="flex flex--col flex--bottom border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"></div>
+                      <div class="p-4 rounded-md bg-gray-100 w--36 h--12"><span class="label text--center">Bottom</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Column Vertical Alignment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col flex--top">
+  {{ Item }}
+</div>
+
+<div class="flex flex--col flex--center">
+  {{ Item }}
+</div>
+
+<div class="flex flex--col flex--bottom">
+  {{ Item }}
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Stretch Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Flex system provides both container-level and individual item stretch controls. Container modifiers affect all children,
+            while item classes only affect the specific element they're applied to.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Container Stretch') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">flex--stretch</code>,
+              <code class="<%= framework_section_code_classes %>">flex--stretch-x</code>, or
+              <code class="<%= framework_section_code_classes %>">flex--stretch-y</code> to control how children fill the container:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="flex flex--row flex--stretch border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full h-36">
+                      <div class="flex p-4 rounded-md bg-gray-100"><span class="label"></span></div>
+                      <div class="flex p-4 rounded-md bg-gray-100 justify-center items-center"><span class="label">Stretch All</span></div>
+                      <div class="flex p-4 rounded-md bg-gray-100"><span class="label"></span></div>
+                    </div>
+                    <div class="flex flex--row flex--stretch-x border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full h-36">
+                      <div class="flex p-4 rounded-md bg-gray-100 h-12"><span class="label"></span></div>
+                      <div class="flex p-4 rounded-md bg-gray-100 h-12 justify-center items-center"><span class="label">Stretch X</span></div>
+                      <div class="flex p-4 rounded-md bg-gray-100 h-12"><span class="label"></span></div>
+                    </div>
+                    <div class="flex flex--row flex--stretch-y border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full h-36">
+                      <div class="flex p-4 rounded-md bg-gray-100 w-32"><span class="label"></span></div>
+                      <div class="flex p-4 rounded-md bg-gray-100 w-32 justify-center items-center"><span class="label">Stretch Y</span></div>
+                      <div class="flex p-4 rounded-md bg-gray-100 w-32"><span class="label"></span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Container Stretch</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--row flex--stretch">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--row flex--stretch-x">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>
+
+<div class="flex flex--row flex--stretch-y">
+  {{ Item }}
+  {{ Item }}
+  {{ Item }}
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Individual Item Stretch (Row)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">stretch</code>,
+              <code class="<%= framework_section_code_classes %>">stretch-x</code>, or
+              <code class="<%= framework_section_code_classes %>">stretch-y</code> on individual items in a row layout:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="flex flex--row border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full h-36">
+                      <div class="p-4 rounded-md bg-gray-100 stretch"><span class="label">Stretch</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Normal</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch"><span class="label">Stretch</span></div>
+                    </div>
+                    <div class="flex flex--row border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full h-36">
+                      <div class="p-4 rounded-md bg-gray-100 stretch-x"><span class="label">Stretch X</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Normal</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch-x"><span class="label">Stretch X</span></div>
+                    </div>
+                    <div class="flex flex--row border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full h-36">
+                      <div class="p-4 rounded-md bg-gray-100 stretch-y"><span class="label">Stretch Y</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Normal</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch-y"><span class="label">Stretch Y</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Item Stretch (Row)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--row">
+  <div class="stretch">Stretches in cross-axis</div>
+  <div>Normal item</div>
+  <div class="stretch">Stretches in cross-axis</div>
+</div>
+
+<div class="flex flex--row">
+  <div class="stretch-x">Stretches horizontally</div>
+  <div>Normal item</div>
+  <div class="stretch-x">Stretches horizontally</div>
+</div>
+
+<div class="flex flex--row">
+  <div class="stretch-y">Stretches vertically</div>
+  <div>Normal item</div>
+  <div class="stretch-y">Stretches vertically</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Individual Item Stretch (Column)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">stretch</code>,
+              <code class="<%= framework_section_code_classes %>">stretch-x</code>, or
+              <code class="<%= framework_section_code_classes %>">stretch-y</code> on individual items in a column layout:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--row layout--stretch gap">
+                    <div class="flex flex--col border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 stretch"><span class="label">Stretch</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Normal</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch"><span class="label">Stretch</span></div>
+                    </div>
+                    <div class="flex flex--col border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 stretch-x"><span class="label">Stretch X</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Normal</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch-x"><span class="label">Stretch X</span></div>
+                    </div>
+                    <div class="flex flex--col border border-2 border-gray-300 border-dashed p-4 rounded-xl">
+                      <div class="p-4 rounded-md bg-gray-100 stretch-y"><span class="label">Stretch Y</span></div>
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Normal</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch-y"><span class="label">Stretch Y</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Item Stretch (Column)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col">
+  <div class="stretch">Stretches in cross-axis</div>
+  <div>Normal item</div>
+  <div class="stretch">Stretches in cross-axis</div>
+</div>
+
+<div class="flex flex--col">
+  <div class="stretch-x">Stretches horizontally</div>
+  <div>Normal item</div>
+  <div class="stretch-x">Stretches horizontally</div>
+</div>
+
+<div class="flex flex--col">
+  <div class="stretch-y">Stretches vertically</div>
+  <div>Normal item</div>
+  <div class="stretch-y">Stretches vertically</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Preventing Item Shrinkage') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">no-shrink</code> on flex children to prevent them from shrinking
+              when other items try to take up more space:
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <!-- Without no-shrink -->
+                    <div class="flex flex--row border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full">
+                      <div class="p-4 rounded-md bg-gray-100"><span class="label">Can Shrink</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch"><span class="label">Stretching Content That Pushes Others</span></div>
+                    </div>
+                    <!-- With no-shrink -->
+                    <div class="flex flex--row border border-2 border-gray-300 border-dashed p-4 rounded-xl w-full">
+                      <div class="p-4 rounded-md bg-gray-100 no-shrink"><span class="label">Won't Shrink</span></div>
+                      <div class="p-4 rounded-md bg-gray-100 stretch"><span class="label">Stretching Content That Pushes Others</span></div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Flex</span>
+                    <span class="instance">Prevent Shrinking</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--row">
+  <div class="no-shrink">Maintains its width</div>
+  <div class="stretch">Stretches but won\'t squish the no-shrink item</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

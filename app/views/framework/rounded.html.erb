@@ -1,0 +1,427 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :rounded %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:rounded) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            The rounded system includes predefined base sizes and arbitrary pixel values. These standardized radii
+            help maintain consistent corner rounding across your application's components.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Base') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The base <code class="<%= framework_section_code_classes %>">rounded</code> class without size modifiers
+              and the <code class="<%= framework_section_code_classes %>">rounded--base</code> class both produce the same visual result,
+              providing the standard border radius (10px). Use <code class="<%= framework_section_code_classes %>">rounded--base</code> when you need
+              to explicitly set the base size in responsive contexts. See the <%= link_to 'Responsive Rounded', '#responsive-rounded', class: 'hover:underline' %> section for examples.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap rounded">
+                      <div class="flex flex--col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 stretch">
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--none stretch">
+                            <span class="label">rounded--none</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--xsmall stretch">
+                            <span class="label">rounded--xsmall</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--small stretch">
+                            <span class="label">rounded--small</span>
+                          </div>
+                        </div>
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded stretch">
+                            <span class="label">rounded</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--medium stretch">
+                            <span class="label">rounded--medium</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--large stretch">
+                            <span class="label">rounded--large</span>
+                          </div>
+                        </div>
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--xlarge stretch">
+                            <span class="label">rounded--xlarge</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--xxlarge stretch">
+                            <span class="label">rounded--xxlarge</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--full stretch">
+                            <span class="label">rounded--full</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Predefined Rounded</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Available rounded sizes from sharp to pill -->
+<div class="rounded--none">...</div>     <!-- 0px -->
+<div class="rounded--xsmall">...</div>   <!-- 5px -->
+<div class="rounded--small">...</div>    <!-- 7px -->
+<div class="rounded">...</div>           <!-- 10px (default) -->
+<div class="rounded--base">...</div>     <!-- 10px (explicit base) -->
+<div class="rounded--medium">...</div>   <!-- 15px -->
+<div class="rounded--large">...</div>    <!-- 20px -->
+<div class="rounded--xlarge">...</div>   <!-- 25px -->
+<div class="rounded--xxlarge">...</div>  <!-- 30px -->
+<div class="rounded--full">...</div>     <!-- 9999px (pill shape) -->
+
+<!-- Or using the base modifier -->
+<div class="rounded--base">...</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Arbitrary') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">rounded--[Npx]</code> syntax to specify
+              exact pixel values from <strong>0px to 50px</strong>. This rounds all four corners and does not support responsive variants.
+              Corner-specific utilities take the named sizes only.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap rounded">
+                      <div class="flex flex--col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 stretch">
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--[0px] stretch">
+                            <span class="label">rounded--[0px]</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--[10px] stretch">
+                            <span class="label">rounded--[10px]</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--[30px] stretch">
+                            <span class="label">rounded--[30px]</span>
+                          </div>
+                        </div>
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--[20px] stretch">
+                            <span class="label">rounded--[20px]</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--[40px] stretch">
+                            <span class="label">rounded--[40px]</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--[50px] stretch">
+                            <span class="label">rounded--[50px]</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Arbitrary Pixel Rounded</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Custom rounded values from 0px to 50px (no responsive support) -->
+<div class="rounded--[0px]">...</div>
+<div class="rounded--[10px]">...</div>
+<div class="rounded--[20px]">...</div>
+<div class="rounded--[30px]">...</div>
+<div class="rounded--[40px]">...</div>
+<div class="rounded--[50px]">...</div>
+
+<!-- Corner-specific utilities take the named sizes -->
+<div class="rounded-t--large">...</div>'
+            ) %>
+          </div>
+
+          <div class="<%= message_sage_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  Arbitrary rounded values using the <code class="font-mono">rounded--[Npx]</code> syntax do not support responsive variants. Use predefined rounded classes if you need responsive behavior.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Corner-Specific Rounding') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply border radius to specific corners or sides of an element. This allows for more complex shapes
+            and asymmetric designs while maintaining consistency.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Individual Corners') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Target specific corners with <code class="<%= framework_section_code_classes %>">rounded-{corner}</code>, where
+              corner is tl (top-left), tr (top-right), br (bottom-right), or bl (bottom-left). Add a size with a second
+              double dash: <code class="<%= framework_section_code_classes %>">rounded-tl--large</code>.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              Every corner takes the full size scale, the same one the all-corners class uses: bare (base),
+              <code class="<%= framework_section_code_classes %>">--base</code>,
+              <code class="<%= framework_section_code_classes %>">--none</code>,
+              <code class="<%= framework_section_code_classes %>">--xsmall</code>,
+              <code class="<%= framework_section_code_classes %>">--small</code>,
+              <code class="<%= framework_section_code_classes %>">--medium</code>,
+              <code class="<%= framework_section_code_classes %>">--large</code>,
+              <code class="<%= framework_section_code_classes %>">--xlarge</code>,
+              <code class="<%= framework_section_code_classes %>">--xxlarge</code>, and
+              <code class="<%= framework_section_code_classes %>">--full</code>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap rounded">
+                      <div class="flex flex--col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 stretch">
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-tl--large stretch">
+                            <span class="label">rounded-tl--large</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-tr--large stretch">
+                            <span class="label">rounded-tr--large</span>
+                          </div>
+                        </div>
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-bl--large stretch">
+                            <span class="label">rounded-bl--large</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-br--large stretch">
+                            <span class="label">rounded-br--large</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Corner-Specific Rounding</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2 mt-6">
+            <%= framework_heading(4, 'Side Rounding') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Round entire sides with <code class="<%= framework_section_code_classes %>">rounded-{side}</code>, where
+              side is t (top), r (right), b (bottom), or l (left). Sides take the same size scale as the corners, so
+              <code class="<%= framework_section_code_classes %>">rounded-t</code> is the base radius and
+              <code class="<%= framework_section_code_classes %>">rounded-t--xxlarge</code> is the widest.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap rounded">
+                      <div class="flex flex--col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 stretch">
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-t--large stretch">
+                            <span class="label">rounded-t--large</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-r--large stretch">
+                            <span class="label">rounded-r--large</span>
+                          </div>
+                        </div>
+                        <div class="flex flex--row stretch gap">
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-b--large stretch">
+                            <span class="label">rounded-b--large</span>
+                          </div>
+                          <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-l--large stretch">
+                            <span class="label">rounded-l--large</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Side Rounding</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Individual corners -->
+<div class="rounded-tl--large">Top left corner</div>
+<div class="rounded-tr--large">Top right corner</div>
+<div class="rounded-br--large">Bottom right corner</div>
+<div class="rounded-bl--large">Bottom left corner</div>
+
+<!-- Entire sides -->
+<div class="rounded-t--large">Top corners</div>
+<div class="rounded-r--large">Right corners</div>
+<div class="rounded-b--large">Bottom corners</div>
+<div class="rounded-l--large">Left corners</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section id="responsive-rounded" class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Rounded') %>
+          <p class="<%= framework_section_description_classes %>">
+            Rounded utilities support size-based breakpoints, orientation variants, and their combination.
+            Use prefixes like <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">portrait:</code>,
+            and <code class="<%= framework_section_code_classes %>">md:portrait:</code> to target conditions.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Base Examples') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Apply different border radius values at different breakpoints using the size-based responsive system.
+              The framework follows a mobile-first approach where larger breakpoints inherit smaller ones.
+              The <code class="<%= framework_section_code_classes %>">--base</code> modifier
+              is particularly useful for resetting to the default size at specific breakpoints.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--row flex--stretch gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded">
+                        <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded--xlarge portrait:rounded--small w--48 h--32">
+                          <span class="label">Responsive</span>
+                        </div>
+                      </div>
+                      <div class="mt-4">
+                        <span class="description">Xlarge in landscape, small in portrait</span>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Responsive Rounded</span>
+                      <span class="instance">Size-Based</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Orientation example -->
+<div class="rounded--xlarge portrait:rounded--small">
+  Xlarge in landscape, small in portrait
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2 mt-6">
+            <%= framework_heading(4, 'Corner-Specific Examples') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Corner-specific rounding utilities support responsive variants just like base rounded utilities.
+              Use prefixes like <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">portrait:</code>,
+              and <code class="<%= framework_section_code_classes %>">md:portrait:</code> to apply different corner rounding at different breakpoints.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--row flex--stretch gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded">
+                        <div class="flex flex--center-x flex--center-y bg--white text-stroke rounded-tl--xlarge portrait:rounded-tl--small w--48 h--32">
+                          <span class="label">Responsive</span>
+                        </div>
+                      </div>
+                      <div class="mt-4">
+                        <span class="description">Xlarge in landscape, small in portrait</span>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Responsive Corner Rounding</span>
+                      <span class="instance">Size-Based</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Orientation example -->
+<div class="rounded-tl--xlarge portrait:rounded-tl--small">
+  Xlarge in landscape, small in portrait
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,40 @@
+<div class="space-y-6">
+  <nav class="not-prose" aria-label="Framework page navigation">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <% if previous_page %>
+          <div class="flex items-center gap-1.5 mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+            <%= render 'shared/icons/arrow_left' %>
+            Previous
+          </div>
+          <%= render 'framework_v2/framework_card',
+            url: framework_page_path(previous_page),
+            title: (page_titles[previous_page] || previous_page.to_s.titleize),
+            description: page_description(previous_page),
+            page: previous_page,
+            compact: false %>
+        <% end %>
+      </div>
+
+      <div>
+        <% if next_page %>
+          <div class="flex items-center justify-end gap-1.5 mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+            Next
+            <%= render 'shared/icons/arrow_right' %>
+          </div>
+          <%= render 'framework_v2/framework_card',
+            url: framework_page_path(next_page),
+            title: (page_titles[next_page] || next_page.to_s.titleize),
+            description: page_description(next_page),
+            page: next_page,
+            compact: false %>
+        <% end %>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<script type="text/javascript">
+// ensures all Framework docs load as intended, with terminalize() being invoked
+Array.from(document.querySelectorAll('[href*="/framework/"]')).forEach(docs => { docs.dataset.turbo = false; })
+</script>

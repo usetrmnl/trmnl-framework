@@ -1,0 +1,10 @@
+// ============================================
+// TRMNL Framework - Namespace Mixin
+// ============================================
+
+// Wraps content in the .trmnl namespace
+@mixin trmnl-namespace {
+    .trmnl {
+        @content;
+    }
+} 

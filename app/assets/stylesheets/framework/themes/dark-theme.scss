@@ -1,0 +1,398 @@
+// ============================================
+// TRMNL Framework - Dark Theme
+// ============================================
+// Engine-safe theme model:
+// - Sets role/slot token refs only.
+// - Does not override root palette vars (--white, --gray-*, --color-*).
+// - Does not override framework-owned paint vars (--bg-*, --text-*, --border-*).
+//
+// Standalone theme file that compiles to its own CSS file.
+// Usage: <link rel="stylesheet" href="dark-theme.css">
+// Apply: <div class="screen screen--theme-dark">
+//
+// This is the `dark:` variant axis written as a plain theme. Every value below
+// is the framework's own light default read through the reversible scale, the
+// same table base/_screen-mode-vars.scss remaps the axis with, so the theme
+// tracks the axis instead of restating it.
+
+@use 'sass:map';
+@use '../config/layers' as layers;
+@use '../config/tokens' as tokens;
+@use '../mixins/background-patterns' as bg;
+@use '../mixins/border-levels' as border-levels;
+@use '../mixins/selector-helpers' as helpers;
+@use '../mixins/theme-slots' as theme-slots;
+
+// Emit the framework's layer order before the theme's own layer, so the theme
+// lands after tn--base whichever stylesheet the browser parses first.
+@include layers.order;
+
+// Every grayscale and chromatic token resolves as its counterpoint on the
+// reversible scale: bg--black paints white, bg--gray-10 paints gray-75,
+// text--red-20 paints red-65. The tables are the framework's own, so a change
+// to the scale reaches the theme and the axis together.
+@mixin _reversible-utility-palette {
+    @each $token, $mirrored in tokens.$dark-mode-grayscale-remap {
+        @include theme-slots.utility-bg($token, $mirrored);
+        @include theme-slots.utility-text($token, $mirrored);
+        @include theme-slots.utility-stroke($token, $mirrored);
+    }
+
+    // Base hues hold still on the scale by framework policy; only their shade
+    // steps mirror, which is what the axis's chromatic remap does on a rail that
+    // can show a hue. The rails that cannot are the block below.
+    @each $hue in tokens.$color-hues {
+        @each $step in tokens.$color-shade-steps {
+            $mirrored: map.get(tokens.$dark-mode-step-mirror, '#{$step}');
+            @include theme-slots.utility-bg('#{$hue}-#{$step}', '#{$hue}-#{$mirrored}');
+            @include theme-slots.utility-text('#{$hue}-#{$step}', '#{$hue}-#{$mirrored}');
+            @include theme-slots.utility-stroke('#{$hue}-#{$step}', '#{$hue}-#{$mirrored}');
+        }
+    }
+}
+
+// A grayscale rail resolves every chromatic token through the gray fallback
+// table first and mirrors the gray it lands on, so the axis's mirror there is a
+// gray step and not a shade step. The theme has to say the same thing, for two
+// reasons the mirror above cannot reach: the two orders do not commute (the
+// fallback table is asymmetric, so red-15 mirrored then resolved is a gray step
+// off red-15 resolved then mirrored), and a bare hue has no shade step to mirror
+// at all, which left bg--blue and label--primary on their light gray under this
+// theme's black canvas.
+//
+// The table is the axis's own, so a change to either reaches both.
+@mixin _gray-fallback-palette {
+    @each $color-token, $gray-token in tokens.$color-to-gray-fallback {
+        $mirrored: bg.dark-remap-token($gray-token);
+        @include theme-slots.utility-bg($color-token, $mirrored);
+        @include theme-slots.utility-text($color-token, $mirrored);
+        @include theme-slots.utility-stroke($color-token, $mirrored);
+    }
+
+    // A semantic role publishes its own class token, so bg--primary reads
+    // --theme-bg-primary-* and never the hue's hook. The stroke families
+    // publish no role class, so the pair is bg and text.
+    @each $role, $hue in tokens.$semantic-colors {
+        $mirrored: bg.dark-remap-token(map.get(tokens.$color-to-gray-fallback, $hue));
+        @include theme-slots.utility-bg($role, $mirrored);
+        @include theme-slots.utility-text($role, $mirrored);
+    }
+}
+
+// The 1-bit rail collapses the gray it lands on through the deprecated 7-step
+// aliases before it mirrors, one quantization more than the other rails apply
+// (the `$family == 'grayscale' and $dark` branch of _color-to-gray-bg-vars). The
+// stroke channel skips that branch on every rail, so this restates bg and text
+// alone and the block above keeps the stroke.
+@mixin _gray-fallback-palette-1bit {
+    @each $color-token, $gray-token in tokens.$color-to-gray-fallback {
+        $deprecated: map.get(tokens.$extended-to-deprecated-mapping, $gray-token);
+        $mirrored: bg.dark-remap-token(if($deprecated, $deprecated, $gray-token));
+        @include theme-slots.utility-bg($color-token, $mirrored);
+        @include theme-slots.utility-text($color-token, $mirrored);
+    }
+
+    @each $role, $hue in tokens.$semantic-colors {
+        $gray-token: map.get(tokens.$color-to-gray-fallback, $hue);
+        $deprecated: map.get(tokens.$extended-to-deprecated-mapping, $gray-token);
+        $mirrored: bg.dark-remap-token(if($deprecated, $deprecated, $gray-token));
+        @include theme-slots.utility-bg($role, $mirrored);
+        @include theme-slots.utility-text($role, $mirrored);
+    }
+}
+
+// The 1-bit border patterns keep their geometry and swap which segments carry
+// ink, so the rail draws white lines on the black canvas. That swap is the
+// level mirror: $border-level-lines-1bit pairs 1/7, 2/6 and 3/5 as exact
+// complements, so level 3 recolored is byte for byte the level 5 art the axis
+// reaches for. `bright` is the side that puts white on the ink positions;
+// `black` is the canvas the light positions take.
+@mixin _dark-border-line-polarity {
+    @include theme-slots.utility-remap-border-grayscale('black', $side: 'bright');
+}
+
+// The framework's own polarity, named in tokens rather than left to the
+// literal fallbacks, because an inherited polarity cannot be unset. Inside an
+// inverse subtree the stroke chain is the screen's own light rail, so naming
+// ink as black and canvas as white restates the light default literally.
+@mixin _light-border-line-polarity {
+    @include theme-slots.utility-remap-border-grayscale('white', $side: 'dark');
+}
+
+// A level the scale maps to itself is the one place the tone swap above is not
+// the axis: same ink coverage, one device pixel out of phase, because swapping
+// the two segments of a 50% checker shifts it instead of leaving it alone.
+// Restating the level keeps the family's own polarity on it, and the reversible
+// scale names which level that is, so the exception tracks the table.
+@mixin _self-mirrored-border-levels {
+    @each $level, $_ in border-levels.$border-level-token-map {
+        @if border-levels.dark-remap-border-level($level) == $level {
+            @each $dir in (h, v) {
+                @include theme-slots.utility-border-level($level, $dir, $level);
+            }
+        }
+    }
+}
+
+// The 2-bit rail mirrors the level itself, not its tones: the axis paints level
+// 1 as level 7's solid white and level 2's #555555/#000000 checker as level 6's
+// #AAAAAA/#FFFFFF. The four tones are literal in the line data, so naming the
+// level is the only way to say it, and the same reversible table the axis reads
+// picks the pairs.
+@mixin _reversible-border-levels {
+    @each $level, $_ in border-levels.$border-level-token-map {
+        $mirrored: border-levels.dark-remap-border-level($level);
+        @each $dir in (h, v) {
+            @include theme-slots.utility-border-level($level, $dir, $mirrored);
+        }
+    }
+}
+
+// The inverse subtree keeps the family's own levels: the root's mirror hooks
+// inherit in, and a level hook cannot be unset, so each level is restated onto
+// itself, which forwards its own art and the family's own line polarity.
+@mixin _identity-border-levels {
+    @each $level, $_ in border-levels.$border-level-token-map {
+        @each $dir in (h, v) {
+            @include theme-slots.utility-border-level($level, $dir, $level);
+        }
+    }
+}
+
+// Component slots ride the same scale as the utility palette: each one is the
+// framework default from base/_screen.scss read through the mirror, which is
+// what the axis does to those slots by remapping the paint underneath them.
+@mixin _reversible-component-slots {
+    @include theme-slots.bg-slot('title-bar', 'gray-15');
+    @include theme-slots.bg-slot('screen-backdrop', 'gray-45');
+    @include theme-slots.bg-slot('item-meta', 'gray-15');
+    @include theme-slots.bg-slot('item-meta-emphasis-2', 'gray-45');
+    @include theme-slots.bg-slot('item-meta-emphasis-3', 'gray-65');
+    @include theme-slots.bg-slot('progress-track', 'gray-15');
+    @include theme-slots.bg-slot('progress-fill', 'gray-45');
+    @include theme-slots.bg-slot('progress-fill-emphasis-2', 'gray-65');
+    @include theme-slots.bg-slot('progress-fill-emphasis-3', 'gray-75');
+    @include theme-slots.bg-slot('progress-dot', 'gray-25');
+    @include theme-slots.bg-slot('progress-dot-current', 'gray-45');
+    @include theme-slots.bg-slot('table-meta', 'gray-25');
+    @include theme-slots.bg-slot('table-meta-device', 'gray-10');
+    @include theme-slots.text-slot('label-gray', 'gray-45');
+    // The marker box on the dark ground: a white field with black text, the
+    // framework's own light chip read through the mirror.
+    @include theme-slots.bg-slot('chip', 'white');
+    @include theme-slots.text-slot('chip', 'black');
+
+    // The table row rails and the label underline keep their default levels.
+    // Each one points at a level, and the level statements below move the line
+    // under it, which is what the axis does by remapping that art in place.
+}
+
+// Semantic channels, the values base/_screen.scss gives a dark screen. The
+// tokens go through the paint pipeline rather than the root palette, so each
+// one renders as its rail can: a dither tile on 1-bit and 2-bit, a palette ink
+// on the limited palettes, a solid on 4-bit and up.
+//
+// The icon channel is left unset on purpose in both sets, so adaptive images
+// follow text-primary the way they do on a dark screen.
+@mixin _dark-semantic-channels {
+    @include theme-slots.semantic-bg('canvas', 'black');
+    @include theme-slots.semantic-bg('surface', 'black');
+    @include theme-slots.semantic-bg('backdrop', 'gray-10');
+    @include theme-slots.semantic-bg('fill-strong', 'white');
+    @include theme-slots.semantic-bg('fill-muted', 'gray-70');
+    @include theme-slots.semantic-bg('fill-soft', 'gray-60');
+    @include theme-slots.semantic-text('text-primary', 'white');
+    @include theme-slots.semantic-text('text-secondary', 'gray-70');
+    @include theme-slots.semantic-text('text-inverse', 'black');
+    @include theme-slots.semantic-stroke('stroke-contrast', 'black');
+    @include theme-slots.semantic-border('border-strong', 'white');
+    @include theme-slots.semantic-border('border-muted', 'gray-25');
+}
+
+// The light channel set for the inverse subtree, named literally: the
+// framework leaves the screen's own paint rail under a themed inverse
+// subtree, so each token below is the framework's own light default from
+// base/_screen.scss, resolving as the local rail renders it.
+@mixin _light-semantic-channels {
+    @include theme-slots.semantic-bg('canvas', 'white');
+    @include theme-slots.semantic-bg('surface', 'white');
+    @include theme-slots.semantic-bg('backdrop', 'gray-55');
+    @include theme-slots.semantic-bg('fill-strong', 'black');
+    @include theme-slots.semantic-bg('fill-muted', 'gray-60');
+    @include theme-slots.semantic-bg('fill-soft', 'gray-70');
+    @include theme-slots.semantic-text('text-primary', 'black');
+    @include theme-slots.semantic-text('text-secondary', 'gray-30');
+    @include theme-slots.semantic-text('text-inverse', 'white');
+    @include theme-slots.semantic-stroke('stroke-contrast', 'white');
+    @include theme-slots.semantic-border('border-strong', 'black');
+    @include theme-slots.semantic-border('border-muted', 'gray-65');
+}
+
+// The framework's light slot defaults from base/_screen.scss, restated for the
+// inverse subtree: the root's mirrored slots resolved where they were declared
+// and would otherwise inherit in as dark art.
+@mixin _light-component-slots {
+    @include theme-slots.bg-slot('title-bar', 'gray-70');
+    @include theme-slots.bg-slot('screen-backdrop', 'gray-40');
+    @include theme-slots.bg-slot('item-meta', 'gray-70');
+    @include theme-slots.bg-slot('item-meta-emphasis-2', 'gray-40');
+    @include theme-slots.bg-slot('item-meta-emphasis-3', 'gray-20');
+    @include theme-slots.bg-slot('progress-track', 'gray-70');
+    @include theme-slots.bg-slot('progress-fill', 'gray-40');
+    @include theme-slots.bg-slot('progress-fill-emphasis-2', 'gray-20');
+    @include theme-slots.bg-slot('progress-fill-emphasis-3', 'gray-10');
+    @include theme-slots.bg-slot('progress-dot', 'gray-60');
+    @include theme-slots.bg-slot('progress-dot-current', 'gray-40');
+    @include theme-slots.bg-slot('table-meta', 'gray-60');
+    @include theme-slots.bg-slot('table-meta-device', 'gray-75');
+    @include theme-slots.text-slot('label-gray', 'gray-40');
+    @include theme-slots.bg-slot('chip', 'black');
+    @include theme-slots.text-slot('chip', 'white');
+}
+
+// Identity restatements for every utility hook the theme root binds. An
+// inherited custom property carries the value it resolved at the root, so the
+// mirrored palette would follow the theme's dark scheme into the inverse
+// subtree; restating each token as itself makes the hook resolve against the
+// inverse root's own (light) rail instead. Identity is rail-independent, so
+// one ungated statement covers the dither rails, the solid rails and the
+// palettes alike, where the root needs rail-gated blocks for its mirrors.
+@mixin _identity-utility-palette {
+    @each $token, $_ in tokens.$dark-mode-grayscale-remap {
+        @include theme-slots.utility-bg($token, $token);
+        @include theme-slots.utility-text($token, $token);
+        @include theme-slots.utility-stroke($token, $token);
+    }
+
+    @each $hue in tokens.$color-hues {
+        @each $step in tokens.$color-shade-steps {
+            @include theme-slots.utility-bg('#{$hue}-#{$step}', '#{$hue}-#{$step}');
+            @include theme-slots.utility-text('#{$hue}-#{$step}', '#{$hue}-#{$step}');
+            @include theme-slots.utility-stroke('#{$hue}-#{$step}', '#{$hue}-#{$step}');
+        }
+
+        @include theme-slots.utility-bg('#{$hue}', '#{$hue}');
+        @include theme-slots.utility-text('#{$hue}', '#{$hue}');
+        @include theme-slots.utility-stroke('#{$hue}', '#{$hue}');
+    }
+
+    @each $role, $hue in tokens.$semantic-colors {
+        @include theme-slots.utility-bg($role, $hue);
+        @include theme-slots.utility-text($role, $hue);
+    }
+}
+
+// Chart series run from the canvas-contrasting white down the grayscale ladder
+// to black: the base ramp reversed, which is what the axis leaves behind when
+// it remaps the base ramp's tokens. $span stays 11, the near-full ladder the
+// base ramp publishes, because this canvas is a lightness extreme too.
+@mixin _reversible-chart-ramp {
+    @include theme-slots.chart-series-ramp(
+        (white, gray-75, gray-70, gray-65, gray-60, gray-55, gray-50, gray-45, gray-40, gray-35, gray-30, gray-25, gray-20, gray-15, gray-10, black),
+        $span: 11
+    );
+}
+
+// The framework's own light ramp, for the inverse subtree: the base grayscale
+// ladder from base/_screen.scss, ink black running toward the white ground.
+@mixin _light-chart-ramp {
+    @include theme-slots.chart-series-ramp(tokens.$grayscale-ramp, $span: 11);
+}
+
+// A screen that can render hues gets identity rather than magnitude, so the
+// grayscale ladder above is the wrong ramp there: the axis binds the ink plus
+// seven CVD-vetted hues on a dark full-color ground, and the theme names the
+// same list. The tokens are named straight rather than through the mirror the
+// axis needs, because a themed screen keeps the light paint rail underneath.
+@mixin _color-full-chart-ramp($ramp) {
+    @include theme-slots.chart-series-ramp(
+        $ramp,
+        $span: tokens.$color-full-chart-series-span
+    );
+}
+
+@layer tn--themes {
+    .trmnl .screen--theme-dark {
+        @include _dark-semantic-channels;
+        @include _reversible-component-slots;
+        @include _reversible-chart-ramp;
+        @include _reversible-utility-palette;
+        @include _dark-border-line-polarity;
+        @include _self-mirrored-border-levels;
+    }
+
+    // The 2-bit level art is mirrored per level. The mirror is keyed on the
+    // rail that paints, not on the bit-depth class. A screen wearing a palette
+    // or solid mode class beside `screen--2bit` takes its lines from a block
+    // declared after the 2-bit one, and those families carry no literal tones:
+    // the polarity swap and the token remap above already mirror them, so a
+    // level mirror on top would land black ink back on this theme's black
+    // canvas. helpers.$grayscale-rail-only is the framework's own statement of
+    // that precedence, so the mirror tracks the paint order rather than
+    // restating it.
+    .trmnl .screen--theme-dark.screen--2bit#{helpers.$grayscale-rail-only} {
+        @include _reversible-border-levels;
+    }
+
+    // The inverse subtree keeps the family's own light art, but the mirror
+    // hooks above inherit in, so each level is restated onto itself there.
+    .trmnl .screen--theme-dark.screen--2bit#{helpers.$grayscale-rail-only} .inverse {
+        @include _identity-border-levels;
+    }
+
+    // The chromatic tokens on a rail that paints them as gray. Same rail-keyed
+    // gate as the level mirror above, one tier wider: the solid rails resolve
+    // chromatic tokens through the same fallback table the dither rails do, so
+    // they take the same statement. The inverse subtree takes no arm here: the
+    // identity palette in the inverse block already resolves every chromatic
+    // token against the local light rail, which applies its own gray fallback.
+    .trmnl .screen--theme-dark#{helpers.$color-to-gray-rail} {
+        @include _gray-fallback-palette;
+    }
+
+    .trmnl .screen--theme-dark.screen--1bit#{helpers.$grayscale-rail-only} {
+        @include _gray-fallback-palette-1bit;
+    }
+
+    // The full-color rail takes the axis's categorical ramp on the dark ground
+    // and the framework's own light list inside the inverse subtree; both are
+    // named straight, because a themed screen keeps the light paint rail on
+    // both sides of the inverse boundary.
+    .trmnl .screen--theme-dark.screen--color-full {
+        @include _color-full-chart-ramp(tokens.$color-full-chart-series-dark);
+    }
+
+    .trmnl .screen--theme-dark.screen--color-full .inverse {
+        @include _color-full-chart-ramp(tokens.$color-full-chart-series);
+    }
+
+    // The 1-bit rail prices its backdrop separately, exactly as the framework
+    // does for unthemed screens (see the screen-backdrop block in
+    // base/_screen-mode-vars.scss). gray-45's dither reads as a busy stipple
+    // at backdrop scale; gray-10's dense tile is the near-black field with a
+    // sparse white lattice a dark 1-bit screen paints.
+    .trmnl .screen--theme-dark.screen--1bit {
+        @include theme-slots.bg-slot('screen-backdrop', 'gray-10');
+    }
+
+    // An inverse subtree is a light screen inside this dark one. The framework
+    // leaves the screen's own paint rail under a themed inverse subtree, so
+    // the light defaults are named literally; what still has to be said is the
+    // inherited state, because the root's mirrored hooks resolved where they
+    // were declared and would otherwise carry the dark scheme in: the utility
+    // palette restates every token as itself, and the line polarity names the
+    // light default in tokens.
+    .trmnl .screen--theme-dark .inverse {
+        @include _light-semantic-channels;
+        @include _light-component-slots;
+        @include _light-chart-ramp;
+        @include _identity-utility-palette;
+        @include _light-border-line-polarity;
+    }
+
+    // The checkerboard is the 1-bit rail's flat mid-tone and only the light
+    // paint block publishes it, so the inverse subtree names it directly.
+    .trmnl .screen--theme-dark.screen--1bit .inverse {
+        @include theme-slots.bg-slot('screen-backdrop', 'checker');
+    }
+}

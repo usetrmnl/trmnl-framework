@@ -1,0 +1,126 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :pixel_perfect %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Pixel Perfect system ensures text renders with crisp edges by aligning text precisely to the pixel grid.
+      We use specialized pixel fonts designed to work at specific pixel sizes, producing the sharpest possible rendering
+      and preventing sub-pixel rendering issues that cause text to appear blurry or inconsistently bold in final renders when converting layouts to a 1-bit color space for ePaper displays.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            To enable pixel perfect text rendering, add the <code class="<%= framework_section_code_classes %>">data-pixel-perfect="true"</code>
+            attribute to your text element.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="columns">
+                      <div class="column">
+                        <div class="richtext richtext--center gap--large">
+                          <span class="title" data-pixel-perfect="true">Pixel Perfect Title</span>
+                          <div class="content content--center" data-pixel-perfect="true"><p>This text is rendered with pixel perfect alignment, ensuring that each line falls exactly on the pixel grid. Depending on the parent width, the system automatically breaks text into lines and adjusts each line's width.</p></div>
+                          <div class="content content--center" data-pixel-perfect="true"><p>This produces crisp, sharp text edges that renders perfectly in a 1-bit color space.</p></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Pixel Perfect</span>
+                    <span class="instance">With Pixel Perfect Applied</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="title" data-pixel-perfect="true">Pixel Perfect Title</span>
+<div class="content" data-pixel-perfect="true">
+  <p>This text will be aligned to the pixel grid for crisp rendering.</p>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Why?') %>
+          <p class="<%= framework_section_description_classes %>">
+            Text rendering on digital displays involves complex anti-aliasing techniques to make text appear smooth at various sizes.
+            This process creates partially opaque pixels (gray pixels) at the edges of characters to create the illusion of smoothness.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            When text isn't perfectly aligned to the pixel grid, these anti-aliased pixels can appear inconsistently, particularly with centered text.
+            This is especially problematic for ePaper displays that use a 1-bit color space (just black and white, no grays), where anti-aliased gray pixels
+            are forced to become either fully black or fully white. The result is text that appears randomly bold or distorted in final renders,
+            creating an unprofessional and difficult-to-read presentation.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            Our system uses pixel fonts that are specifically designed to work at particular pixel sizes and their multipliers. These fonts
+            are meticulously crafted to perfectly align with the pixel grid, ensuring each character renders with maximum sharpness and clarity.
+            By combining these specialized fonts with our pixel-perfect alignment technique, we achieve optimal text rendering for ePaper displays.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'How It Works') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Pixel Perfect system works by applying the following techniques to elements with <code class="<%= framework_section_code_classes %>">data-pixel-perfect="true"</code>:
+          </p>
+
+          <div class="space-y-4 pl-4">
+            <ul class="list-disc <%= framework_section_description_classes %>">
+              <li>The system measures the parent element's width to determine whether it's odd or even</li>
+              <li>The text content is broken into individual lines</li>
+              <li>Each line is wrapped in a span element</li>
+              <li>Each span's width is adjusted to match the parent's pattern: even widths for even-width parents, odd widths for odd-width parents</li>
+            </ul>
+          </div>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            By analyzing the parent container's dimensions and adjusting each line accordingly, the system ensures text falls precisely on the pixel grid.
+            This precise adjustment ensures text is perfectly aligned to the pixel grid, eliminating sub-pixel rendering issues on 1-bit displays.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Cross-Platform Consistency') %>
+          <p class="<%= framework_section_description_classes %>">
+            Different browsers render text differently across operating systems. For example, Chrome on macOS handles font rendering
+            differently than Chrome on Linux or Windows. This means developers see different results depending on their development environment.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            The Pixel Perfect system unifies the developer experience across platforms by enforcing consistent rendering rules regardless of the browser or operating system.
+            This ensures that text renders with the same crispness and weight consistency on the final ePaper display, regardless of where it was developed or previewed.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

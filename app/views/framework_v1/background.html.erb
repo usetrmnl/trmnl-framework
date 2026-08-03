@@ -1,0 +1,65 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :background %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Background system creates the illusion of grayscale through carefully designed dither patterns. When rendered on 1-bit (black and white only) displays, these patterns create an illusion of different shades of gray by using specific arrangements of black and white pixels.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the <code class="<%= framework_section_code_classes %>">bg-{color}</code> utility
+            classes to apply these background patterns to any element. Choose from nine values: black, gray-1 through gray-7,
+            and white.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+              <div class="view view--full">
+                <div class="layout layout--col gap--space-between">
+                  <div class="grid grid--cols-9 h-full py-16">
+                    <% %w[black gray-1 gray-2 gray-3 gray-4 gray-5 gray-6 gray-7 white].each do |color| %>
+                      <div class="flex flex-col gap">
+                        <div class="rounded-lg flex-1 bg--<%= color %>"></div>
+                        <span class="label bg-white text-black"><%= color %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="title_bar">
+                  <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                  <span class="title">Background Colors</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="bg-black">Black</div>
+<div class="bg--gray-1">Gray 1</div>
+<div class="bg--gray-2">Gray 2</div>
+<div class="bg--gray-3">Gray 3</div>
+<div class="bg--gray-4">Gray 4</div>
+<div class="bg--gray-5">Gray 5</div>
+<div class="bg--gray-6">Gray 6</div>
+<div class="bg--gray-7">Gray 7</div>
+<div class="bg-white">White</div>'
+          ) %>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

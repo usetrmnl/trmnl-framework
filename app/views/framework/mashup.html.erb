@@ -1,0 +1,984 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :mashup %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:mashup) %>
+    <div class="space-y-16">
+      <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">You don't specify the Mashup. When you configure multiple plugins on a single screen, the platform provides the appropriate Mashup container automatically.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">You provide the Mashup yourself. Include the <code class="<%= framework_section_code_classes %>">mashup</code> container with the appropriate layout class in your markup (e.g. <code class="<%= framework_section_code_classes %>">mashup--1Lx1R</code>, <code class="<%= framework_section_code_classes %>">mashup--2x2</code>).</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip,
+              <!-- mashup mashup--1Lx1R (platform-provided) -->
+              <!-- view view--half_vertical (platform-provided) -->
+              <div class="layout">...</div>
+              <div class="title_bar">...</div>
+              <!-- /view -->
+              <!-- /mashup -->
+            HTML
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="mashup mashup--1Lx1R">
+  <div class="view view--half_vertical">
+    <div class="layout">...</div>
+    <div class="title_bar">...</div>
+  </div>
+  <div class="view view--half_vertical">
+    <div class="layout">...</div>
+    <div class="title_bar">...</div>
+  </div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <!-- Section: Mashup Layouts -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Mashup Layouts') %>
+          <p class="<%= framework_section_description_classes %>">
+            Mashup modifiers control how <%= render DocsRef.new(page: :view) %> instances are arranged within the screen, while each view's own modifier determines how much space it occupies.
+            The following layouts are available.
+          </p>
+        </div>
+
+        <!-- Single Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Single') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              In the 1x1 layout, one view spans both columns and both rows, so a single plugin fills the mashup.
+              Pair it with <code class="<%= framework_section_code_classes %>">view--full</code>, which is sized to the
+              same area.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--1x1">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--1x1">
+  <div class="view view--full">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 1 Left, 1 Right Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '1 Left, 1 Right') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              In the 1Lx1R layout, the first plugin occupies the left column while the second occupies the right column.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--1Lx1R">
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--1Lx1R">
+  <div class="view view--half_vertical">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--half_vertical">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 1 Top, 1 Bottom Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '1 Top, 1 Bottom') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              In the 1Tx1B layout, one plugin spans the top row while the other occupies the bottom row.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--1Tx1B">
+                    <div class="view view--half_horizontal">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_horizontal">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--1Tx1B">
+  <div class="view view--half_horizontal">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--half_horizontal">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 1 Left, 2 Right Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '1 Left, 2 Right') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              In the 1Lx2R layout, one plugin occupies the left column while two plugins stack in the right column.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--1Lx2R">
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin C</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--1Lx2R">
+  <div class="view view--half_vertical">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin C</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 2 Left, 1 Right Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '2 Left, 1 Right') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The 2Lx1R layout stacks two plugins in the left column, with a single plugin in the right column.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--2Lx1R">
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin C</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--2Lx1R">
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+  <div class="view view--half_vertical">
+    <div class="layout">
+      <span class="label">Plugin C</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 2 Top, 1 Bottom Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '2 Top, 1 Bottom') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              In the 2Tx1B layout, two plugins are presented side by side in the top row, with a single plugin in the bottom row.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--2Tx1B">
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_horizontal">
+                      <div class="layout">
+                        <span class="label">Plugin C</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--2Tx1B">
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+  <div class="view view--half_horizontal">
+    <div class="layout">
+      <span class="label">Plugin C</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 1 Top, 2 Bottom Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '1 Top, 2 Bottom') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The 1Tx2B layout places one plugin in the top row, with two plugins side by side in the bottom row.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--1Tx2B">
+                    <div class="view view--half_horizontal">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin C</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--1Tx2B">
+  <div class="view view--half_horizontal">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin C</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- 2 x 2 Grid Layout -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '2 x 2 Grid') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The 2x2 grid arranges four plugins in a grid pattern.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--2x2">
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin C</span>
+                      </div>
+                    </div>
+                    <div class="view view--quadrant">
+                      <div class="layout">
+                        <span class="label">Plugin D</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--2x2">
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin A</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin B</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin C</span>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout">
+      <span class="label">Plugin D</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Fluid Mashups -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Fluid Mashups') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">mashup--3x3</code> layout arranges
+            <%= render DocsRef.new(page: :view) %> instances on a three by three grid that you carve up yourself.
+            Each <code class="<%= framework_section_code_classes %>">mashup-cell</code> uses column, row, and span
+            modifiers to set its place. A grid can hold nine equal tiles or a few large regions, and every cell draws
+            its own border and surface at any size.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A view inside a mashup cell always fills the cell, whatever view size class it carries.
+            <code class="<%= framework_section_code_classes %>">w--*</code> and
+            <code class="<%= framework_section_code_classes %>">h--*</code> utilities on that view have no effect;
+            size the content inside the view instead.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Available Modifiers') %>
+          <p class="<%= framework_subsection_description_classes %>">
+            Combine one modifier from each group to place a cell. Column, row, and span values range from 1 to 3.
+          </p>
+          <p class="<%= framework_subsection_description_classes %>">
+            Keep start plus span at 4 or less. The grid is three tracks wide, so
+            <code class="<%= framework_section_code_classes %>">mashup-cell--col-2</code> with
+            <code class="<%= framework_section_code_classes %>">mashup-cell--col-span-3</code> reaches past the last
+            track and adds an auto-sized fourth column, which re-lays the whole mashup. The same holds for rows.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Description</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <% [
+                  ['mashup-cell--col-1', 'Starts the cell at column 1'],
+                  ['mashup-cell--col-2', 'Starts the cell at column 2'],
+                  ['mashup-cell--col-3', 'Starts the cell at column 3'],
+                  ['mashup-cell--col-span-1', 'Spans 1 column'],
+                  ['mashup-cell--col-span-2', 'Spans 2 columns'],
+                  ['mashup-cell--col-span-3', 'Spans 3 columns'],
+                  ['mashup-cell--row-1', 'Starts the cell at row 1'],
+                  ['mashup-cell--row-2', 'Starts the cell at row 2'],
+                  ['mashup-cell--row-3', 'Starts the cell at row 3'],
+                  ['mashup-cell--row-span-1', 'Spans 1 row'],
+                  ['mashup-cell--row-span-2', 'Spans 2 rows'],
+                  ['mashup-cell--row-span-3', 'Spans 3 rows']
+                ].each do |class_name, description| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <code class="text-sm font-mono text-syntax-string"><%= class_name %></code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= description %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3 x 3 Grid -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '3 x 3 Grid') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Nine <code class="<%= framework_section_code_classes %>">mashup-cell</code> elements with no placement
+              fill the grid from left to right, top to bottom, giving an even grid of equal tiles.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--3x3">
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin A</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin B</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin C</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin D</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin E</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin F</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin G</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin H</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin I</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--3x3">
+  <div class="mashup-cell">
+    <div class="view view--quadrant">
+      <div class="layout">
+        <span class="label">Plugin A</span>
+      </div>
+    </div>
+  </div>
+  <!-- eight more mashup-cell elements (Plugin B through Plugin I) -->
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Feature and Sidebar -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Feature and Sidebar') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add <code class="<%= framework_section_code_classes %>">mashup-cell--col-*</code> and
+              <code class="<%= framework_section_code_classes %>">mashup-cell--row-*</code> to choose the starting
+              tracks. Add the matching <code class="<%= framework_section_code_classes %>">*-span-*</code> modifiers
+              to cover up to three tracks in either direction.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--3x3">
+                    <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-1 mashup-cell--row-span-3">
+                      <div class="view view--full">
+                        <div class="layout">
+                          <span class="label">Plugin A</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-1 mashup-cell--row-span-1">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin B</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-2 mashup-cell--row-span-1">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin C</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-3 mashup-cell--row-span-1">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="label">Plugin D</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--3x3">
+  <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-1 mashup-cell--row-span-3">
+    <div class="view view--full">
+      <div class="layout">
+        <span class="label">Plugin A</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-1 mashup-cell--row-span-1">
+    <div class="view view--quadrant">
+      <div class="layout">
+        <span class="label">Plugin B</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-2 mashup-cell--row-span-1">
+    <div class="view view--quadrant">
+      <div class="layout">
+        <span class="label">Plugin C</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-3 mashup-cell--row-span-1">
+    <div class="view view--quadrant">
+      <div class="layout">
+        <span class="label">Plugin D</span>
+      </div>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Banner and Split -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Banner and Split') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Cells span in either direction. This grid runs a full width banner across the top, a two by two block
+              below it, and a tall cell down the right.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--3x3">
+                    <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-3 mashup-cell--row-1 mashup-cell--row-span-1">
+                      <div class="view view--half_horizontal">
+                        <div class="layout">
+                          <span class="label">Plugin A</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-2 mashup-cell--row-span-2">
+                      <div class="view view--full">
+                        <div class="layout">
+                          <span class="label">Plugin B</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-2 mashup-cell--row-span-2">
+                      <div class="view view--half_vertical">
+                        <div class="layout">
+                          <span class="label">Plugin C</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--3x3">
+  <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-3 mashup-cell--row-1 mashup-cell--row-span-1">
+    <div class="view view--half_horizontal">
+      <div class="layout">
+        <span class="label">Plugin A</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-2 mashup-cell--row-span-2">
+    <div class="view view--full">
+      <div class="layout">
+        <span class="label">Plugin B</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-2 mashup-cell--row-span-2">
+    <div class="view view--half_vertical">
+      <div class="layout">
+        <span class="label">Plugin C</span>
+      </div>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Title Bars -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Title Bars') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add a <%= render DocsRef.new(page: :title_bar) %> to a cell to label its plugin. Place the
+              <code class="<%= framework_section_code_classes %>">title_bar</code> as a sibling of
+              <code class="<%= framework_section_code_classes %>">layout</code> inside the view, the same as a
+              standalone view. Every cell uses the compact title bar, whatever its size, and the layout above
+              shrinks to make room for it.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="mashup mashup--3x3">
+                    <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-1 mashup-cell--row-span-1">
+                      <div class="view view--half_horizontal">
+                        <div class="layout">
+                          <span class="value">72&deg;</span>
+                        </div>
+                        <div class="title_bar">
+                          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                          <span class="title">Weather</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-1 mashup-cell--row-span-2">
+                      <div class="view view--half_vertical">
+                        <div class="layout">
+                          <span class="value">2 PM</span>
+                        </div>
+                        <div class="title_bar">
+                          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                          <span class="title">Agenda</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-2 mashup-cell--row-span-2">
+                      <div class="view view--full">
+                        <div class="layout">
+                          <span class="value">Wed 14</span>
+                        </div>
+                        <div class="title_bar">
+                          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                          <span class="title">Calendar</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-3 mashup-cell--row-span-1">
+                      <div class="view view--quadrant">
+                        <div class="layout">
+                          <span class="value">84%</span>
+                        </div>
+                        <div class="title_bar">
+                          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                          <span class="title">Battery</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="mashup mashup--3x3">
+  <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-1 mashup-cell--row-span-1">
+    <div class="view view--half_horizontal">
+      <div class="layout">
+        <span class="value">72&deg;</span>
+      </div>
+      <div class="title_bar">
+        <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg">
+        <span class="title">Weather</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-1 mashup-cell--row-span-2">
+    <div class="view view--half_vertical">
+      <div class="layout">
+        <span class="value">2 PM</span>
+      </div>
+      <div class="title_bar">
+        <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg">
+        <span class="title">Agenda</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-1 mashup-cell--col-span-2 mashup-cell--row-2 mashup-cell--row-span-2">
+    <div class="view view--full">
+      <div class="layout">
+        <span class="value">Wed 14</span>
+      </div>
+      <div class="title_bar">
+        <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg">
+        <span class="title">Calendar</span>
+      </div>
+    </div>
+  </div>
+  <div class="mashup-cell mashup-cell--col-3 mashup-cell--col-span-1 mashup-cell--row-3 mashup-cell--row-span-1">
+    <div class="view view--quadrant">
+      <div class="layout">
+        <span class="value">84%</span>
+      </div>
+      <div class="title_bar">
+        <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg">
+        <span class="title">Battery</span>
+      </div>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Screen Backdrop Modifier -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Screen Backdrop Modifier') %>
+          <p class="<%= framework_section_description_classes %>">
+            The <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
+            modifier provides an alternative appearance where views sit on a patterned background instead of
+            having outlined borders.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default vs Backdrop Mashups') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              By default, mashups use a white background with bordered views for a clean, separated look.
+              The <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
+              modifier changes this to a patterned background (1-bit) or solid gray background (2-bit/4-bit)
+              with plain white views on top.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--backdrop">
+                  <div class="mashup mashup--1Lx1R">
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Default mashup (white background, bordered views) -->
+<div class="screen">
+  <div class="mashup mashup--1Lx1R">
+    <div class="view view--half_vertical">...</div>
+    <div class="view view--half_vertical">...</div>
+  </div>
+</div>
+
+<!-- Backdrop mashup (patterned background) -->
+<div class="screen screen--backdrop">
+  <div class="mashup mashup--1Lx1R">
+    <div class="view view--half_vertical">...</div>
+    <div class="view view--half_vertical">...</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

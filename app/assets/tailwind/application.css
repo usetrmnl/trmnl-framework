@@ -1,0 +1,2641 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@import "tailwindcss" source(none);
+@custom-variant dark (&:where(.dark, .dark *));
+@config "../../../config/tailwind.config.js";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@source "../../../app/helpers/**/*.rb";
+@source "../../../app/javascript/**/*.js";
+@source "../../../app/views/**/*";
+@source "../../../app/components/**/*.html.erb";
+@source "../../../app/components/**/*.rb";
+@source "../../../lib/**/*.rb";
+@source inline("animate-card-enter aspect-og grid grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5 grid-cols-6 grid-cols-11 flex gap-2 flex-1 max-h-48 max-h-96 overflow-auto");
+@source inline("bg-{primary,gray,grayWarm,grayCold,teal,green,blue,red,yellow,amber,violet,fuchsia,sage,clay}-{25,50,75,100,150,175,200,250,300,325,350,400,450,500,550,575,600,610,615,625,650,660,675,700,750,800,850,900,950}");
+@source inline("dark:text-white dark:bg-[rgba(26,26,26,0.05)] dark:bg-gray-900 dark:bg-lander-footer dark:text-gray-400 dark:hover:text-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:bg-gray-400/50 dark:hover:bg-gray-50 dark:text-gray-500 dark:text-gray-600 dark:text-gray-625 dark:text-gray-200");
+
+/* The framework's own responsive variants, kept out of this bundle.
+ *
+ * The docs pages teach classes like `sm:hidden` and `md:portrait:hidden`, and the
+ * scanner reads every one of them as a Tailwind variant chain: sm/md/lg are
+ * breakpoints here, portrait/landscape are orientations, and the tails below are all
+ * real Tailwind utilities. Tailwind then keys them off the visitor's browser window,
+ * while the framework gates the same class on the simulated screen, so a demo element
+ * vanished whenever the window happened to be portrait or wide enough. The framework
+ * bundle is the only stylesheet allowed to style these.
+ *
+ * The gate lists below are not identical because the docs chrome writes nine of these
+ * class names as genuine Tailwind utilities: lg:block, lg:flex, lg:hidden,
+ * lg:inline-flex, md:flex, md:flex-none, md:hidden, sm:inline and sm:inline-flex live
+ * in the nav, the layout, the menubar and the release cards. They stay generated.
+ * Shrink that set by moving a chrome call site off the class; never grow it.
+ */
+@source not inline("{dark:,}{portrait,landscape}:{block,flex,flex-auto,flex-initial,flex-none,grid,grow,grow-0,hidden,inline,inline-block,inline-flex,inline-grid,shrink-0,table,table-cell,table-row,visible}");
+@source not inline("{dark:,}{sm,md,lg}:{portrait,landscape}:{block,flex,flex-auto,flex-initial,flex-none,grid,grow,grow-0,hidden,inline,inline-block,inline-flex,inline-grid,shrink-0,table,table-cell,table-row,visible}");
+@source not inline("dark:{sm,md,lg}:{block,flex,flex-auto,flex-initial,flex-none,grid,grow,grow-0,hidden,inline,inline-block,inline-flex,inline-grid,shrink-0,table,table-cell,table-row,visible}");
+@source not inline("sm:{block,flex,flex-auto,flex-initial,flex-none,grid,grow,grow-0,hidden,inline-block,inline-grid,shrink-0,table,table-cell,table-row,visible}");
+@source not inline("md:{block,flex-auto,flex-initial,grid,grow,grow-0,inline,inline-block,inline-flex,inline-grid,shrink-0,table,table-cell,table-row,visible}");
+@source not inline("lg:{flex-auto,flex-initial,flex-none,grid,grow,grow-0,inline,inline-block,inline-grid,shrink-0,table,table-cell,table-row,visible}");
+
+@font-face {
+    font-family: "TRMNL12";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("/fonts/TRMNL12-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "TRMNL12";
+    font-style: normal;
+    font-weight: 700;
+    font-display: block;
+    src: url("/fonts/TRMNL12-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "TRMNL16";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("/fonts/TRMNL16-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "TRMNL16";
+    font-style: normal;
+    font-weight: 700;
+    font-display: block;
+    src: url("/fonts/TRMNL16-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "TRMNL21";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("/fonts/TRMNL21-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "TRMNL21";
+    font-style: normal;
+    font-weight: 700;
+    font-display: block;
+    src: url("/fonts/TRMNL21-Bold.ttf") format("truetype");
+}
+
+/* Shared 3D effect: gradient (inset highlight/shadow) acts as the edge. Used by badges and card hover. */
+:root {
+    --shadow-3d-inset: inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.33);
+    /* Stronger 3D edge for cards (larger surface) so it stays visible */
+    --shadow-3d-inset-card: inset 0 2px 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 1px 0 rgba(0, 0, 0, 0.12);
+    --shadow-card-rest: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.1), 0 10px 22px rgba(0, 0, 0, 0.09);
+    /* Thumbnail hover radial gradient: stronger in light mode so it matches dark-mode visibility */
+    --thumbnail-hover-highlight: rgba(255, 255, 255, 0.09);
+
+    /* Syntax highlighting tokens: single source of truth for prism_trmnl.css and Tailwind syntax-* utilities */
+    --syntax-base: #2b2b2b;
+    --syntax-bg: #f2f0ed;
+    --syntax-comment: #6b7280;
+    --syntax-punctuation: #525252;
+    --syntax-tag: #2d5243;
+    --syntax-attr: #5b4dbf;
+    --syntax-deleted: #991b1b;
+    --syntax-function: #9a5a1a;
+    --syntax-boolean: #4b5563;
+    --syntax-number: #9a5a1a;
+    --syntax-property: #0d7a6b;
+    --syntax-class: #1d4ed8;
+    --syntax-keyword: #0d7a6b;
+    --syntax-string: #a03d8f;
+    --syntax-inserted: #15803d;
+    --syntax-string-bg: #f8f4f7;
+    --syntax-string-border: rgba(160, 61, 143, 0.25);
+}
+html.dark {
+    /* Native controls (multi-select options, scrollbars) follow color-scheme, not the .dark class. */
+    color-scheme: dark;
+    --shadow-3d-inset: inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3);
+    --shadow-3d-inset-card: inset 0 2px 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 1px 0 rgba(0, 0, 0, 0.5);
+    --thumbnail-hover-highlight: rgba(255, 255, 255, 0.036);
+}
+
+/* .syntax-dark forces dark syntax colors on permanently dark sections (e.g. BYOS code blocks) */
+html.dark,
+.syntax-dark {
+    --syntax-base: #d8dee9;
+    --syntax-bg: #1a1a1a;
+    --syntax-comment: #6d6d6d;
+    --syntax-punctuation: #a4a4a4;
+    --syntax-tag: #699b87;
+    --syntax-attr: #aaa0fa;
+    --syntax-deleted: #bf616a;
+    --syntax-function: #efb080;
+    --syntax-boolean: rgba(255, 255, 255, 0.36);
+    --syntax-number: #ebc88d;
+    --syntax-property: #81d2ce;
+    --syntax-class: #87c3ff;
+    --syntax-keyword: #83d6c5;
+    --syntax-string: #e394dc;
+    --syntax-inserted: #a3be8c;
+    --syntax-string-bg: #1a1a1a;
+    --syntax-string-border: rgba(227, 148, 220, 0.2);
+}
+
+@layer base {
+    kbd {
+        @apply font-sans;
+    }
+
+       overscroll from chaining to the document so trackpad gestures never
+       trigger browser back/forward navigation. `contain` (not `none`) keeps
+       the per-scroller elastic bounce on inner panels. */
+    body.is-fullscreen-layout,
+    html:has(body.is-fullscreen-layout) {
+        overscroll-behavior: contain;
+    }
+}
+
+@layer components {
+    .prose :where(kbd) {
+        @apply font-sans;
+    }
+
+    html.has-touch [data-command-palette-action-hint] {
+        display: none !important;
+    }
+
+    html.has-touch [data-command-shortcut-badge] {
+        display: none !important;
+    }
+
+    /* Touch devices (notably iOS Safari): compositing the command-palette scrim's
+       backdrop-filter blur over the Framework docs' live preview iframes is
+       catastrophically expensive and pins the main thread for many seconds. Drop
+       the blur on touch and use a slightly more opaque solid scrim instead. The
+       frosted-glass look is preserved on pointer (desktop) devices. */
+    html.has-touch [data-command-palette-target="backdrop"] {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        background-color: rgba(242, 240, 237, 0.9) !important; /* gray-100 */
+    }
+
+    html.dark.has-touch [data-command-palette-target="backdrop"] {
+        background-color: rgba(16, 16, 16, 0.9) !important; /* gray-850 */
+    }
+
+    [data-command-palette-target="input"][contenteditable]:empty::before {
+        content: attr(data-placeholder);
+        color: #9ca3af;
+        pointer-events: none;
+    }
+
+    html.dark [data-command-palette-target="input"][contenteditable]:empty::before {
+        color: #6b7280;
+    }
+
+    /* 3D badges: use shared --shadow-3d-inset */
+    .badge-border-3d-primary {
+        background: #ffbaa3;
+        box-shadow: var(--shadow-3d-inset);
+    }
+    .badge-border-3d-blue {
+        background: #dbeafe;
+        box-shadow: var(--shadow-3d-inset);
+    }
+    .badge-border-3d-gray {
+        background: #fbfaf8;
+        box-shadow: var(--shadow-3d-inset);
+    }
+    html.dark .badge-border-3d-primary {
+        background: #b94938;
+    }
+    html.dark .badge-border-3d-blue {
+        background: #162456;
+    }
+    html.dark .badge-border-3d-gray {
+        background: #202020;
+    }
+    .badge-border-3d-sage {
+        background: #e1ebe7; /* sage-50 */
+        box-shadow: var(--shadow-3d-inset);
+    }
+    html.dark .badge-border-3d-sage {
+        background: #0f2516; /* sage-900 */
+    }
+
+    /* Card: outer lift shadow set by JS on hover; 3D border always on via overlay on top of image */
+    [data-thumbnail-hover-target="card"] {
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    }
+    .thumbnail-hover-card-3d-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 10;
+        box-shadow: var(--shadow-3d-inset-card);
+    }
+}
+
+/* exists natively in a newer version of Tailwind we're not using */
+ .wrap-anywhere {
+   overflow-wrap: anywhere;
+ }
+
+.contain-paint {
+    contain: paint;
+}
+
+/* BYOD wizard: normalize device-family icons to a uniform size. The shared
+   shared/icons/* partials hardcode their own dimensions, so constrain the SVG
+   here rather than relying on the (uncompiled) [&_svg] arbitrary variant. */
+.byod-wizard__icon svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+.trmnl-font-page .f12 { font-family: "TRMNL12", monospace; font-size: 12px; line-height: 12px; }
+.trmnl-font-page .f12x2 { font-family: "TRMNL12", monospace; font-size: 24px; line-height: 24px; }
+.trmnl-font-page .f12x3 { font-family: "TRMNL12", monospace; font-size: 36px; line-height: 36px; }
+.trmnl-font-page .f12x4 { font-family: "TRMNL12", monospace; font-size: 48px; line-height: 48px; }
+.trmnl-font-page .f16 { font-family: "TRMNL16", monospace; font-size: 16px; line-height: 16px; }
+.trmnl-font-page .f16x2 { font-family: "TRMNL16", monospace; font-size: 32px; line-height: 32px; }
+.trmnl-font-page .f16x3 { font-family: "TRMNL16", monospace; font-size: 48px; line-height: 48px; }
+.trmnl-font-page .f21 { font-family: "TRMNL21", monospace; font-size: 21px; line-height: 21px; }
+.trmnl-font-page .f21x2 { font-family: "TRMNL21", monospace; font-size: 42px; line-height: 42px; }
+.trmnl-font-page .f21x3 { font-family: "TRMNL21", monospace; font-size: 63px; line-height: 63px; }
+.trmnl-font-page .f21x4 { font-family: "TRMNL21", monospace; font-size: 84px; line-height: 84px; }
+.trmnl-font-page .f21x6 { font-family: "TRMNL21", monospace; font-size: 126px; line-height: 126px; }
+.trmnl-font-page .fs-ss01 { font-feature-settings: "ss01" 1; }
+.trmnl-font-page .fs-frac { font-feature-settings: "frac" 1; }
+.trmnl-font-page .fs-numr { font-feature-settings: "numr" 1; }
+.trmnl-font-page .fs-dnom { font-feature-settings: "dnom" 1; }
+.trmnl-font-page .fs-rule-chapter { @apply border-gray-300 dark:border-gray-625; }
+.trmnl-font-page .fs-rule-section { @apply border-gray-250 dark:border-gray-700; }
+.trmnl-font-page .fs-rule-item { @apply border-gray-175 dark:border-gray-800; }
+.trmnl-font-page .fs-rule-grid { @apply border-gray-150 dark:border-gray-850; }
+.trmnl-font-page .fs-rule-chapter-sage { @apply border-sage-500 dark:border-sage-700; }
+.trmnl-font-page .fs-rule-section-sage { @apply border-sage-700 dark:border-sage-800; }
+.trmnl-font-page .fs-rule-item-sage { @apply border-sage-850 dark:border-sage-900; }
+.trmnl-font-page .fs-rule-section-primary { @apply border-primary-250 dark:border-primary-900; }
+.trmnl-font-page .fs-rule-item-primary { @apply border-primary-200 dark:border-primary-900; }
+.trmnl-font-page .fs-rule-chapter-dark { @apply border-gray-625 dark:border-gray-625; }
+.trmnl-font-page .fs-rule-section-dark { @apply border-gray-625 dark:border-gray-700; }
+.trmnl-font-page .fs-rule-item-dark { @apply border-gray-800 dark:border-gray-800; }
+.trmnl-font-page .max-w-\[96rem\] { max-width: 100rem; }
+.trmnl-font-page .font-sans,
+.trmnl-font-page .font-serif,
+.trmnl-font-page .font-heading,
+.trmnl-font-page .font-display { font-family: "TRMNL16", monospace; }
+
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Bottom navigation (shared/_nav): static frosted-glass pill bar.
+   Active state is rendered server-side via the data-active attribute
+   (see shared/_nav_item); no JavaScript drives this design. */
+
+/* Active item: primary tint + a static pill background. */
+.nav-link[data-active] {
+    @apply text-primary-700 dark:text-primary-200 bg-primary-100/80 dark:bg-primary-900/40;
+}
+
+/* Subtle hover affordance for inactive items. */
+.nav-link:not([data-active]):hover {
+    background-color: rgb(0 0 0 / 0.05);
+}
+
+html.dark .nav-link:not([data-active]):hover {
+    background-color: rgb(255 255 255 / 0.06);
+}
+
+/* Labels appear once the island has enough room. */
+.nav-label {
+    display: none;
+    margin-left: 0.375rem;
+    white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+    .nav-label {
+        display: inline-block;
+    }
+}
+
+/* Frosted-glass surface for the floating nav. The grey tint comes from the
+   bg-gray-* utilities in the nav_classes helper, so it tracks the project
+   palette; this rule only adds the hue-neutral glass treatment: blur + a mild
+   saturation lift and a defined edge (hairline border, inset top highlight,
+   soft drop shadow) so the bar separates from whatever sits behind it. */
+.nav-glass {
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    box-shadow:
+        0 8px 30px -8px rgba(0, 0, 0, 0.18),
+        0 2px 6px -2px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+html.dark .nav-glass {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 10px 34px -8px rgba(0, 0, 0, 0.6),
+        0 2px 6px -2px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* blog */
+
+/* Override lexxy CSS variables for dark mode.
+   Uses html.dark:root to beat lexxy-variables.css specificity (lexxy.css loads after tailwind). */
+html.dark:root {
+    --lexxy-color-ink: oklch(90% 0 0);
+    --lexxy-color-ink-medium: oklch(70% 0 0);
+    --lexxy-color-ink-light: oklch(55% 0 0);
+    --lexxy-color-ink-lighter: oklch(35% 0 0);
+    --lexxy-color-ink-lightest: oklch(22% 0 0);
+    --lexxy-color-ink-inverted: oklch(15% 0 0);
+
+    --lexxy-color-code-token-att: #ff7b72;
+    --lexxy-color-code-token-comment: #8b949e;
+    --lexxy-color-code-token-function: #d2a8ff;
+    --lexxy-color-code-token-operator: #ff7b72;
+    --lexxy-color-code-token-property: #79c0ff;
+    --lexxy-color-code-token-punctuation: #c9d1d9;
+    --lexxy-color-code-token-selector: #7ee787;
+    --lexxy-color-code-token-variable: #ffa657;
+
+    --lexxy-color-canvas: oklch(15% 0 0);
+    --lexxy-color-table-header-bg: oklch(22% 0 0);
+}
+
+/* https://github.com/basecamp/lexxy/issues/64 */
+.lexxy-content {
+  :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before, :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+    content: "";
+  }
+
+  /* Plain code blocks: wrap + Framework code-block design (code_example_component) + Tailwind mono font */
+  code[data-language="plain"] {
+    white-space: pre-wrap !important;
+    text-wrap: wrap !important;
+    overflow-x: visible !important;
+    @apply font-mono font-normal text-sm text-gray-600 dark:text-gray-500 bg-gray-150 dark:bg-gray-750 border border-gray-250 dark:border-gray-650 rounded-xl p-4 block;
+  }
+
+  & table {
+    & th, & td {
+      &.lexxy-content__table-cell--header {
+        font-weight: 300;
+      }
+    }
+  }
+}
+
+/* Embedded <video> attachment styling, toggle via ?video_style=coral|sage|brackets|bezel */
+.lexxy-content figure.attachment--video {
+  margin: 1.5rem 0;
+}
+.lexxy-content figure.attachment--video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  accent-color: theme('colors.primary.500');
+}
+.lexxy-content figure.attachment--video figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: theme('colors.gray.500');
+  text-align: center;
+}
+
+/* Blog post video player variant 1: coral, a bold 2px primary border + soft drop shadow */
+.lexxy-content figure.attachment--video {
+  border: 2px solid theme('colors.primary.500');
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+.lexxy-content figure.attachment--video figcaption {
+  padding: 0.5rem 0.75rem;
+  margin-top: 0;
+  background: theme('colors.primary.50');
+  color: theme('colors.primary.800');
+  border-top: 1px solid theme('colors.primary.500');
+}
+html.dark .lexxy-content figure.attachment--video figcaption {
+  background: theme('colors.primary.950');
+  color: theme('colors.primary.200');
+}
+
+/* Blog post video player variant 2: bezel, a thick gray device frame with coral LED dot */
+/* .lexxy-content figure.attachment--video {
+  background: theme('colors.gray.800');
+  padding: 14px 14px 28px 14px;
+  border-radius: 14px;
+  position: relative;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+.lexxy-content figure.attachment--video video {
+  border-radius: 2px;
+}
+.lexxy-content figure.attachment--video::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: theme('colors.primary.500');
+  border-radius: 50%;
+  bottom: 11px;
+  right: 14px;
+  box-shadow: 0 0 6px theme('colors.primary.500');
+}
+.lexxy-content figure.attachment--video figcaption {
+  color: theme('colors.gray.300');
+  margin-top: 0.75rem;
+} */
+
+/* Override Prism theme for Framework code examples - keep our layout, explicit bg in light mode */
+.code-example pre,
+.code-example pre[class*="language-"] {
+  margin: 0;
+  padding: 0.75rem;
+  @apply bg-gray-75 dark:bg-transparent;
+  width: 100%;
+  min-height: 0;
+  overflow: visible !important;
+}
+.code-example code,
+.code-example code[class*="language-"] {
+  padding: 0;
+  @apply bg-gray-75 dark:bg-transparent;
+}
+
+/* Framework section code: adapt to sage/gray/clay message environments (do/don't, platform/custom) */
+[data-framework-message="sage"] .framework-section-code {
+  color: #27493a;
+  background-color: #d2e1db;
+  border-color: rgba(45, 82, 67, 0.4);
+}
+html.dark [data-framework-message="sage"] .framework-section-code {
+  color: #a5c3b7;
+  background-color: #0f2516;
+  border-color: rgba(45, 82, 67, 0.5);
+}
+
+[data-framework-message="gray"] .framework-section-code {
+  color: #5b5b5b;
+  background-color: #edebe8;
+  border-color: rgba(91, 91, 91, 0.25);
+}
+html.dark [data-framework-message="gray"] .framework-section-code {
+  color: #d6d5d4;
+  background-color: #181818;
+  border-color: rgba(214, 213, 212, 0.25);
+}
+
+[data-framework-message="clay"] .framework-section-code {
+  color: #522d2d;
+  background-color: #ebe1e1;
+  border-color: rgba(82, 45, 45, 0.3);
+}
+html.dark [data-framework-message="clay"] .framework-section-code {
+  color: #c3a5a5;
+  background-color: #250f0f;
+  border-color: rgba(91, 51, 51, 0.55);
+}
+
+/* Inline framework demos (Colors palettes, 2.3 Background swatches): the .screen
+   wrapper only provides the token and device-gate context for bg--* utilities.
+   The docs chrome owns the shell around and between the swatches, so the screen
+   canvas must not paint. plugins.css loads after this sheet and is unlayered,
+   hence the !important. */
+.framework-inline-demo .screen {
+  background-color: transparent !important;
+  background-image: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+  color: inherit !important;
+}
+
+/* Limit lexxy editor height in blog post form */
+/* Target the field div that contains the rich_text_area */
+.field.relative.border.rounded-lg {
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Target the lexxy-editor element */
+summary.lexxy-editor__toolbar-button {
+  display: grid !important;
+}
+.field.relative.border.rounded-lg lexxy-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Keep toolbar fixed at top */
+.field.relative.border.rounded-lg lexxy-toolbar {
+  flex-shrink: 0;
+}
+
+/* Make the content area scrollable - this is the key class from lexxy */
+.field.relative.border.rounded-lg .lexxy-editor__content {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex: 1;
+  min-height: 0;
+  max-height: 100%;
+  min-block-size: 0 !important; /* Override lexxy's min-block-size */
+}
+
+blockquote {
+  /* border-inline-start-color (border-s-) is defined by tailwind already, must use !important */
+  @apply p-4 my-4 !border-s-gray-400 bg-gray-100 dark:bg-gray-700;
+
+  p {
+    @apply italic font-medium leading-relaxed text-gray-900 dark:text-gray-200;
+  }
+}
+
+/* Blog post article: vertical line fades to transparent over first and last 300px */
+.blog-article-vertical-line {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, theme('colors.gray.200') 300px, theme('colors.gray.200') calc(100% - 300px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, theme('colors.gray.200') 300px, theme('colors.gray.200') calc(100% - 300px), transparent 100%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Blog blockquotes: accent line. Small screens: flush with content, text shifted right; md+: in margin aligned with main decorator */
+.lexxy-content blockquote {
+  position: relative;
+  padding: 0;
+  padding-left: 1rem;  /* room for accent line + gap when main decorator hidden */
+  margin-inline-start: 0;
+  background: transparent;
+  border-inline-start: none;
+}
+
+.lexxy-content blockquote::before {
+  content: "";
+  position: absolute;
+  left: 0;        /* small: flush with content edge */
+  top: 0;
+  bottom: 0;
+  width: 0.25rem; /* w-1 = 4px */
+  background-color: theme('colors.primary.500');
+}
+
+@media (min-width: 768px) {
+  .lexxy-content blockquote {
+    padding-left: 0;
+  }
+  .lexxy-content blockquote::before {
+    left: -3rem;  /* matches blog-article vertical line */
+  }
+}
+
+/* Typography on blockquote paragraphs (Lexxy wraps blockquote content in <p>) */
+.lexxy-content blockquote p {
+  font-family: theme('fontFamily.heading');
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.625;
+  font-size: 24px;
+}
+
+/* Override Tailwind prose open-quote on blockquote p:first-of-type::before */
+.lexxy-content blockquote p:first-of-type::before {
+  content: none;
+}
+
+/* Closing quote icon on the last paragraph only */
+.lexxy-content blockquote p:last-of-type::after {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.33em;
+  vertical-align: middle;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M116,72v88a48.05,48.05,0,0,1-48,48,8,8,0,0,1,0-16,32,32,0,0,0,32-32v-8H40a16,16,0,0,1-16-16V72A16,16,0,0,1,40,56h60A16,16,0,0,1,116,72ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M116,72v88a48.05,48.05,0,0,1-48,48,8,8,0,0,1,0-16,32,32,0,0,0,32-32v-8H40a16,16,0,0,1-16-16V72A16,16,0,0,1,40,56h60A16,16,0,0,1,116,72ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background-color: theme('colors.gray.450');
+  transform: translateY(-2px);
+}
+html.dark .lexxy-content blockquote p:last-of-type::after {
+  background-color: theme('colors.gray.600');
+}
+
+/* Footer dotted divider: same radial-gradient dots as Lexxy blog links */
+.footer-dotted-divider {
+  height: 3px;
+  background-image:
+    radial-gradient(circle, theme('colors.gray.600') 1px, transparent 1px),
+    radial-gradient(circle, theme('colors.gray.600') 1px, transparent 1px);
+  background-size: 7px 3px, 7px 3px;
+  background-repeat: repeat-x;
+  background-position: 0px 0px, 3.5px 0px;
+  opacity: 0.5;
+}
+html.dark .footer-dotted-divider {
+  background-image:
+    radial-gradient(circle, theme('colors.gray.700') 1px, transparent 1px),
+    radial-gradient(circle, theme('colors.gray.700') 1px, transparent 1px);
+}
+
+/* Lexxy blog lists: UL uses vertical bar per item. Small: flush with content, text right; md+: in margin aligned with main decorator */
+.lexxy-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.lexxy-content ul li {
+  position: relative;
+  padding-left: 1rem;  /* room for bar + gap when main decorator hidden */
+  font-size: 1rem;     /* slightly smaller than body */
+  font-weight: 500;    /* medium */
+  color: theme('colors.gray.500');
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+html.dark .lexxy-content ul li {
+  color: theme('colors.gray.500');
+}
+
+.lexxy-content ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;         /* small: flush with content edge */
+  top: 0.9em;
+  transform: translateY(-50%);  /* center dot in text row */
+  width: 0.25rem;  /* 4px square */
+  height: 0.25rem;
+  background-color: theme('colors.primary.500');
+}
+
+@media (min-width: 768px) {
+  .lexxy-content ul li {
+    padding-left: 0;
+  }
+  .lexxy-content ul li::before {
+    left: -3rem;   /* matches blockquote and blog-article vertical line */
+  }
+}
+
+/* OL: keep default numbers, gray marker color */
+.lexxy-content ol li::marker {
+  color: theme('colors.gray.500');
+}
+html.dark .lexxy-content ol li::marker {
+  color: theme('colors.gray.600');
+}
+
+/* Lexxy may emit class="underline" on links inside .lexxy-content. Keep primary
+   styling scoped here so we do not hijack Tailwind's global `underline` utility
+   (text-decoration only) used across the app. */
+.lexxy-content .underline {
+  color: theme('colors.primary.500');
+  text-decoration: underline;
+}
+
+.lexxy-content a {
+  color: theme('colors.primary.500');
+  text-decoration: none;
+  /* Halo outside the text (bg-gray-200) so link text doesn’t mush with dotted underline */
+  text-shadow:
+    1px 0 0 theme('colors.gray.200'),
+    -1px 0 0 theme('colors.gray.200'),
+    0 1px 0 theme('colors.gray.200'),
+    0 -1px 0 theme('colors.gray.200'),
+    1px 1px 0 theme('colors.gray.200'),
+    -1px 1px 0 theme('colors.gray.200'),
+    1px -1px 0 theme('colors.gray.200'),
+    -1px -1px 0 theme('colors.gray.200'),
+    2px 0 0 theme('colors.gray.200'),
+    -2px 0 0 theme('colors.gray.200'),
+    0 2px 0 theme('colors.gray.200'),
+    0 -2px 0 theme('colors.gray.200'),
+    2px 2px 0 theme('colors.gray.200'),
+    -2px 2px 0 theme('colors.gray.200'),
+    2px -2px 0 theme('colors.gray.200'),
+    -2px -2px 0 theme('colors.gray.200');
+  background-image:
+    radial-gradient(circle, theme('colors.primary.500') 1px, transparent 1px),
+    radial-gradient(circle, theme('colors.primary.500') 1px, transparent 1px);
+  background-size:
+    7px 3px,
+    7px 3px;
+  background-repeat: repeat-x;
+  background-position:
+    0px calc(100% - 1.5px),
+    3.5px calc(100% - 1.5px);
+  padding-bottom: 5px;
+  transition: background-position 320ms cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+.lexxy-content a:hover {
+  background-position:
+    0px calc(100% - 0px),
+    3.5px calc(100% - 3px);
+}
+html.dark .lexxy-content a {
+  color: theme('colors.primary.400');
+  text-shadow:
+    1px 0 0 theme('colors.gray.800'),
+    -1px 0 0 theme('colors.gray.800'),
+    0 1px 0 theme('colors.gray.800'),
+    0 -1px 0 theme('colors.gray.800'),
+    1px 1px 0 theme('colors.gray.800'),
+    -1px 1px 0 theme('colors.gray.800'),
+    1px -1px 0 theme('colors.gray.800'),
+    -1px -1px 0 theme('colors.gray.800'),
+    2px 0 0 theme('colors.gray.800'),
+    -2px 0 0 theme('colors.gray.800'),
+    0 2px 0 theme('colors.gray.800'),
+    0 -2px 0 theme('colors.gray.800'),
+    2px 2px 0 theme('colors.gray.800'),
+    -2px 2px 0 theme('colors.gray.800'),
+    2px -2px 0 theme('colors.gray.800'),
+    -2px -2px 0 theme('colors.gray.800');
+  background-image:
+    radial-gradient(circle, theme('colors.primary.400') 1px, transparent 1px),
+    radial-gradient(circle, theme('colors.primary.400') 1px, transparent 1px);
+}
+
+/* plugin_settings#form */
+
+small kbd {
+  @apply p-1 mx-1 text-xs uppercase font-semibold text-gray-600 border border-gray-300
+  dark:border-gray-600 rounded-lg dark:text-gray-100
+  shadow-[0px_3px_0px_0px_rgba(0,_0,_0,_0.2)]
+  dark:shadow-[0px_3px_0px_0px_rgba(255,255,255,_0.2)]
+}
+
+/* playlists#index */
+
+.playlist-item {
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.playlist-item--dropped {
+    isolation: isolate;
+}
+
+.playlist-item--dropped::after {
+    animation: playlist-item-drop-settle 960ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    background: rgb(248 101 75 / 9%);
+    border-radius: inherit;
+    box-shadow:
+        inset 0 0 0 1px rgb(248 101 75 / 22%),
+        0 10px 30px rgb(248 101 75 / 10%);
+    content: "";
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+.playlist-item--dropped > * {
+    position: relative;
+    z-index: 1;
+}
+
+.dark .playlist-item--dropped::after {
+    background: rgb(255 146 128 / 11%);
+    box-shadow:
+        inset 0 0 0 1px rgb(255 146 128 / 24%),
+        0 10px 30px rgb(255 146 128 / 12%);
+}
+
+@keyframes playlist-item-drop-settle {
+    0% {
+        opacity: 0;
+    }
+    16% {
+        opacity: 1;
+    }
+    42% {
+        opacity: 0.74;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+[data-playlist-sortable="true"] .playlist-item {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+[data-playlist-sortable="true"] .playlist-item img {
+    -webkit-user-drag: none;
+}
+
+[data-playlist-sortable="true"] .playlist-item * {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+[data-playlist-sortable="true"] .playlist-item a,
+[data-playlist-sortable="true"] .playlist-item button,
+[data-playlist-sortable="true"] .playlist-item input,
+[data-playlist-sortable="true"] .playlist-item label,
+[data-playlist-sortable="true"] .playlist-item select,
+[data-playlist-sortable="true"] .playlist-item textarea,
+[data-playlist-sortable="true"] .playlist-item [data-no-drag] {
+    cursor: pointer;
+    user-select: auto;
+    -webkit-user-select: auto;
+}
+
+.playlist-sortable--handle-only .playlist-item {
+    cursor: default;
+    touch-action: pan-y;
+    user-select: auto;
+    -webkit-user-select: auto;
+}
+
+.playlist-sortable--handle-only .playlist-item * {
+    user-select: auto;
+    -webkit-user-select: auto;
+}
+
+.playlist-item__ghost {
+    opacity: 1;
+}
+
+.playlist-item__ghost > .playlist-group__row {
+    opacity: 0.72;
+}
+
+.playlist-item__chosen {
+    cursor: grabbing;
+}
+
+.playlist-item__drag {
+    cursor: grabbing;
+    opacity: 0.98;
+    z-index: 50;
+    @apply shadow-2xl ring-1 ring-primary-500/20 dark:ring-primary-400/25;
+}
+
+.playlist-item__fallback {
+    opacity: 0 !important;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.playlist-sortable--sorting {
+    cursor: grabbing;
+}
+
+.playlist-sortable--sorting .playlist-item {
+    will-change: transform;
+}
+
+.playlist-sortable-active {
+    cursor: grabbing;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.playlist-sortable-select-suppressed,
+.playlist-sortable-select-suppressed * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none;
+}
+
+.playlist-sortable-select-suppressed ::selection {
+    background: transparent;
+}
+
+.playlist-item--drop-before::before,
+.playlist-item--drop-after::after {
+    animation: playlist-drop-line-in 110ms ease-out;
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 2px;
+    border-radius: 9999px;
+    z-index: 20;
+    background-color: #f8654b;
+    box-shadow: 0 0 0 3px rgb(248 101 75 / 14%);
+    transform-origin: center;
+}
+
+.dark .playlist-item--drop-before::before,
+.dark .playlist-item--drop-after::after {
+    background-color: #ff9280;
+    box-shadow: 0 0 0 3px rgb(255 146 128 / 16%);
+}
+
+.playlist-item--drop-before::before {
+    top: -1px;
+}
+
+.playlist-item--drop-after::after {
+    bottom: -1px;
+}
+
+@keyframes playlist-drop-line-in {
+    from {
+        opacity: 0;
+        transform: scaleX(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+.playlist-item__reorder-affordance {
+    width: 1rem;
+    min-width: 1rem;
+    opacity: 0.34;
+    transition: color 150ms ease, opacity 150ms ease;
+    @apply text-gray-400 dark:text-gray-500;
+}
+
+.playlist-item:hover .playlist-item__reorder-affordance,
+.playlist-item__chosen .playlist-item__reorder-affordance {
+    opacity: 0.68;
+    @apply text-gray-500 dark:text-gray-400;
+}
+
+.playlist-item__reorder-affordance svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.playlist-sortable--handle-only .playlist-item__handle {
+    cursor: grab;
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+    touch-action: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    width: 2.5rem;
+}
+
+.playlist-sortable--handle-only .playlist-item__handle:active {
+    cursor: grabbing;
+}
+
+/* Select mode: the per-item controls (three-dot menu + drag handle) and the bulk
+   checkbox share the same trailing slot. Entering select mode crossfades the controls
+   out and the checkbox in (and the reverse on exit) without ever changing the row's
+   layout. The checkbox is absolutely positioned over the controls' slot, so the grid
+   columns never shift. Calm, decelerating motion (no bounce) to keep the mode switch Zen. */
+.playlist-item__row-controls {
+    transition:
+        opacity 360ms ease,
+        scale 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.playlist-item__bulk-checkbox {
+    opacity: 0;
+    visibility: hidden;
+    scale: 0.7;
+    pointer-events: none;
+    transition:
+        opacity 360ms ease,
+        scale 420ms cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 420ms;
+}
+
+[data-bulk-mode="active"] .playlist-item__row-controls {
+    opacity: 0;
+    scale: 0.7;
+    pointer-events: none;
+}
+
+[data-bulk-mode="active"] .playlist-item__bulk-checkbox {
+    opacity: 1;
+    visibility: visible;
+    scale: 1;
+    pointer-events: auto;
+}
+
+[data-bulk-mode="active"] .playlist-item {
+    cursor: pointer;
+}
+
+.playlist-item--bulk-removing {
+    max-height: 0 !important;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: scaleY(0.98);
+    transform-origin: top;
+    transition:
+        max-height 220ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 160ms ease,
+        transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.playlist-item--bulk-removing > * {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+    transition:
+        opacity 140ms ease,
+        transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Selected card: tinted background (no ring; the ring escapes the box).
+   Lives in @layer utilities so it competes with the muted-row utilities
+   (e.g. !bg-gray-100) in the same cascade layer; otherwise their layered
+   !important would beat this unlayered rule and hidden/out-of-schedule/
+   needs-setup rows wouldn't tint. Specificity here wins within the layer. */
+@layer utilities {
+    [data-bulk-mode="active"] .playlist-item[data-bulk-selected="true"] {
+        @apply !bg-primary-50 dark:!bg-primary-950/40;
+    }
+}
+
+/* Grid templates for playlist rows. The leading icon and preview columns size to
+   their content (`auto`) so the gap between icon, preview, and title is always the
+   row gap. Fixed widths wider than the content left uneven slack (and ballooned in
+   compact density, where the icon shrinks but a fixed column wouldn't). Schedule and
+   Status each get their own fixed column so they stay table-aligned. At md the
+   schedule column is a narrow compact indicator; at lg it widens to hold the full
+   24h graph. */
+@media (min-width: 768px) {
+    .playlist-group__row {
+        grid-template-columns: auto minmax(0, 1fr) 4.5rem 8.5rem auto;
+    }
+}
+@media (min-width: 1024px) {
+    .playlist-group__row {
+        grid-template-columns: auto auto minmax(0, 1fr) 14rem 10rem auto;
+    }
+}
+
+[data-schedule-visibility="hidden"] .playlist-item__schedule-cell {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    [data-schedule-visibility="hidden"] .playlist-group__row {
+        grid-template-columns: auto minmax(0, 1fr) 8.5rem auto;
+    }
+}
+@media (min-width: 1024px) {
+    [data-schedule-visibility="hidden"] .playlist-group__row {
+        grid-template-columns: auto auto minmax(0, 1fr) 10rem auto;
+    }
+}
+
+/* Select mode keeps the exact same grid as normal mode. The checkbox reuses the
+   trailing actions slot rather than adding a leading column, so the row never shifts. */
+
+@media (prefers-reduced-motion: reduce) {
+    .playlist-item--drop-before::before,
+    .playlist-item--drop-after::after {
+        animation: none;
+    }
+
+    .playlist-item--dropped::after {
+        content: none;
+    }
+
+    .playlist-item--bulk-removing,
+    .playlist-item--bulk-removing > *,
+    .playlist-item__row-controls,
+    .playlist-item__bulk-checkbox {
+        transition: none;
+    }
+}
+
+/* Focused select mode: while `html[data-bulk-active]` is set (toggled by the bulk-select
+   Stimulus controller), slide the bottom nav and the floating Time Travel island down and
+   out of view, and slide the Select actions island up so it rests anchored at the bottom.
+   The action bar is always in the DOM; its off-screen resting state hides it pre-/post-mode. */
+.playlist-bulk-bar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    translate: -50% 150%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        translate 520ms cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 420ms ease,
+        visibility 520ms;
+}
+
+html[data-bulk-active] .playlist-bulk-bar {
+    translate: -50% 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+[data-bottom-nav],
+#time-travel-island {
+    transition:
+        translate 520ms cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 420ms ease;
+}
+
+html[data-bulk-active] [data-bottom-nav] {
+    translate: 0 150%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+html[data-bulk-active] #time-travel-island {
+    translate: -50% 150%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .playlist-bulk-bar,
+    [data-bottom-nav],
+    #time-travel-island {
+        transition: none;
+    }
+}
+
+/* Compact density: tighter rows, smaller icon and preview, less padding. */
+[data-density="compact"] .playlist-group__row {
+    height: 3rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+@media (min-width: 768px) {
+    [data-density="compact"] .playlist-group__row {
+        height: 3.25rem;
+    }
+}
+[data-density="compact"] .playlist-item__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+@media (min-width: 768px) {
+    [data-density="compact"] .playlist-item__icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+[data-density="compact"] .playlist-item__preview {
+    height: 1.5rem;
+}
+
+/* View dropdown: primary-tinted highlight on the active preference options,
+   muted look on the inactive one. Mirrors the framework menubar dropdown
+   active/inactive states without needing per-item Stimulus updates. */
+[data-controller~="playlist-view-preferences"] .view-control__item {
+    @apply text-gray-600 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+[data-controller~="playlist-view-preferences"][data-density="regular"] [data-playlist-view-density="regular"],
+[data-controller~="playlist-view-preferences"][data-density="compact"] [data-playlist-view-density="compact"],
+[data-controller~="playlist-view-preferences"][data-schedule-visibility="visible"] [data-playlist-view-schedule-visibility="visible"],
+[data-controller~="playlist-view-preferences"][data-schedule-visibility="hidden"] [data-playlist-view-schedule-visibility="hidden"] {
+    @apply text-primary-700 dark:text-primary-300 font-semibold bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-900/50;
+}
+
+/* Time Travel dropdowns: same active/inactive treatment as the View dropdown.
+   The Stimulus controller sets aria-selected on the option matching the current
+   value, so the highlight tracks the live selection without per-item rerenders. */
+.tt-option {
+    @apply text-gray-600 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+.tt-option[aria-selected="true"] {
+    @apply text-primary-700 dark:text-primary-300 font-semibold bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-900/50;
+}
+
+/* Soft, layered shadow for floating UI overlaid on scrolling content (the Time
+   Travel island, the bottom nav). Light mode only needs a small grounding shadow;
+   dark mode keeps a much heavier ambient glow, where faint shadows disappear over
+   near-black content. */
+.shadow-floating {
+    box-shadow:
+        0 1px 3px rgb(0 0 0 / 0.10),
+        0 12px 28px -18px rgb(0 0 0 / 0.24);
+}
+.dark .shadow-floating {
+    box-shadow:
+        0 2px 8px rgb(0 0 0 / 0.55),
+        0 0 72px 16px rgb(0 0 0 / 0.80);
+}
+
+/* user-facing logs */
+.pagy {
+    justify-content: center;
+
+    @apply flex space-x-1 font-semibold text-sm text-gray-500;
+
+    a:not(.gap) {
+        @apply block rounded-lg px-3 py-1 bg-gray-200;
+        &:hover {
+            @apply bg-gray-300;
+        }
+        &:not([href]) {
+            /* disabled links */
+            @apply text-gray-300 bg-gray-100 cursor-default;
+        }
+        &.current {
+            @apply text-white bg-primary-500 dark:bg-black;
+        }
+    }
+
+    label {
+        @apply inline-block whitespace-nowrap bg-gray-200 rounded-lg px-3 py-0.5;
+
+        input {
+            @apply bg-gray-100 border-none rounded-md;
+        }
+    }
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  background: #f8654b;
+  appearance: none;
+  cursor: pointer;
+  border: 0;
+  border-radius: 9999px;
+  width: 1rem;
+  height: 1rem;
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+
+@layer utilities {
+    /* Stagger card-enter animations so cards ripple in sequentially */
+    .animate-card-enter:nth-child(2)  { animation-delay:  25ms }
+    .animate-card-enter:nth-child(3)  { animation-delay:  50ms }
+    .animate-card-enter:nth-child(4)  { animation-delay:  75ms }
+    .animate-card-enter:nth-child(5)  { animation-delay: 100ms }
+    .animate-card-enter:nth-child(6)  { animation-delay: 125ms }
+    .animate-card-enter:nth-child(7)  { animation-delay: 150ms }
+    .animate-card-enter:nth-child(8)  { animation-delay: 175ms }
+    .animate-card-enter:nth-child(n+9) { animation-delay: 175ms }
+
+    .scrollbar-hide {
+        /* Firefox */
+        scrollbar-width: none;
+        /* Safari and Chrome */
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        /* For when actually scrolling - show a subtle scrollbar */
+        &:hover {
+            /* Firefox */
+            scrollbar-width: thin;
+            /* Safari and Chrome */
+            &::-webkit-scrollbar {
+                display: block;
+                width: 8px;
+                height: 8px;
+            }
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(155, 155, 155, 0.5);
+                border-radius: 20px;
+                border: transparent;
+            }
+        }
+    }
+
+    .image-pixelated {
+        image-rendering: pixelated;
+    }
+
+    .image-crisp {
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Guides */
+.guide h1 {
+    @apply font-heading text-4xl lg:text-5xl tracking-tight mb-4;
+}
+
+.guide h2 {
+    @apply font-heading text-2xl lg:text-3xl tracking-tight mb-4 pt-8;
+    position: relative;
+}
+.guide h2::after {
+    content: "";
+    @apply block w-full h-px absolute left-1/2 translate-x-[-50%] -bottom-2 bg-gray-400;
+}
+
+.guide h3 {
+    @apply font-heading text-xl lg:text-2xl tracking-tight pt-4 mb-2;
+}
+
+.guide p {
+    @apply text-base mb-4;
+}
+.guide img {
+    @apply block rounded bg-gray-200 my-4 lg:my-6;
+}
+
+.guide pre {
+    @apply bg-gray-300 rounded-md px-1 py-0.5;
+}
+
+.guide code,
+.guide pre {
+    @apply bg-gray-300 rounded-md px-1 py-0.5;
+}
+
+.guide ul {
+    @apply list-disc ml-4 mb-4;
+}
+
+.guide ol {
+    @apply list-decimal ml-4 mb-4;
+}
+
+.guide li {
+    @apply list-disc ml-4;
+}
+
+.guide a {
+    @apply text-primary-500 underline;
+}
+
+.guide a:hover {
+    @apply text-primary-700 underline;
+}
+
+/* Framework Documentation - Links in content and example code */
+body[data-controller*="framework-examples"] #main-content a:not(.framework-heading-anchor):not([class*="button"]):not([class*="bg-"]):not([class*="ring-"]) {
+    @apply text-primary-500 dark:text-primary-400;
+}
+
+body[data-controller*="framework-examples"] #main-content a:not(.framework-heading-anchor):not([class*="button"]):not([class*="bg-"]):not([class*="ring-"]):hover {
+    @apply text-primary-600 dark:text-primary-300;
+}
+
+.framework-heading-anchor {
+    position: absolute;
+    left: -16px;
+    display: inline;
+    padding-right: 8px;
+    cursor: pointer;
+    @apply text-primary-500 opacity-0 transition-opacity;
+}
+
+.group:hover > .framework-heading-anchor,
+.framework-heading-anchor:focus-visible {
+    @apply opacity-100;
+}
+
+.guide strong {
+    @apply font-bold;
+}
+
+.guide blockquote {
+    @apply bg-gray-300 rounded-md px-1 py-0.5;
+}
+
+/* Hero Overlay */
+.hero-overlay {
+  position: relative;
+}
+.hero-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    color(srgb 0.9026 0.8933 0.8794 / 0),
+    rgba(233, 231, 228, 0) 31.93%,
+    rgba(237, 235, 231, 0.79) 60.92%,
+    color(srgb 0.9333 0.9257 0.9142)
+  );
+  pointer-events: none;
+}
+
+/* Compositions Editor */
+
+@layer components {
+  .loading-animation {
+    --loading-animation-beat: 2.5s;
+    --loading-animation-cycle: 20s;
+    width: 100%;
+    min-height: clamp(360px, 62vh, 560px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: theme('spacing.6') theme('spacing.4');
+  }
+
+  .loading-animation--compact {
+    min-height: clamp(220px, 42vh, 360px);
+  }
+
+  .loading-animation__inner {
+    width: min(100%, 32rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .loading-animation__mark {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    display: grid;
+    place-items: center;
+  }
+
+  .loading-animation--compact .loading-animation__mark {
+    width: 96px;
+    height: 96px;
+  }
+
+  .loading-animation__icon-stage {
+    position: relative;
+    z-index: 1;
+    width: 128px;
+    height: 128px;
+    display: grid;
+    place-items: center;
+    color: theme('colors.sage.600');
+  }
+
+  html.dark .loading-animation__icon-stage {
+    color: theme('colors.sage.400');
+  }
+
+  .loading-animation--compact .loading-animation__icon-stage {
+    width: 96px;
+    height: 96px;
+  }
+
+  .loading-animation__icon {
+    width: 128px;
+    height: 128px;
+    overflow: visible;
+  }
+
+  .loading-animation--compact .loading-animation__icon {
+    width: 96px;
+    height: 96px;
+  }
+
+  .loading-animation__icon-item {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .loading-animation--sequence .loading-animation__icon-item {
+    opacity: 0;
+    animation: loadingAnimationIconCycle var(--loading-animation-cycle) infinite both;
+    animation-delay: calc(var(--loading-animation-index) * var(--loading-animation-beat));
+  }
+
+  .loading-animation__generic-square,
+  .loading-animation__generic-plus {
+    transform-box: view-box;
+    transform-origin: center;
+  }
+
+  .loading-animation__generic-plus {
+    animation: loadingAnimationGenericPlusTurn 5600ms infinite both;
+  }
+
+  .loading-animation__generic-square {
+    animation: loadingAnimationGenericSquareTurn 5600ms infinite both;
+  }
+
+  .loading-animation__caption {
+    position: relative;
+    width: min(100%, 32rem);
+    min-height: 2rem;
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loading-animation__caption-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loading-animation--sequence .loading-animation__caption-item {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%, 5px);
+    animation: loadingAnimationMessageCycle var(--loading-animation-cycle) infinite both;
+    animation-delay: calc(var(--loading-animation-index) * var(--loading-animation-beat));
+  }
+
+  .loading-animation__pulse {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 11px;
+    height: 11px;
+    margin-top: -5.5px;
+    margin-right: 14px;
+    color: theme('colors.sage.500');
+    animation: loadingAnimationBreathe 3600ms cubic-bezier(.45,0,.55,1) infinite;
+  }
+
+  .loading-animation__pulse svg {
+    display: block;
+  }
+
+  .loading-animation__message {
+    display: block;
+    font-family: theme('fontFamily.heading');
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    color: theme('colors.gray.575');
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .loading-animation--compact .loading-animation__message {
+    font-size: 18px;
+  }
+
+  html.dark .loading-animation__message {
+    color: theme('colors.gray.300');
+  }
+
+  .loading-animation__eyebrow {
+    margin-bottom: theme('spacing.3');
+    font-family: theme('fontFamily.mono');
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: theme('colors.gray.500');
+  }
+
+  html.dark .loading-animation__eyebrow {
+    color: theme('colors.gray.400');
+  }
+
+  .loading-animation__title {
+    font-family: theme('fontFamily.heading');
+    font-size: 1.875rem;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 2.25rem;
+    color: theme('colors.gray.900');
+  }
+
+  html.dark .loading-animation__title {
+    color: theme('colors.gray.50');
+  }
+
+  .loading-animation__subtitle {
+    max-width: 30rem;
+    margin-top: theme('spacing.3');
+    font-family: theme('fontFamily.sans');
+    font-size: 1rem;
+    line-height: 1.6;
+    color: theme('colors.gray.500');
+  }
+
+  html.dark .loading-animation__subtitle {
+    color: theme('colors.gray.400');
+  }
+
+  .loading-animation__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: theme('spacing.3');
+    margin-top: theme('spacing.6');
+  }
+
+  .loading-animation__button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: theme('spacing.3') theme('spacing.5');
+    font-family: theme('fontFamily.sans');
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+  }
+
+  .loading-animation__button:hover {
+    opacity: 0.88;
+  }
+
+  .loading-animation__button--primary {
+    border: 1px solid theme('colors.gray.950');
+    background: theme('colors.gray.950');
+    color: theme('colors.white');
+  }
+
+  .loading-animation__button--secondary {
+    border: 1px solid theme('colors.gray.300');
+    background: theme('colors.white');
+    color: theme('colors.gray.800');
+  }
+
+  html.dark .loading-animation__button--primary {
+    border-color: theme('colors.gray.50');
+    background: theme('colors.gray.50');
+    color: theme('colors.gray.950');
+  }
+
+  html.dark .loading-animation__button--secondary {
+    border-color: theme('colors.gray.650');
+    background: theme('colors.gray.750');
+    color: theme('colors.gray.100');
+  }
+
+  @media (min-width: 768px) {
+    .loading-animation__title {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loading-animation__icon-item,
+    .loading-animation__caption-item {
+      animation: none;
+    }
+
+    .loading-animation__icon-item:first-child,
+    .loading-animation__caption-item:first-child {
+      opacity: 1;
+      transform: none;
+    }
+
+    .loading-animation--sequence .loading-animation__caption-item:first-child {
+      transform: translate(-50%, 0);
+    }
+
+    .loading-animation__pulse {
+      animation-duration: 5400ms;
+    }
+
+    .loading-animation__generic-square,
+    .loading-animation__generic-plus {
+      animation: none;
+      transform: none;
+    }
+  }
+
+  @keyframes loadingAnimationIconCycle {
+    0%, 1.5% {
+      opacity: 0;
+      animation-timing-function: ease-out;
+    }
+    8.5%, 12.5% {
+      opacity: 1;
+      animation-timing-function: ease-out;
+    }
+    17.5%, 100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes loadingAnimationMessageCycle {
+    0%, 0.9% {
+      opacity: 0;
+      transform: translate(-50%, 5px);
+      animation-timing-function: cubic-bezier(.2, .6, .2, 1);
+    }
+    4.9%, 12.5% {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+    }
+    15.5%, 100% {
+      opacity: 0;
+      transform: translate(-50%, -4px);
+    }
+  }
+
+  @keyframes loadingAnimationGenericPlusTurn {
+    0%, 10% {
+      transform: rotate(0deg);
+      animation-timing-function: cubic-bezier(.45, 0, .15, 1);
+    }
+    18%, 55% {
+      transform: rotate(90deg);
+      animation-timing-function: cubic-bezier(.45, 0, .15, 1);
+    }
+    63%, 100% {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes loadingAnimationGenericSquareTurn {
+    0%, 32% {
+      transform: rotate(0deg);
+      animation-timing-function: cubic-bezier(.45, 0, .15, 1);
+    }
+    40%, 77% {
+      transform: rotate(90deg);
+      animation-timing-function: cubic-bezier(.45, 0, .15, 1);
+    }
+    85%, 100% {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes loadingAnimationBreathe {
+    0%, 100% {
+      opacity: 0.28;
+      transform: scale(0.65);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1);
+    }
+  }
+
+  .composition-color-input {
+    @apply cursor-pointer appearance-none rounded-xl bg-transparent p-0 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-primary-700 dark:focus-visible:ring-offset-gray-900;
+  }
+
+  .composition-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .composition-color-input::-webkit-color-swatch,
+  .composition-color-input::-moz-color-swatch {
+    border: 0;
+    border-radius: 0.75rem;
+  }
+
+  .carousel-nav-attention,
+  .carousel-nav-attention-active {
+    /* Default: let buttons render normally until we intentionally hide them */
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .carousel-slide-initial-dim {
+    /* Initial dimmed/blurred state for the first slide before scroll threshold */
+    opacity: 0.2;
+    filter: blur(4px);
+  }
+
+  .carousel-nav-initial {
+    /* Initial hidden/offset state before attention animation runs */
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .carousel-nav-attention {
+    /* Inactive items: transparent -> white-ish -> transparent */
+    animation-name: carousel-nav-attention-bg-pulse;
+    animation-delay: var(--carousel-nav-attention-delay, 0ms);
+    animation-duration: var(--carousel-nav-attention-duration, 500ms);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+  }
+
+  .carousel-nav-attention-active {
+    /* Active item: black -> white -> black */
+    animation-name: carousel-nav-attention-active-bg-pulse;
+    animation-delay: var(--carousel-nav-attention-delay, 0ms);
+    animation-duration: var(--carousel-nav-attention-duration, 500ms);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+  }
+
+  .carousel-nav-active {
+    /* Active nav item base style is bg-gray-900; on hover, lighten to gray-800 */
+    background-color: #111827; /* gray-900 */
+    color: #ffffff;
+  }
+
+  .carousel-nav-active:hover {
+    /* Force override of default hover:bg-gray-100 hover:text-black */
+    background-color: #1f2937 !important; /* gray-800 */
+    color: #ffffff !important;
+  }
+
+  @keyframes carousel-nav-attention-bg-pulse {
+    0% {
+      background-color: rgba(245, 245, 245, 0); /* transparent */
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    50% {
+      background-color: rgba(245, 245, 245, 1); /* hover:bg-gray-100 */
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      background-color: rgba(245, 245, 245, 0); /* back to transparent */
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes carousel-nav-attention-active-bg-pulse {
+    0% {
+      background-color: #111827; /* bg-gray-900 */
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    50% {
+      background-color: #ffffff; /* white highlight */
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      background-color: #111827; /* back to bg-gray-900 */
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .composition-canvas-preview,
+  .composition-canvas-grid {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .split-pane {
+    @apply relative h-full w-full;
+    --split-ratio: 65%;
+    --split-divider-size: 1px;
+    display: grid;
+    grid-template-rows: var(--split-ratio) var(--split-divider-size) 1fr;
+  }
+
+  .split-pane > * {
+    @apply min-h-0 min-w-0;
+  }
+
+  .split-pane--row {
+    grid-template-columns: var(--split-ratio) var(--split-divider-size) 1fr;
+    grid-template-rows: 100%;
+  }
+
+  .split-pane--column {
+    grid-template-columns: 100%;
+    grid-template-rows: var(--split-ratio) var(--split-divider-size) 1fr;
+  }
+
+  .split-pane__divider {
+    @apply relative flex items-center justify-center bg-gray-200/80 dark:bg-gray-650;
+    touch-action: none;
+    cursor: row-resize;
+  }
+
+  .split-pane__divider::after {
+    content: "";
+    position: absolute;
+    background-color: rgba(148, 163, 184, 0.18);
+    transition: background-color 150ms ease;
+  }
+
+  .dark .split-pane__divider::after {
+    background-color: rgba(100, 116, 139, 0.16);
+  }
+
+  .split-pane__divider:hover::after,
+  .split-pane__divider--active::after {
+    @apply bg-primary-300;
+  }
+
+  .dark .split-pane__divider:hover::after,
+  .dark .split-pane__divider--active::after {
+    @apply bg-primary-600;
+  }
+
+  .split-pane--column .split-pane__divider::after {
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+
+  .split-pane--row .split-pane__divider::after {
+    width: 1px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  .split-pane__divider::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    @apply rounded-full bg-gray-300 transition-colors;
+  }
+
+  .dark .split-pane__divider::before {
+    @apply bg-gray-600;
+  }
+
+  .split-pane--column > .split-pane__divider::before {
+    width: 3.5rem;
+    height: 0.35rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .split-pane--row > .split-pane__divider::before {
+    height: 3.5rem;
+    width: 0.35rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .split-pane__divider:hover::before,
+  .split-pane__divider--active::before {
+    @apply bg-primary-400;
+  }
+
+  .dark .split-pane__divider:hover::before,
+  .dark .split-pane__divider--active::before {
+    @apply bg-primary-500;
+  }
+
+  .split-pane--row .split-pane__divider {
+    cursor: col-resize;
+  }
+
+  /*
+   * Sidebar resize: reuse split-pane divider look (same as code panel row splits).
+   * Divider is not inside .split-pane--row, so we mirror .split-pane--row .split-pane__divider positioning.
+   */
+  .sidebar-resize__handle.split-pane__divider {
+    flex-shrink: 0;
+    align-self: stretch;
+    width: 1px;
+    z-index: 30;
+    cursor: col-resize;
+  }
+
+  .sidebar-resize__handle.split-pane__divider::after {
+    width: 1px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  .sidebar-resize__handle.split-pane__divider::before {
+    height: 3.5rem;
+    width: 0.35rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .split-pane [data-orientation].is-active,
+  .composition-editor-nav [data-orientation].is-active {
+    @apply border-primary-300 bg-primary-100/60 text-primary-700 ring-2 ring-primary-200 ring-offset-2 ring-offset-white dark:border-primary-500/60 dark:bg-primary-900/40 dark:text-primary-200 dark:ring-primary-700 dark:ring-offset-gray-900;
+  }
+
+  /* Component docs reference row */
+
+  /* Control block: label above a control */
+
+  /* Two-up grid row for pairing related control-blocks side-by-side */
+
+  /* Compact input group: inline label + input + suffix */
+
+  /* When the field is the only/leading child of an input group (no icon label
+     in front), pad it so the value text aligns with dropdown trigger values
+
+  /* Inspector dropdown (custom menubar-style picker sized for the Properties sidebar).
+     Mirrors the Device Picker / Plugin Picker pattern with a button trigger and a
+     body-level floating menu. */
+
+  /* Color picker */
+
+  /* Dual-input row: two input groups side by side */
+
+  /* Segmented button group */
+
+  /* Readonly badge */
+
+  /* Class tags */
+
+  /* Spacing controls (Padding / Margin) */
+
+  /* Merge variable buttons */
+
+  /* Override indicator dot */
+
+  /* Two-up grid for pairing adjacent toggle-gated modulations. Each cell is a
+     its column without pushing the sibling column down. */
+
+  /* Inline label used when a single-control modulation is flattened (no
+     dedicated header row). Keeps the docs-link icon sitting next to the text. */
+
+     footprint when sitting beside a dropdown (label above, status + slider inside). */
+
+  /* =========================================================================
+     Scoped under `.code-agent` so the legacy floating drawer is untouched.
+     JS mirror of tool icons/labels lives at app/javascript/lib/ai_tool_catalog.js.
+     ========================================================================= */
+
+  .code-agent {
+    @apply text-[13px] text-gray-700 dark:text-gray-300;
+    line-height: 1.7;
+  }
+
+  .code-agent__viewport {
+    @apply flex-1 min-h-0 overflow-y-auto;
+  }
+
+  /* Tab strip: Cursor-style single horizontal row of chat sessions sitting
+     between the header and the messages viewport. The outer nav is a
+     non-scrolling flex wrapper; horizontal scrolling lives on the inner
+     `.code-agent__tabs-scroll` track so the `+` and history buttons in
+     `.code-agent__tab-actions` stay pinned outside the scroll area. The
+     `group` modifier on .code-agent__tab is added as a literal class in JS
+     (not via @apply, which is unsupported for `group`). */
+  .code-agent__tabs {
+    @apply flex flex-nowrap items-stretch py-1
+      border-b border-gray-200 dark:border-gray-700/70
+      bg-gray-50/60 dark:bg-gray-850/60
+      text-[12px] text-gray-500 dark:text-gray-400;
+  }
+
+  .code-agent__tabs-scroll {
+    @apply flex flex-nowrap items-center gap-0.5 pl-2 pr-3
+      flex-1 min-w-0 overflow-x-auto overflow-y-hidden;
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.gray.300") transparent;
+    /* NOTE: Soft right-edge fade so tabs dissolve into the action cluster
+       instead of being clipped abruptly. The mask is applied to the scroll
+       track (not its contents) so the fade region sits in front of scrolled
+       tabs, keeping the leading edge crisp. */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 1.25rem),
+      transparent 100%
+    );
+            mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 1.25rem),
+      transparent 100%
+    );
+  }
+
+  .dark .code-agent__tabs-scroll {
+    scrollbar-color: theme("colors.gray.700") transparent;
+  }
+
+  .code-agent__tabs-scroll::-webkit-scrollbar {
+    height: 4px;
+  }
+  .code-agent__tabs-scroll::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  .dark .code-agent__tabs-scroll::-webkit-scrollbar-thumb {
+    @apply bg-gray-700;
+  }
+  .code-agent__tabs-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .code-agent__tab {
+    @apply relative inline-flex items-center gap-1
+      max-w-[10rem] min-w-0 flex-shrink-0
+      h-7 pl-2.5 pr-1
+      rounded-md
+      text-gray-600 dark:text-gray-400
+      hover:bg-gray-200/70 dark:hover:bg-gray-800
+      cursor-pointer select-none transition-colors duration-150;
+  }
+
+  .code-agent__tab--active {
+    @apply bg-white dark:bg-gray-900
+      text-gray-900 dark:text-gray-100
+      ring-1 ring-gray-200 dark:ring-gray-700
+      shadow-sm;
+  }
+
+  .code-agent__tab--busy .code-agent__tab-label::before {
+    content: "";
+    @apply inline-block w-1.5 h-1.5 mr-1.5 rounded-full
+      bg-primary-500 animate-pulse align-middle;
+  }
+
+  .code-agent__tab-label {
+    @apply truncate text-[12px] leading-none;
+  }
+
+  .code-agent__tab-input {
+    @apply w-full bg-transparent border-0 p-0 m-0
+      text-[12px] leading-none text-gray-900 dark:text-gray-100
+      focus:ring-0 focus:outline-none;
+  }
+
+  .code-agent__tab-close {
+    @apply inline-flex items-center justify-center
+      w-4 h-4 ml-0.5 rounded
+      text-gray-400 dark:text-gray-500
+      opacity-0
+      hover:bg-gray-300/60 dark:hover:bg-gray-700
+      hover:text-gray-700 dark:hover:text-gray-200
+      transition-opacity duration-150 cursor-pointer;
+  }
+
+  .code-agent__tab:hover .code-agent__tab-close,
+  .code-agent__tab--active .code-agent__tab-close {
+    @apply opacity-100;
+  }
+
+  .code-agent__tab-close svg {
+    @apply w-3 h-3;
+  }
+
+  /* Action cluster, sitting to the right of the scroll track (not inside it),
+     so tabs can never scroll past the `+` and history buttons. The scroll
+     track's right-edge mask fades into this cluster's left padding. */
+  .code-agent__tab-actions {
+    @apply inline-flex items-center gap-0.5 flex-shrink-0 pl-0.5 pr-2;
+  }
+
+  .code-agent__tab-new {
+    @apply inline-flex items-center justify-center
+      w-6 h-6 rounded-md flex-shrink-0
+      text-gray-400 dark:text-gray-500
+      hover:bg-gray-200/70 dark:hover:bg-gray-800
+      hover:text-primary-500 dark:hover:text-primary-400
+      transition-colors duration-150 cursor-pointer;
+  }
+
+  .code-agent__tab-new svg {
+    @apply w-3.5 h-3.5;
+  }
+
+  .code-agent__tab-history {
+    @apply inline-flex items-center justify-center
+      w-6 h-6 rounded-md flex-shrink-0
+      text-gray-400 dark:text-gray-500
+      hover:bg-gray-200/70 dark:hover:bg-gray-800
+      hover:text-primary-500 dark:hover:text-primary-400
+      transition-colors duration-150 cursor-pointer;
+  }
+
+  .code-agent__tab-history svg {
+    @apply w-3.5 h-3.5;
+  }
+
+  .code-agent__tab-history[aria-expanded="true"] {
+    @apply bg-gray-200/70 dark:bg-gray-800
+      text-primary-600 dark:text-primary-300;
+  }
+
+  .code-agent__history-menu {
+    @apply absolute top-9 right-2 z-30
+      w-64 max-h-64 overflow-y-auto py-1 rounded-md
+      bg-white dark:bg-gray-900
+      border border-gray-200 dark:border-gray-700
+      shadow-lg
+      text-[12px] text-gray-700 dark:text-gray-200;
+  }
+
+  .code-agent__history-item {
+    @apply flex flex-col items-start gap-0.5 w-full text-left
+      px-2.5 py-1.5 cursor-pointer select-none
+      hover:bg-gray-100 dark:hover:bg-gray-800
+      focus:outline-none focus-visible:bg-gray-100 dark:focus-visible:bg-gray-800;
+  }
+
+  .code-agent__history-item-title {
+    @apply truncate w-full text-[12px] text-gray-800 dark:text-gray-100;
+  }
+
+  .code-agent__history-item-meta {
+    @apply text-[10px] text-gray-400 dark:text-gray-500;
+  }
+
+  .code-agent__history-empty {
+    @apply px-2.5 py-2 text-[11px] italic
+      text-gray-400 dark:text-gray-500;
+  }
+
+  .code-agent__messages {
+    @apply flex flex-col min-h-full px-3 pt-2 pb-1 space-y-2;
+  }
+
+  .code-agent__empty {
+    @apply flex flex-1 min-h-full items-center justify-center px-6 py-8 text-gray-400 dark:text-gray-500;
+  }
+
+  .code-agent__empty-list {
+    @apply flex flex-col items-start gap-2 text-[12px] leading-relaxed;
+  }
+
+  .code-agent__empty-list li {
+    @apply flex items-center gap-2.5 text-left;
+  }
+
+  .code-agent__empty-list svg {
+    @apply h-3.5 w-3.5 text-gray-400 dark:text-gray-500 flex-shrink-0;
+  }
+
+  .code-agent__user {
+    @apply block w-full rounded-xl px-3.5 py-2 text-[13px]
+      whitespace-pre-wrap text-gray-800 dark:text-gray-100
+      bg-gray-200 dark:bg-gray-700
+      border border-gray-300/70 dark:border-gray-600/60;
+    line-height: 1.7;
+  }
+
+  .code-agent__user-wrap {
+    @apply my-3;
+  }
+
+  .code-agent__assistant {
+    @apply py-1 text-[13px] text-gray-700 dark:text-gray-300;
+    line-height: 1.7;
+  }
+
+  .code-agent__tool {
+    @apply flex items-center gap-2 rounded-md px-2 py-1 my-1
+      text-[11px] text-gray-400 dark:text-gray-500
+      bg-transparent
+      border border-gray-200/50 dark:border-gray-700/30;
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+
+  .code-agent__tool[data-state="active"] {
+    @apply text-gray-600 dark:text-gray-300
+      border-gray-300/70 dark:border-gray-600/60;
+  }
+
+  .code-agent__tool-icon {
+    @apply flex-shrink-0 text-gray-400/80 dark:text-gray-500/80;
+  }
+
+  .code-agent__tool[data-state="active"] .code-agent__tool-icon {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .code-agent__tool-title {
+    @apply flex-1 truncate;
+  }
+
+  .code-agent__tool-status {
+    @apply flex-shrink-0 flex items-center;
+  }
+
+  .code-agent__tool[data-state="done"] .code-agent__tool-spinner,
+  .code-agent__tool[data-state="active"] .code-agent__tool-check {
+    @apply hidden;
+  }
+
+  .code-agent__tool-check {
+    @apply h-3.5 w-3.5 text-gray-400 dark:text-gray-500;
+  }
+
+  .code-agent__tool-spinner {
+    @apply h-3.5 w-3.5 animate-spin text-gray-400 dark:text-gray-500;
+  }
+
+  .code-agent__status {
+    @apply flex items-center gap-2 px-3 py-1 mt-2 mb-3
+      text-[12px] text-gray-500 dark:text-gray-400 italic;
+    animation: code-agent-fade-in 180ms ease-out;
+  }
+
+  @keyframes code-agent-fade-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .code-agent__status svg {
+    @apply h-3 w-3;
+  }
+
+  .code-agent__error {
+    @apply flex items-start gap-2 rounded-md px-2 py-1.5 my-1
+      text-[12px] text-red-700 dark:text-red-300
+      bg-red-50 dark:bg-red-900/20
+      border border-red-200/70 dark:border-red-800/40;
+  }
+
+  .code-agent__system {
+    @apply text-[12px] text-gray-500 dark:text-gray-400 italic px-2 py-1 my-1;
+  }
+
+  .code-agent__question {
+    @apply space-y-2 my-2 text-[13px] text-gray-800 dark:text-gray-100;
+  }
+
+  .code-agent__chips {
+    @apply flex flex-wrap gap-1.5;
+  }
+
+  .code-agent__chip {
+    @apply inline-flex items-center px-2.5 py-1 rounded-md text-[12px]
+      bg-gray-100 dark:bg-gray-800
+      border border-gray-200 dark:border-gray-700
+      text-gray-700 dark:text-gray-200
+      hover:bg-gray-200 dark:hover:bg-gray-700
+      transition duration-150 cursor-pointer
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .code-agent__idle {
+    @apply my-2 rounded-lg border border-amber-300/80 dark:border-amber-700/60
+      bg-amber-50 dark:bg-amber-900/20 px-3 py-2
+      text-[12px] text-amber-800 dark:text-amber-200;
+  }
+
+  .code-agent__idle-actions {
+    @apply mt-2 flex gap-2;
+  }
+
+  .code-agent__composer {
+    @apply px-2 pt-0 pb-2;
+  }
+
+  .code-agent__composer-field {
+    @apply relative flex flex-col rounded-lg border border-gray-200 dark:border-gray-700
+      bg-white dark:bg-gray-850/60
+      focus-within:border-primary-500/60 focus-within:ring-1 focus-within:ring-primary-500/40
+      transition duration-150;
+  }
+
+  .code-agent__composer-textarea {
+    @apply w-full bg-transparent border-0 resize-none text-[13px]
+      text-gray-800 dark:text-gray-100
+      placeholder-gray-400 dark:placeholder-gray-500
+      focus:ring-0 focus:outline-none py-2.5 px-3;
+    max-height: 160px;
+  }
+
+  .code-agent__composer-row {
+    @apply flex items-center justify-between px-2 py-1
+      border-t border-gray-100 dark:border-gray-800;
+  }
+
+  .code-agent__composer-meta {
+    @apply flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-gray-500;
+  }
+
+  .code-agent__model {
+    @apply relative inline-block;
+  }
+
+  .code-agent__model-pill {
+    @apply inline-flex items-center gap-1 rounded-md px-1.5 py-0.5
+      text-[10px] text-gray-500 dark:text-gray-400
+      hover:bg-gray-100 dark:hover:bg-gray-800
+      focus:outline-none focus-visible:ring-1 focus-visible:ring-primary-500
+      transition duration-150 cursor-pointer;
+  }
+
+  .code-agent__model-chevron {
+    @apply h-3 w-3 opacity-60;
+  }
+
+  .code-agent__model-menu {
+    @apply absolute left-0 bottom-full mb-1 z-30
+      min-w-[11rem] py-1 rounded-md
+      bg-white dark:bg-gray-900
+      border border-gray-200 dark:border-gray-700
+      shadow-lg
+      text-[11px] text-gray-700 dark:text-gray-200;
+    list-style: none;
+  }
+
+  .code-agent__model-option {
+    @apply flex items-center justify-between gap-2
+      px-2 py-1.5 cursor-pointer select-none
+      hover:bg-gray-100 dark:hover:bg-gray-800;
+  }
+
+  .code-agent__model-option[aria-selected="true"] {
+    @apply text-primary-600 dark:text-primary-400;
+  }
+
+  .code-agent__model-option-label {
+    @apply truncate;
+  }
+
+  .code-agent__model-option-check {
+    @apply h-3 w-3 opacity-0;
+  }
+
+  .code-agent__model-option[aria-selected="true"] .code-agent__model-option-check {
+    @apply opacity-100;
+  }
+
+  .code-agent__send-btn,
+  .code-agent__stop-btn {
+    @apply inline-flex items-center justify-center rounded-md w-6 h-6
+      transition duration-150 disabled:opacity-40
+      text-gray-600 dark:text-gray-300
+      bg-gray-200 hover:bg-gray-300
+      dark:bg-gray-700 dark:hover:bg-gray-600;
+  }
+
+  .code-agent__stop-btn {
+    @apply text-gray-700 dark:text-gray-200;
+  }
+
+  .code-agent__tokens {
+    @apply inline-flex items-center px-1.5 py-0.5 rounded-md
+      text-[10px] font-mono tabular-nums
+      text-gray-500 dark:text-gray-400;
+  }
+
+  /* Markdown rendered into assistant bubbles. Previously lived in an inline
+     <style> block on _ai_assistant_inline.html.erb. */
+  .ai-markdown { white-space: normal; line-height: 1.7; }
+  .ai-markdown p { margin: 0 0 1em; line-height: 1.7; }
+  .ai-markdown p:last-child { margin-bottom: 0; }
+  .ai-markdown pre {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    overflow-x: auto;
+    margin: 0.5em 0;
+    font-size: 0.85em;
+  }
+  .ai-markdown code {
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 0.25rem;
+    padding: 0.1em 0.35em;
+    font-size: 0.85em;
+  }
+  .ai-markdown pre code { background: none; padding: 0; font-size: inherit; }
+  .ai-markdown ul, .ai-markdown ol { padding-left: 1.5em; margin: 0.5em 0; }
+  .ai-markdown ul { list-style-type: disc; }
+  .ai-markdown ol { list-style-type: decimal; }
+  .ai-markdown a { text-decoration: underline; }
+  .ai-markdown h1, .ai-markdown h2, .ai-markdown h3 {
+    font-weight: 600;
+    margin: 0.75em 0 0.25em;
+  }
+  .ai-markdown blockquote {
+    border-left: 3px solid rgba(0, 0, 0, 0.2);
+    padding-left: 0.75em;
+    margin: 0.5em 0;
+    opacity: 0.8;
+  }
+  .ai-markdown table { border-collapse: collapse; margin: 0.5em 0; width: 100%; }
+  .ai-markdown th, .ai-markdown td {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.25em 0.5em;
+    text-align: left;
+  }
+  .dark .ai-markdown pre { background: rgba(255, 255, 255, 0.05); }
+  .dark .ai-markdown code { background: rgba(255, 255, 255, 0.1); }
+  .dark .ai-markdown blockquote { border-left-color: rgba(255, 255, 255, 0.2); }
+  .dark .ai-markdown th,
+  .dark .ai-markdown td { border-color: rgba(255, 255, 255, 0.1); }
+
+  /* Docs sidebar handles (resizable + collapsible) */
+  .docs-sidebar__handle {
+    @apply relative flex items-center justify-center shrink-0;
+    width: 6px;
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 10;
+  }
+
+  .docs-sidebar__handle::after {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    @apply bg-gray-300;
+    transition: background-color 150ms ease;
+  }
+
+  .dark .docs-sidebar__handle::after {
+    @apply bg-gray-650;
+  }
+
+  .docs-sidebar__handle:hover::after,
+  .docs-sidebar__handle--active::after {
+    @apply bg-primary-400;
+  }
+
+  .dark .docs-sidebar__handle:hover::after,
+  .dark .docs-sidebar__handle--active::after {
+    @apply bg-primary-500;
+  }
+
+  .docs-sidebar__toggle-btn {
+    @apply absolute flex items-center justify-center rounded-md;
+    @apply bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500;
+    @apply border border-gray-300 dark:border-gray-650;
+    @apply hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300;
+    width: 22px;
+    height: 22px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 150ms ease, background-color 150ms ease, color 150ms ease;
+    z-index: 11;
+    cursor: pointer;
+  }
+
+  .docs-sidebar__handle:hover .docs-sidebar__toggle-btn,
+  .docs-sidebar__handle--active .docs-sidebar__toggle-btn {
+    opacity: 1;
+  }
+
+  /* Collapsed sidebar: strip with persistent icon, vertically centered */
+  [data-docs-sidebar-collapsed] {
+    @apply border-r border-gray-300 dark:border-gray-650;
+  }
+
+  [data-docs-sidebar-collapsed][data-docs-sidebar-side-value="right"] {
+    @apply border-r-0 border-l border-gray-300 dark:border-gray-650;
+  }
+
+  [data-docs-sidebar-collapsed] .docs-sidebar__handle {
+    cursor: default;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-docs-sidebar-collapsed] .docs-sidebar__handle::after {
+    display: none;
+  }
+
+  [data-docs-sidebar-collapsed] .docs-sidebar__toggle-btn {
+    opacity: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    background: transparent;
+    @apply text-gray-400 dark:text-gray-600;
+    @apply hover:text-gray-600 dark:hover:text-gray-400;
+  }
+}

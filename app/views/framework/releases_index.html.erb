@@ -1,0 +1,193 @@
+<% meta title: @og_title %>
+
+<%# SVG icon helpers %>
+<% tag_icon = capture do %>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+<% end %>
+<% file_icon = capture do %>
+  <svg class="w-4 h-4 flex-shrink-0 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+<% end %>
+<% copy_icon = capture do %>
+  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+<% end %>
+<% download_icon = capture do %>
+  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+  </svg>
+<% end %>
+
+<% sidebar_classes = "hidden md:flex flex-col items-start pt-1 w-28 flex-shrink-0" %>
+
+<%# Renders the assets list for a release, grouped into sub-sections the way docs
+    tables group their rows. The sha and URL chips are the docs chrome's small
+    tertiary buttons; one copies the checksum, the other the CDN URL. %>
+<% asset_chip_classes = "#{button_small_classes} #{button_gray_light_classes}" %>
+<% render_assets_table = ->(assets, released_at) do %>
+  <% assets.select { |a| a[:exists] }.group_by { |a| a[:group] || 'Files' }.each do |group, group_assets| %>
+    <div class="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+      <div class="px-5 py-2 bg-gray-25 dark:bg-gray-800/95 border-b border-gray-200 dark:border-gray-700">
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"><%= group %></span>
+      </div>
+      <div class="divide-y divide-gray-200 dark:divide-gray-700">
+        <% group_assets.each do |asset| %>
+          <div class="flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors px-5 py-2.5">
+            <%= file_icon %>
+            <div class="flex-1 min-w-0">
+              <a href="<%= asset[:url] %>" download class="text-sm font-medium text-syntax-string hover:underline"><%= asset[:name] %></a>
+            </div>
+            <% if asset[:sha256] %>
+              <button type="button" data-copy="<%= asset[:sha256] %>" title="Copy the full SHA256 checksum" class="max-lg:hidden <%= asset_chip_classes %>">
+                <span class="font-mono font-normal"><span class="text-gray-400 dark:text-gray-500">sha</span> <%= asset[:sha256][0..7] %></span>
+              </button>
+            <% end %>
+            <button type="button" data-copy="<%= asset[:public_url] %>" title="Copy the CDN URL for this asset" class="<%= asset_chip_classes %>">
+              <%= copy_icon %>Copy URL
+            </button>
+            <span class="text-xs text-gray-400 dark:text-gray-500 tabular-nums w-20 text-right flex-shrink-0"><%= format_file_size(asset[:size]) %></span>
+            <% if released_at %>
+              <span class="hidden sm:inline text-xs text-gray-400 dark:text-gray-500 w-24 text-right flex-shrink-0"><%= relative_release_date(released_at) %></span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%# Unified release card: sidebar + card with header, toggle, and assets panel %>
+<% render_release_card = ->(version_label:, title:, assets:, toggle_key:, released_at: nil, badge: nil, release_notes: nil, expanded: false, prominent_zip_button: false, anchor_id: nil) do %>
+  <% zip_asset = assets.find { |asset| asset[:type] == 'zip' && asset[:exists] } %>
+  <div<%= " id=\"#{anchor_id}\"".html_safe if anchor_id %> class="flex gap-8 scroll-mt-24">
+    <div class="<%= sidebar_classes %>">
+      <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
+        <%= tag_icon %>
+        <span class="text-sm font-semibold whitespace-nowrap"><%= version_label %></span>
+      </div>
+      <% if released_at %>
+        <span class="text-xs text-gray-400 dark:text-gray-500 mt-1 ml-5"><%= relative_release_date(released_at) %></span>
+      <% end %>
+    </div>
+
+    <div class="flex-1 min-w-0 border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-900">
+      <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white"><%= title %></h2>
+              <% if badge %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"><%= badge %></span>
+              <% end %>
+            </div>
+          </div>
+          <% if zip_asset %>
+            <a href="<%= zip_asset[:url] %>" download data-turbo="false" class="flex-shrink-0 <%= "#{button_small_classes} #{prominent_zip_button ? button_secondary_classes : button_gray_light_classes}" %>">
+              <%= download_icon %>
+              Download ZIP
+            </a>
+          <% end %>
+        </div>
+      </div>
+
+      <% if release_notes %>
+        <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-25/50 dark:bg-gray-850/40">
+          <div class="framework-release-notes prose prose-sm dark:prose-invert max-w-none prose-gray prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-6 prose-li:leading-6 prose-a:text-primary-600 dark:prose-a:text-primary-400 prose-code:text-syntax-string dark:prose-code:text-syntax-string prose-code:font-mono prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-ul:my-3 prose-ol:my-3 prose-li:my-1 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+            <%= release_notes[:html] %>
+          </div>
+        </div>
+      <% end %>
+
+      <button type="button" data-release-toggle="<%= toggle_key %>" class="w-full flex items-center gap-2 px-5 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+        <svg data-chevron class="w-4 h-4 transition-transform<%= ' rotate-180' if expanded %>" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        Assets
+        <span class="text-xs font-normal text-gray-500 dark:text-gray-400"><%= assets.count { |a| a[:exists] } %></span>
+      </button>
+      <div data-release-assets="<%= toggle_key %>"<%= ' class="hidden"'.html_safe unless expanded %>>
+        <% render_assets_table.call(assets, released_at) %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="<%= layout_framework_classes %>">
+  <div class="max-w-6xl mx-auto w-full px-4 md:px-8">
+    <div class="pt-8 pb-4 my-4">
+      <%= render 'shared/heading', title: 'Releases' %>
+    </div>
+    <div class="mt-2 mb-8 space-y-3">
+      <p class="text-base text-gray-600 dark:text-gray-400">
+        Every build of the framework, hosted and ready to embed. Reference a version from your project, or download it to self-host.
+      </p>
+      <p class="text-base text-gray-600 dark:text-gray-400">
+        Fonts ship as their own bundles below. The CSS loads them from <code class="font-mono">/fonts</code> on whichever host serves the stylesheet, so a self-hosted build serves them too.
+      </p>
+    </div>
+
+    <section class="mb-10">
+      <div class="mb-5">
+        <h2 class="<%= framework_section_title_classes %>">Featured</h2>
+      </div>
+
+      <%= render 'framework/releases_summary_cards' %>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="<%= framework_section_title_classes %>">Archive</h2>
+      <p class="<%= framework_section_description_classes %>">
+        Every published version, newest first, grouped by major. Each release keeps the files it shipped with and is never rebuilt, so a version you reference today serves the same bytes tomorrow.
+      </p>
+    </section>
+
+    <%# Versioned releases grouped by major version. The newest one is the latest release:
+        it carries the badge and opens with its files listed. %>
+    <div id="versions" class="scroll-mt-24"></div>
+    <% releases_config.each do |major, versions| %>
+      <div id="framework-release-major-<%= major %>" class="pt-8 pb-8 border-t border-gray-300 dark:border-gray-700 scroll-mt-24">
+        <h2 class="<%= framework_section_title_classes %> mb-6 ml-0 md:ml-36">Version <%= major %>.x</h2>
+
+        <div class="space-y-6">
+          <% versions.each_with_index do |release, idx| %>
+            <% is_latest = idx.zero? && major == releases_config.keys.first %>
+            <% render_release_card.call(
+              version_label: "v#{release[:version]}",
+              title: "v#{release[:version]}",
+              assets: release[:assets],
+              toggle_key: release[:version],
+              released_at: release[:released_at],
+              badge: is_latest ? 'Latest' : nil,
+              release_notes: release[:release_notes],
+              expanded: is_latest,
+              prominent_zip_button: idx.zero?,
+              anchor_id: is_latest ? 'framework-release-latest' : nil
+            ) %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+Array.from(document.querySelectorAll('[href*="/framework/"]')).forEach(docs => { docs.dataset.turbo = false; });
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-release-toggle]');
+  if (btn) {
+    var version = btn.getAttribute('data-release-toggle');
+    var panel = document.querySelector('[data-release-assets="' + version + '"]');
+    var chevron = btn.querySelector('[data-chevron]');
+    if (panel) panel.classList.toggle('hidden');
+    if (chevron) chevron.classList.toggle('rotate-180');
+    return;
+  }
+
+  var copyBtn = e.target.closest('[data-copy]');
+  if (copyBtn) {
+    var text = copyBtn.getAttribute('data-copy');
+    navigator.clipboard.writeText(text).then(function() {
+      var original = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+      setTimeout(function() { copyBtn.innerHTML = original; }, 1500);
+    });
+  }
+});
+</script>

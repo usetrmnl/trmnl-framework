@@ -1,0 +1,199 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :text_scale %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:text_scale) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Add <code class="<%= framework_section_code_classes %>">screen--text-scale-{size}</code> to the
+            <code class="<%= framework_section_code_classes %>">screen</code>. Text Scale changes framework typography while Scale continues to control the rest of the interface.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<div class="screen screen--text-scale-large">
+  <!-- All framework typography renders at 125%. -->
+</div>') %>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Available Levels') %>
+          <p class="<%= framework_subsection_description_classes %>">
+            Text Scale uses four factors from 80% to 150%. Each factor applies after device density and <%= render DocsRef.new(page: :scale) %>.
+            Every factor except Regular also resolves typography to Inter Variable on low-density displays, because pixel bundles only render correctly at their native sizes.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Factor</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Result</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <%
+                  text_scale_levels = [
+                    ['small', '0.8', '80%'],
+                    ['regular', '1', '100%'],
+                    ['large', '1.25', '125%'],
+                    ['xlarge', '1.5', '150%']
+                  ]
+                %>
+                <% text_scale_levels.each do |name, factor, percentage| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <code class="text-sm font-mono text-syntax-string">screen--text-scale-<%= name %></code>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><%= factor %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= percentage %> of the composed text size</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="<%= message_sage_classes %>">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/info' %>
+            </div>
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm font-medium">
+                Text Scale names its neutral tier <code class="font-mono">regular</code> and its ladder stops at <code class="font-mono">xlarge</code>, where Scale runs seven tiers.
+                Utility families name their neutral tier <code class="font-mono">base</code> (<code class="font-mono">gap--base</code>, <code class="font-mono">text--base</code>), so there is no <code class="font-mono">screen--text-scale-base</code>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%
+        interactive_text_scale_options = Framework::TextScale.options.map do |label, id|
+          multiplier = Framework::TextScale.multiplier(id)
+          { label:, multiplier:, percentage: "#{(multiplier.to_f * 100).to_i}%", className: "screen--text-scale-#{id}" }
+        end
+        weather_preview = example_fixture_path('weather', 'full.preview').read.html_safe
+      %>
+
+      <section class="space-y-8"
+               data-controller="text-scale-preview"
+               data-text-scale-preview-options-value="<%= interactive_text_scale_options.to_json %>"
+               data-text-scale-preview-initial-index-value="1">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Interactive Preview') %>
+          <p class="<%= framework_section_description_classes %>">
+            Move the slider between the four Text Scale levels. The Weather example updates its framework typography while component dimensions, gaps, and text strokes keep their regular scale.
+          </p>
+        </div>
+
+        <div class="w-full max-w-[480px]" data-text-scale-preview-controls>
+          <div class="mb-4 flex justify-between" aria-hidden="true">
+            <% interactive_text_scale_options.each_with_index do |option, index| %>
+              <% active = index == 1 %>
+              <% color_classes = active ? 'border-primary-500 text-primary-500' : 'border-gray-300 text-gray-600 dark:border-gray-600 dark:text-gray-300' %>
+              <div class="flex size-12 items-center justify-center rounded-lg border bg-transparent font-semibold leading-none transition-colors <%= color_classes %>"
+                   data-text-scale-preview-target="scalePreview"
+                   data-active="<%= active %>">
+                <span style="font-size: <%= option[:multiplier] %>rem;">Aa</span>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="relative h-4">
+            <div class="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 rounded-lg bg-gray-200 dark:bg-gray-700"></div>
+            <input type="range"
+                   min="0"
+                   max="<%= interactive_text_scale_options.size - 1 %>"
+                   step="1"
+                   value="1"
+                   aria-label="Text Scale"
+                   aria-valuetext="Regular, 100%"
+                   class="absolute top-1/2 z-10 h-2 -translate-y-1/2 appearance-none bg-transparent cursor-pointer"
+                   style="left: 1rem; width: calc(100% - 2rem);"
+                   data-text-scale-preview-target="input"
+                   data-action="input->text-scale-preview#change">
+          </div>
+
+          <div class="mt-2 flex justify-between">
+            <% interactive_text_scale_options.each_with_index do |option, index| %>
+              <button type="button"
+                      class="w-12 flex-none whitespace-nowrap text-center text-xs leading-tight text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
+                      aria-pressed="<%= index == 1 %>"
+                      data-text-scale-preview-target="option"
+                      data-action="text-scale-preview#select"
+                      data-text-scale-preview-index-param="<%= index %>">
+                <span class="block"><%= option[:label] %></span>
+                <span class="block mt-1"><%= option[:multiplier] %>×</span>
+              </button>
+            <% end %>
+          </div>
+        </div>
+
+        <div data-text-scale-preview-target="preview">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--text-scale-regular">
+                  <%= weather_preview %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<div class="screen screen--text-scale-regular">
+  <!-- Replace regular with small, large, or xlarge. -->
+</div>') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Combining Scale and Text Scale') %>
+          <p class="<%= framework_section_description_classes %>">
+            Scale sets the base size for the whole interface, including component dimensions, spacing, and typography. Text Scale then multiplies only the typography on top of that base while leaving the surrounding geometry unchanged. For example, a 66% Scale combined with a 150% Text Scale produces text at 99% of its original size inside an interface that remains at 66%.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Device density is still part of the framework's typography calculation, so Text Scale complements rather than replaces the device's font bundle and density settings.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Custom Typography') %>
+          <p class="<%= framework_section_description_classes %>">
+            Framework classes scale automatically. Use <code class="<%= framework_section_code_classes %>">--text-ui-scale</code> for custom CSS that follows framework typography, or pass <code class="<%= framework_section_code_classes %>">kind: "text"</code> to <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> for JavaScript values.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<style>
+  .custom-reading {
+    font-size: calc(20px * var(--text-ui-scale, 1));
+    line-height: calc(26px * var(--text-ui-scale, 1));
+  }
+</style>
+
+<script>
+  var fontSize = TRMNLPaint.px(20, { el: "reading", kind: "text" });
+</script>') %>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

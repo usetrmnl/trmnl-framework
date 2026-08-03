@@ -1,0 +1,51 @@
+// ============================================
+// TRMNL Framework - Utility Mixins
+// ============================================
+
+@use 'sass:meta';
+
+// Helper mixin to apply styles from a map
+// Supports nested selectors for child elements
+@mixin apply-styles($styles) {
+    @each $property, $value in $styles {
+        @if meta.type-of($value) == 'map' {
+            // Handle nested selectors
+            #{$property} {
+                @include apply-styles($value);
+            }
+        } @else {
+            #{$property}: $value;
+        }
+    }
+} 
+
+// Apply framework mode-aware background vars for a token.
+// This is the canonical mixin used by bg utilities and tests.
+@mixin bg-from-vars($token) {
+    background-color: var(--bg-#{$token}-color, transparent);
+    background-image: var(--bg-#{$token}-image, none);
+    background-size: var(--dither-bg-size, auto);
+}
+
+// The framework's one `filter` declaration. Every utility that filters writes
+// this exact line and contributes through a channel variable, the way bg and
+// text utilities compose through --tn-bg-* and --tn-text-*.
+//
+// filter is a single property, not a list-composing one, so two utilities that
+// each wrote their own declaration could not both apply: `image invert
+// image-stroke` dropped the inversion outright, because image-stroke is
+// forwarded after effects and won the tie. Written as one declaration in both
+// places, the winner carries every channel and source order stops deciding.
+//
+// Inversion leads: the stroke color comes from a semantic token, so inverting
+// after the ring would repaint the ring as the opposite of the token it names.
+// With no channel set the substitution leaves the declaration empty, which is
+// invalid at computed-value time and resolves to the property's initial `none`,
+// the value the text-stroke program used to write literally.
+//
+// Both channels are registered with `inherits: false` in utilities/_effects.scss.
+// A plain custom property would cascade into descendants, and an image-stroke
+// inside an inverted container would invert itself a second time.
+@mixin filter-from-vars {
+    filter: var(--tn-invert, ) var(--tn-image-stroke, );
+}

@@ -1,0 +1,175 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :sass_mixins %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:sass_mixins) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Screen targeting') %>
+          <p class="<%= framework_section_description_classes %>">
+            The screen mixins scope rules to a screen's size, orientation, and bit depth: the same grammar as the
+            responsive utility classes (<%= render DocsRef.new(page: :responsive) %>), for styles you author in SCSS.
+            Load the mixins module and wrap declarations.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '@use \'framework/mixins\' as trmnl;
+
+.forecast-tile {
+    border: 1px solid var(--black);
+
+    // 1-bit screens: thicker rule so the dithered edge stays legible.
+    @include trmnl.for-1bit {
+        border-width: 2px;
+    }
+
+    // md and larger screens in portrait.
+    @include trmnl.screen(\'md\', \'portrait\') {
+        padding: 20px;
+    }
+}', language: 'scss') %>
+        </div>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            A mixin wraps the current rule in the matching screen ancestor: the 1-bit block above compiles to
+            <code class="<%= framework_section_code_classes %>">.trmnl .screen--1bit .forecast-tile</code>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">screen($modifiers...)</code>: one to three modifiers
+              in any order, sorted internally to size, orientation, bit depth. A size modifier is mobile-first (that
+              size and up). Bit depth accepts <code class="<%= framework_section_code_classes %>">'1bit'</code> or
+              <code class="<%= framework_section_code_classes %>">'1'</code>.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">screen-only($modifiers...)</code>: the same grammar
+              with exact size targeting instead of mobile-first.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-sm</code> / <code class="<%= framework_section_code_classes %>">for-md</code> / <code class="<%= framework_section_code_classes %>">for-lg</code> and their <code class="<%= framework_section_code_classes %>">-only</code> variants: size shorthands.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-portrait</code> / <code class="<%= framework_section_code_classes %>">for-landscape</code>: orientation shorthands.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-1bit</code> / <code class="<%= framework_section_code_classes %>">for-2bit</code> / <code class="<%= framework_section_code_classes %>">for-4bit</code>: bit-depth shorthands.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-dark-mode</code> and <code class="<%= framework_section_code_classes %>">for-dark-1bit</code> / <code class="<%= framework_section_code_classes %>">for-dark-2bit</code> / <code class="<%= framework_section_code_classes %>">for-dark-4bit</code>: dark-mode targeting. Themed screens are exempt, matching the theme contract on <%= render DocsRef.new(page: :themes) %>.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-color-palette($id)</code> / <code class="<%= framework_section_code_classes %>">for-color-full</code>: limited-palette and full-color targeting. The palette ids are <code class="<%= framework_section_code_classes %>">'3bwr'</code>, <code class="<%= framework_section_code_classes %>">'3bwy'</code>, <code class="<%= framework_section_code_classes %>">'4bwry'</code>, <code class="<%= framework_section_code_classes %>">'6a'</code>, and <code class="<%= framework_section_code_classes %>">'7a'</code>, each documented on <%= render DocsRef.new(page: :color_palettes) %>.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-density($tier)</code>: density tier targeting (<code class="<%= framework_section_code_classes %>">'1x'</code>, <code class="<%= framework_section_code_classes %>">'2x'</code>).
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">for-combo</code> / <code class="<%= framework_section_code_classes %>">for-combo-up</code> / <code class="<%= framework_section_code_classes %>">for-triple</code> / <code class="<%= framework_section_code_classes %>">for-triple-up</code>: the explicit combination helpers behind <code class="<%= framework_section_code_classes %>">screen()</code> and <code class="<%= framework_section_code_classes %>">screen-only()</code>.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Scale functions') %>
+          <p class="<%= framework_section_description_classes %>">
+            The scale functions wrap pixel values in the framework's scale variables, so custom CSS follows device
+            density, Scale, and Text Scale exactly like framework CSS. Non-px and zero values pass through unchanged;
+            lists are scaled item by item.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">content-scaled($value)</code>: multiplies by
+              <code class="<%= framework_section_code_classes %>">--content-scale</code>. Use for plugin content
+              geometry.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">ui-scaled($value)</code>: multiplies by
+              <code class="<%= framework_section_code_classes %>">--ui-scale</code>, which includes device density.
+              Use for framework-owned component geometry.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">text-ui-scaled($value)</code>: multiplies by
+              <code class="<%= framework_section_code_classes %>">--text-ui-scale</code>, which includes density,
+              Scale, and Text Scale. Use for typography.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '@use \'framework/mixins\' as trmnl;
+
+.forecast-tile {
+    padding: trmnl.content-scaled(10px);
+    // => padding: calc(10px * var(--content-scale, 1));
+}', language: 'scss') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Public surface') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards every module the
+            framework compiles itself with, which is far more than it supports. Three families are public: their
+            names and signatures hold from one release to the next, and the docs cover them page by page.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <strong>Screen targeting:</strong> <code class="<%= framework_section_code_classes %>">screen()</code>,
+              <code class="<%= framework_section_code_classes %>">screen-only()</code>, and the
+              <code class="<%= framework_section_code_classes %>">for-*</code> shorthands listed above.
+            </li>
+            <li>
+              <strong>Scale functions:</strong> <code class="<%= framework_section_code_classes %>">content-scaled()</code>,
+              <code class="<%= framework_section_code_classes %>">ui-scaled()</code>,
+              <code class="<%= framework_section_code_classes %>">text-ui-scaled()</code>.
+            </li>
+            <li>
+              <strong>Theme slots:</strong> the <code class="<%= framework_section_code_classes %>">framework/mixins/theme-slots</code>
+              module, documented on <%= render DocsRef.new(page: :theme_slots) %> with the authoring contract on
+              <%= render DocsRef.new(page: :theme_authoring) %>.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Everything else the module forwards is internal. That covers the selector helpers
+            (<code class="<%= framework_section_code_classes %>">scope-selector</code>,
+            <code class="<%= framework_section_code_classes %>">generate-screen-utilities</code>), the variant
+            emitters (<code class="<%= framework_section_code_classes %>">with-all-variants</code>,
+            <code class="<%= framework_section_code_classes %>">generate-triple-variants</code>), the factorized
+            utility emitters, the pattern, border-level and text-paint helpers, and the
+            <code class="<%= framework_section_code_classes %>">trmnl-namespace</code> wrapper. They exist to compile
+            the framework's own classes and can change or disappear in any release, with no deprecation notice and no
+            entry in the release notes.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The same split holds inside a public module: a member the docs do not name is internal even when it sits
+            next to one they do. The device configuration is public and documented on
+            <%= render DocsRef.new(page: :sass_devices) %>; the whole SCSS contract is summarized on
+            <%= render DocsRef.new(page: :sass_api) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Where the rest lives') %>
+          <p class="<%= framework_section_description_classes %>">
+            The class-based variants for markup are on <%= render DocsRef.new(page: :responsive) %>, and
+            <%= render DocsRef.new(page: :responsive_test) %> renders mixins and classes side by side to prove they
+            produce the same result.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

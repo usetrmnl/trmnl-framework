@@ -1,0 +1,69 @@
+<!-- BEGIN app/views/plugins/weather/quadrant.html.erb
+-->  <!-- BEGIN app/views/plugins/weather/_weatherapi_quadrant.html.erb
+--><div class="view view--quadrant">
+  <div class="layout">
+    <div class="grid grid--cols-2 portrait:grid--cols-1 gap--none lg:portrait:gap">
+      <div class="col">
+        <div class="row row--center">
+          <img class="image--adaptive w--[46cqw] h--auto portrait:w--auto portrait:h--[50cqh] lg:w--[46cqw] lg:h--[46cqw] lg:portrait:w--auto lg:portrait:h--[46cqh]" alt="Weather condition" src="/images/plugins/weather/wi-day-sunny.svg" />
+        </div>
+
+        <div class="hidden lg:flex lg:portrait:hidden h--full">
+          <div class="item grow">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--xsmall lg:value--base">Sunny</span>
+              <span class="label hidden lg:visible">Right Now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col gap lg:portrait:grid lg:portrait:grid--cols-2">
+        <div class="item grow">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--large lg:value--xxxlarge" data-fit-value="true">77°</span>
+            <span class="label hidden lg:visible">Temperature</span>
+          </div>
+        </div>
+        <div class="visible lg:hidden lg:portrait:flex h--full">
+          <div class="item grow">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--xsmall lg:portrait:value--base">Sunny</span>
+              <span class="label hidden lg:visible">Right Now</span>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xxsmall lg:value--small">69.5° - 86.2°</span>
+            <span class="label hidden lg:visible">L/H</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xxsmall lg:value--small">High (8)</span>
+            <span class="label hidden lg:visible">UV</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image image--adaptive" alt="" src="/images/plugins/weather--render.svg" />
+    <h1 class="title"><!-- BEGIN app/views/plugins/weather/_render_time.html.erb
+-->5:55 PM
+<!-- END app/views/plugins/weather/_render_time.html.erb --></h1>
+    <span class="instance">Las Vegas</span>
+  </div>
+</div>
+
+<!-- BEGIN app/views/plugins/weather/_common.html.erb
+--><!-- END app/views/plugins/weather/_common.html.erb -->
+<!-- END app/views/plugins/weather/_weatherapi_quadrant.html.erb -->
+<!-- END app/views/plugins/weather/quadrant.html.erb -->

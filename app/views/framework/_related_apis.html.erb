@@ -1,0 +1,32 @@
+<% return unless framework_related_apis_section? %>
+<% excerpts = framework_api_excerpts_for_page %>
+<% consumers = framework_api_ref_consumers_for_page %>
+
+<% if excerpts.present? %>
+  <section class="space-y-8">
+    <%= framework_heading(3, 'Related APIs') %>
+    <% excerpts.each do |ref| %>
+      <%= render "framework/related_apis/#{ref[:partial]}", ref[:locals] || {} %>
+    <% end %>
+  </section>
+<% end %>
+
+<% if consumers.present? %>
+  <section class="space-y-4">
+    <%= framework_heading(3, 'Where This Applies') %>
+    <p class="<%= framework_section_description_classes %>">
+      These pages document the surfaces this API programs.
+    </p>
+    <%# The consumer cards carry h2 titles; keep them out of the page TOC. %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-toc-exclude>
+      <% consumers.each do |consumer_page| %>
+        <%= render 'framework/framework_card',
+          url: framework_page_path(consumer_page),
+          title: (page_titles[consumer_page] || consumer_page.titleize),
+          description: page_description(consumer_page),
+          page: consumer_page,
+          compact: true %>
+      <% end %>
+    </div>
+  </section>
+<% end %>

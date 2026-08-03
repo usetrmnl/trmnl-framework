@@ -1,0 +1,44 @@
+// ============================================
+// TRMNL Framework - Screen Orientation Targeting Mixins
+// ============================================
+// Internal development mixins for targeting specific orientations
+
+@use 'selector-helpers' as helpers;
+
+// Target portrait orientation
+@mixin for-portrait {
+    @include helpers.for-screen-modifier('portrait') {
+        @content;
+    }
+}
+
+// Target landscape orientation
+@mixin for-landscape {
+    @include helpers.for-screen-modifier('landscape') {
+        @content;
+    }
+}
+
+// Core mixin for generating orientation-specific selectors
+// This is the main building block for all orientation utilities
+@mixin for-orientation($orientation, $class-name) {
+    @include helpers.for-screen-variant($orientation, $orientation, $class-name) {
+        @content;
+    }
+}
+
+// Generate orientation-specific variants for classes
+// This creates classes like: portrait:flex--col, portrait:text--center, etc.
+@mixin generate-orientation-variants($class-name: null) {
+    @include helpers.generate-screen-utilities(helpers.$orientations, null, $class-name) {
+        @content;
+    }
+}
+
+// Simplified mixin for generating a single orientation variant
+// Usage: @include orientation-variant('portrait', 'flex--col') { ... }
+@mixin orientation-variant($orientation, $class-name) {
+    @include for-orientation($orientation, $class-name) {
+        @content;
+    }
+} 

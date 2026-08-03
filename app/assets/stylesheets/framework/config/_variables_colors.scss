@@ -1,0 +1,35 @@
+// ============================================
+// TRMNL Framework - CSS color variables (GENERATED)
+// ============================================
+// Generated from db/data/framework_colors.yml
+// Regenerate with: rake framework:css_variables
+// ============================================
+
+:root {
+    // Color palette framework (10 base hues + 10 hues × 14 steps)
+    --red: #FF0000; --orange: #FF8000; --yellow: #FFFF00; --lime: #80FF00; --green: #00FF00; --cyan: #00FFFF;
+    --blue: #0000FF; --violet: #8000FF; --purple: #FF00FF; --pink: #FF0080; --red-10: #220000; --red-15: #440000;
+    --red-20: #660000; --red-25: #880000; --red-30: #AA0000; --red-35: #CC0000; --red-40: #EE0000; --red-45: #FF1111;
+    --red-50: #FF3333; --red-55: #FF5555; --red-60: #FF7777; --red-65: #FF9999; --red-70: #FFBBBB; --red-75: #FFDDDD;
+    --orange-10: #221100; --orange-15: #442200; --orange-20: #663300; --orange-25: #884400; --orange-30: #AA5500; --orange-35: #CC6600;
+    --orange-40: #EE7700; --orange-45: #FF8811; --orange-50: #FF9933; --orange-55: #FFAA55; --orange-60: #FFBB77; --orange-65: #FFCC99;
+    --orange-70: #FFDDBB; --orange-75: #FFEEDD; --yellow-10: #222200; --yellow-15: #444400; --yellow-20: #666600; --yellow-25: #888800;
+    --yellow-30: #AAAA00; --yellow-35: #CCCC00; --yellow-40: #EEEE00; --yellow-45: #FFFF11; --yellow-50: #FFFF33; --yellow-55: #FFFF55;
+    --yellow-60: #FFFF77; --yellow-65: #FFFF99; --yellow-70: #FFFFBB; --yellow-75: #FFFFDD; --lime-10: #112200; --lime-15: #224400;
+    --lime-20: #336600; --lime-25: #448800; --lime-30: #55AA00; --lime-35: #66CC00; --lime-40: #77EE00; --lime-45: #88FF11;
+    --lime-50: #99FF33; --lime-55: #AAFF55; --lime-60: #BBFF77; --lime-65: #CCFF99; --lime-70: #DDFFBB; --lime-75: #EEFFDD;
+    --green-10: #002200; --green-15: #004400; --green-20: #006600; --green-25: #008800; --green-30: #00AA00; --green-35: #00CC00;
+    --green-40: #00EE00; --green-45: #11FF11; --green-50: #33FF33; --green-55: #55FF55; --green-60: #77FF77; --green-65: #99FF99;
+    --green-70: #BBFFBB; --green-75: #DDFFDD; --cyan-10: #002222; --cyan-15: #004444; --cyan-20: #006666; --cyan-25: #008888;
+    --cyan-30: #00AAAA; --cyan-35: #00CCCC; --cyan-40: #00EEEE; --cyan-45: #11FFFF; --cyan-50: #33FFFF; --cyan-55: #55FFFF;
+    --cyan-60: #77FFFF; --cyan-65: #99FFFF; --cyan-70: #BBFFFF; --cyan-75: #DDFFFF; --blue-10: #000022; --blue-15: #000044;
+    --blue-20: #000066; --blue-25: #000088; --blue-30: #0000AA; --blue-35: #0000CC; --blue-40: #0000EE; --blue-45: #1111FF;
+    --blue-50: #3333FF; --blue-55: #5555FF; --blue-60: #7777FF; --blue-65: #9999FF; --blue-70: #BBBBFF; --blue-75: #DDDDFF;
+    --violet-10: #110022; --violet-15: #220044; --violet-20: #330066; --violet-25: #440088; --violet-30: #5500AA; --violet-35: #6600CC;
+    --violet-40: #7700EE; --violet-45: #8811FF; --violet-50: #9933FF; --violet-55: #AA55FF; --violet-60: #BB77FF; --violet-65: #CC99FF;
+    --violet-70: #DDBBFF; --violet-75: #EEDDFF; --purple-10: #220022; --purple-15: #440044; --purple-20: #660066; --purple-25: #880088;
+    --purple-30: #AA00AA; --purple-35: #CC00CC; --purple-40: #EE00EE; --purple-45: #FF11FF; --purple-50: #FF33FF; --purple-55: #FF55FF;
+    --purple-60: #FF77FF; --purple-65: #FF99FF; --purple-70: #FFBBFF; --purple-75: #FFDDFF; --pink-10: #220011; --pink-15: #440022;
+    --pink-20: #660033; --pink-25: #880044; --pink-30: #AA0055; --pink-35: #CC0066; --pink-40: #EE0077; --pink-45: #FF1188;
+    --pink-50: #FF3399; --pink-55: #FF55AA; --pink-60: #FF77BB; --pink-65: #FF99CC; --pink-70: #FFBBDD; --pink-75: #FFDDEE;
+}

@@ -1,0 +1,14 @@
+<div class="<%= helpers.card_classes %> p-4 flex flex-col">
+  <div class="flex items-center gap-2 mb-1">
+    <%= helpers.page_icon(@icon, 'w-6 h-6 flex-shrink-0 text-gray-600 dark:text-gray-400') %>
+    <h4 class="<%= helpers.framework_subsection_title_classes %> !mb-0 leading-none"><%= @title %></h4>
+  </div>
+  <div class="<%= helpers.framework_card_content_classes %> [&>*:last-child]:!mb-0">
+    <%= content %>
+  </div>
+  <% if docs_page? %>
+    <div class="mt-auto text-right pt-4 text-sm text-gray-500 dark:text-gray-500">
+      Go to <%= render DocsRef.new(page: @docs_page) %>
+    </div>
+  <% end %>
+</div>

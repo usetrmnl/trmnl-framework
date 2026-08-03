@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "trmnl-framework-docs",
+      "runtimeExecutable": "bin/dev",
+      "runtimeArgs": [],
+      "port": 3001
+    }
+  ]
+}

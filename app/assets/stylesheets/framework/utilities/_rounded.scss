@@ -1,0 +1,67 @@
+// ============================================
+// TRMNL Framework - Rounded Utilities
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../config/tokens' as vars;
+@use 'sass:map';
+
+// Define all rounded variants
+$rounded-variants: (
+    '': var(--rounded),
+    '--base': var(--rounded),
+    '--none': var(--rounded-none),
+    '--xsmall': var(--rounded-xsmall),
+    '--small': var(--rounded-small),
+    '--medium': var(--rounded-medium),
+    '--large': var(--rounded-large),
+    '--xlarge': var(--rounded-xlarge),
+    '--xxlarge': var(--rounded-xxlarge),
+    '--full': var(--rounded-full)
+);
+
+@include mixins.trmnl-namespace {
+    // Generate rounded utilities with responsive variants
+    @each $modifier, $value in $rounded-variants {
+        .rounded#{$modifier} {
+            @include responsive.with-size-and-orientation-variants {
+                border-radius: $value;
+                overflow: hidden;
+            }
+        }
+    }
+    
+    // Corner-specific utilities
+    $corners: (
+        't': (border-top-left-radius, border-top-right-radius),
+        'r': (border-top-right-radius, border-bottom-right-radius),
+        'b': (border-bottom-left-radius, border-bottom-right-radius),
+        'l': (border-top-left-radius, border-bottom-left-radius),
+        'tl': (border-top-left-radius),
+        'tr': (border-top-right-radius),
+        'br': (border-bottom-right-radius),
+        'bl': (border-bottom-left-radius)
+    );
+    
+    @each $corner, $properties in $corners {
+        @each $modifier, $value in $rounded-variants {
+            .rounded-#{$corner}#{$modifier} {
+                @include responsive.with-size-and-orientation-variants {
+                    @each $property in $properties {
+                        #{$property}: $value;
+                        overflow: hidden;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Programmatically generated rounded classes for 0-50 pixels
+    @for $i from 0 through 50 {
+        .rounded--\5B#{$i}px\5D {
+            border-radius: vars.content-scaled($i * 1px);
+            overflow: hidden;
+        }
+    }
+}

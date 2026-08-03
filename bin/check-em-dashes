@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# House-style guard: no em-dashes. AGENTS.md and .claude/skills/write-docs/SKILL.md ban
+# the glyph in docs copy, code comments, and commit messages, and the pull request
+# template asks contributors to confirm it. This is the check that enforces it.
+#
+# Scope: every tracked file, minus the allowlist below. The check looks for U+2014 and
+# the HTML entities that render as it. It does not look for `--`, which the style guide
+# also bans as a dash, because `--` is legitimate in CSS custom properties, Sass, and CLI
+# flags on thousands of lines here; that one stays a review item.
+#
+# Run it locally the same way CI does:
+#
+#   bin/check-em-dashes
+#
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+PATTERN='—|&mdash;|&#8212;|&#x2014;'
+
+# --- Allowlist: paths ---------------------------------------------------------------
+# One entry per exemption, each with the reason it is exempt. Nothing else is exempt.
+# Adding an entry is a deliberate act; a new em-dash anywhere outside this list fails.
+ALLOWED_PATHS=(
+    # Published release archive. Every byte under these paths is a shipped artifact and
+    # published versions are never re-cut (RELEASE.md).
+    'public/css'
+    'public/js'
+    'public/framework/releases'
+    # Font bundle READMEs, OFL texts, and CHANGELOG: third-party foundry copy, shipped
+    # verbatim under its own license.
+    'public/fonts'
+    # Vendored third-party libraries (Prism, jQuery), shipped verbatim.
+    'vendor'
+    # Frozen docs tracks. Each documents the released bundle of its own version and is
+    # not edited after that version ships.
+    'app/views/framework_v1'
+    'app/views/framework_v2'
+    'app/views/framework_v3_1'
+    # The two files that state the rule have to print the glyph to state it.
+    'AGENTS.md'
+    '.claude/skills/write-docs/SKILL.md'
+    # This script carries the glyph it searches for.
+    'bin/check-em-dashes'
+)
+
+
+pathspecs=()
+for path in "${ALLOWED_PATHS[@]}"; do
+    # A path that is no longer tracked means the allowlist has gone stale, which is the
+    # same rot this check exists to prevent. Say so and carry on: git grep only reads
+    # tracked files, so a dead exemption excludes nothing, and the commit that untracks a
+    # file (the pre-publish removal of the private planning record, say) should not fail
+    # the check it is unrelated to.
+    if [ -z "$(git ls-files -- "$path")" ]; then
+        echo "bin/check-em-dashes: allowlisted path '$path' is not tracked. Remove it." >&2
+        continue
+    fi
+    pathspecs+=(":(exclude)$path")
+done
+
+all_hits="$(git grep -nI -E "$PATTERN" -- "${pathspecs[@]}" || true)"
+
+offenders="$all_hits"
+
+if [ -n "$offenders" ]; then
+    echo "Em-dashes found. Rewrite each with a period, comma, colon, or parentheses."
+    echo "If the use is legitimate, add a commented entry to the allowlist in $0."
+    echo
+    printf '%s' "$offenders"
+    exit 1
+fi
+
+echo "No em-dashes outside the allowlist."

@@ -1,0 +1,52 @@
+<%#
+  Compact menubar device picker: a dropdown trigger with a live summary label
+  (device name + palette + state icons) that opens a popover containing the
+  full screen picker (`:dropdown` variant): theme, orientation, color mode,
+  device, palette, and reset.
+
+  Shared between the Framework Docs nav and the Visual Editor menubar.
+
+  Open/close is delegated to the Stimulus `dropdown` controller; the live
+  summary text is updated by `screen_picker_controller#updateSummaryLabel`
+  via the `summary_element_id` value on the inner picker.
+
+  Locals:
+    scope:       (required) BroadcastChannel + localStorage namespace, e.g. 'framework' or 'markup'
+    summary_id:  (required) DOM id for the trigger's summary span, unique on the page
+    theme:       optional, forwarded to the inner picker (default: nil = system)
+    refresh:     optional, forwarded to the inner picker (default: false)
+    menu_align:  optional, :right or :left (default: :right)
+%>
+<%
+  theme ||= nil
+  refresh = !!defined?(refresh) && refresh
+  menu_align = (defined?(menu_align) && menu_align) || :right
+  align_class = menu_align == :left ? "left-0" : "right-0"
+  default_model_keyname = (defined?(default_model_keyname) && default_model_keyname.presence) || "og_plus"
+  default_palette_id = local_assigns.fetch(:default_palette_id, nil)
+  device_key = local_assigns.fetch(:device_key, nil)
+%>
+
+<div class="relative" data-controller="dropdown">
+  <button type="button"
+          class="<%= menubar_dropdown_trigger_classes %>"
+          data-action="click->dropdown#toggleClick"
+          aria-haspopup="true"
+          aria-expanded="false">
+    <span id="<%= summary_id %>"><%= framework_screen_picker_default_summary(default_model_keyname: default_model_keyname) %></span>
+    <%= menubar_dropdown_chevron %>
+  </button>
+  <div data-dropdown-target="menu"
+       class="<%= align_class %> w-48 <%= menubar_dropdown_menu_classes %>"
+       hidden>
+    <%= render "shared/fancy_screen_picker",
+               variant: :dropdown,
+               theme: theme,
+               refresh: refresh,
+               scope: scope,
+               summary_element_id: summary_id,
+               default_model_keyname: default_model_keyname,
+               default_palette_id: default_palette_id,
+               device_key: device_key %>
+  </div>
+</div>

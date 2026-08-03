@@ -1,0 +1,647 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :overflow %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:overflow) %>
+
+    <div class="space-y-16">
+      <!-- Single container (non-.columns) -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            You can enable Overflow on any container (e.g., a flex or grid column) by adding
+            <code class="<%= framework_section_code_classes %>">data-overflow="true"</code> to the container.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--col gap" data-overflow="true">
+                        <% overflow_demo_content[:extended_tasks].each do |task| %>
+                          <%= render_task_item(task) %>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">Generic Container</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col gap" data-overflow="true">
+  <div class="item">
+    <div class="meta"></div>
+    <div class="content">
+      <span class="title title--small">Title goes here</span>
+      <span class="description">Description goes here</span>
+    </div>
+  </div>
+  <!-- more .item elements -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <!-- Attributes (new) - after example -->
+      <section class="space-y-4">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-800">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Attribute</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Default</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">data-overflow</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><code class="text-sm font-mono text-syntax-string">false</code></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Enable Overflow on any container (non-<code class="<%= framework_section_code_classes %>">.columns</code>). Hides trailing items to fit the height budget.</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">data-overflow-max-height</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><code class="text-sm font-mono text-syntax-string">auto</code></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Override height budget. Pixel value (e.g., <code class="<%= framework_section_code_classes %>">320</code>) or <code class="<%= framework_section_code_classes %>">auto</code> to inherit the parent’s content height.</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">data-overflow-counter</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><code class="text-sm font-mono text-syntax-string">false</code></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Show a trailing “and N more” label when items are hidden.</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">data-overflow-max-cols</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><code class="text-sm font-mono text-syntax-string">unset</code></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Best‑fit columns up to N on a <code class="<%= framework_section_code_classes %>">.columns</code> container. Optimizes for the most visible items. Responsive: <code class="<%= framework_section_code_classes %>">-sm</code>, <code class="<%= framework_section_code_classes %>">-md</code>, <code class="<%= framework_section_code_classes %>">-lg</code>, <code class="<%= framework_section_code_classes %>">-portrait</code>, <code class="<%= framework_section_code_classes %>">-md-portrait</code>, etc.</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">data-overflow-cols</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><code class="text-sm font-mono text-syntax-string">unset</code></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Force exactly N columns on a <code class="<%= framework_section_code_classes %>">.columns</code> container. Same responsive variants as <code class="<%= framework_section_code_classes %>">data-overflow-max-cols</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- Basic: single column -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Smart Columns') %>
+          <p class="<%= framework_section_description_classes %>">
+            Place <code class="<%= framework_section_code_classes %>">.item</code> <%= render DocsRef.new(page: :item) %> elements inside a single <code class="<%= framework_section_code_classes %>">.column</code> element, that's nested inside a <code class="<%= framework_section_code_classes %>">.columns</code> <%= render DocsRef.new(page: :columns) %> container. Set the exact or maximum number of columns with <code class="<%= framework_section_code_classes %>">data-overflow-cols</code> or <code class="<%= framework_section_code_classes %>">data-overflow-max-cols</code>.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Number of columns') %>
+            <p class="<%= framework_section_description_classes %>">
+              Set <code class="<%= framework_section_code_classes %>">data-overflow-cols</code> to force an exact
+              column count. Use this when you want a consistent column count regardless of how many
+              items fit. The engine will still respect height constraints, but it will keep the
+              requested number of columns even if that shows fewer items than a best‑fit layout.
+            </p>
+          </div>
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-cols="3">
+                        <div class="column">
+                          <% overflow_demo_content[:extended_tasks].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">Exactly 3 Columns</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-cols="3">
+  <div class="column">
+    <!-- Items go here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Maximum number of columns') %>
+            <p class="<%= framework_section_description_classes %>">
+              Set <code class="<%= framework_section_code_classes %>">data-overflow-max-cols</code> to allow the
+              engine to choose the best number of columns up to the maximum you specify. This
+              best‑fit mode prioritizes the most visible items. For example, allowing 3 columns may
+              still render 2 columns if that shows more items due to less wrapping.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <% overflow_demo_content[:extended_tasks].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">Max 3 Columns</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-max-cols="3">
+  <div class="column">
+    <!-- Items go here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Responsive') %>
+            <p class="<%= framework_section_description_classes %>">
+              <code class="<%= framework_section_code_classes %>">data-overflow-max-cols</code> and <code class="<%= framework_section_code_classes %>">data-overflow-cols</code> support the same size and orientation modifiers as other framework components. Specificity (most specific first): size + orientation (e.g. <code class="<%= framework_section_code_classes %>">data-overflow-max-cols-md-portrait</code>), size (<code class="<%= framework_section_code_classes %>">-sm</code>, <code class="<%= framework_section_code_classes %>">-md</code>, <code class="<%= framework_section_code_classes %>">-lg</code>), orientation (<code class="<%= framework_section_code_classes %>">-portrait</code>), then base.
+            </p>
+          </div>
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-max-cols="2" data-overflow-max-cols-lg="4">
+  <div class="column"><!-- Items --></div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Height Budget -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Height Budget') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control how much vertical space Overflow can use by specifying <code class="<%= framework_section_code_classes %>">data-overflow-max-height</code>. When not specified, the height budget defaults to the parent’s content height.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--col gap" data-overflow="true" data-overflow-max-height="220">
+                        <% overflow_demo_content[:extended_tasks].each do |task| %>
+                          <%= render_task_item(task) %>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">Height Budget (220px)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col gap" data-overflow="true" data-overflow-max-height="220">
+  <!-- Items go here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Overflow Counter -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Overflow Counter') %>
+          <p class="<%= framework_section_description_classes %>">
+            Opt‑in to display a trailing “and N more” label by adding
+            <code class="<%= framework_section_code_classes %>">data-overflow-counter="true"</code> The engine will reserve
+            space for the label during planning so it fits without pushing items out of bounds.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="1" data-overflow-counter="true">
+                        <div class="column">
+                          <% overflow_demo_content[:extended_tasks].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">Counter Enabled</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-max-cols="1" data-overflow-counter="true">
+  <div class="column">
+    <!-- Items go here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Clamp-aware overflow example (uses same dataset) -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Clamp-aware Overflow') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Clamp engine <%= render DocsRef.new(page: :clamp) %> re-clamps text for the actual column width. Apply <code class="<%= framework_section_code_classes %>">data-clamp</code> on titles or descriptions as needed.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="2">
+                        <div class="column">
+                          <% overflow_demo_content[:extended_tasks].each do |task| %>
+                            <%= render_task_item(task.merge(
+                              title_attributes: { 'data-clamp': '1' },
+                              description_attributes: { 'data-clamp': '3' }
+                            )) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow + Clamp</span>
+                      <span class="instance">Title 1 • Description 3 • Max 2 Columns</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-max-cols="2">
+  <div class="column">
+    <!-- Items go here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      
+
+      <!-- Group headers -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Group Headers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Mark headers with <code class="<%= framework_section_code_classes %>">group-header</code>. The engine avoids orphaned headers and duplicates a header at the start of the next column when a group spills over.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <%= render_group_header("Today") %>
+                          <% overflow_grouped_from_extended_tasks[:today].each do |task| %>
+                            <%= render_task_item(task.merge(
+                              title_attributes: { 'data-clamp': '1' },
+                              description_attributes: { 'data-clamp': '2' }
+                            )) %>
+                          <% end %>
+
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_grouped_from_extended_tasks[:tomorrow].each do |task| %>
+                            <%= render_task_item(task.merge(
+                              title_attributes: { 'data-clamp': '1' },
+                              description_attributes: { 'data-clamp': '2' }
+                            )) %>
+                          <% end %>
+
+                          <%= render_group_header("This Week") %>
+                          <% overflow_grouped_from_extended_tasks[:this_week].each do |task| %>
+                            <%= render_task_item(task.merge(
+                              title_attributes: { 'data-clamp': '1' },
+                              description_attributes: { 'data-clamp': '2' }
+                            )) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Group Headers</span>
+                      <span class="instance">Smart Distribution</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-max-cols="3">
+  <div class="column">
+    <span class="label label--medium group-header" data-group-header="true">Today</span>
+    <!-- Items go here -->
+    <span class="label label--medium group-header" data-group-header="true">Tomorrow</span>
+    <!-- Items go here -->
+    <span class="label label--medium group-header" data-group-header="true">This Week</span>
+    <!-- Items go here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="mt-6">
+            <div class="space-y-2">
+          <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
+                <li>Headers are never left as the last visible element in a column.</li>
+                <li>When a group spills, a gray duplicate header is added to the next column for context.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Harmonious Groups: one group per column when headings match max columns -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Harmonious Group Columns') %>
+          <p class="<%= framework_section_description_classes %>">
+            When the number of group headers equals the maximum columns and there's enough space, the engine places each group in its own column for a more harmonious layout.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:grouped_tasks][:today].first(2).each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:grouped_tasks][:tomorrow].first(3).each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:grouped_tasks][:this_week].first(2).each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">Harmonious Groups 3 Columns (2/3/2)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="columns" data-overflow-max-cols="3">
+  <div class="column">
+    <span class="label label--medium group-header" data-group-header="true">Today</span>
+    <!-- Items go here -->
+    <span class="label label--medium group-header" data-group-header="true">Tomorrow</span>
+    <!-- Items go here -->
+    <span class="label label--medium group-header" data-group-header="true">This Week</span>
+    <!-- Items go here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8" id="with-dividers">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'With dividers') %>
+          <p class="<%= framework_section_description_classes %>">
+            When the Overflow engine hides items to fit the height or column budget, <%= render DocsRef.new(page: :divider) %> elements between items are hidden when either adjacent item is hidden. That way you never see an orphaned divider - a divider is only shown when both the item above and the item below are visible. Place <code class="<%= framework_section_code_classes %>">.divider</code> between <code class="<%= framework_section_code_classes %>">.item</code> <%= render DocsRef.new(page: :item) %> elements in your overflow container; the engine handles visibility automatically.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--col gap" data-overflow="true">
+                        <% extended_tasks = overflow_demo_content[:extended_tasks] %>
+                        <% extended_tasks.each_with_index do |task, i| %>
+                          <%= render_task_item(task) %>
+                          <% unless i == extended_tasks.length - 1 %><div class="divider"></div><% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Overflow</span>
+                      <span class="instance">With dividers</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="flex flex--col gap" data-overflow="true">
+  <div class="item">...</div>
+  <div class="divider"></div>
+  <div class="item">...</div>
+  <div class="divider"></div>
+  <div class="item">...</div>
+  <!-- more items with dividers between -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Backwards compatibility -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Backwards compatibility') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Overflow engine <%= render DocsRef.new(page: :overflow) %> remains compatible with legacy list attributes used in older plugins. When these
+            attributes are present on a descendant <code class="<%= framework_section_code_classes %>">.column</code> or
+            <code class="<%= framework_section_code_classes %>">.list</code>, the engine will promote them onto the
+            enclosing <code class="<%= framework_section_code_classes %>">.columns</code> <%= render DocsRef.new(page: :columns) %> container at runtime.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Supported legacy attributes') %>
+            <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+              <li><code class="<%= framework_section_code_classes %>">data-list-limit="true"</code>: opts the list into Overflow. If the enclosing <code class="<%= framework_section_code_classes %>">.columns</code> lacks <code class="<%= framework_section_code_classes %>">data-overflow-max-cols</code>, it will default to <code class="<%= framework_section_code_classes %>">1</code>.</li>
+              <li><code class="<%= framework_section_code_classes %>">data-list-max-columns</code>: sets the maximum column count. Responsive variants (e.g., <code class="<%= framework_section_code_classes %>">-sm</code>, <code class="<%= framework_section_code_classes %>">-md</code>) on the legacy element are honored when present; the base value is used for the engine.</li>
+              <li><code class="<%= framework_section_code_classes %>">data-list-max-height</code>: sets the height budget for the columns. Use a pixel value (e.g., <code class="<%= framework_section_code_classes %>">340</code>) or <code class="<%= framework_section_code_classes %>">auto</code> to inherit from the parent container.</li>
+              <li><code class="<%= framework_section_code_classes %>">data-list-hidden-count</code>: older toggle for the trailing label; still honored when present.</li>
+              <li>Divider visibility when items are hidden: see the With dividers section above.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Legacy example (still works)') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col">
+                        <div class="columns">
+                          <div class="column" data-list-limit="true" data-list-max-height="340" data-list-hidden-count="true" data-list-max-columns="2">
+                            <% overflow_demo_content[:extended_tasks].each do |task| %>
+                              <%= render_task_item(task) %>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Overflow</span>
+                        <span class="instance">Legacy attributes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="columns">
+  <div class="column"
+       data-list-limit="true"
+       data-list-max-height="340"
+       data-list-hidden-count="true"
+       data-list-max-columns="2">
+    <!-- Items go here -->
+  </div>
+</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Notes') %>
+            <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+              <li><code class="<%= framework_section_code_classes %>">data-overflow-cols</code> (fixed count) takes precedence over <code class="<%= framework_section_code_classes %>">data-overflow-max-cols</code> (best‑fit up to N) when both are present.</li>
+              <li>When only <code class="<%= framework_section_code_classes %>">data-list-limit</code> is present, the engine defaults to 1 column.</li>
+              <li>By default, the trailing hidden count label is not shown. Enable with <code class="<%= framework_section_code_classes %>">data-overflow-counter="true"</code>. Legacy <code class="<%= framework_section_code_classes %>">data-list-hidden-count</code> remains supported.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,213 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :v3_upgrade_guide %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Framework v3 is structurally backward-compatible with v2: your existing class names still compile and render. However, the <code class="<%= framework_section_code_classes %>">1bit</code> grayscale dither patterns have been rebuilt on a new linear scale, so most shade names now produce different lightness values than they did in v2. Review the migration table below to restore your original look or take advantage of the finer 14-step palette.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '1-Bit Grayscale Dither Scale') %>
+          <p class="<%= framework_section_description_classes %>">In <code class="<%= framework_section_code_classes %>">1bit</code> mode, v3 replaces the 7-step non-linear dither scale (12&times;12&nbsp;px tiles) with a 14-step linear scale (16&times;16&nbsp;px tiles). Each step now increments by 6.25% white-pixel density. In v2 the 14 extended shade names were rendered in pairs: <code class="<%= framework_section_code_classes %>">gray-15</code> produced the same pattern as <code class="<%= framework_section_code_classes %>">gray-10</code>, <code class="<%= framework_section_code_classes %>">gray-25</code> the same as <code class="<%= framework_section_code_classes %>">gray-20</code>, and so on. In v3 every shade has its own distinct pattern, so nearly all shades now sit at <strong>different lightness values</strong> than they did in v2.</p>
+        </div>
+
+        <div class="space-y-1">
+          <%= framework_heading(4, 'Lightness Shift') %>
+          <p class="<%= framework_section_description_classes %>">The table below shows the white-pixel density each shade produced in v2 <code class="<%= framework_section_code_classes %>">1bit</code> mode, what it now produces in v3, and which v3 shade to use to restore the original appearance.</p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+              <tr>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">v2 Lightness</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">v3 Lightness</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Shift</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Use Instead</th>
+              </tr>
+            </thead>
+            <% spark_cell = framework_docs_table_cell_classes %>
+            <% spark_row = "flex items-center gap-2" %>
+            <% spark_label = "w-14 shrink-0 text-right tabular-nums" %>
+            <% spark_track = "h-1 w-28 rounded-full bg-gray-200 dark:bg-gray-700" %>
+            <% spark_fill = "h-1 rounded-full bg-gray-500 dark:bg-gray-500" %>
+            <tbody class="<%= framework_docs_table_body_classes %>">
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-10</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">6.25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:6.25%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">6.25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:6.25%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&mdash;</td>
+                <td class="<%= framework_docs_table_cell_classes %>">&mdash;</td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-15</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">6.25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:6.25%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">12.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:12.5%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">+6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-10</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-20</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">12.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:12.5%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">18.75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:18.75%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">+6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-15</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-25</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">12.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:12.5%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:25%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">+12.5%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-15</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-30</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:25%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">31.25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:31.25%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">+6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-25</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-35</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:25%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">37.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:37.5%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">+12.5%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-25</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-40</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">50%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:50%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">43.75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:43.75%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&minus;6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-45</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-45</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">50%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:50%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">56.25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:56.25%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">+6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-40</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-50</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:75%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">62.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:62.5%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&minus;12.5%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-60</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-55</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:75%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">68.75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:68.75%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&minus;6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-60</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-60</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">87.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:87.5%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:75%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&minus;12.5%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-70</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-65</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">87.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:87.5%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">81.25%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:81.25%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&minus;6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-70</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-70</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">93.75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:93.75%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">87.5%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:87.5%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&minus;6.25%</td>
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-75</code></td>
+              </tr>
+              <tr class="<%= framework_docs_table_row_classes %>">
+                <td class="<%= framework_docs_table_cell_emphasis_classes %>"><code class="<%= framework_section_code_classes %>">gray-75</code></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">93.75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:93.75%"></div></div></div></td>
+                <td class="<%= spark_cell %>"><div class="<%= spark_row %>"><span class="<%= spark_label %>">93.75%</span><div class="<%= spark_track %>"><div class="<%= spark_fill %>" style="width:93.75%"></div></div></div></td>
+                <td class="<%= framework_docs_table_cell_classes %>">&mdash;</td>
+                <td class="<%= framework_docs_table_cell_classes %>">&mdash;</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="<%= message_gray_classes %> max-w-[800px]">
+          <div class="flex items-center w-full">
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm leading-7">
+                To preserve your v2 look, switch to the shade listed in the &ldquo;Use Instead&rdquo; column. To adopt the new linear scale and take advantage of the finer 14-step palette, keep your current class names - they now each produce a unique dither pattern. See the <%= render DocsRef.new(page: :colors) %> reference for the full scale.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'CSS Variable Architecture') %>
+          <p class="<%= framework_section_description_classes %>">Under the hood, utilities like <%= render DocsRef.new(page: :background) %> and <%= render DocsRef.new(page: :text) %> now reference CSS custom properties instead of containing per-mode selector rules.</p>
+        </div>
+        <p class="<%= framework_section_description_classes %>">
+          This is an internal refactor. The class names you use in your markup (<code class="<%= framework_section_code_classes %>">bg--gray-50</code>, <code class="<%= framework_section_code_classes %>">text--black</code>, etc.) are unchanged. If you have custom CSS that directly targets framework internals (e.g., overriding <code class="<%= framework_section_code_classes %>">.screen--1bit .bg--gray-3</code> selectors), you may need to update those overrides to use the new CSS variable approach.
+        </p>
+        <div class="<%= message_gray_classes %> max-w-[800px]">
+          <div class="flex items-center w-full">
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm leading-7">
+                If you use only framework-provided class names, no action is needed. If you have custom CSS overriding framework internals, review the updated <%= render DocsRef.new(page: :background) %> and <%= render DocsRef.new(page: :text) %> pages for the new variable-based approach.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Background and Border Rendering Modes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Utility class names are unchanged, but rendering support is broader in v3. Both <%= render DocsRef.new(page: :background) %> and <%= render DocsRef.new(page: :border) %> now support high-density <code class="<%= framework_section_code_classes %>">1bit</code> and <code class="<%= framework_section_code_classes %>">2bit</code> output modes without markup changes.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Color Palette on Grayscale Devices') %>
+          <p class="<%= framework_section_description_classes %>">
+            If you adopt the new chromatic color classes (e.g., <code class="<%= framework_section_code_classes %>">bg--red</code>, <code class="<%= framework_section_code_classes %>">text--blue-40</code>) in your plugin, they automatically adapt by device capability. On grayscale hardware, colors fall back to perceptually equivalent gray values; on limited-color hardware, unavailable colors map to the closest supported hue. No conditional logic is needed. The framework handles this mapping via perceptual lightness (LAB L*).
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Raw / Preview Verification') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the Raw Colors / Preview Colors toggle in Device Preview while upgrading. Raw mode shows full-bright token values; Preview mode simulates panel-accurate output, including true-color behavior and device white point.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Next Steps') %>
+          <p class="<%= framework_section_description_classes %>">
+            Once you've reviewed the deprecation notes above, head to the <%= render DocsRef.new(page: :v3_enhancement_guide) %> to learn how to use chromatic colors, semantic roles, and the new label variants in your plugins.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

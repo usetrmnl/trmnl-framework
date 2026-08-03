@@ -1,0 +1,108 @@
+// ============================================
+// TRMNL Framework - Border level data & mixins
+// Shared by border utilities and divider element.
+// ============================================
+// Border-level CSS variables (--border-{level}-{dir}-image/size/color)
+// are defined per mode on .screen in base/_screen-mode-vars.scss.
+// These mixins simply reference those variables.
+
+@use "sass:list";
+@use "sass:map";
+@use "../mixins/crisp-edges" as crisp;
+
+$border-1bit-tiles: (
+    1: (1, 2), 2: (12, 2), 3: (8, 2), 4: (2, 2), 5: (8, 2), 6: (12, 2), 7: (1, 2)
+);
+$border-level-token-map: (
+    1: "black",
+    2: "gray-15",
+    3: "gray-30",
+    4: "gray-40",
+    5: "gray-50",
+    6: "gray-65",
+    7: "white"
+);
+// Step borders (border--{h,v}-10 through border--{h,v}-75) render the hand-crafted level art,
+// two steps per level from darkest to lightest.
+$border-step-level-map: (
+    10: 1, 15: 1,
+    20: 2, 25: 2,
+    30: 3, 35: 3,
+    40: 4, 45: 4,
+    50: 5, 55: 5,
+    60: 6, 65: 6,
+    70: 7, 75: 7
+);
+
+@function dark-remap-border-level($level) {
+    $level-map: (
+        1: 7,
+        2: 6,
+        3: 5,
+        4: 4,
+        5: 3,
+        6: 2,
+        7: 1
+    );
+    $mapped: map.get($level-map, $level);
+    @return if($mapped, $mapped, $level);
+}
+
+// The renderer program every border publishes beside its background longhands:
+// eight fields with the value an absent program falls back to. One list keeps
+// the level chain, the step chain, and the theme helpers on the same contract.
+$border-render-fields: (
+    'stroke': transparent,
+    'width': 0px,
+    'height': 0px,
+    'view-box': none,
+    'path-1': none,
+    'color-1': none,
+    'path-2': none,
+    'color-2': none
+);
+
+// A line with no tile geometry: the flat stroke is the whole program. Emitted
+// under a variable prefix so the level/step art, the border utilities, and the
+// theme slot/remap helpers all publish the same eight-field shape.
+@mixin border-render-solid($prefix, $color) {
+    --#{$prefix}-render-stroke: #{$color};
+    --#{$prefix}-render-width: 0px;
+    --#{$prefix}-render-height: 0px;
+    --#{$prefix}-render-view-box: none;
+    --#{$prefix}-render-path-1: none;
+    --#{$prefix}-render-color-1: none;
+    --#{$prefix}-render-path-2: none;
+    --#{$prefix}-render-color-2: none;
+}
+
+// $slot layers a --framework-slot-<slot>-border-* override in front of the
+// level chain; unset slots fall through, keeping unthemed art identical. The
+// renderer program carries the same slot layer as the background longhands, so
+// a slotted border hands the DOM and TRMNLPaint the one paint.
+@mixin border-level-vars($level, $direction, $slot: null) {
+    $repeat: if($direction == "h", repeat-x, repeat-y);
+    $color: var(--theme-border-#{$level}-#{$direction}-color, var(--border-#{$level}-#{$direction}-color, transparent));
+    $image: var(--theme-border-#{$level}-#{$direction}-image, var(--border-#{$level}-#{$direction}-image, none));
+    $size: var(--theme-border-#{$level}-#{$direction}-size, var(--border-#{$level}-#{$direction}-size, auto));
+    $position: var(--theme-border-#{$level}-#{$direction}-position, var(--border-#{$level}-#{$direction}-position, 0 0));
+    @if $slot {
+        $color: var(--framework-slot-#{$slot}-border-color, #{$color});
+        $image: var(--framework-slot-#{$slot}-border-image, #{$image});
+        $size: var(--framework-slot-#{$slot}-border-size, #{$size});
+        $position: var(--framework-slot-#{$slot}-border-position, #{$position});
+    }
+    background-color: $color;
+    background-image: $image;
+    background-repeat: $repeat;
+    background-size: $size;
+    background-position: $position;
+    @each $field, $fallback in $border-render-fields {
+        $render: 'var(--theme-border-#{$level}-#{$direction}-render-#{$field}, var(--border-#{$level}-#{$direction}-render-#{$field}, #{$fallback}))';
+        @if $slot {
+            $render: 'var(--framework-slot-#{$slot}-border-render-#{$field}, #{$render})';
+        }
+        --framework-border-render-#{$field}: #{$render};
+    }
+    @include crisp.crisp-edges;
+}

@@ -1,0 +1,61 @@
+// ============================================
+// TRMNL Framework - Description Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+
+@include mixins.trmnl-namespace {
+    .description {
+        font-family: var(--description-font-family);
+        font-size: var(--description-font-size);
+        font-weight: var(--description-font-weight);
+        line-height: var(--description-line-height);
+        -webkit-font-smoothing: var(--description-font-smoothing);
+        color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
+        background-color: var(--framework-semantic-text-primary-text-under, transparent);
+        background-image: var(--framework-semantic-text-primary-text-image, none);
+        -webkit-background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+        background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+
+        &--base {
+            @include responsive.with-all-variants {
+                font-family: var(--description-font-family);
+                font-size: var(--description-font-size);
+                font-weight: var(--description-font-weight);
+                line-height: var(--description-line-height);
+                -webkit-font-smoothing: var(--description-font-smoothing);
+            }
+        }
+
+        &--large {
+            @include responsive.with-all-variants {
+                font-family: var(--description-large-font-family);
+                font-size: var(--description-large-font-size);
+                line-height: var(--description-large-line-height);
+                -webkit-font-smoothing: var(--description-large-font-smoothing);
+                font-weight: var(--description-large-font-weight);
+            }
+        }
+
+        &--xlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--description-xlarge-font-family);
+                font-size: var(--description-xlarge-font-size);
+                line-height: var(--description-xlarge-line-height);
+                -webkit-font-smoothing: var(--description-xlarge-font-smoothing);
+                font-weight: var(--description-xlarge-font-weight);
+            }
+        }
+
+        &--xxlarge {
+            @include responsive.with-all-variants {
+                font-family: var(--description-xxlarge-font-family);
+                font-size: var(--description-xxlarge-font-size);
+                line-height: var(--description-xxlarge-line-height);
+                -webkit-font-smoothing: var(--description-xxlarge-font-smoothing);
+                font-weight: var(--description-xxlarge-font-weight);
+            }
+        }
+    }
+} 

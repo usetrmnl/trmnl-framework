@@ -1,0 +1,33 @@
+// ============================================
+// TRMNL Framework - Utilities Index
+// ============================================
+
+// Forward all utility modules
+@forward 'flexbox';
+@forward 'grid';
+@forward 'background';
+@forward 'border';
+@forward 'effects';
+@forward 'visibility';
+@forward 'text_stroke';
+@forward 'image_stroke';
+@forward 'text';
+@forward 'image';
+@forward 'rounded';
+@forward 'outline';
+@forward 'scale';
+@forward 'text_scale';
+@forward 'aspect_ratio';
+@forward 'pixel_ratio';
+@forward 'font';
+
+// Box model last. Every utility here sits in one layer at one class of weight,
+// so the file order decides who wins a tie, and the layout containers declare
+// the same properties as their defaults: `.grid` and `.col` set width and
+// height, `.stretch` sets both min-* floors. Forwarded first, the explicit
+// dimension lost that tie, so `class="col h--max-8"` and `class="stretch
+// w--min-32"` did nothing at all. The order is asserted in
+// spec/assets/stylesheets/framework_cascade_weight_spec.rb.
+@forward 'size';
+@forward 'spacing';
+@forward 'gap';

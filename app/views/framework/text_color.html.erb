@@ -1,0 +1,331 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :text_color %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:text_color) %>
+
+    <div class="space-y-16">
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the <code class="<%= framework_section_code_classes %>">text--{shade}</code> utility classes to apply
+            text color patterns to any element. The shade comes from one of three schemes
+            (see <%= link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline' %>):
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <strong>Grayscale:</strong> <code class="<%= framework_section_code_classes %>">text--black</code>,
+              <code class="<%= framework_section_code_classes %>">text--gray-10</code> through
+              <code class="<%= framework_section_code_classes %>">text--gray-75</code>, and
+              <code class="<%= framework_section_code_classes %>">text--white</code>.
+            </li>
+            <li>
+              <strong>Chromatic:</strong> <code class="<%= framework_section_code_classes %>">text--{hue}</code> for the
+              pure color, or <code class="<%= framework_section_code_classes %>">text--{hue}-{step}</code> for a step on
+              that hue's ladder (e.g. text--red-50, text--blue-40).
+            </li>
+            <li>
+              <strong>Semantic:</strong> <code class="<%= framework_section_code_classes %>">text--primary</code>,
+              <code class="<%= framework_section_code_classes %>">text--success</code>,
+              <code class="<%= framework_section_code_classes %>">text--error</code>, and
+              <code class="<%= framework_section_code_classes %>">text--warning</code>.
+            </li>
+            <li>
+              <strong>Ink roles:</strong> <code class="<%= framework_section_code_classes %>">text--default</code>,
+              <code class="<%= framework_section_code_classes %>">text--muted</code>, and
+              <code class="<%= framework_section_code_classes %>">text--inverse</code> paint the screen's own text
+              roles. They resolve through the theme slot chain, so a theme repaints them, and they mirror
+              <code class="<%= framework_section_code_classes %>">bg--canvas</code> and its siblings on
+              <%= render DocsRef.new(page: :background) %>.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            See the <%= link_to 'Responsive Features', '#responsive-text-color', class: 'hover:underline' %> section for responsive variants.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Grayscale') %>
+          <p class="<%= framework_section_description_classes %>">
+            Sixteen grayscale values: black, gray-10 through gray-75, and white.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--space-between">
+                    <div class="grid grid--cols-2 gap--medium h--full">
+                      <!-- White background column -->
+                      <div class="bg--white rounded">
+                        <div class="grid grid--cols-4 portrait:grid--cols-2 gap--small h--full">
+                          <% %w[black gray-10 gray-15 gray-20 gray-25 gray-30 gray-35 gray-40 gray-45 gray-50 gray-55 gray-60 gray-65 gray-70 gray-75 white].each do |shade| %>
+                            <div class="flex flex--col gap--xsmall flex--center">
+                              <div class="value value--base lg:value--large text--<%= shade %>">Aa</div>
+                              <span class="label label--small 1bit:text--black 2bit:text--gray-55 4bit:text--gray-60"><%= shade %></span>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+
+                      <!-- Black background column -->
+                      <div class="bg--black rounded">
+                        <div class="grid grid--cols-4 portrait:grid--cols-2 gap--small h--full">
+                          <% %w[black gray-10 gray-15 gray-20 gray-25 gray-30 gray-35 gray-40 gray-45 gray-50 gray-55 gray-60 gray-65 gray-70 gray-75 white].each do |shade| %>
+                            <div class="flex flex--col gap--xsmall flex--center">
+                              <div class="value value--base lg:value--large text--<%= shade %>">Aa</div>
+                              <span class="label label--small 1bit:text--white 2bit:text--gray-30 4bit:text--gray-25"><%= shade %></span>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Text color shades</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dark-mode-notice hidden <%= message_sage_classes %> !mt-0">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/info' %>
+            </div>
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm font-medium">
+                <strong>Dark Mode Notice:</strong> The color palette appears inverted because dark mode remaps the framework tokens: black and white swap, grays and chromatic steps mirror. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens are exempt from dark mode entirely.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="text--black">Black text</div>
+<div class="text--gray-10">Gray 10 text</div>
+<div class="text--gray-15">Gray 15 text</div>
+<div class="text--gray-20">Gray 20 text</div>
+<div class="text--gray-25">Gray 25 text</div>
+<div class="text--gray-30">Gray 30 text</div>
+<div class="text--gray-35">Gray 35 text</div>
+<div class="text--gray-40">Gray 40 text</div>
+<div class="text--gray-45">Gray 45 text</div>
+<div class="text--gray-50">Gray 50 text</div>
+<div class="text--gray-55">Gray 55 text</div>
+<div class="text--gray-60">Gray 60 text</div>
+<div class="text--gray-65">Gray 65 text</div>
+<div class="text--gray-70">Gray 70 text</div>
+<div class="text--gray-75">Gray 75 text</div>
+<div class="text--white">White text</div>'
+          ) %>
+        </div>
+      </section>
+
+      <% %w[red orange yellow lime green cyan blue violet purple pink].each do |hue| %>
+        <% steps_before = %w[10 15 20 25 30 35 40].map { |s| "#{hue}-#{s}" } %>
+        <% steps_after = %w[45 50 55 60 65 70 75].map { |s| "#{hue}-#{s}" } %>
+        <% chromatic_tokens = steps_before + [hue] + steps_after %>
+        <% chromatic_demo_code = chromatic_tokens.map { |t| "<div class=\"text--#{t}\">#{t.humanize} text</div>" }.join("\n") %>
+        <section id="text-<%= hue %>" class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, hue.capitalize) %>
+            <p class="<%= framework_section_description_classes %>">
+              Two classes write <%= hue %> text:
+            </p>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">text--<%= hue %></code>: the pure <%= hue %>.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">text--<%= hue %>-{step}</code>: a step on the
+                <%= hue %> ladder (e.g. text--<%= hue %>-50), on the same 10 to 75 scale as grayscale.
+              </li>
+            </ul>
+            <p class="<%= framework_section_description_classes %>">
+              Use the Device Preview (top right) to switch to a color device (e.g. Inky Impression 7.3, Tidbyt) to see these colors.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-2 gap--medium h--full">
+                        <!-- White background column -->
+                        <div class="bg--white rounded">
+                          <div class="grid grid--cols-4 portrait:grid--cols-2 gap--small h--full">
+                            <% chromatic_tokens.each do |token| %>
+                              <div class="flex flex--col gap--xsmall flex--center">
+                                <div class="value value--base lg:value--large text--<%= token %>">Aa</div>
+                                <span class="label label--small 1bit:text--black 2bit:text--gray-55 4bit:text--gray-60"><%= token %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+
+                        <!-- Black background column -->
+                        <div class="bg--black rounded">
+                          <div class="grid grid--cols-4 portrait:grid--cols-2 gap--small h--full">
+                            <% chromatic_tokens.each do |token| %>
+                              <div class="flex flex--col gap--xsmall flex--center">
+                                <div class="value value--base lg:value--large text--<%= token %>">Aa</div>
+                                <span class="label label--small 1bit:text--white 2bit:text--gray-30 4bit:text--gray-25"><%= token %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Text</span>
+                      <span class="instance"><%= hue.capitalize %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: chromatic_demo_code
+            ) %>
+          </div>
+        </section>
+      <% end %>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Backward Compatibility') %>
+          <p class="<%= framework_section_description_classes %>">
+            For backward compatibility, the original shade names (<code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code>) are still supported but deprecated. These map to equivalent extended shades:
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Deprecated (but still works) -->
+<div class="text--gray-1">Gray 1 text (deprecated)</div>
+<div class="text--gray-2">Gray 2 text (deprecated)</div>
+
+<!-- Preferred (new naming) -->
+<div class="text--gray-10">Gray 10 text (preferred)</div>
+<div class="text--gray-20">Gray 20 text (preferred)</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section id="responsive-text-color" class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Features') %>
+          <p class="<%= framework_section_description_classes %>">
+            Text color classes support size, orientation, and bit-depth variants.
+            Bit-depth prefixes like <code class="<%= framework_section_code_classes %>">1bit:</code>, <code class="<%= framework_section_code_classes %>">2bit:</code>, and <code class="<%= framework_section_code_classes %>">4bit:</code> set the shade for a specific device color depth.
+            The demos above use them together, for example <code class="<%= framework_section_code_classes %>">1bit:text--black 2bit:text--gray-55 4bit:text--gray-60</code>.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Breakpoint Prefixes') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Use breakpoint prefixes like <code class="<%= framework_section_code_classes %>">sm:</code>,
+                <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">lg:</code>
+                to apply different colors per device size class.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap">
+                        <div class="flex flex--col">
+                          <span class="value text--gray-50 md:text--gray-30">Responsive color</span>
+                          <p class="label label--small">Gray 50 by default, gray 30 on md+</p>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Text Color</span>
+                        <span class="instance">Responsive</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Text color: different shades at different breakpoints -->
+<span class="value text--gray-50 md:text--gray-30">Responsive color</span>
+
+<!-- Progressive color scaling -->
+<span class="value text--gray-70 sm:text--gray-50 md:text--gray-30 lg:text--black">Progressive color</span>
+
+<!-- Chromatic color at breakpoints -->
+<span class="value text--red sm:text--blue lg:text--green">Responsive chromatic color</span>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, 'Orientation and Size+Orientation') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Text colors can adapt to orientation with <code class="<%= framework_section_code_classes %>">portrait:</code> and <code class="<%= framework_section_code_classes %>">landscape:</code>, and can be combined
+                with size breakpoints (e.g., <code class="<%= framework_section_code_classes %>">md:portrait:</code>).
+              </p>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Different color in portrait -->
+<span class="value text--gray-50 portrait:text--black">Orientation color variant</span>
+
+<!-- Combined size and orientation -->
+<span class="value text--gray-50 md:portrait:text--gray-30">Color on md+ portrait</span>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="<%= message_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  Text color classes accept size, orientation, and bit-depth prefixes. Bit-depth prefixes (1bit:, 2bit:, 4bit:) override the shade for a specific device color depth.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

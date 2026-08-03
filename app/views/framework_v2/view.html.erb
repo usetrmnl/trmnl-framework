@@ -1,0 +1,148 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :view %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:view) %>
+
+    <div class="space-y-16">
+      <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">You don't specify the <code class="<%= framework_section_code_classes %>">view</code>. The markup you write for any plugin layout is automatically wrapped in the appropriate <code class="<%= framework_section_code_classes %>">view</code> container by the platform.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">You provide the <code class="<%= framework_section_code_classes %>">view</code> yourself. Include the appropriate wrapper in your markup: <code class="<%= framework_section_code_classes %>">view view--full</code>, <code class="<%= framework_section_code_classes %>">view view--half_vertical</code>, <code class="<%= framework_section_code_classes %>">view view--half_horizontal</code>, or <code class="<%= framework_section_code_classes %>">view view--quadrant</code>.</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: <<~'HTML'.strip,
+              <!-- view view--full (platform-provided) -->
+              <div class="layout">...</div>
+              <div class="title_bar">...</div>
+              <!-- /view -->
+            HTML
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="view view--full">
+  <div class="layout">...</div>
+  <div class="title_bar">...</div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Layout element <%= render DocsRef.new(page: :layout) %> is the core component of every View <%= render DocsRef.new(page: :view) %>, providing a consistent container for your content.
+            Views can optionally include a Title Bar <%= render DocsRef.new(page: :title_bar) %> for additional context.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            There are four view types: <code class="<%= framework_section_code_classes %>">view--full</code>, <code class="<%= framework_section_code_classes %>">view--half_horizontal</code>, <code class="<%= framework_section_code_classes %>">view--half_vertical</code>, and <code class="<%= framework_section_code_classes %>">view--quadrant</code>.
+            The default full view (<code class="<%= framework_section_code_classes %>">view view--full</code>) lives directly inside the <code class="<%= framework_section_code_classes %>">screen</code> div.
+            Other view types must be nested inside a <%= render DocsRef.new(page: :mashup) %> component.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'With Layout and Title Bar') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              When combined with a title bar, it provides context and navigation options.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                      <span class="label text-stroke">Layout</span>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Title</span>
+                      <span class="instance">Instance</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="view view--full">
+  <div class="layout">
+    <!-- Your content here -->
+  </div>
+
+  <div class="title_bar">
+    <img class="image" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+    <span class="title">Title</span>
+    <span class="instance">Instance</span>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'With only Layout') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For simpler interfaces, you can create a view without a title bar using just the base view classes.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium text--center">
+                      <span class="label text-stroke">Layout</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="view view--full">
+  <div class="layout">
+    <!-- Your content here -->
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Views in Mashups') %>
+          <p class="<%= framework_section_description_classes %>">
+            When multiple plugins share a single screen, each one gets its own view, and those views must be wrapped in a <%= render DocsRef.new(page: :mashup) %> container.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The view modifier (<code class="<%= framework_section_code_classes %>">view--half_vertical</code>, <code class="<%= framework_section_code_classes %>">view--quadrant</code>, etc.) determines how much space each plugin gets.
+            The mashup modifier (<code class="<%= framework_section_code_classes %>">mashup--1Lx1R</code>, <code class="<%= framework_section_code_classes %>">mashup--2x2</code>, etc.) determines how those views are arranged on screen.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

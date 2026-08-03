@@ -1,0 +1,115 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :v3_enhancement_guide %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Framework v3 opens up the full color spectrum for ePaper plugins. This guide walks through the key enhancements you can adopt, from chromatic backgrounds and text to semantic labels and the extended grayscale.
+    </p>
+
+    <div class="space-y-16">
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '1. Use Chromatic Colors') %>
+          <p class="<%= framework_section_description_classes %>">The framework now provides 10 hues, each with 14 lightness steps. Apply them with the same <code class="<%= framework_section_code_classes %>">bg--</code> and <code class="<%= framework_section_code_classes %>">text--</code> prefixes you already know.</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li>
+            <strong>Base hue:</strong> <code class="<%= framework_section_code_classes %>">bg--red</code>, <code class="<%= framework_section_code_classes %>">text--blue</code> - the pure, full-saturation color.
+          </li>
+          <li>
+            <strong>Hue + step:</strong> <code class="<%= framework_section_code_classes %>">bg--red-40</code>, <code class="<%= framework_section_code_classes %>">text--green-60</code> - lighter or darker variants using steps 10 (darkest) through 75 (lightest).
+          </li>
+          <li>
+            <strong>Available hues:</strong> red, orange, yellow, lime, green, cyan, blue, violet, purple, pink.
+          </li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          On grayscale devices, chromatic tokens automatically fall back to perceptually equivalent gray shades. On limited-color panels, unavailable colors map to the closest supported hue automatically, so no conditional markup is needed. See the full palette on the <%= render DocsRef.new(page: :colors) %> page.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '2. Apply Semantic Colors') %>
+          <p class="<%= framework_section_description_classes %>">Semantic roles let you style by intent rather than specific hue. The framework maps each role to an underlying color token that can be themed via CSS variables.</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><code class="<%= framework_section_code_classes %>">bg--primary</code> / <code class="<%= framework_section_code_classes %>">text--primary</code> - blue (highlights, accents)</li>
+          <li><code class="<%= framework_section_code_classes %>">bg--success</code> / <code class="<%= framework_section_code_classes %>">text--success</code> - green (confirmations, positive states)</li>
+          <li><code class="<%= framework_section_code_classes %>">bg--error</code> / <code class="<%= framework_section_code_classes %>">text--error</code> - red (errors, critical states)</li>
+          <li><code class="<%= framework_section_code_classes %>">bg--warning</code> / <code class="<%= framework_section_code_classes %>">text--warning</code> - orange (cautions, alerts)</li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          Semantic tokens inherit all device and bit-depth behavior. To override the default mapping, set <code class="<%= framework_section_code_classes %>">--color-primary</code>, <code class="<%= framework_section_code_classes %>">--color-success</code>, etc. in your custom CSS.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '3. Use Label Color Variants') %>
+          <p class="<%= framework_section_description_classes %>">The <%= render DocsRef.new(page: :label) %> element now supports semantic color variants for colored badges and status indicators.</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><code class="<%= framework_section_code_classes %>">label--primary</code> - blue label for key information</li>
+          <li><code class="<%= framework_section_code_classes %>">label--success</code> - green label for positive states</li>
+          <li><code class="<%= framework_section_code_classes %>">label--error</code> - red label for errors or alerts</li>
+          <li><code class="<%= framework_section_code_classes %>">label--warning</code> - orange label for cautions</li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          The default filled label (<code class="<%= framework_section_code_classes %>">label--filled</code>) continues to use black (the darkest shade). The new color variants use semantic color backgrounds while adapting to the current device palette.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '4. Leverage the Extended Grayscale') %>
+          <p class="<%= framework_section_description_classes %>">The extended scale doubles the available gray shades from 7 to 14, giving you finer control over tonal variation in your layouts. In <code class="<%= framework_section_code_classes %>">1bit</code> mode, the usable grayscale palette now expands from 7 shades to 14.</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><strong>Old scale:</strong> <code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code> (still works, deprecated)</li>
+          <li><strong>New scale:</strong> <code class="<%= framework_section_code_classes %>">gray-10</code>, <code class="<%= framework_section_code_classes %>">gray-15</code>, <code class="<%= framework_section_code_classes %>">gray-20</code>, …, <code class="<%= framework_section_code_classes %>">gray-75</code></li>
+        </ul>
+
+        <p class="<%= framework_section_description_classes %>">
+          Intermediate steps like <code class="<%= framework_section_code_classes %>">gray-15</code>, <code class="<%= framework_section_code_classes %>">gray-25</code>, and <code class="<%= framework_section_code_classes %>">gray-35</code> let you create subtler contrasts and more nuanced visual hierarchies, especially on 2-bit and 4-bit displays.
+        </p>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '5. Use the Raw / Preview Toggle') %>
+          <p class="<%= framework_section_description_classes %>">The device picker now includes a Raw / Preview switch that lets you compare how colors render across different modes.</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><strong>Raw:</strong> shows the full-bright token values, useful for verifying your color choices.</li>
+          <li><strong>Preview:</strong> shows panel-accurate simulation, including device true-color behavior and lowered white points on displays like TRMNL BWRY, so you can see what end users actually see on hardware.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '6. Target High-Density 1bit / 2bit Rendering') %>
+          <p class="<%= framework_section_description_classes %>">Core utilities now render consistently on high-density ePaper modes. Use the same classes and let the framework adapt to panel capabilities.</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><strong>Background utility:</strong> <%= render DocsRef.new(page: :background) %> supports high-density <code class="<%= framework_section_code_classes %>">1bit</code> and <code class="<%= framework_section_code_classes %>">2bit</code> output in addition to broader color-capable modes.</li>
+          <li><strong>Border utility:</strong> <%= render DocsRef.new(page: :border) %> supports the same high-density <code class="<%= framework_section_code_classes %>">1bit</code> and <code class="<%= framework_section_code_classes %>">2bit</code> rendering behavior for consistent edge contrast.</li>
+        </ul>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

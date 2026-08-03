@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%= stylesheet_link_tag "plugins", "data-runtime-stylesheet": "true" %>
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+
+      .screen {
+        visibility: visible;
+      }
+    </style>
+  </head>
+  <body class="environment trmnl">
+    <main
+      id="runtime-screen"
+      class="screen screen--og screen--1bit"
+      data-runtime-test-screen
+    >
+      <div class="view view--full">
+        <div
+          id="runtime-test-fixture"
+          class="layout layout--col"
+          data-runtime-test-fixture
+        ></div>
+      </div>
+    </main>
+
+    <script>
+      window.__TRMNL_FRAMEWORK_BUILD__ = "runtime-test";
+      window.__TRMNL_FRAMEWORK_PARENT_TERMINALIZE__ = false;
+    </script>
+    <script src="/__runtime-test__/plugins.js"></script>
+  </body>
+</html>

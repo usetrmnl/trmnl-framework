@@ -1,0 +1,243 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :text_stroke %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:text_stroke) %>
+    <div class="<%= message_sage_classes %>">
+      <div class="flex items-center w-full">
+        <div class="flex-shrink-0 items-center">
+          <%= render 'shared/icons/warning' %>
+        </div>
+        <div class="w-full flex items-center justify-between ml-3">
+          <p class="text-sm font-medium">
+            <strong>Note:</strong> Text Stroke works only on pure black or white text.
+          </p>
+          <p class="text-sm md:mt-0 md:ml-6">
+            <%= link_to '#browser-limitations', class: "#{button_small_classes} #{button_sage_classes}" do %>
+              Learn More
+              <%= render 'shared/icons/arrow_right' %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply <code class="<%= framework_section_code_classes %>">text-stroke</code> to outline text. Combine with width and shade modifiers as needed.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+            <thead>
+              <tr>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Description</th>
+              </tr>
+            </thead>
+            <tbody class="<%= framework_docs_table_body_classes %>">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">text-stroke</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Stroke: outline (default 3.5px white)</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">text-stroke--{size}</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Stroke width: <code class="<%= framework_section_code_classes %>">small</code>, <code class="<%= framework_section_code_classes %>">medium</code>, <code class="<%= framework_section_code_classes %>">large</code>, <code class="<%= framework_section_code_classes %>">xlarge</code></td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">text-stroke--{shade}</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Stroke color: <code class="<%= framework_section_code_classes %>">black</code>, <code class="<%= framework_section_code_classes %>">gray-10</code> … <code class="<%= framework_section_code_classes %>">gray-75</code>, <code class="<%= framework_section_code_classes %>">white</code>. See <%= render DocsRef.new(page: :background) %> for the shade scale.</td>
+              </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="text-stroke">Outlined text</span>'
+          ) %>
+        </div>
+      </section>
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Widths') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Text Stroke system includes preset size modifiers that allow you to quickly apply different stroke widths to your text. The default stroke is 3.5px white, with additional options for base (3.5px, equivalent to default), small (2px), medium (4.5px), large (6px), and extra large (7.5px). The <code class="<%= framework_section_code_classes %>">text-stroke--base</code> modifier explicitly sets the default stroke width and is useful for responsive layouts.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="bg--gray-50 2bit:bg--gray-65 4bit:bg--gray-65 p--6 rounded flex flex--row portrait:flex--col flex--center gap--large portrait:gap--small">
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large">Aa</span>
+                          <span class="label">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text-stroke text-stroke--small">Aa</span>
+                          <span class="label text-stroke text-stroke--small">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text-stroke text-stroke--base">Aa</span>
+                          <span class="label text-stroke text-stroke--base">Base</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text-stroke">Aa</span>
+                          <span class="label text-stroke">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text-stroke text-stroke--medium">Aa</span>
+                          <span class="label text-stroke text-stroke--medium">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text-stroke text-stroke--large">Aa</span>
+                          <span class="label text-stroke text-stroke--large">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text-stroke text-stroke--xlarge">Aa</span>
+                          <span class="label text-stroke text-stroke--xlarge">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive" %>
+                      <span class="title">Text Stroke</span>
+                      <span class="instance">Preset Sizes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large">Aa</span>
+<span class="value value--large text-stroke text-stroke--small">Aa</span>
+<span class="value value--large text-stroke text-stroke--base">Aa</span>
+<span class="value value--large text-stroke">Aa</span>
+<span class="value value--large text-stroke text-stroke--medium">Aa</span>
+<span class="value value--large text-stroke text-stroke--large">Aa</span>
+<span class="value value--large text-stroke text-stroke--xlarge">Aa</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Shades') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use the <code class="<%= framework_section_code_classes %>">text-stroke--{shade}</code> modifier to change the stroke color. Choose from sixteen values: black, gray-10 through gray-75, and white. For an overview of the shade scale and how it adapts across bit-depths, see <%= render DocsRef.new(page: :background) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A shade modifier and a width modifier combine: <code class="<%= framework_section_code_classes %>">text-stroke text-stroke--black text-stroke--small</code> is a 2px black outline. Both take the bit-depth prefixes, so <code class="<%= framework_section_code_classes %>">2bit:text-stroke--gray-30</code> restyles the outline on 2-bit screens only.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A bare shade class draws nothing: it sets the color and leaves the drawing to <code class="<%= framework_section_code_classes %>">text-stroke</code> or a width modifier. <%= render DocsRef.new(page: :image_stroke) %> differs here, where a lone shade class draws the default ring.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="bg--gray-20 2bit:bg--gray-30 4bit:bg--gray-30 p--6 rounded flex flex--row portrait:flex--col flex--center gap--large portrait:gap--small">
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white">Aa</span>
+                          <span class="label text--white">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white text-stroke text-stroke--small text-stroke--black">Aa</span>
+                          <span class="label text--white text-stroke text-stroke--small text-stroke--black">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white text-stroke text-stroke--base text-stroke--black">Aa</span>
+                          <span class="label text--white text-stroke text-stroke--base text-stroke--black">Base</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white text-stroke text-stroke--black">Aa</span>
+                          <span class="label text--white text-stroke text-stroke--black">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white text-stroke text-stroke--medium text-stroke--black">Aa</span>
+                          <span class="label text--white text-stroke text-stroke--medium text-stroke--black">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white text-stroke text-stroke--large text-stroke--black">Aa</span>
+                          <span class="label text--white text-stroke text-stroke--large text-stroke--black">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <span class="value value--large text--white text-stroke text-stroke--xlarge text-stroke--black">Aa</span>
+                          <span class="label text--white text-stroke text-stroke--xlarge text-stroke--black">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive" %>
+                      <span class="title">Text Stroke</span>
+                      <span class="instance">Shades</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large text--white">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--small text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--medium text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--large text-stroke--black">Aa</span>
+<span class="value value--large text--white text-stroke text-stroke--xlarge text-stroke--black">Aa</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      
+      <section id="browser-limitations" class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Browser Limitations') %>
+          <p class="<%= framework_section_description_classes %>">
+            <strong>Text Stroke works only when the text itself is pure black or pure white.</strong> This is due to how browsers render strokes relative to text fills.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            We simulate grayscale text by applying hand-crafted bitmap patterns as a background and revealing them with <code class="<%= framework_section_code_classes %>">background-clip: text</code> (with transparent text color). This makes text appear gray, but under the hood the fill is not a solid color. It is a background image clipped to the text.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The CSS <code class="<%= framework_section_code_classes %>">paint-order</code> property cannot treat a background as a pass-through fill layer, so only <code class="<%= framework_section_code_classes %>">paint-order: stroke fill;</code> is effective when the fill is a solid color. Because clipped backgrounds are not considered a fill for paint-order, we cannot stroke around grayscale (background-clipped) text. Use black or white text when you need a stroke.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

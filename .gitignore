@@ -1,0 +1,42 @@
+/dist/
+/app/assets/builds/*
+!/app/assets/builds/.keep
+/server/app/assets/builds/*
+!/server/app/assets/builds/.keep
+/server/tmp/*
+!/server/tmp/.keep
+/server/log/*
+!/server/log/.keep
+/tmp/*
+!/tmp/.keep
+/log/*
+!/log/.keep
+/storage/
+/public/assets/
+# rake framework:generate_markdown output: the docs Markdown twins and the LLM indexes,
+# regenerated on demand rather than committed.
+/public/framework/docs/
+/public/framework/examples/
+/public/llms.txt
+/public/llms-full.txt
+node_modules/
+*.log
+# Local environment files. Nothing in the repo reads one today, but a contributor
+# running the app against a host app will make one, and it is the commonest
+# accidental commit. A committed .env.example stays visible.
+.env
+.env.*
+!.env.example
+# Built gem, from `gem build trmnl_framework.gemspec`.
+*.gem
+# Private pre-launch planning record and review logs. They stay on disk in a
+# maintainer's checkout and are read there; the public repo does not carry them.
+/prelaunch-briefs/
+/REVIEW_PLAN.md
+/REVIEW_PLAN_2.md
+/REVIEW_FINDINGS.md
+/REVIEW_FINDINGS_2.md
+/REVIEW_REMAINING.md
+.DS_Store
+.idea
+.vscode/

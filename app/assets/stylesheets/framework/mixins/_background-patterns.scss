@@ -1,0 +1,70 @@
+// ============================================
+// TRMNL Framework - Dark Token Remap
+// ============================================
+// The one place a token name is turned into the token the dark side of the
+// reversible scale paints in its place. Every _*-vars($dark: true) mixin in
+// base/_screen-mode-vars.scss and the Dark theme both read it, so the axis and
+// the theme mirror a token the same way.
+//
+// The dither tiles, border level art and gradient patterns this file was named
+// for live in base/_screen-mode-vars.scss (_bg-tile, _text-tile,
+// _border-level-pattern-vars) and mixins/_crisp-edges.scss.
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+@use '../config/tokens' as vars;
+
+@function dark-remap-token($token) {
+    // 1) Explicit grayscale remap
+    $grayscale-mapped: map.get(vars.$dark-mode-grayscale-remap, $token);
+    @if $grayscale-mapped {
+        @return $grayscale-mapped;
+    }
+
+    // 2) Chromatic remap (hues and their shade steps)
+    @return dark-remap-chromatic-token($token);
+}
+
+// The list form. A ramp names its slots in one list, and inside a dark block
+// each slot has to name its mirror preimage for the rail underneath to land on
+// the token the list means.
+@function dark-remap-tokens($tokens) {
+    $out: ();
+    @each $token in $tokens {
+        $out: list.append($out, dark-remap-token($token));
+    }
+    @return $out;
+}
+
+@function _last-hyphen-index($value) {
+    $idx: null;
+    @for $i from 1 through string.length($value) {
+        @if string.slice($value, $i, $i) == '-' {
+            $idx: $i;
+        }
+    }
+    @return $idx;
+}
+
+@function dark-remap-chromatic-token($token) {
+    $last-hyphen: _last-hyphen-index($token);
+
+    // No hyphen: a base hue or a non-remapped token. Base hues hold still on
+    // the scale by framework policy, so both cases return the token as given.
+    @if $last-hyphen == null {
+        @return $token;
+    }
+
+    $suffix: string.slice($token, $last-hyphen + 1);
+    $base: string.slice($token, 1, $last-hyphen - 1);
+    $mirrored-step: map.get(vars.$dark-mode-step-mirror, $suffix);
+
+    // Tokens with a shade step mirror the step and keep the hue.
+    @if $mirrored-step {
+        @return "#{$base}-#{$mirrored-step}";
+    }
+
+    // Compound tokens with no numeric step stay as they are.
+    @return $token;
+}

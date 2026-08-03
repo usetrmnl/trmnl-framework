@@ -1,0 +1,49 @@
+// ============================================
+// TRMNL Framework - Rich Text Component Device Overrides
+// ============================================
+// Device-specific styles for the rich text component
+// This file is imported in the device-overrides layer
+
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+@use 'sass:map';
+
+// Map of class names to their font-weight CSS variables. Bare `content` is the
+// container class and carries no responsive variants of its own, so it appears
+// only in $content-base-only below.
+$content-sizes: (
+    'content--base': '--richtext-font-weight',
+    'content--small': '--richtext-small-font-weight',
+    'content--large': '--richtext-large-font-weight',
+    'content--xlarge': '--richtext-xlarge-font-weight',
+    'content--xxlarge': '--richtext-xxlarge-font-weight',
+    'content--xxxlarge': '--richtext-xxxlarge-font-weight'
+);
+
+// The container class takes the unprefixed override only. Running the variant
+// ladder over it would publish classes like sm:content that the base layer never
+// defines, so they would carry this weight and nothing else.
+$content-base-only: ('content': '--richtext-font-weight');
+
+@each $class-name, $weight-var in map.merge($content-base-only, $content-sizes) {
+    @each $bit-depth in (2, 4) {
+        // Base bit-depth styles
+        .trmnl .screen--#{$bit-depth}bit .richtext .#{helpers.escape-class-token($class-name)} {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}
+
+// Generate all device overrides for content classes
+@each $class-name, $weight-var in $content-sizes {
+    @each $bit-depth in (2, 4) {
+        // Every prefixed gate the class itself is published under, including the
+        // bit-prefixed ones (`md:4bit:content--large` and friends), which carried
+        // font-weight alone and so rendered at the base weight. The .richtext
+        // scope is the same one the unprefixed rule above carries: without it the
+        // gates weigh one class less than the element-wide pin and lose to it.
+        @include responsive.device-variants-for-bit-depth($class-name, $bit-depth, $ancestor: '.richtext') {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}

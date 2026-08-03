@@ -1,0 +1,122 @@
+<%# Shared Command Palette with Provider support %>
+<%# Locals: default_provider ("application" | "framework-docs" | "unified") %>
+<% default_provider = local_assigns.fetch(:default_provider, 'unified') %>
+
+<div data-controller="command-palette" 
+     class="hidden fixed inset-0 z-[200]"
+     aria-hidden="true" 
+     data-default-provider="<%= default_provider %>"
+     data-action="click->command-palette#onOutsideClick">
+  
+  <%# Backdrop overlay %>
+  <div class="<%= command_palette_class(:backdrop) %>"
+       data-command-palette-target="backdrop"></div>
+
+  <%# Main panel container %>
+  <div class="relative z-10 flex min-h-full items-start justify-center p-4 sm:p-6 md:p-20"
+       data-command-palette-target="frame">
+    <div class="<%= command_palette_class(:panel) %>" 
+         data-command-palette-target="panel" 
+         role="dialog" 
+         aria-modal="true" 
+         aria-label="Command Palette">
+      <%# Search header %>
+      <div class="grid grid-cols-1">
+        <%= render 'shared/icons/search', classes: command_palette_class(:search_icon) rescue nil %>
+        <div class="col-start-1 row-start-1 h-16 w-full pr-4 pl-11 flex items-center gap-2"
+             data-action="pointerdown->command-palette#focusSearchChrome">
+          <%# Scope pills container %>
+          <div class="flex items-center gap-1 flex-none overflow-x-auto" 
+               data-command-palette-target="pillContainer"></div>
+          
+          <%# Search input %>
+          <div role="searchbox"
+               aria-label="Search"
+               contenteditable="plaintext-only"
+               spellcheck="false"
+               data-placeholder="Search..."
+               class="<%= command_palette_class(:input) %>"
+               style="outline: none; box-shadow: none; border: 0; --tw-ring-color: transparent; --tw-ring-shadow: 0 0 #0000; --tw-ring-offset-shadow: 0 0 #0000;"
+               data-command-palette-target="input"
+               data-action="input->command-palette#onInput keydown->command-palette#onInputKeydown"></div>
+          <%# Provider indicators %>
+          <button type="button"
+                  class="flex items-center gap-1 ml-auto flex-none cursor-pointer appearance-none border-0 bg-transparent p-0"
+                  data-command-palette-target="providerIndicatorContainer"
+                  data-action="click->command-palette#cycleProvider"
+                  aria-label="Cycle command palette provider">
+            <div class="<%= command_palette_class(:provider_indicator_base) %> <%= command_palette_class(:provider_indicator_inactive) %>" 
+                 data-command-palette-target="providerIndicatorUniversal" 
+                 title="Universal">
+              <%= render 'shared/icons/infinity', classes: 'w-5 h-5' rescue nil %>
+            </div>
+            <div class="<%= command_palette_class(:provider_indicator_base) %> <%= command_palette_class(:provider_indicator_inactive) %>" 
+                 data-command-palette-target="providerIndicatorApp" 
+                 title="Application">
+              <%= render 'shared/icons/trmnl', classes: 'w-5 h-5' rescue nil %>
+            </div>
+            <div class="<%= command_palette_class(:provider_indicator_base) %> <%= command_palette_class(:provider_indicator_inactive) %>" 
+                 data-command-palette-target="providerIndicatorDocs" 
+                 title="Documentation">
+              <%= render 'shared/icons/description', classes: 'w-5 h-5' rescue nil %>
+            </div>
+          </button>
+          <button type="button"
+                  class="hidden flex-none rounded-full p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  aria-label="Close command palette"
+                  data-command-palette-target="closeButton"
+                  data-action="click->command-palette#close">
+            <%= render 'shared/icons/x' %>
+          </button>
+        </div>
+      </div>
+
+      <%# Results container %>
+      <div class="flex min-h-0 flex-1 flex-col divide-y divide-gray-100 dark:divide-white/10 md:flex-none">
+        <div class="flex min-h-0 flex-1 md:flex-none" data-command-palette-target="optionsContainer">
+          <div class="min-h-0 min-w-0 flex-auto scroll-py-4 overflow-y-auto p-4 md:max-h-96 [ &>div[role='option'] ]:border-b [ &>div[role='option'] ]:border-gray-100 dark:[ &>div[role='option'] ]:border-white/10"
+               data-command-palette-target="list"
+               role="listbox">
+            <%# Top result header %>
+            <h3 class="mb-2 mt-3 text-xs font-semibold text-gray-900 dark:text-white hidden"
+                data-command-palette-target="topHeader">Top Result</h3>
+            <div data-command-palette-target="topResultContainer"></div>
+
+            <%# Empty state %>
+            <div class="<%= command_palette_class(:empty) %> hidden" 
+                 data-command-palette-target="empty">
+              No results found
+            </div>
+          </div>
+        </div>
+
+        <%# Keyboard hints %>
+        <%= render 'shared/command_providers/keyboard_hints' %>
+      </div>
+    </div>
+  </div>
+
+  <%# Provider Templates (render once, reuse via content_for/yield) %>
+  <%# Safe to cache globally: this provider is identical for every user. %>
+  <% content_for :cp_framework_docs_provider do %>
+    <% cache ['cp_framework_docs_provider', (current_section rescue :docs)], expires_in: 12.hours do %>
+      <%= render 'shared/command_providers/framework_docs_provider' %>
+    <% end %>
+  <% end %>
+
+  <%# Standalone docs: only the framework-docs provider exists. The core app's
+      application/devices/plugins providers stayed in core. %>
+  <template data-provider-id="framework-docs">
+    <%= yield :cp_framework_docs_provider %>
+  </template>
+
+  <template data-provider-id="application">
+    <%= yield :cp_framework_docs_provider %>
+  </template>
+
+  <template data-provider-id="unified">
+    <div data-origin-provider="framework-docs">
+      <%= yield :cp_framework_docs_provider %>
+    </div>
+  </template>
+</div>

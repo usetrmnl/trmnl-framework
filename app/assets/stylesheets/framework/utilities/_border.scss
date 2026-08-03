@@ -1,0 +1,139 @@
+// ============================================
+// TRMNL Framework - Border Utilities
+// ============================================
+// Uses --border-{level}-{dir}-* CSS variables from _screen-mode-vars.scss.
+// All bit-depth, dark-mode, and palette handling is automatic via variable cascade.
+// Black/white borders use --framework-fill-strong/--framework-fill-soft, which
+// read the semantic channels base/_screen.scss rebinds on a dark screen and in
+// an inverse subtree, so they follow the scheme with no rule of their own here.
+
+@use 'sass:map';
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+
+@mixin border-style($direction) {
+    content: " ";
+    position: absolute;
+
+    @if $direction == 'horizontal' {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+    } @else {
+        bottom: 0;
+        left: 0;
+        width: 1px;
+        height: 100%;
+    }
+}
+
+// Steps paint the hand-crafted level art (two steps per level) by default. The
+// --theme-border-<step>-* hooks in front of that are a theme's per-step handle,
+// written by hand: no theme-slots mixin publishes them, and the two that move a
+// rail work a tier down (utility-border-level restates a level,
+// utility-remap-border-grayscale recolors the 1-bit line ink).
+//
+// The level tier reads the theme layer too, so a step that collapses onto a level
+// follows a theme that restated that level (theme-slots.utility-border-level).
+// It sits behind the per-step art on purpose: the rails that give every shade its
+// own step line answer from --border-step-* and never reach the level at all.
+@mixin border-step-paint($step, $direction) {
+    $level: map.get(mixins.$border-step-level-map, $step);
+    background-color: var(--theme-border-#{$step}-#{$direction}-color, var(--border-step-#{$step}-#{$direction}-color, var(--theme-border-#{$level}-#{$direction}-color, var(--border-#{$level}-#{$direction}-color, transparent))));
+    background-image: var(--theme-border-#{$step}-#{$direction}-image, var(--border-step-#{$step}-#{$direction}-image, var(--theme-border-#{$level}-#{$direction}-image, var(--border-#{$level}-#{$direction}-image, none))));
+    background-size: var(--theme-border-#{$step}-#{$direction}-size, var(--border-step-#{$step}-#{$direction}-size, var(--theme-border-#{$level}-#{$direction}-size, var(--border-#{$level}-#{$direction}-size, auto))));
+    background-position: var(--theme-border-#{$step}-#{$direction}-position, var(--border-step-#{$step}-#{$direction}-position, var(--theme-border-#{$level}-#{$direction}-position, var(--border-#{$level}-#{$direction}-position, 0 0))));
+    background-repeat: if($direction == 'h', repeat-x, repeat-y);
+    @each $field, $fallback in mixins.$border-render-fields {
+        --framework-border-render-#{$field}: #{'var(--theme-border-#{$step}-#{$direction}-render-#{$field}, var(--border-step-#{$step}-#{$direction}-render-#{$field}, var(--theme-border-#{$level}-#{$direction}-render-#{$field}, var(--border-#{$level}-#{$direction}-render-#{$field}, #{$fallback}))))'};
+    }
+    @include mixins.crisp-edges;
+}
+
+@mixin solid-border-renderer($color) {
+    @include mixins.border-render-solid('framework-border', $color);
+}
+
+@include mixins.trmnl-namespace {
+    // ── Numbered level borders (deprecated) ──
+    // 3.x compatibility aliases; removal deferred to 4.0, see docs/V4_BREAKING.md.
+    @each $i in map.keys(mixins.$border-1bit-tiles) {
+        .border--h-#{$i}, .border--v-#{$i} {
+            position: relative;
+        }
+
+        .border--h-#{$i}::before {
+            @include border-style('horizontal');
+            @include mixins.border-level-vars($i, h);
+        }
+
+        .border--v-#{$i}::after {
+            @include border-style('vertical');
+            @include mixins.border-level-vars($i, v);
+        }
+    }
+
+    // ── Semantic black/white borders ──
+    .border--h-black, .border--v-black {
+        position: relative;
+    }
+
+    .border--h-black::before {
+        @include border-style('horizontal');
+        @include mixins.crisp-edges;
+        background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+        background-image: var(--framework-semantic-fill-strong-bg-image, none);
+        background-size: var(--dither-bg-size, auto);
+        @include solid-border-renderer(var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong)));
+    }
+
+    .border--v-black::after {
+        @include border-style('vertical');
+        @include mixins.crisp-edges;
+        background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+        background-image: var(--framework-semantic-fill-strong-bg-image, none);
+        background-size: var(--dither-bg-size, auto);
+        @include solid-border-renderer(var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong)));
+    }
+
+    .border--h-white, .border--v-white {
+        position: relative;
+    }
+
+    .border--h-white::before {
+        @include border-style('horizontal');
+        @include mixins.crisp-edges;
+        background-color: var(--framework-semantic-fill-soft-bg-color, var(--framework-fill-soft));
+        background-image: var(--framework-semantic-fill-soft-bg-image, none);
+        background-size: var(--dither-bg-size, auto);
+        @include solid-border-renderer(var(--framework-semantic-fill-soft-bg-color, var(--framework-fill-soft)));
+    }
+
+    .border--v-white::after {
+        @include border-style('vertical');
+        @include mixins.crisp-edges;
+        background-color: var(--framework-semantic-fill-soft-bg-color, var(--framework-fill-soft));
+        background-image: var(--framework-semantic-fill-soft-bg-image, none);
+        background-size: var(--dither-bg-size, auto);
+        @include solid-border-renderer(var(--framework-semantic-fill-soft-bg-color, var(--framework-fill-soft)));
+    }
+
+    // ── Step borders (grayscale rail, theme-repaintable) ──
+    // Endpoints are covered by semantic border--h-black / border--h-white.
+    @each $step in vars.$color-shade-steps {
+        .border--h-#{$step}, .border--v-#{$step} {
+            position: relative;
+        }
+
+        .border--h-#{$step}::before {
+            @include border-style('horizontal');
+            @include border-step-paint($step, 'h');
+        }
+
+        .border--v-#{$step}::after {
+            @include border-style('vertical');
+            @include border-step-paint($step, 'v');
+        }
+    }
+}

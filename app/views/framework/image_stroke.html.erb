@@ -1,0 +1,176 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :image_stroke %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:image_stroke) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Preset size modifiers set the stroke width on an image. The default stroke is 1.5px white, with additional options for base (1.5px, equivalent to default), small (1px), medium (2px), large (2.5px), and extra large (3px). The <code class="<%= framework_section_code_classes %>">image-stroke--base</code> modifier explicitly sets the default stroke width and is useful for responsive layouts.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Image Stroke is the right tool for photos and multi-color logos that cannot be recolored.
+            It also composes with <code class="<%= framework_section_code_classes %>">image--adaptive</code>, outlining the recolored shape (see <%= render DocsRef.new(page: :image) %>).
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="bg--gray-50 2bit:bg--gray-65 4bit:bg--gray-65 p--6 rounded flex flex--row portrait:flex--col flex--center gap--large portrait:gap--small">
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "w--16 h--16" %>
+                          <span class="label">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--small w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--small">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--base w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--base">Base</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke w--16 h--16" %>
+                          <span class="label text-stroke">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--medium w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--medium">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--large w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--large">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-black.svg", class: "image-stroke image-stroke--xlarge w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--xlarge">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive" %>
+                      <span class="title">Image Stroke</span>
+                      <span class="instance">Preset Sizes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<img src="path to image">
+<img class="image-stroke image-stroke--small" src="path to image">
+<img class="image-stroke image-stroke--base" src="path to image">
+<img class="image-stroke" src="path to image">
+<img class="image-stroke image-stroke--medium" src="path to image">
+<img class="image-stroke image-stroke--large" src="path to image">
+<img class="image-stroke image-stroke--xlarge" src="path to image">'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Stroke Colors') %>
+
+          <p class="<%= framework_section_description_classes %>">
+            Use the <code class="<%= framework_section_code_classes %>">image-stroke--{shade}</code> modifier to change the stroke color, black for images on dark backgrounds. The shades are the same palette tokens the background scale uses:
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">image-stroke--black</code> and <code class="<%= framework_section_code_classes %>">image-stroke--white</code>.</li>
+            <li><code class="<%= framework_section_code_classes %>">image-stroke--gray-10</code> through <code class="<%= framework_section_code_classes %>">image-stroke--gray-75</code>, in steps of five, plus the legacy <code class="<%= framework_section_code_classes %>">gray-1</code> to <code class="<%= framework_section_code_classes %>">gray-7</code> aliases.</li>
+            <li>Ten hues (red, orange, yellow, lime, green, cyan, blue, violet, purple, pink) as a bare name such as <code class="<%= framework_section_code_classes %>">image-stroke--red</code> and on the same 10 to 75 steps, so <code class="<%= framework_section_code_classes %>">image-stroke--red-40</code> works on a color panel.</li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            For the shade scale and how it adapts across bit depths, see <%= render DocsRef.new(page: :background) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A shade modifier and a width modifier combine: <code class="<%= framework_section_code_classes %>">image-stroke image-stroke--black image-stroke--small</code> is a 1px black ring. Both take the bit-depth prefixes, so <code class="<%= framework_section_code_classes %>">2bit:image-stroke--gray-30</code> restyles the ring on 2-bit screens only.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A shade class also draws on its own: a lone <code class="<%= framework_section_code_classes %>">image-stroke--black</code> is the default 1.5px ring in black. <%= render DocsRef.new(page: :text_stroke) %> differs here, where a shade class only colors a stroke that <code class="<%= framework_section_code_classes %>">text-stroke</code> or a width modifier applies.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap">
+                      <div class="bg--gray-20 2bit:bg--gray-30 4bit:bg--gray-30 p--6 rounded flex flex--row portrait:flex--col flex--center gap--large portrait:gap--small">
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "w--16 h--16" %>
+                          <span class="label text--white">No Stroke</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--small w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--small">Small</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--base w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--base">Base</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white">Default</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--medium w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--medium">Medium</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--large w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--large">Large</span>
+                        </div>
+                        <div class="flex flex--col flex--center gap--none">
+                          <%= image_tag "trmnl--glyph-white.svg", class: "image-stroke image-stroke--black image-stroke--xlarge w--16 h--16" %>
+                          <span class="label text-stroke text-stroke--black text--white text-stroke--xlarge">Extra Large</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive" %>
+                      <span class="title">Image Stroke</span>
+                      <span class="instance">Color Variants</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<img src="path to light image">
+<img class="image-stroke image-stroke--black image-stroke--small" src="path to light image">
+<img class="image-stroke image-stroke--black image-stroke--base" src="path to light image">
+<img class="image-stroke image-stroke--black" src="path to light image">
+<img class="image-stroke image-stroke--black image-stroke--medium" src="path to light image">
+<img class="image-stroke image-stroke--black image-stroke--large" src="path to light image">
+<img class="image-stroke image-stroke--black image-stroke--xlarge" src="path to light image">'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

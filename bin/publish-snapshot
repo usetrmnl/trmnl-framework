@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+# Build the public single-commit snapshot of this repo and push it to the public
+# repository. The export is cut from `git archive HEAD` (tracked files only), so
+# nothing untracked can leak; on top of that the EXCLUDED list below removes the
+# tracked internal planning files. The default run stops after building and
+# verifying the export so the operator can run the test suite inside it.
+#
+#   bin/publish-snapshot            # dry run: build and verify the export, no push
+#   bin/publish-snapshot --push     # build, verify, then push one commit to main
+set -euo pipefail
+
+PUBLIC_URL="https://github.com/usetrmnl/trmnl-framework.git"
+COMMIT_TITLE="TRMNL Framework 3.2.0"
+COMMIT_BODY="Initial public release: the TRMNL design framework (CSS, JS runtime,
+paint API), its documentation site, and the release pipeline."
+
+EXCLUDED=(
+  TASKS.md
+  docs/COMPAT_3_2_VS_4_0.md
+  docs/DARK_MODE_TO_THEME.md
+  docs/DARK_MODULE_PROPOSAL.md
+  docs/MASHUP_CELL_REMOVAL.md
+  docs/MIN_ALIAS_PLAN.md
+  docs/SIZE_OPTIONS_3_2.md
+  docs/SIZE_PLAN_3_2.md
+)
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+[[ "$branch" == "main" ]] || { echo "publish-snapshot: run from main (currently on $branch)" >&2; exit 1; }
+[[ -z "$(git status --porcelain)" ]] || { echo "publish-snapshot: working tree is not clean" >&2; exit 1; }
+remote_url=$(git remote get-url public 2>/dev/null || true)
+[[ "$remote_url" == "$PUBLIC_URL" ]] || { echo "publish-snapshot: remote 'public' is '$remote_url', expected $PUBLIC_URL" >&2; exit 1; }
+
+export_dir=$(mktemp -d "${TMPDIR:-/tmp}/trmnl-framework-snapshot.XXXXXX")
+git archive HEAD | tar -x -C "$export_dir"
+
+for path in "${EXCLUDED[@]}"; do
+  [[ -f "$export_dir/$path" ]] || { echo "publish-snapshot: $path is not in the export; the EXCLUDED list has drifted" >&2; exit 1; }
+  rm "$export_dir/$path"
+done
+
+# Belt and braces: no excluded basename and no untracked private tree may
+# survive anywhere in the export, whatever produced it.
+for name in TASKS.md COMPAT_3_2_VS_4_0.md DARK_MODE_TO_THEME.md DARK_MODULE_PROPOSAL.md \
+            MASHUP_CELL_REMOVAL.md MIN_ALIAS_PLAN.md SIZE_OPTIONS_3_2.md SIZE_PLAN_3_2.md \
+            prelaunch-briefs REVIEW_PLAN.md REVIEW_PLAN_2.md REVIEW_FINDINGS.md \
+            REVIEW_FINDINGS_2.md REVIEW_REMAINING.md; do
+  if find "$export_dir" -name "$name" | grep -q .; then
+    echo "publish-snapshot: private name still present in export: $name" >&2
+    exit 1
+  fi
+done
+
+count=$(find "$export_dir" -type f | wc -l | tr -d ' ')
+echo "export: $export_dir"
+echo "$count files after removing ${#EXCLUDED[@]} internal paths"
+
+git -C "$export_dir" init -q -b main
+git -C "$export_dir" add -A
+git -C "$export_dir" commit -q -m "$COMMIT_TITLE" -m "$COMMIT_BODY"
+git -C "$export_dir" --no-pager show --shortstat --format='%h %an <%ae> %s' HEAD
+
+if [[ "${1:-}" == "--push" ]]; then
+  git -C "$export_dir" push "$PUBLIC_URL" main
+  echo "pushed one commit to main at $PUBLIC_URL"
+else
+  echo "dry run: nothing pushed. Verify the export, then re-run with --push."
+fi

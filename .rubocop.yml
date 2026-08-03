@@ -1,0 +1,235 @@
+# This app is a Rails engine plus the docs server that mounts it. It has no database:
+# spec/rails_helper.rb aborts the suite if ActiveRecord ever loads, so every model and
+# query cop is unreachable by construction and none is configured here.
+
+inherit_mode:
+  merge:
+    - Exclude
+
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 4.0
+  DisplayCopNames: true
+  Exclude:
+    - bin/*
+    - tmp/**/*
+    - vendor/*/**
+    - '**/*.erb'
+  SuggestExtensions:
+    rubocop-rspec_rails: false # set to true and add it to `plugins` to enable
+
+# The Gemfile declares dev/test gems in two blocks on purpose: build-only tooling and the
+# test and lint toolchain are separate concerns with separate comments, and bundler reads
+# the pair as one group either way.
+Bundler/DuplicatedGroup:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: true
+
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/RedundantFreeze:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Max: 20
+
+Metrics/MethodLength:
+  Max: 60
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 60
+
+Metrics/PerceivedComplexity:
+  Max: 20
+
+Layout/LineLength:
+  Severity: warning
+  Max: 500
+
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/ParameterLists:
+  Max: 7
+  CountKeywordArgs: false
+
+Naming/MethodParameterName:
+  AllowedNames:
+    - x
+    - y
+    - id
+    - to
+    - io
+
+# Hex channel formats (`#%02X%02X%02X`) are clearer unannotated.
+Style/FormatStringToken:
+  Enabled: false
+
+# View helpers mark trusted markup; disabling avoids noise on every html_safe.
+Rails/OutputSafety:
+  Enabled: false
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Style/SafeNavigationChainLength:
+  Enabled: false
+
+# Plugin cops below are style opinions we don't share; bug-catching cops stay on.
+
+# The Sass build and the one-pass bundle indexes belong to the group, not to each
+# example; before(:all) is deliberate.
+RSpec/BeforeAfterAll:
+  Enabled: false
+
+# Example generation at describe-load time (docs page sweep) needs outer locals.
+RSpec/LeakyLocalVariable:
+  Enabled: false
+
+RSpec/IdenticalEqualityAssertion:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/BeEq:
+  Enabled: false
+
+RSpec/BeEql:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExampleWording:
+  Enabled: false
+
+RSpec/ExpectChange:
+  Enabled: false
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/NotToNot:
+  Enabled: false
+
+RSpec/ReceiveMessages:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+RSpec/StubbedMock:
+  Enabled: false
+
+RSpec/SubjectStub:
+  Enabled: false
+
+RSpec/VariableDefinition:
+  Enabled: false
+
+RSpec/VariableName:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+Rails/ActionOrder:
+  Enabled: false
+
+# Docs helpers build a page's view state across several methods; threading it through
+# arguments instead would be churn for its own sake.
+Rails/HelperInstanceVariable:
+  Enabled: false
+
+# The collections here are plain arrays of hashes, not relations. ActiveSupport's
+# Enumerable#pluck would work, but `map { |asset| asset[:size] }` says what it reads.
+Rails/Pluck:
+  Enabled: false
+
+# Autocorrect swaps Dir.children (bare names) for Pathname#children (full paths) and
+# bypasses Dir.[] stubs: behaviour changes that broke specs. Not worth the churn.
+Rails/RootPathnameMethods:
+  Enabled: false

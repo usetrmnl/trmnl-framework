@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%= stylesheet_link_tag "plugins", "data-visual-stylesheet": "framework" %>
+    <% Framework::Themes.ids.each do |theme_id| %>
+      <%= stylesheet_link_tag "themes/#{theme_id}-theme", "data-visual-theme": theme_id %>
+    <% end %>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-width: 100%;
+        min-height: 100%;
+      }
+
+      body {
+        padding: 24px;
+        background: #808080;
+        box-sizing: border-box;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        caret-color: transparent !important;
+        transition: none !important;
+      }
+
+      .visual-page {
+        display: grid;
+        gap: 24px;
+        justify-content: start;
+      }
+
+      [data-visual] {
+        overflow: hidden;
+      }
+
+      [data-visual] .screen {
+        visibility: visible;
+      }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>

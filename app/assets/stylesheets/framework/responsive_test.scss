@@ -1,0 +1,566 @@
+// ============================================
+// TRMNL Framework - Responsive Utilities Test
+// ============================================
+// Scope: the screen() mixin API, and nothing else.
+//
+// Every rule below keys off an element ID or a page-local demo class from the
+// responsive test page and calls screen() with one to three modifiers. The IDs
+// are the mixin half of each parity row in framework_demo_helper.rb; the class
+// half is written as variant classes in
+// app/views/framework/responsive_test.html.erb and styled by the bundle.
+//
+// Nothing here reaches a variant emitter, so this file publishes no `md:`,
+// `portrait:` or `2bit:` class and cannot see a class-emission regression. Read
+// it as a smoke test of screen(), not as variant coverage.
+//
+// The class-based variant machinery is covered by two suites:
+//
+//   spec/assets/stylesheets/framework_responsive_variants_spec.rb
+//     The gate matrix, asserted against the compiled bundle. Which gates each
+//     family publishes, companion pairings, parent-child guards.
+//
+//   test/runtime/framework/responsive-variants.spec.js
+//     The same classes in a real engine, driving real screen states against the
+//     fixtures in app/views/framework_tests/responsive_variants.html.erb.
+
+@use 'mixins/screen' as screen;
+@use 'mixins' as framework-mixins;
+
+// ============================================
+// Spacing Component Tests
+// ============================================
+
+#spacing-size-md-p-24-mixin {
+  @include screen.screen('md') {
+    padding: 96px; // matches p--24 per variables scale
+  }
+}
+
+#spacing-orientation-portrait-mx-20-mixin {
+  @include screen.screen('portrait') {
+    margin-left: 80px; // mx--20
+    margin-right: 80px;
+  }
+}
+
+// ============================================
+// Gap Component Tests
+// ============================================
+
+#gap-size-lg-xlarge-mixin {
+  display: flex;
+  @include screen.screen('lg') {
+    gap: var(--gap-xlarge);
+  }
+}
+
+#gap-orientation-portrait-large-mixin {
+  display: flex;
+  @include screen.screen('portrait') {
+    gap: var(--gap-large);
+  }
+}
+
+// ============================================
+// Size Component Tests
+// ============================================
+
+#size-size-md-w-36-mixin {
+  height: 48px;
+  width: 48px;
+  @include screen.screen('md') {
+    width: 144px; // matches w--36
+  }
+}
+
+// ============================================
+// Rounded Component Tests
+// ============================================
+
+#rounded-size-md-xlarge-mixin {
+  @include screen.screen('md') {
+    border-radius: var(--rounded-xlarge);
+    overflow: hidden; // rounded--xlarge clips too
+  }
+}
+
+// ============================================
+// Grid Component Tests
+// ============================================
+
+// The base is the .grid base verbatim: auto-fit gives the three children three
+// tracks below md, where repeat(1, ...) would show a drift the bundle has not got.
+#grid-size-md-cols-3-mixin {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  width: 100%;
+  @include screen.screen('md') {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+// ============================================
+// Background Component Tests
+// ============================================
+
+// Test: md:bg--gray-50 equivalent using mixins
+#bg-size-md-mixin {
+  @include screen.screen('md') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// Orientation variant
+#bg-orientation-portrait-mixin {
+  @include screen.screen('portrait') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// Bit-depth variant
+#bg-bit-depth-2bit-mixin {
+  @include screen.screen('2bit') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// Size + Orientation combination
+#bg-size-orientation-md-portrait-mixin {
+  @include screen.screen('md', 'portrait') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// Size + Bit-depth combination
+#bg-size-bit-depth-md-2bit-mixin {
+  @include screen.screen('md', '2bit') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// Orientation + Bit-depth combination
+#bg-orientation-bit-depth-portrait-2bit-mixin {
+  @include screen.screen('portrait', '2bit') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// All three combined
+#bg-all-md-portrait-2bit-mixin {
+  @include screen.screen('md', 'portrait', '2bit') {
+    @include framework-mixins.bg-from-vars('gray-50');
+  }
+}
+
+// ============================================
+// Visibility Component Tests  
+// ============================================
+
+// Size variants
+#vis-size-sm-hidden-mixin {
+  @include screen.screen('sm') {
+    display: none;
+  }
+}
+
+// Orientation variants
+#vis-orientation-portrait-hidden-mixin {
+  @include screen.screen('portrait') {
+    display: none;
+  }
+}
+
+// Bit-depth variants
+#vis-bit-depth-4bit-hidden-mixin {
+  @include screen.screen('4bit') {
+    display: none;
+  }
+}
+
+// Size + Orientation combinations
+#vis-size-orientation-md-portrait-hidden-mixin {
+  @include screen.screen('md', 'portrait') {
+    display: none;
+  }
+}
+
+// Size + Bit-depth combinations
+#vis-size-bit-depth-lg-2bit-hidden-mixin {
+  @include screen.screen('lg', '2bit') {
+    display: none;
+  }
+}
+
+// Orientation + Bit-depth combinations
+#vis-orientation-bit-depth-portrait-4bit-hidden-mixin {
+  @include screen.screen('portrait', '4bit') {
+    display: none;
+  }
+}
+
+// All three combined
+#vis-all-md-portrait-2bit-hidden-mixin {
+  @include screen.screen('md', 'portrait', '2bit') {
+    display: none;
+  }
+}
+
+// ============================================
+// Text Component Tests
+// ============================================
+
+// Size variants
+#text-size-lg-center-mixin {
+  @include screen.screen('lg') {
+    text-align: center;
+  }
+}
+
+// Orientation variants
+#text-orientation-portrait-center-mixin {
+  @include screen.screen('portrait') {
+    text-align: center;
+  }
+}
+
+// Bit-depth variants
+#text-bit-depth-2bit-center-mixin {
+  @include screen.screen('2bit') {
+    text-align: center;
+  }
+}
+
+// Size + Orientation combinations
+#text-size-orientation-md-portrait-center-mixin {
+  @include screen.screen('md', 'portrait') {
+    text-align: center;
+  }
+}
+
+// Size + Bit-depth combinations
+#text-size-bit-depth-lg-4bit-center-mixin {
+  @include screen.screen('lg', '4bit') {
+    text-align: center;
+  }
+}
+
+// Orientation + Bit-depth combinations
+#text-orientation-bit-depth-portrait-2bit-center-mixin {
+  @include screen.screen('portrait', '2bit') {
+    text-align: center;
+  }
+}
+
+// All three combined
+#text-all-md-portrait-2bit-right-mixin {
+  @include screen.screen('md', 'portrait', '2bit') {
+    text-align: right;
+  }
+}
+
+// ============================================
+// Layout/Flexbox Component Tests
+// ============================================
+
+// Size variants
+#flex-size-md-center-mixin {
+  @include screen.screen('md') {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+// Orientation variants
+#flex-orientation-portrait-col-mixin {
+  @include screen.screen('portrait') {
+    flex-direction: column;
+  }
+}
+
+// Size + Orientation combinations
+#flex-size-orientation-lg-portrait-center-mixin {
+  @include screen.screen('lg', 'portrait') {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+// ============================================
+// Layout Component Tests
+// ============================================
+
+// Size variant - layout direction
+#layout-size-md-col-mixin {
+  @include screen.screen('md') {
+    flex-direction: column;
+  }
+}
+
+// Orientation variant - alignment
+#layout-orientation-portrait-center-mixin {
+  @include screen.screen('portrait') {
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+}
+
+// Size + Orientation combination - complex layout change
+// Mirrors .layout--row.layout--bottom, which the row demo markup opts into.
+#layout-size-orientation-lg-portrait-bottom-mixin {
+  @include screen.screen('lg', 'portrait') {
+    align-items: flex-end;
+    justify-content: center;
+  }
+}
+
+// Stretch variant with size modifier
+#layout-size-md-stretch-x-mixin {
+  @include screen.screen('md') {
+    & > * {
+      width: 100%;
+    }
+  }
+}
+
+// Complex multi-axis alignment
+// Mirrors .layout--row.layout--bottom, which the row demo markup opts into.
+#layout-orientation-portrait-bottom-mixin {
+  @include screen.screen('portrait') {
+    align-items: flex-end;
+    justify-content: center;
+  }
+}
+
+
+// ============================================
+// Alternative Approach Examples
+// ============================================
+// These examples show different ways to achieve the same results
+// using the combination mixins from the screen.scss file
+
+// Alternative for complex targeting using combination mixins
+.test-alternative-complex {
+  @include screen.screen('md', 'portrait', '2bit') {
+    text-align: right;
+  }
+}
+
+// Alternative using mobile-first combination helpers
+.test-alternative-mobile-first {
+  @include screen.screen('md', '4bit') {
+    background: var(--gray-75);
+  }
+}
+
+// Alternative using triple combination
+.test-alternative-triple {
+  @include screen.screen('lg', 'portrait', '4bit') {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+// ============================================
+// Edge Case Tests
+// ============================================
+// Test nested combinations to ensure proper specificity
+
+#edge-case-nested {
+  // Base styles
+  background: var(--gray-75);
+  
+  // Size-based override
+  @include screen.screen('md') {
+    background: var(--gray-75);
+  }
+  
+  // Orientation override (should be more specific)
+  @include screen.screen('portrait') {
+    background: var(--gray-50);
+  }
+  
+  // Combined override (should be most specific)
+  @include screen.screen('lg', 'portrait', '4bit') {
+    background: var(--gray-25);
+  }
+}
+
+// Test cascade and specificity
+#edge-case-cascade {
+  display: block;
+  
+  @include screen.screen('sm') {
+    display: flex;
+  }
+  
+  @include screen.screen('md') {
+    display: grid;
+  }
+  
+  @include screen.screen('portrait') {
+    display: none; // This should override size-based rules when in portrait
+  }
+}
+
+// ============================================
+// Performance Test - Multiple Conditions
+// ============================================
+// Test element with many conditional styles to verify compilation efficiency
+
+#performance-test {
+  // Base styles
+  padding: var(--gap-small);
+  margin: var(--gap-small);
+  
+  // Size variants
+  @include screen.screen('sm') {
+    padding: var(--gap-medium);
+  }
+  
+  @include screen.screen('md') {
+    padding: var(--gap-large);
+    margin: var(--gap-medium);
+  }
+  
+  @include screen.screen('lg') {
+    padding: var(--gap-xlarge);
+    margin: var(--gap-large);
+  }
+  
+  // Orientation variants
+  @include screen.screen('portrait') {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  // Bit-depth variants
+  @include screen.screen('1bit') {
+    background: var(--black);
+    color: var(--white);
+  }
+  
+  @include screen.screen('2bit') {
+    background: var(--gray-75);
+    color: var(--black);
+  }
+  
+  @include screen.screen('4bit') {
+    background: var(--gray-50);
+    color: var(--black);
+  }
+  
+  // Complex combinations
+  @include screen.screen('md', 'portrait') {
+    flex-direction: row;
+    text-align: left;
+  }
+  
+  @include screen.screen('lg', '4bit') {
+    background: var(--gray-25);
+  }
+  
+  @include screen.screen('portrait', '1bit') {
+    background: var(--white);
+    color: var(--black);
+  }
+  
+  // Triple combination
+  @include screen.screen('lg', 'portrait', '4bit') {
+    background: var(--gray-10);
+    text-align: right;
+    flex-direction: column-reverse;
+  }
+}
+
+// ============================================
+// Documentation Examples
+// ============================================
+// These mirror the examples from the responsive documentation
+
+.example-progressive-sizing {
+  font-size: var(--value-font-size);
+  
+  @include screen.screen('md') {
+    font-size: var(--value-large-font-size);
+  }
+  
+  @include screen.screen('lg') {
+    font-size: var(--value-xlarge-font-size);
+  }
+}
+
+.example-bit-depth-adaptation {
+  height: 36px;
+  width: 36px;
+  border-radius: var(--rounded-large);
+  
+  @include screen.screen('1bit') {
+    background: var(--black);
+  }
+  
+  @include screen.screen('2bit') {
+    background: var(--gray-45);
+  }
+  
+  @include screen.screen('4bit') {
+    background: var(--gray-75);
+  }
+}
+
+.example-orientation-responsive {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-small);
+  
+  @include screen.screen('portrait') {
+    flex-direction: column;
+  }
+}
+
+// ============================================
+// Debugging Helpers
+// ============================================
+// These help visualize which conditions are active
+
+.debug-screen-info::before {
+  content: "landscape";
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 10px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 2px 4px;
+  z-index: 1000;
+  
+  @include screen.screen('portrait') {
+    content: "portrait";
+    background: rgba(0, 255, 0, 0.8);
+  }
+  
+  @include screen.screen('sm') {
+    content: "sm+" attr(content);
+  }
+  
+  @include screen.screen('md') {
+    content: "md+" attr(content);
+  }
+  
+  @include screen.screen('lg') {
+    content: "lg+" attr(content);
+  }
+  
+  @include screen.screen('1bit') {
+    content: attr(content) " 1bit";
+  }
+  
+  @include screen.screen('2bit') {
+    content: attr(content) " 2bit";
+  }
+  
+  @include screen.screen('4bit') {
+    content: attr(content) " 4bit";
+  }
+} 

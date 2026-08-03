@@ -1,0 +1,10 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'Where variables are defined') %>
+  <p class="<%= framework_section_description_classes %>">
+    The SCSS source emits every variable on this page: root defaults from
+    <code class="<%= framework_section_code_classes %>">_variables_root.scss</code>, per-mode overrides from
+    <code class="<%= framework_section_code_classes %>">_variables_overrides.scss</code>. A custom build can
+    reconfigure or extend the set. See <%= render DocsRef.new(page: :sass_api) %> for the source layout and its
+    public surface.
+  </p>
+</div>

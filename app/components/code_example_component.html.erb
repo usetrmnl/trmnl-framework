@@ -1,0 +1,28 @@
+<div class="bg-gray-100 dark:bg-syntax-bg border border-gray-200 dark:border-gray-650 rounded-xl code-example relative max-h-48 overflow-hidden grid grid-cols-1 grid-rows-1 grow <%= @extra_classes %>" data-controller="code-example" data-expanded="false">
+	<div class="button-container col-start-1 row-start-1 sticky top-2 justify-self-end self-start flex justify-end pointer-events-none z-10 gap-2 m-2">
+		<button class="<%= helpers.button_small_classes %> <%= helpers.button_gray_light_classes %> copy-button pointer-events-auto">
+			<span class="copy-text flex items-center">
+				Copy
+			</span>
+			<span class="copied-text flex items-center" hidden>
+				Copied
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+				</svg>
+			</span>
+		</button>
+		<button class="<%= helpers.button_small_classes %> <%= helpers.button_gray_light_classes %> expand-toggle pointer-events-auto" hidden>
+			<span class="expand-text flex items-center" aria-label="Expand">
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+				</svg>
+			</span>
+			<span class="collapse-text flex items-center" aria-label="Collapse" hidden>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" />
+				</svg>
+			</span>
+		</button>
+	</div>
+	<pre class="col-start-1 row-start-1 leading-tight min-w-0"><code class="language-<%= @language || 'html' %> text-xs"><%= formatted_code %></code></pre>
+</div>

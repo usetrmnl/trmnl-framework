@@ -1,0 +1,37 @@
+// ============================================
+// TRMNL Framework - Device Overrides
+// ============================================
+// This file contains all device-specific style overrides.
+// It's imported within the device-overrides layer to ensure
+// proper cascade priority (after components, before utilities).
+
+@use 'mixins' as *;
+
+// ============================================
+// Import base-specific device overrides
+// ============================================
+@use 'base/view-device';
+@use 'base/title_bar-device';
+@use 'base/screen-device';
+@use 'base/columns-device';
+
+// ============================================
+// Import element-specific device overrides
+// ============================================
+@use 'elements/title-device';
+@use 'elements/value-device';
+@use 'elements/label-device';
+@use 'elements/description-device';
+
+// ============================================
+// Import component-specific device overrides
+// ============================================
+@use 'components/table-device';
+@use 'components/rich_text-device';
+@use 'components/item-device';
+@use 'components/progress-device';
+
+// ============================================
+// Global device overrides
+// ============================================
+// Add any global device-specific overrides here

@@ -1,0 +1,150 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :view %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The View system provides a consistent container structure for displaying content within the application.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Layout element is the core component of every View, providing a consistent container for your content.
+            Views can optionally include a Title Bar for additional context.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'View with Title Bar') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">view view--full</code> classes create a full-width view.
+              Also available are <code class="<%= framework_section_code_classes %>">view--half_horizontal, view--half_vertical, view--quadrant</code>.<br>
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              When combined with a title bar, it provides context and navigation options.
+              If you're building a screen in the markup editor, <em>you do not need to wrap your content</em>
+              with the <code class="<%= framework_section_code_classes %>">view view--{{size}}</code> classes.
+              The example code below is sufficient for any layout.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout border border-2 border-gray-300 border-dashed rounded-xl mb-3">
+                    <span class="label">Layout</span>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Title</span>
+                    <span class="instance">Instance</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout">
+  <!-- Your content here -->
+</div>
+
+<div class="title_bar">
+  <img class="image" src="/images/plugins/trmnl--render.svg">
+  <span class="title">Title</span>
+  <span class="instance">Instance</span>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'View without Title Bar') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For simpler interfaces, you can create a view without a title bar using just the base view classes.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout border border-2 border-gray-300 border-dashed rounded-xl">
+                    <span class="label">Layout</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Screen Container Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            The screen container that wraps your views has a no-bleed option that removes padding. This can be controlled through Private and Public Plugin settings,
+            or applied directly in your code when developing locally.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'No Bleed Modifier') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">screen--no-bleed</code> modifier removes the default padding around the screen container,
+              allowing content to extend fully to the edges.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="screen screen--no-bleed rounded-2xl shadow shadow-xl">
+                <div class="view view--full">
+                  <div class="layout border border-2 border-gray-300 border-dashed rounded-2xl">
+                    <span class="label">Screen No Bleed / Layout</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--no-bleed">
+  <div class="view view--full">
+    <div class="layout">
+      <!-- Your content here -->
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1282 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :responsive %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:responsive) %>
+
+    <div class="space-y-16">
+      <!-- Component Support -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Component Support') %>
+          <p class="<%= framework_section_description_classes %>">
+            Not all framework components support responsive variants. We're trying to keep the framework as minimal as we can while offering the features you need.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Component Support Table -->
+          <div class="space-y-4">
+            <p class="<%= framework_section_description_classes %>">
+              This table shows which responsive features each framework component supports. Use this reference to understand what's possible with each component type.
+            </p>
+          </div>
+
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Component</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Size</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Orientation</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Bit-Depth</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Example Usage</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <!-- Custom Bit-Depth Logic -->
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Background
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:2bit:bg--gray-50</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Border
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_no_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_auto_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/lightning' %></span> Auto
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">border--h-30 (auto adapts)</code>
+                  </td>
+                </tr>
+
+                <!-- Full Support -->
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Text
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">lg:2bit:text--center</code>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Visibility
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">sm:1bit:hidden</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Value
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_yes_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 text-sm">
+                     <code class="text-sm font-mono text-syntax-string">lg:2bit:value--xlarge</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Label
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:portrait:2bit:label--filled</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Title
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:2bit:title--large</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Description
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">portrait:description--large</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Content
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">lg:portrait:content--large</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Font Weight
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:1bit:text--bold</code>
+                  </td>
+                </tr>
+
+                <!-- Bit-Depth Only -->
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Text Stroke
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">1bit:text-stroke--large</code>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Image Stroke
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">2bit:image-stroke--large</code>
+                  </td>
+                </tr>
+
+                <!-- Size-Based Only -->
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Spacing
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:p--16, lg:m--32, md:portrait:my--24</code>
+                  </td>
+                </tr>
+                
+                <!-- Size-Based Only (Additional) -->
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Layout
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_no_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:layout--row, lg:layout--col</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Gap
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_yes_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:gap--large, lg:gap--xlarge</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Flexbox
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_no_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:flex--row, portrait:flex--col</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Rounded
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_yes_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:rounded--large, lg:rounded--xlarge</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Aspect Ratio
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:aspect--1/1, lg:landscape:aspect--16/9</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Table
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">lg:table--base, lg:portrait:table--xlarge</code>
+                  </td>
+                </tr>
+
+                <!-- Size-Based Only -->
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Size
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_yes_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:w--36, lg:h--full</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Grid
+                  </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_yes_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                     </span>
+                   </td>
+                   <td class="px-6 py-4 whitespace-nowrap">
+                     <span class="<%= framework_docs_support_yes_classes %>">
+                       <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                     </span>
+                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">md:grid--cols-3, md:portrait:col--span-2</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Clamp
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">data-clamp-md-portrait="3"</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Overflow (Smart columns)
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_yes_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="<%= framework_docs_support_no_classes %>">
+                      <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <code class="text-sm font-mono text-syntax-string">data-overflow-max-cols-lg="4"</code>
+                  </td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Legend') %>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center">
+                  <span class="mr-2 <%= framework_docs_support_auto_classes %>">
+                    <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/lightning' %></span> Auto
+                  </span>
+                  <span>Built-in adaptive behavior</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="mr-2 <%= framework_docs_support_yes_classes %>">
+                    <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/checkmark' %></span> Yes
+                  </span>
+                  <span>Full support</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="mr-2 <%= framework_docs_support_no_classes %>">
+                    <span class="<%= framework_docs_support_pill_icon_classes %>"><%= render 'shared/icons/x' %></span> No
+                  </span>
+                  <span>Not supported</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Size-Based Responsive Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Size-Based Responsive') %>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'How It Works') %>
+            <p class="<%= framework_section_description_classes %>">
+              Every device carries a size class (e.g., <code class="<%= framework_section_code_classes %>">screen--md</code>) that activates the matching responsive utilities.
+              The class comes from the device model, not from a measured width, so pick a breakpoint by the devices you want to hit rather than by a pixel count.
+            </p>
+            <div class="<%= message_sage_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/info' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    The system follows a mobile-first approach. When you use <code class="font-mono">md:value--large</code>, it applies on medium screens and larger.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Usage -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(3, 'Basic Usage') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Prefix any utility class with a breakpoint name followed by a colon. The style applies 
+                at that breakpoint and all larger sizes.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <span class="value md:value--large lg:value--xlarge">Responsive Value</span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Responsive</span>
+                        <span class="instance">Size Based</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="<%= message_gray_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/example' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    This example shows progressive sizing: the text starts at regular size, becomes large on medium screens (md:) and larger, then becomes xlarge on large screens (lg:) and larger.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Regular by default, large on medium and above, xlarge on large and above -->
+<span class="value md:value--large lg:value--xlarge">
+  Responsive Value
+</span>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Available Breakpoints -->
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Available Breakpoints') %>
+            <p class="<%= framework_section_description_classes %>">
+              Three breakpoints cover every supported TRMNL device. Prefixes are mobile-first, so a
+              prefix applies on its own size class and every larger one.
+            </p>
+          </div>
+
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Prefix</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Screen Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Applies On</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Example Devices</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">sm:</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">screen--sm</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">sm, md, lg</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Kindle 2024
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">md:</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">screen--md</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">md, lg</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    TRMNL OG, TRMNL OG V2, Playdate, Frame
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">lg:</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">screen--lg</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">lg</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    TRMNL V2, Kindle Scribe, reMarkable Paper 2
+                  </td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bit-Depth Responsive Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Bit-Depth Responsive') %>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'How It Works') %>
+            <p class="<%= framework_section_description_classes %>">
+              Bit-depth responsiveness adapts styles based on the display's color capabilities. 
+              Unlike size-based breakpoints, bit-depth variants are not progressive. Each
+              variant targets a specific bit-depth only.
+            </p>
+            <div class="<%= message_sage_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/info' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    When you use <code class="font-mono">4bit:bg--gray-65</code>, it applies only on 4-bit screens, not on 1-bit or 2-bit screens.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Usage -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(3, 'Basic Usage') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Prefix utilities with bit-depth values to create display-specific styles. This is especially 
+                useful for optimizing appearance across monochrome and grayscale screens.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <div class="h--36 w--36 rounded--large 1bit:bg--black 2bit:bg--gray-45 4bit:bg--gray-75"></div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Responsive</span>
+                        <span class="instance">Bit Depth</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="<%= message_gray_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/example' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    This example demonstrates bit-depth adaptation: the square appears black on 1-bit displays, gray-45 on 2-bit displays, and gray-75 on 4-bit displays. Each bit-depth variant targets only that specific display type.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- black on 1-bit, gray-45 on 2-bit, gray-75 on 4-bit screens -->
+<div class="h--36 w--36 rounded--large 1bit:bg--black 2bit:bg--gray-45 4bit:bg--gray-75"></div>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Available Bit-Depths -->
+          <div class="space-y-4">
+            <%= framework_heading(3, 'Available Bit-Depths') %>
+            <p class="<%= framework_section_description_classes %>">
+              The framework supports three bit-depth variants corresponding to TRMNL's display technologies. 
+              Each targets specific color capabilities.
+            </p>
+          </div>
+
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Prefix</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Screen Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Color Support</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Example Devices</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">1bit:</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">screen--1bit</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    Monochrome (2 shades)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    TRMNL OG
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">2bit:</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">screen--2bit</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    Grayscale (4 shades)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    TRMNL OG V2
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">4bit:</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">screen--4bit</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    Grayscale (16 shades)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    TRMNL V2, Kindle 2024
+                  </td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Orientation-Based Responsive Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Orientation-Based Responsive') %>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(3, 'How It Works') %>
+            <p class="<%= framework_section_description_classes %>">
+              Orientation variants adapt styles based on whether the screen is in landscape or portrait mode.
+              Since landscape is the default, only <code class="<%= framework_section_code_classes %>">portrait:</code> 
+              variants are provided to avoid redundancy.
+            </p>
+            <div class="<%= message_sage_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/info' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    Portrait variants are particularly useful for layout utilities like Flexbox, where you might want different 
+                    flex directions or alignments when the screen is rotated.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Usage -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(3, 'Basic Usage') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                Use the <code class="<%= framework_section_code_classes %>">portrait:</code> prefix to apply styles 
+                only when the screen is in portrait orientation:
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--row portrait:flex--col gap">
+                          <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 p--4 rounded--medium">
+                            <span class="label">Item 1</span>
+                          </div>
+                          <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 p--4 rounded--medium">
+                            <span class="label">Item 2</span>
+                          </div>
+                          <div class="bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 p--4 rounded--medium">
+                            <span class="label">Item 3</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Responsive</span>
+                        <span class="instance">Orientation Based</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="<%= message_gray_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/example' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    This example shows orientation-responsive layout: items are arranged in a row by default (landscape), but automatically switch to a column layout when the screen is in portrait orientation using <code class="font-mono">portrait:flex--col</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Row layout in landscape, column layout in portrait -->
+<div class="flex flex--row portrait:flex--col gap">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Combining All Systems -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Combining All Systems') %>
+          <p class="<%= framework_section_description_classes %>">
+            The responsive system lets you combine size, orientation, and bit-depth variants. 
+            This enables highly targeted designs that adapt to screen dimensions, orientation, and color capabilities.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Example -->
+          <div class="space-y-6">
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <div class="flex flex--row portrait:flex--col flex--center w--full h--full flex--stretch">
+                          <div class="flex flex--col gap--small flex--center">
+                            <div class="value value--xlarge text--gray-50 md:1bit:text--black">Aa</div>
+                            <span class="label label--small">TRMNL OG</span>
+                          </div>
+                          <div class="flex flex--col gap--small flex--center">
+                            <div class="value value--xlarge text--gray-50 md:2bit:text--black">Aa</div>
+                            <span class="label label--small">TRMNL OG V2</span>
+                          </div>
+                          <div class="flex flex--col gap--small flex--center">
+                            <div class="value value--xlarge text--gray-50 lg:4bit:text--black">Aa</div>
+                            <span class="label label--small">TRMNL V2</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title">Responsive</span>
+                        <span class="instance">Advanced Targeting</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="<%= message_gray_classes %>">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/example' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    This advanced example combines size and bit-depth variants to target specific device configurations: <code class="font-mono">md:1bit:</code> targets medium+ 1-bit screens, <code class="font-mono">md:2bit:</code> targets medium+ 2-bit screens, and <code class="font-mono">lg:4bit:</code> targets large+ 4-bit screens.
+                    Dark-mode-aware utilities also support a dark-first prefix (for scoped utilities): <code class="font-mono">dark:md:portrait:2bit:</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Orientation variant on a layout utility (size and orientation only) -->
+<div class="flex flex--row portrait:flex--col">...</div>
+
+<!-- Size + orientation -->
+<div class="text--center md:portrait:text--left">...</div>
+
+<!-- All three combined on a bit-depth utility: size + orientation + bit-depth -->
+<div class="value md:portrait:4bit:value--large">
+  <!-- Base size by default -->
+  <!-- Large on medium+ screens, in portrait, on 4-bit displays -->
+</div>'
+              ) %>
+            </div>
+          </div>
+
+          <!-- Pattern and Order -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(3, 'Pattern and Order') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                When combining variants, follow this pattern: 
+                <code class="<%= framework_section_code_classes %>">size:orientation:bit-depth:utility</code>. 
+                This order flows from general layout concerns to specific display characteristics.
+              </p>
+              <p class="<%= framework_subsection_description_classes %>">
+                Bit-depth applies only to color and typography utilities: backgrounds, text, text stroke, image stroke, font weight, value, label, title, description, content, and visibility. Layout utilities like flex, gap, grid, rounded, spacing, and size take size and orientation only. The stroke families are bit-depth-only: text stroke and image stroke have no size or orientation variants.
+              </p>
+              <p class="<%= framework_subsection_description_classes %>">
+                Each modifier is optional and can be used independently. You might use just 
+                <code class="<%= framework_section_code_classes %>">portrait:flex--col</code> for orientation-specific layouts, 
+                or <code class="<%= framework_section_code_classes %>">md:value--large</code> for size-responsive typography, 
+                depending on your design needs.
+              </p>
+              <p class="<%= framework_subsection_description_classes %>">
+                For utilities that support dark-mode variants (currently Visibility, Background, and Text), use:
+                <code class="<%= framework_section_code_classes %>">dark:size:orientation:bit-depth:utility</code>
+                with <code class="<%= framework_section_code_classes %>">dark:</code> as the first prefix.
+              </p>
+              <p class="<%= framework_subsection_description_classes %>">
+                The <code class="<%= framework_section_code_classes %>">dark:</code> tier is legacy: it keeps working
+                for the rest of Framework 3.x and will be removed in Framework 4.0. Darken a whole screen with the Dark
+                theme (<%= render DocsRef.new(page: :themes) %>), or one element with
+                <code class="<%= framework_section_code_classes %>">inverse</code>
+                (<%= render DocsRef.new(page: :inverse) %>). No new utility family gains the prefix.
+              </p>
+            </div>
+          </div>
+
+          <!-- Specificity Hierarchy -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(3, 'Specificity Hierarchy') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                When multiple responsive variants target the same property, CSS specificity determines which style applies. 
+                The framework follows a clear hierarchy: the more modifiers in a class, the higher its specificity.
+              </p>
+              <p class="<%= framework_subsection_description_classes %>">
+                For example, <code class="<%= framework_section_code_classes %>">portrait:2bit:value--small</code> will 
+                override both <code class="<%= framework_section_code_classes %>">portrait:value--large</code> and 
+                <code class="<%= framework_section_code_classes %>">2bit:value--base</code> when all conditions are met,
+                because it has the most specific combination of modifiers.
+              </p>
+
+            </div>
+          </div>
+
+          <!-- Available Combinations -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(3, 'Available Combinations') %>
+              <p class="<%= framework_subsection_description_classes %>">
+                The responsive system supports flexible modifier combinations, allowing you to target specific 
+                device configurations. The table below shows all available patterns, from simple single modifiers 
+                to complex multi-modifier combinations. Each combination becomes active only when all its 
+                conditions are met.
+              </p>
+            </div>
+            
+            <div class="<%= framework_docs_table_wrapper_classes %>">
+              <div class="<%= framework_docs_table_card_classes %>">
+                <table class="<%= framework_docs_table_classes %>">
+                <thead>
+                  <tr>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">Pattern</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">Example</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">When Active</th>
+                    <th class="<%= framework_docs_table_header_cell_classes %>">Use Case</th>
+                  </tr>
+                </thead>
+                <tbody class="<%= framework_docs_table_body_classes %>">
+                  <!-- Single Modifiers -->
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">size:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">md:value--large</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Medium screens and larger
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Responsive sizing by device size class
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">orientation:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">portrait:flex--col</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Portrait orientation only
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Layout adjustments for vertical screens
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">bit-depth:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">4bit:bg--gray-75</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      4-bit displays only
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Color optimization for specific displays
+                    </td>
+                  </tr>
+                  
+                  <!-- Double Modifiers -->
+                  <tr class="!bg-gray-50 dark:!bg-gray-800/50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">size:orientation:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">md:portrait:text--center</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Medium+ screens in portrait
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Size-aware orientation layouts
+                    </td>
+                  </tr>
+                  <tr class="!bg-gray-50 dark:!bg-gray-800/50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">size:bit-depth:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">lg:2bit:value--xlarge</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Large+ screens with 2-bit display
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Display-specific sizing on larger screens
+                    </td>
+                  </tr>
+                  <tr class="!bg-gray-50 dark:!bg-gray-800/50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">orientation:bit-depth:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">portrait:2bit:value--small</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Portrait with 2-bit display
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Orientation-aware display optimization
+                    </td>
+                  </tr>
+                  
+                  <!-- Triple Modifier -->
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">size:orientation:bit-depth:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">md:portrait:4bit:value--large</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Medium+ screens, portrait, 4-bit display
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Highly specific device targeting
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <code class="text-sm font-mono text-syntax-string">dark:size:orientation:bit-depth:</code>
+                    </td>
+                    <td class="px-6 py-4">
+                      <code class="text-sm font-mono text-syntax-string">dark:md:portrait:2bit:hidden</code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Dark mode, medium+ screens, portrait, 2-bit display
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      Theme-specific responsive behavior
+                    </td>
+                  </tr>
+                </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div> 

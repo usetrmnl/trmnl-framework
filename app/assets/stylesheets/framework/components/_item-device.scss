@@ -1,0 +1,164 @@
+// ============================================
+// TRMNL Framework - Item Component Device Overrides
+// ============================================
+// Background rendering is handled by --bg-* mode variables.
+// This file retains non-background device-specific overrides.
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../config/tokens' as vars;
+
+// The underline art an Item gives its labels, one level down from the bare
+// label's. Applied to the unprefixed modifier below and to every prefixed gate
+// the modifier publishes, so md:label--underline matches inside an Item too.
+@mixin _item-underline-2bit {
+    @include mixins.border-level-vars(6, h, $slot: 'label-underline');
+    background-repeat: repeat;
+}
+
+@mixin _item-underline-4bit {
+    background-color: var(--framework-slot-label-underline-border-color, var(--framework-semantic-border-muted-border-color, var(--framework-border-muted)));
+    background-image: var(--framework-slot-label-underline-border-image, var(--framework-semantic-border-muted-border-image, none));
+    background-size: var(--framework-slot-label-underline-border-size, var(--framework-semantic-border-muted-border-size, auto));
+}
+
+@include mixins.trmnl-namespace {
+    .list {
+        @include mixins.for-4bit {
+            gap: var(--list-gap-small);
+        }
+    }
+
+    .item {
+        .content {
+            .label {
+                @include mixins.for-screen-modifier('2bit', '4bit') {
+                    @include mixins.semantic-text-paint('text-secondary', var(--framework-text-secondary));
+                }
+            }
+
+            .label.label--underline::after {
+                @include mixins.for-2bit {
+                    @include _item-underline-2bit;
+                }
+
+                @include mixins.for-4bit {
+                    @include _item-underline-4bit;
+                }
+            }
+
+            .description {
+                @include mixins.for-screen-modifier('2bit', '4bit') {
+                    @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+                }
+            }
+
+            .label.label--gray,
+            .label.label--gray-out {
+                @include mixins.for-2bit {
+                    color: var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary)));
+                    background: none;
+                }
+
+                @include mixins.for-4bit {
+                    color: var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary)));
+                }
+            }
+
+            .label.label--filled,
+            .label.label--inverted,
+            .label.label--primary,
+            .label.label--error {
+                @include mixins.for-screen-modifier('2bit', '4bit') {
+                    @include mixins.semantic-text-paint('text-inverse', var(--framework-text-inverse));
+                }
+            }
+        }
+
+        .meta {
+            @include mixins.for-2bit {
+                background-color: var(--framework-slot-item-meta-bg-color, transparent);
+                background-image: var(--framework-slot-item-meta-bg-image, none);
+                background-repeat: repeat;
+                background-size: var(--dither-bg-size, auto);
+            }
+
+            @include mixins.for-4bit {
+                background-color: var(--framework-slot-item-meta-bg-color, transparent);
+                background-image: none;
+                border-radius: vars.ui-scaled(4px);
+                width: var(--item-meta-width);
+                margin-right: var(--gap-small);
+            }
+
+            .index {
+                @include mixins.for-screen-modifier('2bit', '4bit') {
+                    @include mixins.shadow-text-stroke(vars.ui-scaled(2px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1px));
+                    font-family: var(--item-index-font-family);
+                    font-weight: var(--item-index-font-weight);
+                    -webkit-font-smoothing: var(--item-index-font-smoothing);
+                    font-size: var(--item-index-font-size);
+                    line-height: var(--item-index-line-height);
+                    @include mixins.semantic-text-paint('text-secondary', var(--framework-text-secondary));
+                    text-align: center;
+                }
+            }
+        }
+
+        &--emphasis-2 {
+            .meta {
+                @include mixins.for-2bit {
+                    background-color: var(--framework-slot-item-meta-emphasis-2-bg-color, transparent);
+                    background-image: var(--framework-slot-item-meta-emphasis-2-bg-image, none);
+                    background-repeat: repeat;
+                    background-size: var(--dither-bg-size, auto);
+                }
+
+                @include mixins.for-4bit {
+                    background-color: var(--framework-slot-item-meta-emphasis-2-bg-color, transparent);
+                    background-image: none;
+                }
+
+                .index {
+                    @include mixins.for-screen-modifier('2bit', '4bit') {
+                        @include mixins.semantic-text-paint('text-inverse', var(--framework-text-inverse));
+                    }
+                }
+            }
+        }
+
+        &--emphasis-3 {
+            .meta {
+                @include mixins.for-2bit {
+                    background-color: var(--framework-slot-item-meta-emphasis-3-bg-color, transparent);
+                    background-image: var(--framework-slot-item-meta-emphasis-3-bg-image, none);
+                    background-repeat: repeat;
+                    background-size: var(--dither-bg-size, auto);
+                }
+
+                @include mixins.for-4bit {
+                    background-color: var(--framework-slot-item-meta-emphasis-3-bg-color, transparent);
+                    background-image: none;
+                }
+
+                .index {
+                    @include mixins.for-screen-modifier('2bit', '4bit') {
+                        @include mixins.semantic-text-paint('text-inverse', var(--framework-text-inverse));
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include responsive.device-variants-for-bit-depth('label--underline', 2, $ancestor: '.item .content') {
+    &::after {
+        @include _item-underline-2bit;
+    }
+}
+
+@include responsive.device-variants-for-bit-depth('label--underline', 4, $ancestor: '.item .content') {
+    &::after {
+        @include _item-underline-4bit;
+    }
+}

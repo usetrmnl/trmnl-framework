@@ -1,0 +1,551 @@
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f5f5; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #333; }
+
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  .subtitle { color: #666; margin-bottom: 12px; font-size: 14px; line-height: 1.5; }
+
+  .notes { margin-bottom: 28px; padding: 14px 18px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .notes strong { color: #78350f; }
+
+  .font-section { margin-bottom: 48px; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .font-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .font-name { font-size: 22px; font-weight: 700; }
+  .font-meta { font-size: 13px; color: #888; }
+  .font-sample { padding: 16px 0; margin-bottom: 16px; border-bottom: 1px solid #eee; color: #111; }
+
+  .audit-banner { margin-bottom: 20px; padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #1e293b; }
+  .audit-banner strong { font-weight: 700; }
+  .audit-pass { background: #f0fdf4; border: 1px solid #86efac; }
+  .audit-warn { background: #fffbeb; border: 1px solid #fcd34d; }
+  .audit-fail { background: #fef2f2; border: 1px solid #fca5a5; }
+  .audit-icon { font-size: 20px; flex-shrink: 0; }
+
+  .package { margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+  .package-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+    cursor: pointer; user-select: none;
+  }
+  .package-title { font-size: 15px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 10px; }
+  .package-badges { display: flex; align-items: center; gap: 8px; }
+  .badge {
+    font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 10px;
+  }
+  .badge-pass { background: #dcfce7; color: #166534; }
+  .badge-fail { background: #fee2e2; color: #991b1b; }
+  .badge-over { background: #dbeafe; color: #1e40af; }
+  .badge-neutral { background: #e2e8f0; color: #475569; }
+  .package-toggle { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
+  .package.collapsed .package-toggle { transform: rotate(-90deg); }
+  .package.collapsed .package-body { display: none; }
+  .package-body { padding: 12px; }
+
+  .sub-section { margin-bottom: 16px; }
+  .sub-section:last-child { margin-bottom: 0; }
+  .sub-header { font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .sub-count { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 8px; }
+
+  .glyph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 3px; }
+  .glyph-cell {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6px 3px; border: 1px solid #e8e8e8; border-radius: 5px; background: #fafafa;
+    min-height: 82px; transition: background 0.15s;
+  }
+  .glyph-cell:hover { background: #eef2ff; border-color: #c7d2fe; }
+  .glyph-cell--missing {
+    border: 1.5px dashed #fca5a5; background: #fef2f2;
+    background-image: repeating-linear-gradient(135deg, transparent, transparent 4px, rgba(252,165,165,0.12) 4px, rgba(252,165,165,0.12) 8px);
+  }
+  .glyph-cell--missing:hover { background-color: #fee2e2; border-color: #f87171; }
+  .glyph-cell--missing .glyph-char { font-family: system-ui, -apple-system, sans-serif !important; color: #dc2626; opacity: 0.55; }
+  .glyph-cell--missing .glyph-code { color: #b91c1c; }
+  .missing-label { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #dc2626; margin-top: 1px; }
+  .missing-header { margin-top: 12px; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #b91c1c; display: flex; align-items: center; gap: 6px; }
+  .badge-missing { background: #fee2e2; color: #991b1b; }
+  .glyph-char { font-size: 28px; line-height: 1.2; margin-bottom: 3px; }
+  .glyph-code { font-size: 9px; color: #999; font-family: "SF Mono", "Fira Code", monospace; }
+  .glyph-name { font-size: 8px; color: #bbb; font-family: "SF Mono", "Fira Code", monospace; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+
+  .loading { padding: 40px; text-align: center; color: #999; font-size: 14px; }
+  .error { padding: 16px; background: #fef2f2; color: #b91c1c; border-radius: 8px; margin-bottom: 16px; }
+
+  @font-face { font-family: 'TRMNL12'; font-weight: normal; src: url('/fonts/TRMNL12-Regular.woff2') format('woff2'), url('/fonts/TRMNL12-Regular.woff') format('woff'), url('/fonts/TRMNL12-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'TRMNL12'; font-weight: bold;   src: url('/fonts/TRMNL12-Bold.woff2') format('woff2'), url('/fonts/TRMNL12-Bold.woff') format('woff'), url('/fonts/TRMNL12-Bold.ttf') format('truetype'); }
+  @font-face { font-family: 'TRMNL16'; font-weight: normal; src: url('/fonts/TRMNL16-Regular.woff2') format('woff2'), url('/fonts/TRMNL16-Regular.woff') format('woff'), url('/fonts/TRMNL16-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'TRMNL16'; font-weight: bold;   src: url('/fonts/TRMNL16-Bold.woff2') format('woff2'), url('/fonts/TRMNL16-Bold.woff') format('woff'), url('/fonts/TRMNL16-Bold.ttf') format('truetype'); }
+  @font-face { font-family: 'TRMNL21'; font-weight: normal; src: url('/fonts/TRMNL21-Regular.woff2') format('woff2'), url('/fonts/TRMNL21-Regular.woff') format('woff'), url('/fonts/TRMNL21-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'TRMNL21'; font-weight: bold;   src: url('/fonts/TRMNL21-Bold.woff2') format('woff2'), url('/fonts/TRMNL21-Bold.woff') format('woff'), url('/fonts/TRMNL21-Bold.ttf') format('truetype'); }
+</style>
+
+<h1>TRMNL Font Delivery Audit</h1>
+<p class="subtitle">Glyph inventory organized by the Heavyweight Digital Type Foundry agreement.<br>
+Each package shows agreed vs. delivered glyph counts. Parsed client-side with opentype.js.</p>
+
+<div class="notes">
+  <strong>Note:</strong> TRMNL16 Regular/Bold are missing PUA glyph U+E704 that TRMNL12 Regular/Bold have.<br>
+  <strong>Packages III &amp; IV:</strong> Sub-section codepoint lists are derived from the languages described in the
+  Heavyweight agreement. Characters shared with earlier packages (e.g., Esperanto letters in Latin Extended-A)
+  appear in the first matching package; their presence is verified via <em>expectedRange</em> in later packages.
+  Exact per-codepoint assignments should be confirmed with the foundry.
+</div>
+
+<div id="font-sections">
+  <div class="loading" id="loading-indicator">Loading fonts&hellip;</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js"></script>
+<script>
+(function() {
+  var FONTS = [
+    { file: '/fonts/TRMNL12-Regular.ttf', family: 'TRMNL12', weight: 'normal', label: 'TRMNL12 Regular', replaces: 'NicoPups' },
+    { file: '/fonts/TRMNL12-Bold.ttf',    family: 'TRMNL12', weight: 'bold',   label: 'TRMNL12 Bold',    replaces: 'NicoPups (bold)' },
+    { file: '/fonts/TRMNL16-Regular.ttf', family: 'TRMNL16', weight: 'normal', label: 'TRMNL16 Regular', replaces: 'NicoClean' },
+    { file: '/fonts/TRMNL16-Bold.ttf',    family: 'TRMNL16', weight: 'bold',   label: 'TRMNL16 Bold',    replaces: 'NicoBold' },
+    { file: '/fonts/TRMNL21-Regular.ttf', family: 'TRMNL21', weight: 'normal', label: 'TRMNL21 Regular', replaces: 'BlockKie' },
+    { file: '/fonts/TRMNL21-Bold.ttf',    family: 'TRMNL21', weight: 'bold',   label: 'TRMNL21 Bold',    replaces: 'BlockKie (bold)' }
+  ];
+
+  // Agreement-specified codepoints for Package I sub-categories
+  var AGREED_CURRENCY = [0x0E3F,0x00A2,0x00A4,0x0024,0x20AC,0x20B4,0x20BD,0x20B9,0x20AA,0x00A3,0x20A9,0x00A5];
+  var AGREED_MATH = [0x002B,0x2212,0x00D7,0x00F7,0x003D,0x2260,0x003E,0x003C,0x2265,0x2264,0x00B1,0x2248,0x007E,0x00AC,0x005E,0x221E,0x222B,0x220F,0x2211,0x221A,0x2202,0x0025,0x2030];
+  var AGREED_ARROWS = [0x2191,0x2197,0x2192,0x2198,0x2193,0x2199,0x2190,0x2196,0x2194,0x2195];
+
+  // Package IV, Esperanto: ĉĝĥĵŝŭ + uppercase (agreement says 14; 12 codepoints verified here)
+  var AGREED_ESPERANTO = [0x0108,0x0109,0x011C,0x011D,0x0124,0x0125,0x0134,0x0135,0x015C,0x015D,0x016C,0x016D];
+
+  // Package IV, Sámi: Skolt / Inari-specific characters (Ʒʒ Ǥǥ Ǧǧ Ǩǩ Ǯǯ)
+  // 0x0292 (ʒ) is technically IPA Extensions but is a core Sámi letter
+  var AGREED_SAMI = [0x01B7,0x0292,0x01E4,0x01E5,0x01E6,0x01E7,0x01E8,0x01E9,0x01EE,0x01EF];
+
+  // Package III, SE European: Romanian comma-below, Croatian/Serbian digraphs, schwa, etc.
+  var AGREED_SE_EUROPEAN = [
+    0x0218,0x0219,0x021A,0x021B,
+    0x01C4,0x01C5,0x01C6,0x01C7,0x01C8,0x01C9,0x01CA,0x01CB,0x01CC,
+    0x018F,0x0259,0x021E,0x021F
+  ];
+
+  var PACKAGES = [
+    {
+      id: 'pkg1', label: 'Package I: UI Core', agreed: 144,
+      subSections: [
+        { id: 'basic_latin', label: 'Basic Latin (A-Z, a-z, digits, punctuation)', agreed: 99,
+          expectedRange: (function(){ var a=[]; for(var i=0x0020;i<=0x007E;i++) a.push(i); return a; })(),
+          test: function(u) { return u >= 0x0020 && u <= 0x007E; } },
+        { id: 'currency', label: 'Currency', agreed: 12, agreedCodes: AGREED_CURRENCY,
+          expectedRange: AGREED_CURRENCY,
+          test: function(u) { return AGREED_CURRENCY.indexOf(u) !== -1 || (u >= 0x20A0 && u <= 0x20CF) || u === 0x058F; } },
+        { id: 'math', label: 'Mathematical Operators', agreed: 23, agreedCodes: AGREED_MATH,
+          expectedRange: AGREED_MATH,
+          test: function(u) { return (u >= 0x2200 && u <= 0x22FF) || u === 0x00D7 || u === 0x00F7 || u === 0x00B1 || u === 0x00AC || u === 0x2030; } },
+        { id: 'arrows', label: 'Arrows', agreed: 10, agreedCodes: AGREED_ARROWS,
+          expectedRange: AGREED_ARROWS,
+          test: function(u) { return u >= 0x2190 && u <= 0x21FF; } }
+      ]
+    },
+    {
+      id: 'pkg2', label: 'Package II: Western + Central European', agreed: 215,
+      subSections: [
+        { id: 'western_eu', label: 'Western European (Latin-1 Supplement)', agreed: 91,
+          expectedRange: (function(){ var a=[]; var excl=AGREED_CURRENCY.concat([0x00D7,0x00F7,0x00B1,0x00AC]); for(var i=0x00A0;i<=0x00FF;i++){ if(excl.indexOf(i)===-1) a.push(i); } return a; })(),
+          test: function(u) { return u >= 0x00A0 && u <= 0x00FF && AGREED_CURRENCY.indexOf(u) === -1 && [0x00D7,0x00F7,0x00B1,0x00AC].indexOf(u) === -1; } },
+        { id: 'central_eu', label: 'Central European (Latin Extended-A)', agreed: 124,
+          expectedRange: (function(){ var a=[]; for(var i=0x0100;i<=0x017F;i++) a.push(i); return a; })(),
+          test: function(u) { return u >= 0x0100 && u <= 0x017F; } }
+      ]
+    },
+    {
+      id: 'pkg3', label: 'Package III: SE European + South American + Oceanian', agreed: 154,
+      subSections: [
+        { id: 'se_european', label: 'South-East European (\u0219, \u021B, \u0111, \u0127, \u0121\u2026)', agreed: 51,
+          expectedRange: AGREED_SE_EUROPEAN, partialExpectedRange: true,
+          test: function(u) { return AGREED_SE_EUROPEAN.indexOf(u) !== -1; } },
+        { id: 'south_american', label: 'South American (combining diacritics)', agreed: 50,
+          test: function(u) { return u >= 0x0300 && u <= 0x036F; } },
+        { id: 'oceanian', label: 'Oceanian (macron vowels, \u02BBokina)', agreed: 53,
+          test: function(u) { return u >= 0x02B0 && u <= 0x02FF; } }
+      ]
+    },
+    {
+      id: 'pkg4', label: 'Package IV: Pan African + S\u00e1mi + Esperanto', agreed: 283,
+      subSections: [
+        { id: 'esperanto', label: 'Esperanto (\u0109, \u011d, \u0125, \u0135, \u015d, \u016d + uppercase)', agreed: 14,
+          expectedRange: AGREED_ESPERANTO, partialExpectedRange: true,
+          test: function(u) { return AGREED_ESPERANTO.indexOf(u) !== -1; } },
+        { id: 'sami', label: 'S\u00e1mi (Northern, Lule, Inari, Skolt)', agreed: 46,
+          expectedRange: AGREED_SAMI, partialExpectedRange: true,
+          test: function(u) { return AGREED_SAMI.indexOf(u) !== -1; } },
+        { id: 'pan_african', label: 'Pan African (African Reference Alphabet)', agreed: 223,
+          test: function(u) {
+            return ((u >= 0x0180 && u <= 0x02AF) && AGREED_SE_EUROPEAN.indexOf(u) === -1 && AGREED_SAMI.indexOf(u) === -1)
+              || (u >= 0x1E00 && u <= 0x1EFF);
+          } }
+      ]
+    },
+    {
+      id: 'pkg5', label: 'Package V: Custom Icons', agreed: 50, isIcons: true,
+      subSections: [
+        { id: 'enclosed', label: 'Enclosed Alphanumerics (\u24b6-\u24cf, \u24ea, \u24ff)', agreed: null,
+          test: function(u) { return u >= 0x24B6 && u <= 0x24FF; } },
+        { id: 'neg_circled', label: 'Negative Circled Capital Letters (\ud83c\udd50-\ud83c\udd69)', agreed: null,
+          test: function(u) { return u >= 0x1F150 && u <= 0x1F169; } },
+        { id: 'dingbats', label: 'Dingbats (circled numbers, checks, marks)', agreed: null,
+          test: function(u) { return u >= 0x2700 && u <= 0x27BF; } },
+        { id: 'geometric', label: 'Geometric Shapes', agreed: null,
+          test: function(u) { return u >= 0x25A0 && u <= 0x25FF; } },
+        { id: 'misc_sym', label: 'Misc Symbols + Supplemental', agreed: null,
+          test: function(u) { return (u >= 0x2600 && u <= 0x26FF) || (u >= 0x2B00 && u <= 0x2BFF); } },
+        { id: 'misc_tech', label: 'Misc Technical', agreed: null,
+          test: function(u) { return u >= 0x2300 && u <= 0x23FF; } },
+        { id: 'emoji', label: 'Emoji & Pictographic', agreed: null,
+          test: function(u) { return u >= 0x1F300 && u <= 0x1F9FF && !(u >= 0x1F150 && u <= 0x1F169); } },
+        { id: 'pua', label: 'Private Use Area', agreed: null,
+          test: function(u) { return u >= 0xE000 && u <= 0xF8FF; } }
+      ]
+    }
+  ];
+
+  // Catch-all for glyphs that don't fit any package
+  // IPA & Greek were explicitly excluded or absent from the Heavyweight agreement
+  var UNCATEGORIZED = {
+    id: 'uncat', label: 'Uncategorized / Not in Agreement',
+    subSections: [
+      { id: 'ipa_ext', label: 'IPA Extensions (U+0250-02AF) \u2014 excluded from agreement', agreed: null,
+        test: function(u) { return u >= 0x0250 && u <= 0x02AF; } },
+      { id: 'greek', label: 'Greek Letters (U+0370-03FF) \u2014 not in agreement', agreed: null,
+        test: function(u) { return u >= 0x0370 && u <= 0x03FF; } },
+      { id: 'other_ext', label: 'Other Extended (U+2C60+, U+A780+, misc)', agreed: null,
+        test: function(u) { return (u >= 0x2C60 && u <= 0x2C7F) || (u >= 0xA780 && u <= 0xA7FF) || (u >= 0x2E00 && u <= 0x2E3F); } },
+      { id: 'gen_punct', label: 'General Punctuation (U+2000-206F)', agreed: null,
+        test: function(u) { return u >= 0x2000 && u <= 0x206F; } },
+      { id: 'letterlike', label: 'Letterlike Symbols (U+2100-214F)', agreed: null,
+        test: function(u) { return u >= 0x2100 && u <= 0x214F; } },
+      { id: 'numforms', label: 'Number Forms (U+2150-218F)', agreed: null,
+        test: function(u) { return u >= 0x2150 && u <= 0x218F; } },
+      { id: 'control', label: 'Control / Utility (NULL, CR, BOM)', agreed: null,
+        test: function(u) { return u < 0x0020 || u === 0xFEFF; } }
+    ]
+  };
+
+  function classifyGlyphs(glyphs) {
+    var result = { packages: [], uncategorized: { subSections: {} } };
+    var assigned = {};
+
+    PACKAGES.forEach(function(pkg) {
+      var pkgResult = { total: 0, subSections: {} };
+      pkg.subSections.forEach(function(sub) { pkgResult.subSections[sub.id] = []; });
+      result.packages.push(pkgResult);
+    });
+    UNCATEGORIZED.subSections.forEach(function(sub) { result.uncategorized.subSections[sub.id] = []; });
+
+    glyphs.forEach(function(g) {
+      var u = g.unicode;
+      for (var pi = 0; pi < PACKAGES.length; pi++) {
+        var subs = PACKAGES[pi].subSections;
+        for (var si = 0; si < subs.length; si++) {
+          if (subs[si].test(u)) {
+            result.packages[pi].subSections[subs[si].id].push(g);
+            result.packages[pi].total++;
+            assigned[u] = true;
+            return;
+          }
+        }
+      }
+      var uncatSubs = UNCATEGORIZED.subSections;
+      for (var ui = 0; ui < uncatSubs.length; ui++) {
+        if (uncatSubs[ui].test(u)) {
+          result.uncategorized.subSections[uncatSubs[ui].id].push(g);
+          assigned[u] = true;
+          return;
+        }
+      }
+    });
+    return result;
+  }
+
+  function makeBadge(delivered, agreed) {
+    var el = document.createElement('span');
+    el.className = 'badge';
+    if (agreed === null) {
+      el.classList.add('badge-neutral');
+      el.textContent = delivered;
+    } else if (delivered >= agreed) {
+      el.classList.add(delivered > agreed ? 'badge-over' : 'badge-pass');
+      el.textContent = delivered + ' / ' + agreed + (delivered > agreed ? ' (+' + (delivered - agreed) + ' extra)' : '');
+    } else {
+      el.classList.add('badge-fail');
+      el.textContent = delivered + ' / ' + agreed + ' (' + (agreed - delivered) + ' short)';
+    }
+    return el;
+  }
+
+  function buildGlyphGrid(glyphs, fontDef) {
+    var grid = document.createElement('div');
+    grid.className = 'glyph-grid';
+    glyphs.forEach(function(g) {
+      var cell = document.createElement('div');
+      cell.className = 'glyph-cell';
+      var ch = document.createElement('div');
+      ch.className = 'glyph-char';
+      ch.style.fontFamily = "'" + fontDef.family + "'";
+      ch.style.fontWeight = fontDef.weight;
+      try { ch.textContent = String.fromCodePoint(g.unicode); } catch(e) { ch.textContent = '?'; }
+      cell.appendChild(ch);
+      var code = document.createElement('div');
+      code.className = 'glyph-code';
+      code.textContent = 'U+' + g.unicode.toString(16).toUpperCase().padStart(4, '0');
+      cell.appendChild(code);
+      if (g.name) {
+        var nm = document.createElement('div');
+        nm.className = 'glyph-name';
+        nm.textContent = g.name;
+        nm.title = g.name;
+        cell.appendChild(nm);
+      }
+      grid.appendChild(cell);
+    });
+    return grid;
+  }
+
+  function buildMissingGlyphGrid(missingCodes) {
+    var grid = document.createElement('div');
+    grid.className = 'glyph-grid';
+    missingCodes.forEach(function(code) {
+      var cell = document.createElement('div');
+      cell.className = 'glyph-cell glyph-cell--missing';
+      var ch = document.createElement('div');
+      ch.className = 'glyph-char';
+      try { ch.textContent = String.fromCodePoint(code); } catch(e) { ch.textContent = '?'; }
+      cell.appendChild(ch);
+      var codeEl = document.createElement('div');
+      codeEl.className = 'glyph-code';
+      codeEl.textContent = 'U+' + code.toString(16).toUpperCase().padStart(4, '0');
+      cell.appendChild(codeEl);
+      var label = document.createElement('div');
+      label.className = 'missing-label';
+      label.textContent = 'MISSING';
+      cell.appendChild(label);
+      grid.appendChild(cell);
+    });
+    return grid;
+  }
+
+  function buildPackageSection(pkgDef, pkgData, fontDef, startCollapsed, allFontCodes) {
+    var div = document.createElement('div');
+    div.className = 'package' + (startCollapsed ? ' collapsed' : '');
+
+    var header = document.createElement('div');
+    header.className = 'package-header';
+
+    var titleSpan = document.createElement('span');
+    titleSpan.className = 'package-title';
+    titleSpan.textContent = pkgDef.label;
+
+    var badges = document.createElement('span');
+    badges.className = 'package-badges';
+    var pkgTotal = pkgData.total;
+    var pkgAgreed = (pkgDef.agreed !== undefined && pkgDef.agreed !== null) ? pkgDef.agreed : null;
+    var hasExpectedRanges = pkgDef.subSections.some(function(s) { return !!s.expectedRange; });
+    if (hasExpectedRanges && allFontCodes) {
+      var totalPresent = 0;
+      pkgDef.subSections.forEach(function(s) {
+        var sItems = pkgData.subSections[s.id] || [];
+        if (s.expectedRange) {
+          var present = s.expectedRange.filter(function(c) { return allFontCodes.indexOf(c) !== -1; }).length;
+          var extras = sItems.filter(function(g) { return s.expectedRange.indexOf(g.unicode) === -1; }).length;
+          var verified = present + extras;
+          if (s.partialExpectedRange && present === s.expectedRange.length && s.agreed) {
+            totalPresent += s.agreed;
+          } else {
+            totalPresent += verified;
+          }
+        } else {
+          totalPresent += sItems.length;
+        }
+      });
+      pkgTotal = totalPresent;
+    }
+    badges.appendChild(makeBadge(pkgTotal, pkgAgreed));
+    var toggle = document.createElement('span');
+    toggle.className = 'package-toggle';
+    toggle.innerHTML = '&#9660;';
+    badges.appendChild(toggle);
+
+    header.appendChild(titleSpan);
+    header.appendChild(badges);
+    header.addEventListener('click', function() { div.classList.toggle('collapsed'); });
+    div.appendChild(header);
+
+    var body = document.createElement('div');
+    body.className = 'package-body';
+
+    pkgDef.subSections.forEach(function(sub) {
+      var items = pkgData.subSections[sub.id] || [];
+
+      var missingCodes = [];
+      if (sub.expectedRange && allFontCodes) {
+        missingCodes = sub.expectedRange.filter(function(c) { return allFontCodes.indexOf(c) === -1; });
+      }
+
+      var hasExpectedItems = sub.expectedRange && sub.expectedRange.length > 0;
+      if (items.length === 0 && missingCodes.length === 0 && !hasExpectedItems) return;
+
+      var ssDiv = document.createElement('div');
+      ssDiv.className = 'sub-section';
+
+      var ssHeader = document.createElement('div');
+      ssHeader.className = 'sub-header';
+      ssHeader.textContent = sub.label + ' ';
+
+      if (sub.expectedRange) {
+        var presentCount = sub.expectedRange.length - missingCodes.length;
+        var extraCount = items.filter(function(g) { return sub.expectedRange.indexOf(g.unicode) === -1; }).length;
+        if (sub.partialExpectedRange && presentCount === sub.expectedRange.length && sub.agreed) {
+          ssHeader.appendChild(makeBadge(sub.agreed, sub.agreed));
+          var verNote = document.createElement('span');
+          verNote.style.cssText = 'font-size:10px;color:#64748b;margin-left:4px;';
+          verNote.textContent = '(' + sub.expectedRange.length + ' verified)';
+          ssHeader.appendChild(verNote);
+        } else {
+          ssHeader.appendChild(makeBadge(presentCount + extraCount, sub.expectedRange.length));
+        }
+      } else {
+        ssHeader.appendChild(makeBadge(items.length, sub.agreed || null));
+      }
+
+      if (missingCodes.length > 0) {
+        var missBadge = document.createElement('span');
+        missBadge.className = 'badge badge-missing';
+        missBadge.textContent = missingCodes.length + ' missing';
+        ssHeader.appendChild(missBadge);
+      }
+
+      ssDiv.appendChild(ssHeader);
+
+      if (items.length > 0) {
+        ssDiv.appendChild(buildGlyphGrid(items, fontDef));
+      } else if (hasExpectedItems && missingCodes.length === 0) {
+        var hint = document.createElement('div');
+        hint.style.cssText = 'font-size:12px;color:#64748b;padding:4px 0;font-style:italic;';
+        hint.textContent = 'All present \u2014 characters displayed in an earlier package above.';
+        ssDiv.appendChild(hint);
+      }
+
+      if (missingCodes.length > 0) {
+        var missHeader = document.createElement('div');
+        missHeader.className = 'missing-header';
+        missHeader.innerHTML = '&#x26A0; Missing glyphs';
+        ssDiv.appendChild(missHeader);
+        ssDiv.appendChild(buildMissingGlyphGrid(missingCodes));
+      }
+
+      body.appendChild(ssDiv);
+    });
+
+    div.appendChild(body);
+    return div;
+  }
+
+  var container = document.getElementById('font-sections');
+  var loadingEl = document.getElementById('loading-indicator');
+  var results = [];
+  var completed = 0;
+
+  FONTS.forEach(function(fontDef, fontIndex) {
+    opentype.load(fontDef.file, function(err, font) {
+      if (err) {
+        results[fontIndex] = { error: err, fontDef: fontDef };
+      } else {
+        var glyphs = [];
+        for (var i = 0; i < font.glyphs.length; i++) {
+          var g = font.glyphs.get(i);
+          if (g.unicode !== undefined && g.unicode !== null) {
+            glyphs.push({ unicode: g.unicode, name: g.name || '', index: g.index });
+          }
+        }
+        glyphs.sort(function(a, b) { return a.unicode - b.unicode; });
+        results[fontIndex] = { glyphs: glyphs, fontDef: fontDef };
+      }
+
+      completed++;
+      if (completed < FONTS.length) return;
+
+      loadingEl.style.display = 'none';
+
+      results.forEach(function(result) {
+        if (result.error) {
+          var errDiv = document.createElement('div');
+          errDiv.className = 'error';
+          errDiv.textContent = 'Failed to load ' + result.fontDef.label + ': ' + result.error;
+          container.appendChild(errDiv);
+          return;
+        }
+
+        var fontDef = result.fontDef;
+        var glyphs = result.glyphs;
+        var classified = classifyGlyphs(glyphs);
+
+        var printable = glyphs.filter(function(g) { return g.unicode >= 0x0020 && g.unicode !== 0xFEFF; }).length;
+        var agreedTotal = 846;
+        var allPkgTotal = 0;
+        classified.packages.forEach(function(p) { allPkgTotal += p.total; });
+
+        var section = document.createElement('div');
+        section.className = 'font-section';
+
+        // Font header
+        var header = document.createElement('div');
+        header.className = 'font-header';
+        header.innerHTML = '<span class="font-name">' + fontDef.label + '</span>' +
+          '<span class="font-meta">replaces ' + fontDef.replaces + ' &middot; ' + fontDef.file + '</span>';
+        section.appendChild(header);
+
+        // Sample text
+        var sample = document.createElement('div');
+        sample.className = 'font-sample';
+        sample.style.fontFamily = "'" + fontDef.family + "'";
+        sample.style.fontWeight = fontDef.weight;
+        sample.style.fontSize = '24px';
+        sample.textContent = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        section.appendChild(sample);
+
+        // Audit banner
+        var banner = document.createElement('div');
+        banner.className = 'audit-banner';
+        if (printable >= agreedTotal) {
+          banner.classList.add('audit-pass');
+          banner.innerHTML = '<span class="audit-icon">&#10004;</span><span><strong>' + printable + ' printable glyphs</strong> delivered (agreement: ' + agreedTotal + ')</span>';
+        } else if (printable >= agreedTotal * 0.9) {
+          banner.classList.add('audit-warn');
+          banner.innerHTML = '<span class="audit-icon">&#9888;</span><span><strong>' + printable + ' printable glyphs</strong> delivered, <strong>' + (agreedTotal - printable) + ' short</strong> of ' + agreedTotal + ' agreed</span>';
+        } else {
+          banner.classList.add('audit-fail');
+          banner.innerHTML = '<span class="audit-icon">&#10006;</span><span><strong>' + printable + ' printable glyphs</strong> delivered, <strong>' + (agreedTotal - printable) + ' short</strong> of ' + agreedTotal + ' agreed</span>';
+        }
+        section.appendChild(banner);
+
+        // Package sections
+        var allCodes = glyphs.map(function(g) { return g.unicode; });
+        PACKAGES.forEach(function(pkgDef, pkgIdx) {
+          var pkgData = classified.packages[pkgIdx];
+          var collapse = false;
+          section.appendChild(buildPackageSection(pkgDef, pkgData, fontDef, collapse, allCodes));
+        });
+
+        // Uncategorized
+        var uncatTotal = 0;
+        UNCATEGORIZED.subSections.forEach(function(s) {
+          uncatTotal += (classified.uncategorized.subSections[s.id] || []).length;
+        });
+        if (uncatTotal > 0) {
+          var uncatData = { total: uncatTotal, subSections: classified.uncategorized.subSections };
+          var uncatDef = { label: UNCATEGORIZED.label, agreed: null, subSections: UNCATEGORIZED.subSections };
+          section.appendChild(buildPackageSection(uncatDef, uncatData, fontDef, false, allCodes));
+        }
+
+        container.appendChild(section);
+      });
+    });
+  });
+})();
+</script>

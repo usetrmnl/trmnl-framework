@@ -1,0 +1,139 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :spacing %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:spacing) %>
+
+    <div class="<%= message_sage_classes %>">
+      <div class="flex items-center w-full">
+        <div class="flex-shrink-0 items-center">
+          <%= render 'shared/icons/info' %>
+        </div>
+        <div class="w-full flex items-center justify-between ml-3">
+          <p class="leading-none text-sm font-medium">
+            Available spacing sizes and their pixel values
+          </p>
+          <p class="text-sm md:mt-0 md:ml-6">
+            <%= link_to framework_docs_size_path, class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
+              View Size Documentation
+              <%= render 'shared/icons/arrow_right' %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Margin Utilities') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control element margins using these utility classes. Each class follows the pattern <code class="<%= framework_section_code_classes %>">{property}--{size}</code> and supports responsive modifiers for <strong>Size</strong> <%= render DocsRef.new(page: :size) %>, <strong>Orientation</strong>, and <strong>Size + Orientation</strong> <%= render DocsRef.new(page: :responsive) %>.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">m--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">All sides margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">mt--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Top margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">mr--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Right margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">mb--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Bottom margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">ml--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Left margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">mx--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Horizontal margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">my--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Vertical margin</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">md:my--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">portrait:mx--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Orientation-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">lg:portrait:mt--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size + Orientation example</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Padding Utilities') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control element padding using these utility classes. Each class follows the pattern <code class="<%= framework_section_code_classes %>">{property}--{size}</code>. See <%= render DocsRef.new(page: :size) %> for sizing tokens.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">p--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">All sides padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">pt--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Top padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">pr--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Right padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">pb--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Bottom padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">pl--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Left padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">px--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Horizontal padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">py--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Vertical padding</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">sm:px--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">portrait:pb--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Orientation-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">md:portrait:pt--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size + Orientation example</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,129 @@
+@use '../mixins' as mixins;
+@use '../config/tokens' as vars;
+
+// ============================================
+// TRMNL Framework - Title Bar Component
+// ============================================
+
+// Contrast stroke for the title-bar icon, matching the .title/.instance text
+// stroke. Reuses the shipped image-stroke drop-shadow mechanism (4 diagonal
+// rings) rather than text-shadow, because text-shadow only strokes glyphs, and this
+// paints correctly on the mask-recolored image--adaptive silhouette. Same
+// contrast color as the text; $size is derived from --title-bar-text-stroke-width
+// so the icon outline tracks the text outline everywhere it's tuned.
+@mixin _title-bar-image-stroke($size, $color) {
+    filter:
+        drop-shadow(#{$size} #{$size} 0 #{$color})
+        drop-shadow(calc(#{$size} * -1) calc(#{$size} * -1) 0 #{$color})
+        drop-shadow(calc(#{$size} * -1) #{$size} 0 #{$color})
+        drop-shadow(#{$size} calc(#{$size} * -1) 0 #{$color});
+}
+
+@include mixins.trmnl-namespace {
+    .title_bar {
+        height: var(--title-bar-height);
+        display: flex;
+        align-content: center;
+        align-items: center;
+        padding: 0 var(--gap);
+        gap: var(--gap);
+        position: relative;
+        color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+        z-index: 10;
+        border-radius: var(--title-bar-border-radius);
+
+        @include mixins.crisp-edges;
+
+        .image {
+            max-height: var(--title-bar-image-height);
+
+            // Unmasked form (no JS yet, or icon not CORS-readable): stroke the
+            // <img> directly, since its own alpha is the shape. Once plugins.js
+            // mask-recolors it ([data-adaptive]), the mask clips a filter stroke,
+            // so the stroke moves to the .image--adaptive-host wrapper below.
+            &:not([data-adaptive]) {
+                @include _title-bar-image-stroke(
+                    calc(var(--title-bar-text-stroke-width) * 0.5),
+                    var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))
+                );
+            }
+        }
+
+        // Runtime host wrapped by plugins.js around a mask-recolored title-bar
+        // icon. The host isn't masked, so drop-shadowing it rings the icon
+        // silhouette instead of being clipped by the icon's own mask. Same
+        // contrast color + width as the .title/.instance text stroke.
+        //
+        // Internal: plugins.js writes this class. Plugin markup never sets it, and
+        // it is not part of the documented class surface.
+        .image--adaptive-host {
+            display: inline-flex;
+            align-items: center;
+            @include _title-bar-image-stroke(
+                calc(var(--title-bar-text-stroke-width) * 0.5),
+                var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))
+            );
+        }
+
+        .title {
+            font-family: var(--title-bar-font-family);
+            -webkit-font-smoothing: var(--title-bar-font-smoothing);
+            font-size: var(--title-bar-font-size);
+            padding-top: var(--title-bar-padding-top);
+            line-height: var(--title-bar-line-height);
+            white-space: nowrap;
+            overflow: visible;
+            flex: 0 0 auto;
+            min-height: var(--title-bar-line-height);
+            font-weight: var(--title-bar-font-weight);
+            background-color: var(--framework-semantic-text-primary-text-under, transparent);
+            background-image: var(--framework-semantic-text-primary-text-image, none);
+            -webkit-background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+            background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), calc(var(--title-bar-text-stroke-width) * 0.5));
+        }
+
+        .instance {
+            font-family: var(--title-bar-font-family);
+            -webkit-font-smoothing: var(--title-bar-font-smoothing);
+            font-size: var(--title-bar-font-size);
+            padding-top: var(--title-bar-padding-top);
+            line-height: var(--title-bar-line-height);
+            font-weight: var(--title-bar-font-weight);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-align: right;
+            min-height: var(--title-bar-line-height);
+            background-color: var(--framework-semantic-text-primary-text-under, transparent);
+            background-image: var(--framework-semantic-text-primary-text-image, none);
+            -webkit-background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+            background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), calc(var(--title-bar-text-stroke-width) * 0.5));
+        }
+    }
+
+    // Compact title bar: the small mashup-window bar. Applies to the fixed
+    // layouts' quadrant / half views and to every dynamic-grid cell
+    // (.mashup-cell), whatever view size the cell wraps.
+    .view--half_horizontal .title_bar,
+    .view--half_vertical .title_bar,
+    .view--quadrant .title_bar,
+    .mashup-cell .title_bar {
+        height: var(--title-bar-small-height);
+        border-radius: 0;
+
+        .image {
+            max-height: var(--title-bar-small-image-height);
+        }
+    }
+
+    .title_bar {
+        background-color: var(--framework-internal-title-bar-bg-color, transparent);
+        background-image: var(--framework-internal-title-bar-bg-image, none);
+        background-repeat: repeat;
+        background-size: var(--dither-bg-size, auto);
+    }
+}

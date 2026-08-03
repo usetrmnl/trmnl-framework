@@ -1,0 +1,179 @@
+<!-- BEGIN app/views/plugins/days_left_year/quadrant.html.erb
+--><div class="view view--quadrant">
+  <div class="layout layout--col gap--large">
+    <div class="grid grid--cols-2">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small lg:value--large days_passed">value</span>
+          <span class="label">Days Passed</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small lg:value--large days_left">value</span>
+          <span class="label">Days Left</span>
+        </div>
+      </div>
+    </div>
+    <div id="days_left" data-today="2025-09-15T10:29:35+05:30"></div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image image--adaptive" alt="" src="/images/plugins/days_left_year--render.svg" />
+    <span class="title">Days Left This Year</span>
+    <span class="instance">2026</span>
+  </div>
+</div>
+
+<!-- BEGIN app/views/plugins/days_left_year/_common.html.erb
+--><style>
+    #days_left {
+      --rows: 7;
+      --cols: 53;
+      --gap: 3px;
+
+      width: 100%;
+      height: 100%;
+      padding: 0px;
+      flex: 1 1 0;
+      justify-content: center;
+
+      display: grid;
+      grid-template-columns: repeat(
+        var(--cols),
+        round(
+          down,
+          calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)),
+          1px
+        )
+      );
+      grid-template-rows: repeat(
+        var(--rows),
+        round(
+          down,
+          calc((100% - (var(--rows) - 1) * var(--gap)) / var(--rows)),
+          1px
+        )
+      );
+      grid-auto-flow: column;
+      gap: var(--gap);
+    }
+
+    #days_left .day {
+        height: 100%;
+        margin: 0;
+        border-radius: 4px;
+        break-inside: avoid-column;
+    }
+
+    .view--quadrant #days_left {
+      --gap: 2px;
+    }
+
+    .view--half_vertical #days_left {
+      --gap: 2px;
+    }
+
+    .view--half_horizontal #days_left {
+      --gap: 2px;
+    }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const yearContainers = document.querySelectorAll('#days_left');
+    const today = yearContainers[0].dataset['today'];
+    const now = new Date(today);
+
+    // Get the offset for the first day of the year (e.g. start of week is Mon and Jan 1 is Wed -> 2 days)
+    let firstDayOfWeek = 1; // 0=Sunday, 1=Monday, etc.
+
+    function createYearDivs(container) {
+      container.innerHTML = ''; // Clear the container before adding new divs
+      const totalDays = getDaysInYear(now.getFullYear());
+      const dayOffset = getDayOffset(firstDayOfWeek);
+
+      // Add empty divs for pre-January 1st days of first week
+      for (let i = 0; i < dayOffset; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.classList.add('day', 'offset', 'bg--white');
+        container.appendChild(dayDiv);
+      }
+
+      // Add actual days
+      for (let i = 0; i < totalDays; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.classList.add('day');
+        container.appendChild(dayDiv);
+      }
+    }
+
+    function updatePassedDays(container) {
+      const daysPassed = getYearProgress(now);
+      const dayDivs = Array.from(container.getElementsByClassName('day'))
+        .filter(day => !day.classList.contains('offset'));
+
+      // Highlight passed days
+      for (let i = 0; i < daysPassed; i++) {
+        dayDivs[i].classList.add('passed', 'bg--gray-4', '2bit:bg--gray-50');
+      }
+
+      for (let i = daysPassed; i < dayDivs.length; i++) {
+        dayDivs[i].classList.add('today', 'bg--gray-5', '2bit:bg--gray-65');
+      }
+
+      // Highlight the current day
+      if (dayDivs[daysPassed]) {
+        dayDivs[daysPassed].classList.remove('bg--gray-5', '2bit:bg--gray-65');
+        dayDivs[daysPassed].classList.add('bg--black');
+      }
+
+      // Update metric values
+      const daysPassedElements = document.querySelectorAll('.days_passed');
+      const daysLeftElements = document.querySelectorAll('.days_left');
+
+      daysPassedElements.forEach(element => {
+        element.textContent = daysPassed;
+      });
+
+      daysLeftElements.forEach(element => {
+        element.textContent = dayDivs.length - daysPassed;
+      });
+    }
+
+    function getDaysInYear(year) {
+      return isLeapYear(year) ? 366 : 365;
+    }
+
+    function isLeapYear(year) {
+      return year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
+    }
+
+    function getFirstDay() {
+      return new Date(now.getFullYear(), 0, 1).getDay(); // what day of the week is Jan 1st
+    }
+
+    function getDayOffset() {
+      return (getFirstDay() - firstDayOfWeek + 7) % 7; // Offset based on preference
+    }
+
+    function getYearProgress(date) {
+      const startOfYear = new Date(date.getFullYear(), 0, 1);
+      const startOffset = startOfYear.getTimezoneOffset();
+      const currentOffset = date.getTimezoneOffset();
+      const offsetDifference = (startOffset - currentOffset) * 60 * 1000;
+      const diff = (date - startOfYear) + offsetDifference;
+      const oneDay = 1000 * 60 * 60 * 24;
+      return Math.floor(diff / oneDay);
+    }
+
+    yearContainers.forEach(container => {
+      createYearDivs(container);
+      updatePassedDays(container);
+    });
+  });
+</script>
+<!-- END app/views/plugins/days_left_year/_common.html.erb -->
+<!-- END app/views/plugins/days_left_year/quadrant.html.erb -->

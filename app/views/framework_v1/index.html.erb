@@ -1,0 +1,37 @@
+<% meta title: 'Design System' %>
+
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <div class="my-4">
+      <%= render 'shared/heading', title: 'Design System' %>
+    </div>
+  </div>
+
+  <div class="<%= layout_single_col_classes %> space-y-6">
+    <% docs_groups_for_current_version.each do |group, pages| %>
+      <div class="space-y-4">
+        <%= framework_heading(2, group.to_s.titleize) %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% pages.each do |page| %>
+            <%= link_to framework_page_path(page, version: '1.2'), class: "#{card_classes} focus:outline-none ring-2 ring-transparent hover:ring-offset-2 hover:ring-primary-300 dark:hover:ring-primary-900 hover:border-transparent focus:border-transparent focus:ring-2 ring-offset-gray-200 dark:ring-offset-gray-950 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-950 focus:ring-primary-500 focus:border-transparent active:ring-primary-500 dark:active:ring-primary-500 active:border-transparent transition-color duration-150 p-4" do %>
+              <div class="flex gap-3 h-full">
+                <div class="flex items-center self-stretch">
+                  <%= page_icon(page, "w-12 h-12 text-gray-600 dark:text-gray-400 flex-shrink-0") %>
+                </div>
+                <div>
+                  <h3 class="text-md font-medium text-gray-700 dark:text-white"><%= page_titles[page] %></h3>
+                  <p class="text-sm text-gray-550 dark:text-gray-500"><%= page_description(page) %></p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+// ensures all Framework docs load as intended, with terminalize() being invoked
+Array.from(document.querySelectorAll('[href*="/framework/"]')).forEach(docs => { docs.dataset.turbo = false; })
+</script>

@@ -1,0 +1,743 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :layout %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:layout) %>
+    <div class="space-y-16">
+      <%= render FrameworkComparisonComponent.new(variant: :do_vs_dont) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">Use one <code class="<%= framework_section_code_classes %>">layout</code> per <code class="<%= framework_section_code_classes %>">view</code>. Organize content inside it with <code class="<%= framework_section_code_classes %>">flex</code>, <code class="<%= framework_section_code_classes %>">columns</code>, or <code class="<%= framework_section_code_classes %>">grid</code>.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">Don't nest <code class="<%= framework_section_code_classes %>">layout</code> inside <code class="<%= framework_section_code_classes %>">layout</code>. There should be exactly one <code class="<%= framework_section_code_classes %>">layout</code> per <code class="<%= framework_section_code_classes %>">view</code>.</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="layout">
+  <div class="flex flex--row">
+    <div>Item 1</div>
+    <div>Item 2</div>
+  </div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="layout">
+  <div class="layout layout--row">
+    <div>Item 1</div>
+    <div>Item 2</div>
+  </div>
+</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <section class="space-y-8" id="what-goes-inside">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'What Goes Inside Layout') %>
+          <p class="<%= framework_section_description_classes %>">
+            Layout is the main content wrapper inside a View. It defines the available space: its height is calculated from the device type, the orientation, and whether a title bar is present. Its direct children are usually Columns, Grid, or Flex.
+          </p>
+
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Three ways to lay out content') %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <%= render FrameworkDocCardComponent.new(icon: :grid, title: 'Grid', docs_page: :grid) do %>
+                <p class="<%= framework_subsection_description_classes %>">Use when you need a strict grid: define column count and spans, so items align to a consistent rhythm. Good for Swiss-style layouts where everything lines up to a fixed grid.</p>
+              <% end %>
+
+              <%= render FrameworkDocCardComponent.new(icon: :flex, title: 'Flex', docs_page: :flex) do %>
+                <p class="<%= framework_subsection_description_classes %>">Use when you want flexible arrangements where items size by content (width/height). You can use Flex alone for simpler layouts, or nest it inside Grid for per-cell flexibility.</p>
+              <% end %>
+
+              <%= render FrameworkDocCardComponent.new(icon: :columns, title: 'Columns', docs_page: :columns) do %>
+                <p class="<%= framework_subsection_description_classes %>">Use when you have lots of same-type data and want to display as few or as many items as there are, with the Columns system handling the layout. See the Columns page for details.</p>
+              <% end %>
+            </div>
+            <p class="<%= framework_subsection_description_classes %>">
+              You can use multiple of each: multiple Columns components, multiple Grids, multiple Flex containers. You can mix them. The Layout modifiers (<code class="<%= framework_section_code_classes %>">layout--row</code>, <code class="<%= framework_section_code_classes %>">layout--col</code>, alignment, stretch) control how these direct children are arranged within the Layout space.
+            </p>
+            <div class="space-y-2">
+              <%= render 'framework/layout_methods_infographic' %>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Nesting') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              These components can be nested: put a Grid inside Layout, give that Grid a column count, and place Flex containers inside each grid cell. Inside each Flex you then place your actual content (items, text, etc.). Layout arranges the top-level Grid(s); the Grid arranges its cells; the Flex arranges items within each cell.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            Layout arranges content in one of two directions: horizontal or vertical.
+            These base structures are the building blocks for more complex layouts.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Row Layout') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">layout layout--row</code> classes create a horizontal layout. 
+              Items are arranged horizontally from left to right, with center alignment as the default positioning.
+            </p>
+          </div>
+          
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Horizontal</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Column Layout') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">layout layout--col</code> classes create a vertical layout. 
+              Items are arranged vertically from top to bottom, with center alignment as the default positioning.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Vertical</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Alignment Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Once you've chosen a base layout structure, you can apply these modifier classes to control how items are aligned 
+            within their container. Modifiers cover directional alignment (top/bottom/left/right) and centering.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Horizontal Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">layout--left</code>, 
+              <code class="<%= framework_section_code_classes %>">layout--center-x</code>, or 
+              <code class="<%= framework_section_code_classes %>">layout--right</code> to control horizontal alignment.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--left gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Left</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label"></span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label"></span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Left Alignment</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--left">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Vertical Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">layout--top</code>, 
+              <code class="<%= framework_section_code_classes %>">layout--center-y</code>, or 
+              <code class="<%= framework_section_code_classes %>">layout--bottom</code> to control vertical alignment.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row layout--top gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label"></span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Top</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label"></span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Top Alignment</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row layout--top">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Center Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">layout--center</code> to center items both horizontally and vertically, 
+              or use <code class="<%= framework_section_code_classes %>">layout--center-x</code> and 
+              <code class="<%= framework_section_code_classes %>">layout--center-y</code> for individual axis control.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row layout--center gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label"></span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Center</span>
+                      </div>
+                      <div class="w--36 bg--white p--2.5 rounded--small text--center">
+                        <span class="label"></span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Center Alignment</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row layout--center">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+
+<!-- Or with individual axis control -->
+<div class="layout layout--row layout--center-x layout--center-y">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Axis Alignment') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The modifiers above are screen-directional: <code class="<%= framework_section_code_classes %>">layout--left</code>
+              means left whether the layout is a row or a column. The modifiers below follow the flex axes instead, so
+              <code class="<%= framework_section_code_classes %>">layout--justify-*</code> moves items along the layout
+              direction and <code class="<%= framework_section_code_classes %>">layout--align-*</code> moves them across it.
+            </p>
+          </div>
+
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li><code class="<%= framework_section_code_classes %>">layout--justify-start</code> / <code class="<%= framework_section_code_classes %>">layout--justify-center</code> / <code class="<%= framework_section_code_classes %>">layout--justify-end</code>: position items along the main axis.</li>
+            <li><code class="<%= framework_section_code_classes %>">layout--align-start</code> / <code class="<%= framework_section_code_classes %>">layout--align-center</code> / <code class="<%= framework_section_code_classes %>">layout--align-end</code>: position items across the cross axis.</li>
+            <li><code class="<%= framework_section_code_classes %>">layout--start</code> / <code class="<%= framework_section_code_classes %>">layout--end</code>: both axes at once, the corner-anchored counterparts of <code class="<%= framework_section_code_classes %>">layout--center</code>.</li>
+          </ul>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Top-left as a row, top-left as a column too -->
+<div class="layout layout--row portrait:layout--col layout--start">
+  <div>Item 1</div>
+  <div>Item 2</div>
+</div>
+
+<!-- End of the main axis, centered across the cross axis -->
+<div class="layout layout--row layout--justify-end layout--align-center">
+  <div>Item 1</div>
+  <div>Item 2</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Stretch Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Stretch modifiers allow you to control how child elements fill the available space within a layout. 
+            You can apply these modifiers either to the layout container or to individual child elements.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Container Stretch') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">layout--stretch</code> to make all children stretch in both directions.
+              You can also use <code class="<%= framework_section_code_classes %>">layout--stretch-x</code> and
+              <code class="<%= framework_section_code_classes %>">layout--stretch-y</code> for individual axis control.
+              These modifiers work with both row and column layouts.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              <code class="<%= framework_section_code_classes %>">layout--stretch-x</code> and
+              <code class="<%= framework_section_code_classes %>">layout--stretch-y</code> are screen-directional, so
+              each one swaps its rule between a row and a column. Reach for
+              <code class="<%= framework_section_code_classes %>">layout--stretch-main</code> (children fill the layout
+              direction) or <code class="<%= framework_section_code_classes %>">layout--stretch-cross</code> (children
+              fill across it) when you want the axis to follow the layout instead of the screen.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Row Layout Stretch') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Examples of stretch behavior in row layouts. Use <code class="<%= framework_section_code_classes %>">layout--stretch</code> for both directions, 
+              <code class="<%= framework_section_code_classes %>">layout--stretch-x</code> for horizontal, or 
+              <code class="<%= framework_section_code_classes %>">layout--stretch-y</code> for vertical stretch.
+            </p>
+          </div>
+
+          <!-- Row Layout - All Directions -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row layout--stretch gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Row Layout</span>
+                      <span class="instance">Full Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row layout--stretch">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <!-- Row Layout - Horizontal -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row layout--stretch-x gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="h--12 bg--white flex flex--col flex--center p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="h--12 bg--white flex flex--col flex--center p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="h--12 bg--white flex flex--col flex--center p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Row Layout</span>
+                      <span class="instance">Horizontal Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row layout--stretch-x">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <!-- Row Layout - Vertical -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row layout--stretch-y gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Row Layout</span>
+                      <span class="instance">Vertical Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row layout--stretch-y">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2 mt-8">
+            <%= framework_heading(4, 'Column Layout Stretch') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Examples of stretch behavior in column layouts. The same modifiers work consistently regardless of layout direction.
+            </p>
+          </div>
+
+          <!-- Column Layout - All Directions -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="bg--white flex flex--col flex--center p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="bg--white flex flex--col flex--center p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="bg--white flex flex--col flex--center p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Column Layout</span>
+                      <span class="instance">Full Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col layout--stretch">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <!-- Column Layout - Horizontal -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch-x gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Column Layout</span>
+                      <span class="instance">Horizontal Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col layout--stretch-x">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <!-- Column Layout - Vertical -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch-y gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 2</span>
+                      </div>
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Column Layout</span>
+                      <span class="instance">Vertical Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col layout--stretch-y">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2 mt-8">
+            <%= framework_heading(4, 'Child Element Stretch') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">stretch-x</code> and 
+              <code class="<%= framework_section_code_classes %>">stretch-y</code> classes on individual elements to control their stretch behavior 
+              within row or column layouts.
+            </p>
+          </div>
+
+          <!-- Row Layout - Individual Element -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center stretch-x">
+                        <span class="label">Item 2 (stretched)</span>
+                      </div>
+                      <div class="w--36 h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Row + Individual Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--row">
+  <div>Item 1</div>
+  <div class="stretch-x">Stretched Item</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+
+          <!-- Column Layout - Individual Element -->
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <div class="w--36 h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 1</span>
+                      </div>
+                      <div class="w--36 flex flex--col flex--center bg--white p--2.5 rounded--small text--center stretch-y">
+                        <span class="label clamp--none text--center">Item 2 <br>(stretched)</span>
+                      </div>
+                      <div class="w--36 h--12 flex flex--col flex--center bg--white p--2.5 rounded--small text--center">
+                        <span class="label">Item 3</span>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Column + Individual Stretch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col">
+  <div>Item 1</div>
+  <div class="stretch-y">Stretched Item</div>
+  <div>Item 3</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

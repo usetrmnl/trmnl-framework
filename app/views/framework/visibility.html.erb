@@ -1,0 +1,505 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :visibility %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:visibility) %>
+
+    <div class="space-y-16">
+      <!-- Interactive Example Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Visibility Across Devices') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every device carries a size class: <code class="<%= framework_section_code_classes %>">sm</code>, <code class="<%= framework_section_code_classes %>">md</code>, or <code class="<%= framework_section_code_classes %>">lg</code>. Each column below targets one of them, so switching the device in the screen picker changes which column has content.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--row gap p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                      <!-- Small Screen -->
+                      <div class="column bg--white p--2.5 rounded--small">
+                        <span class="label label--small text--center">Small (sm)</span>
+
+                        <!-- Visible on sm screens only -->
+                        <div class="value value--xsmall visible md:hidden">visible md:hidden</div>
+                      </div>
+
+                      <!-- Medium Screen -->
+                      <div class="column bg--white p--2.5 rounded--small">
+                        <span class="label label--small text--center">Medium (md)</span>
+
+                        <!-- Visible on md screens only -->
+                        <div class="value value--xsmall hidden md:visible lg:hidden">hidden md:visible lg:hidden</div>
+                      </div>
+
+                      <!-- Large Screen -->
+                      <div class="column bg--white p--2.5 rounded--small">
+                        <span class="label label--small text--center">Large (lg)</span>
+
+                        <!-- Visible on lg screens only -->
+                        <div class="value value--xsmall hidden lg:visible">hidden lg:visible</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Always visible -->
+<div class="visible">visible</div>
+
+<!-- Always hidden -->
+<div class="hidden">hidden</div>
+
+<!-- Hidden by default, visible on medium+ -->
+<div class="hidden md:visible">md:visible</div>
+
+<!-- Visible by default, hidden on medium+ -->
+<div class="visible md:hidden">md:hidden</div>
+
+<!-- Visible by default, hidden on large -->
+<div class="visible lg:hidden">lg:hidden</div>
+
+<!-- Display as flex on medium+ -->
+<div class="hidden md:flex">md:flex</div>
+
+<!-- Display as grid on large screens -->
+<div class="hidden lg:grid">lg:grid</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Display Utilities Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Display Utilities') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control how elements are displayed with specific display types. These classes set the CSS <code class="<%= framework_section_code_classes %>">display</code> property.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+            <thead>
+              <tr>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Effect</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">CSS Output</th>
+              </tr>
+            </thead>
+            <tbody class="<%= framework_docs_table_body_classes %>">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">hidden</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Hide element completely
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: none</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">visible</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as block element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: block</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">block</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as block element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: block</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">inline</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as inline element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: inline</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">inline-block</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as inline block element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: inline-block</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">flex</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as flex container
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: flex</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">grid</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as grid container
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: grid</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">inline-grid</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as inline grid container
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: inline-grid</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">table</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as table element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: table</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">table-row</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as table row element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: table-row</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">table-cell</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as table cell element
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">display: table-cell</code>
+                </td>
+              </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Size-Based Visibility Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Responsive Display Control') %>
+          <p class="<%= framework_section_description_classes %>">
+            All display utilities take the size prefixes. They are mobile-first, so a prefix applies on its own size class and every larger one. See <%= render DocsRef.new(page: :responsive) %> for the size class each device carries.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+            <thead>
+              <tr>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Example Class</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Effect</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Active On</th>
+              </tr>
+            </thead>
+            <tbody class="<%= framework_docs_table_body_classes %>">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">sm:hidden</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Hide on small screens and larger
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  sm, md, lg (every device)
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">md:flex</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as flex on medium screens and larger
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  md, lg
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">lg:grid</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as grid on large screens
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  lg
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">sm:inline-block</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as inline-block on small screens and larger
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  sm, md, lg (every device)
+                </td>
+              </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Basic responsive display -->
+<div class="hidden md:block">Show as block on medium+</div>
+<div class="block md:flex">Block by default, flex on medium+</div>
+<div class="hidden lg:inline-grid">Show as inline-grid on large screens</div>
+
+<!-- Complex responsive layouts -->
+<div class="inline sm:inline-block md:flex lg:grid">
+  Changes display type at each breakpoint
+</div>
+
+<!-- Hide on mobile, show different layouts -->
+<div class="hidden sm:flex md:grid lg:table">
+  Different layout per screen size
+</div>
+
+<!-- Table-style structures -->
+<div class="table">
+  <div class="table-row">
+    <div class="table-cell">Cell A</div>
+    <div class="table-cell">Cell B</div>
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <!-- Bit-Depth Display Control Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Bit-Depth Display Control') %>
+          <p class="<%= framework_section_description_classes %>">
+            All display utilities take the bit-depth prefixes. These are not progressive the way the size prefixes are: <code class="<%= framework_section_code_classes %>">2bit:</code> applies on 2-bit screens and nowhere else.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+            <thead>
+              <tr>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Example Class</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Effect</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Active On</th>
+              </tr>
+            </thead>
+            <tbody class="<%= framework_docs_table_body_classes %>">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">1bit:hidden</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Hide on monochrome displays
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Every 1-bit profile (TRMNL OG, Playdate, Frame, and the color panels that dither to black and white)
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">2bit:flex</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as flex on 4-shade grayscale displays
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Every 2-bit profile (TRMNL OG V2, Waveshare 5.8" B/W)
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">4bit:grid</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as grid on 16-shade grayscale displays
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Every 4-bit profile (TRMNL V2, Kindle 2024, reMarkable Paper 2, and most Kobo and Inkplate panels)
+                </td>
+              </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Combined Targeting Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Device-Specific Display Control') %>
+          <p class="<%= framework_section_description_classes %>">
+            Combine a size and a bit-depth prefix on any display utility to narrow the target to one group of panels. Use the pattern <code class="<%= framework_section_code_classes %>">size:bit-depth:display</code>.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+            <thead>
+              <tr>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Example Class</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Target Device</th>
+                <th class="<%= framework_docs_table_header_cell_classes %>">Effect</th>
+              </tr>
+            </thead>
+            <tbody class="<%= framework_docs_table_body_classes %>">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">md:1bit:block</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  1-bit screens at md or lg (TRMNL OG, Frame)
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as block
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">md:2bit:flex</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  2-bit screens at md or lg (TRMNL OG V2, Waveshare 5.8" B/W)
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as flex
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">lg:4bit:grid</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  4-bit screens at lg (TRMNL V2, Kindle Scribe, reMarkable Paper 2, and 11 more)
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as grid
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <code class="text-sm font-mono text-syntax-string">sm:4bit:table</code>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Every 4-bit screen, since sm is the smallest size class
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  Display as table
+                </td>
+              </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Device-specific layouts -->
+<div class="hidden md:1bit:block md:2bit:flex lg:4bit:grid">
+  Different display types per device generation
+</div>
+
+<!-- Optimize for ePaper performance -->
+<div class="table 1bit:block 2bit:flex">
+  Simple layouts for lower bit-depth displays
+</div>
+
+<!-- Complex responsive + bit-depth targeting -->
+<div class="hidden sm:inline md:1bit:block md:2bit:flex lg:4bit:grid">
+  Progressive enhancement across all device capabilities
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <!-- Dark Mode Display Control Section -->
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Dark Mode Display Control') %>
+          <p class="<%= framework_section_description_classes %>">
+            Visibility utilities support dark-first prefixes for screen dark mode targeting.
+            Use <code class="<%= framework_section_code_classes %>">dark:</code> to show or hide content by screen dark mode.
+            Light-mode behavior is the default state.
+          </p>
+        </div>
+
+        <div class="mt-6">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Hide only in dark mode -->
+<div class="dark:hidden">Dark mode hides this</div>
+
+<!-- Show only in dark mode -->
+<div class="hidden dark:block">Dark mode shows this</div>
+
+<!-- Combined targeting -->
+<div class="dark:md:portrait:2bit:hidden">
+  Hidden on dark medium+ portrait 2-bit screens
+</div>'
+          ) %>
+        </div>
+      </section>
+      
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div> 

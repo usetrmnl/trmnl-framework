@@ -1,0 +1,490 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :rich_text %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Rich Text component provides a flexible container for displaying text content with consistent styling and layout options.
+      It's commonly used for paragraphs, articles, and other formatted text content that needs to maintain readability and visual hierarchy.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Understanding Richtext Components') %>
+          <p class="<%= framework_section_description_classes %>">
+            The richtext system consists of two key parts working together: the parent <code class="<%= framework_section_code_classes %>">.richtext</code> container and its natural child <code class="<%= framework_section_code_classes %>">.content</code> component.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            The parent <code class="<%= framework_section_code_classes %>">.richtext</code> container is designed for flexibility and can hold any content. It controls the overall placement and spacing of the component within your layout.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            The <code class="<%= framework_section_code_classes %>">.content</code> component is where your actual text content lives. It provides additional styling and formatting options specific to text.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            Both components have separate alignment modifiers that serve different purposes:
+          </p>
+
+          <ul class="list-disc pl-8 mt-3 <%= framework_section_description_classes %>">
+            <li><code class="<%= framework_section_code_classes %>">richtext--left/center/right</code>: Controls how the richtext container is positioned within its parent</li>
+            <li><code class="<%= framework_section_code_classes %>">content--left/center/right</code>: Controls how the content component is positioned within the richtext container</li>
+            <li><code class="<%= framework_section_code_classes %>">text--left/center/right</code>: Controls the actual text alignment within the content component</li>
+          </ul>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            This multi-level alignment system provides maximum flexibility for positioning both the component and its content independently.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Rich Text Alignment') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Rich Text component can be aligned in three different ways: left, center, or right.
+            Each alignment option provides different text positioning to suit various design needs.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Left Aligned') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Left alignment is the default and most readable format for longer text content, ideal for paragraphs and articles.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="richtext richtext--left gap--large">
+                      <%= image_tag "trmnl--glyph-black-large.svg", class: "image" %>
+                      <div class="content content--left gap text--left">
+                        <p>This is an example of left-aligned rich text content. This alignment is generally best for readability with longer paragraphs of text.</p>
+                        <p>Multiple paragraphs will maintain the same alignment, making it easy to read through longer content while maintaining visual consistency.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">Left Aligned</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext richtext--left gap--large">
+  <img class="image" src="/assets/trmnl--glyph-black-large.svg">
+  <div class="content content--left gap text--left">
+    <p>This is an example of left-aligned rich text content.</p>
+    <p>Multiple paragraphs will maintain the same alignment.</p>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Center Aligned') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Center alignment is ideal for headings, quotes, or shorter text that needs to be highlighted or visually balanced within the layout.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="richtext richtext--center gap--large">
+                      <%= image_tag "trmnl--glyph-black-large.svg", class: "image" %>
+                      <div class="content content--center gap text--center">
+                        <p>This is an example of center-aligned rich text content.</p>
+                        <p>Centered text works well for quotes, headings, or highlighted information that needs visual emphasis.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">Center Aligned</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext richtext--center gap--large">
+  <img class="image" src="/assets/trmnl--glyph-black-large.svg">
+  <div class="content content--center gap text--center">
+    <p>This is an example of center-aligned rich text content.</p>
+    <p>Centered text works well for quotes or highlighted information.</p>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Right Aligned') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Right alignment is less common but can be useful for specific design scenarios or to create visual tension in layouts.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="richtext richtext--right gap--large">
+                      <%= image_tag "trmnl--glyph-black-large.svg", class: "image" %>
+                      <div class="content content--right gap text--right">
+                        <p>This is an example of right-aligned rich text content.</p>
+                        <p>Right alignment can be used for captions, sidebars, or to create visual interest through contrasting alignments.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">Right Aligned</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext richtext--right gap--large">
+  <img class="image" src="/assets/trmnl--glyph-black-large.svg">
+  <div class="content content--right gap text--right">
+    <p>This is an example of right-aligned rich text content.</p>
+    <p>Right alignment can be used for captions or sidebars.</p>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Content Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Rich Text component offers different content size variants to accommodate various text hierarchies and emphasis needs.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col">
+                    <div class="richtext richtext--left gap--large">
+                      <div class="content content--large">
+                        <p>This is large size rich text content.<br>
+                        It uses BlockKie font at 26px for emphasis.</p>
+                      </div>
+
+                      <div class="content">
+                        <p>This is the default size for rich text content.<br>
+                        It uses NicoClean font at 16px with a line height of 22px.</p>
+                      </div>
+
+                      <div class="content content--small">
+                        <p>This is small size rich text content.<br>
+                        It uses NicoPups font at 16px with a tighter line height of 16px.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">Size Variants</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext gap--large">
+  <!-- Large Size -->
+  <div class="content content--large">
+    <p>This is large size rich text content.<br>
+    It uses BlockKie font at 26px for emphasis.</p>
+  </div>
+
+  <!-- Default Size -->
+  <div class="content">
+    <p>This is the default size for rich text content.<br>
+    It uses NicoClean font at 16px with line height of 22px.</p>
+  </div>
+
+  <!-- Small Size -->
+  <div class="content content--small">
+    <p>This is small size rich text content.<br>
+    It uses NicoPups font at 16px with line height of 16px.</p>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Controlling Width') %>
+          <p class="<%= framework_section_description_classes %>">
+            By default, the Rich Text content takes up as much space as it needs and is centered in the layout, expanding up to a maximum width.
+            However, you can precisely control the width of content using Size utility classes.
+          </p>
+
+          <div class="<%= message_sage_classes %> mt-4">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="leading-none text-sm font-medium">
+                  Control exact width and height dimensions with size utilities
+                </p>
+                <p class="text-sm md:mt-0 md:ml-6">
+                  <%= link_to framework_page_path(:size, version: '1.2'), class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
+                    View Size Documentation
+                    <%= render 'shared/icons/arrow_right' %>
+                  <% end %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="richtext richtext--center gap--large">
+                      <div class="content w--[240px] text--center gap">
+                        <p>This Rich Text content has a fixed width of 240 pixels using utility classes.</p>
+                        <p>Notice how the text is constrained to this specific width regardless of the container size.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">Fixed Width: 240px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext richtext--center gap--large">
+  <div class="content w--[240px] text--center gap">
+    <p>This Rich Text content has a fixed width of 240 pixels using utility classes.</p>
+    <p>Notice how the text is constrained to this specific width regardless of the container size.</p>
+  </div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-4">
+            <p class="<%= framework_section_description_classes %>">
+              You can use any of the Size system's fixed sizes (<code class="<%= framework_section_code_classes %>">w--32</code>, <code class="<%= framework_section_code_classes %>">w--64</code>, etc.),
+              arbitrary sizes (<code class="<%= framework_section_code_classes %>">w--[250px]</code>), or responsive sizes (<code class="<%= framework_section_code_classes %>">w--full</code>, <code class="<%= framework_section_code_classes %>">w--auto</code>).
+              This flexibility lets you create perfectly sized text blocks for any layout need.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Integration with Content Limiter') %>
+
+          <p class="<%= framework_section_description_classes %>">
+            The Rich Text component works seamlessly with the Content Limiter utility to handle overflowing text. When combined,
+            it automatically adjusts text size to fit the available space, which is particularly useful in constrained layouts.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            Simply add the <code class="<%= framework_section_code_classes %>">data-content-limiter="true"</code> attribute to your richtext content element. You can also specify a custom maximum height using the <code class="<%= framework_section_code_classes %>">data-content-max-height</code> attribute (e.g., <code class="<%= framework_section_code_classes %>">data-content-max-height="140"</code>).
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            When <code class="<%= framework_section_code_classes %>">data-content-limiter="true"</code> is present, the limiter auto-measures the available height in the nearest container and adjusts text to fit. You can override the auto height by specifying <code class="<%= framework_section_code_classes %>">data-content-max-height</code> with a pixel value.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--quadrant">
+                  <div class="layout">
+                    <div class="richtext richtext--left gap--large">
+                      <div class="content" data-content-limiter="true">
+                        <p class="text--left">
+                          The Rich Text component with Content Limiter will automatically adjust text size when content exceeds the auto-measured available height. This is particularly useful for views with limited vertical space such as quadrants or half-horizontal layouts.
+                          <br><br>
+                          Notice how this text is rendered smaller to fit within the quadrant view. Without Content Limiter, this text would overflow the container.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">With Content Limiter</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext richtext--left gap--large">
+  <div class="content" data-content-limiter="true">
+    <p class="text--left">
+      The Rich Text component with Content Limiter will automatically
+      adjust text size when content exceeds the height threshold.
+      This is particularly useful for views with limited vertical space.
+    </p>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Integration with Pixel Perfect') %>
+
+          <p class="<%= framework_section_description_classes %>">
+            For optimal text rendering on ePaper displays, the Rich Text component can be enhanced with the Pixel Perfect utility.
+            This ensures text is rendered with crisp edges by aligning precisely to the pixel grid, preventing blurry or inconsistent text weight.
+          </p>
+
+          <p class="<%= framework_section_description_classes %> mt-3">
+            Simply add the <code class="<%= framework_section_code_classes %>">data-pixel-perfect="true"</code> attribute to your richtext content element.
+          </p>
+
+          <div class="<%= message_sage_classes %> mt-4">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="leading-none text-sm font-medium">
+                  Ensure crisp text rendering on 1-bit displays
+                </p>
+                <p class="text-sm md:mt-0 md:ml-6">
+                  <%= link_to framework_page_path(:pixel_perfect, version: '1.2'), class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
+                    View Pixel Perfect Documentation
+                    <%= render 'shared/icons/arrow_right' %>
+                  <% end %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="richtext richtext--left gap">
+                      <div class="content" data-pixel-perfect="true">
+                        <p>
+                          This text is rendered with pixel perfect alignment, ensuring that each character aligns precisely with the pixel grid. Notice how the text appears crisp and clear with consistent weight.
+                        </p>
+                      </div>
+                      <div class="content" data-pixel-perfect="true">
+                        <p>
+                          Pixel Perfect is especially important for ePaper displays that use a 1-bit color space (just black and white), where anti-aliased gray pixels are forced to become either fully black or fully white.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Rich Text</span>
+                    <span class="instance">With Pixel Perfect</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="richtext richtext--left gap">
+  <div class="content" data-pixel-perfect="true">
+    <p>
+      This text is rendered with pixel perfect alignment, ensuring that each character aligns precisely with the pixel grid. Notice how the text appears crisp and clear with consistent weight.
+    </p>
+  </div>
+  <div class="content" data-pixel-perfect="true">
+    <p>
+      Pixel Perfect is especially important for ePaper displays that use a 1-bit color space (just black and white), where anti-aliased gray pixels are forced to become either fully black or fully white.
+    </p>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

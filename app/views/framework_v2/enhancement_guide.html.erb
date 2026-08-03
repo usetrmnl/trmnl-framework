@@ -1,0 +1,73 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :enhancement_guide %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Framework v2 introduces new engines, utilities, and prefixes that let you build layouts that are both adaptive and responsive. Your existing work will continue to work, but by using these enhancements you can create layouts that adjust to device size, orientation, and bit depth.
+    </p>
+
+    <div class="space-y-16">
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '1. Upgrade Your Engines') %>
+          <p class="<%= framework_section_description_classes %>">One of the most impactful enhancements is updating how you use the framework’s engines. These changes make layouts flexible across devices of varying sizes.</p>
+        </div>
+        
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li>
+            <%= render DocsRef.new(page: :overflow) %> engine: Remove hard-coded values and let the engine calculate available space automatically. Layouts then adapt cleanly to different screen sizes without manual tuning.
+          </li>
+          <li>
+            <%= render DocsRef.new(page: :content_limiter) %> engine: Do the same - drop fixed values and allow the engine to determine available space dynamically.
+          </li>
+          <li>
+            <%= render DocsRef.new(page: :table_overflow) %> engine: For tables, use the new engine that applies the same logic and automatically adds an “&amp;x more” row when needed.
+          </li>
+        </ul>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '2. Apply Responsive Prefixes') %>
+          <p class="<%= framework_section_description_classes %>">All layouts in v1 were effectively fixed to a single device frame. With Framework v2, you can extend them using responsive prefixes in three key ways: display size, bit depth, and orientation.</p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Display size') %>
+          <p class="<%= framework_section_description_classes %>">Use size prefixes to define how layouts adapt to small, medium, or large screens. For example, you might render six items in a single row on a small device, but two rows of three items on a larger display. Prefixes can be applied to grids, flex utilities, spacing, and more.</p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Bit depth') %>
+          <p class="<%= framework_section_description_classes %>">Apply bit-depth prefixes to take advantage of devices with higher grayscale capabilities. For example, you can use a subtle gray shade on 4-bit devices while still defining a simpler fallback for 1- or 2-bit displays.</p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'Orientation') %>
+          <p class="<%= framework_section_description_classes %>">Orientation prefixes let you prepare your layouts for devices that may be used in landscape or portrait mode. You can adjust grids, flex directions, or spacing rules so the same plugin works cleanly in both orientations.</p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, '3. Use the New Utilities and Styling Options') %>
+          <p class="<%= framework_section_description_classes %>">Framework v2 comes with new utilities, elements, and components that expand your design options:</p>
+        </div>
+
+        <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+          <li><%= render DocsRef.new(page: :aspect_ratio) %> utility: Keep images and elements locked to consistent proportions.</li>
+          <li><%= render DocsRef.new(page: :rounded) %> utility: Apply rounded corners to elements.</li>
+          <li><%= render DocsRef.new(page: :divider) %> element: Add separators between sections of content.</li>
+          <li><%= render DocsRef.new(page: :progress) %> component: Show task or state progress with a built-in component.</li>
+          <li><%= render DocsRef.new(page: :item) %> component: Now supports meta-emphasis classes, making it easy to highlight or de-emphasize items.</li>
+          <li><%= render DocsRef.new(page: :table) %> component: New style variants, including small, large, and index tables.</li>
+        </ul>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

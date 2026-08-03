@@ -1,0 +1,213 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :outline %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:outline) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            The outline utility applies a pixel-perfect rounded border to any element. It uses CSS border-image
+            with a 9-slice composite image to ensure crisp rendering on 1-bit displays while maintaining
+            responsiveness across different element sizes.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Applying an Outline') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add the <code class="<%= framework_section_code_classes %>">outline</code> class to any element
+              to give it a pixel-perfect rounded border.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap--large">
+                      <div class="flex flex--row flex--stretch gap">
+                        <div class="flex flex--center-x flex--center-y bg--white outline stretch">
+                          <span class="label">With outline</span>
+                        </div>
+                        <div class="flex flex--center-x flex--center-y bg--white rounded stretch">
+                          <span class="label">Without outline</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Outline Utility</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Add outline to any element -->
+<div class="outline">
+  Content with pixel-perfect rounded border
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'How It Works') %>
+          <p class="<%= framework_section_description_classes %>">
+            The outline utility uses CSS border-image with a 9-slice composite image. This technique allows
+            the corners to remain pixel-perfect while the edges repeat to fill any size container.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '9-Slice Border Image') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The border image is divided into 9 regions: four corners that stay fixed, four edges that repeat
+              to fill the space, and a center region. This approach ensures the rounded corners render
+              consistently regardless of element dimensions.
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '/* How the CSS works internally */
+.outline {
+    border: 10px solid transparent;
+    border-image-source: url("/images/borders--1bit/outline.png");
+    border-image-slice: 10 fill;
+    border-image-repeat: repeat;
+}'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Bit-Depth Behavior') %>
+          <p class="<%= framework_section_description_classes %>">
+            The outline utility adapts to different display bit-depths automatically. On 1-bit displays, it uses
+            the border-image technique for pixel-perfect rendering. On 2-bit and 4-bit displays, it falls back
+            to standard CSS borders with border-radius for smoother rendering.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, '1-bit Displays') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Uses border-image with a dithered 9-slice image for crisp, pixel-perfect corners.
+            </p>
+          </div>
+
+          <div class="space-y-2 mt-6">
+            <%= framework_heading(4, '2-bit and 4-bit Displays') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Falls back to a standard 1px solid border with 10px border-radius for smoother rendering
+              that takes advantage of the additional grayscale capabilities.
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '/* 1-bit: Uses border-image */
+.outline {
+    border-image-source: url("/images/borders--1bit/outline.png");
+    /* ... */
+}
+
+/* 2-bit and 4-bit: Falls back to CSS border */
+.screen--2bit .outline,
+.screen--4bit .outline {
+    border-image: none;
+    border: 1px solid var(--black);
+    border-radius: 10px;
+}'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Screen Backdrop Modifier') %>
+          <p class="<%= framework_section_description_classes %>">
+            For mashup layouts, the <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
+            modifier provides an alternative appearance where views sit on a patterned background instead of
+            having outlined borders.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default vs Backdrop Mashups') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              By default, mashups use a white background with bordered views for a clean, separated look.
+              The <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
+              modifier changes this to a patterned background (1-bit) or solid gray background (2-bit/4-bit)
+              with plain white views on top.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--backdrop">
+                  <div class="mashup mashup--1Lx1R">
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin A</span>
+                      </div>
+                    </div>
+                    <div class="view view--half_vertical">
+                      <div class="layout">
+                        <span class="label">Plugin B</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Default mashup (white background, bordered views) -->
+<div class="screen">
+  <div class="mashup mashup--1Lx1R">
+    <div class="view view--half_vertical">...</div>
+    <div class="view view--half_vertical">...</div>
+  </div>
+</div>
+
+<!-- Backdrop mashup (patterned background) -->
+<div class="screen screen--backdrop">
+  <div class="mashup mashup--1Lx1R">
+    <div class="view view--half_vertical">...</div>
+    <div class="view view--half_vertical">...</div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

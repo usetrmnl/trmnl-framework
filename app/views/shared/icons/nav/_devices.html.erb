@@ -1,0 +1,19 @@
+<%# Nav icon: Devices, two stacked TRMNL ePaper frames with a dithered screen.
+    Concept borrowed from shared/icons/_responsive, redrawn as line art so it
+    reads at nav size. %>
+<svg class="<%= local_assigns[:class] || nav_icon_classes %>" viewBox="0 0 32 32" fill="none"
+     stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <%# device behind, peeking out top-left (open path so nothing crosses the front) %>
+  <path d="M12 18 H7.5 A2.5 2.5 0 0 1 5 15.5 V8.5 A2.5 2.5 0 0 1 7.5 6 H17.5 A2.5 2.5 0 0 1 20 8.5 V13" />
+  <%# device in front %>
+  <rect x="12" y="13" width="16" height="12" rx="2.5" />
+  <%# dithered ePaper screen %>
+  <g fill="currentColor" stroke="none">
+    <rect x="15.3" y="16.8" width="1.4" height="1.4" />
+    <rect x="19.3" y="16.8" width="1.4" height="1.4" />
+    <rect x="23.3" y="16.8" width="1.4" height="1.4" />
+    <rect x="15.3" y="20.3" width="1.4" height="1.4" />
+    <rect x="19.3" y="20.3" width="1.4" height="1.4" />
+    <rect x="23.3" y="20.3" width="1.4" height="1.4" />
+  </g>
+</svg>

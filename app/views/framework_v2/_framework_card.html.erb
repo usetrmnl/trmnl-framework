@@ -1,0 +1,67 @@
+<%# 
+  Framework Card Component
+  
+  Usage examples (see index.html.erb, docs_index.html.erb, examples_index.html.erb):
+  - With icon_content for SVG icons
+  - With page parameter for page icons  
+  - With icon_type: 'image' and image_url/image_dark_url for plugin images
+  - With compact: true for smaller, denser cards (e.g. docs index sections)
+%>
+<% url = local_assigns.fetch(:url, '#') %>
+<% title = local_assigns.fetch(:title, '') %>
+<% description = local_assigns.fetch(:description, '') %>
+<% badge = local_assigns[:badge] %>
+<% page = local_assigns[:page] %>
+<% compact = local_assigns.fetch(:compact, false) %>
+<% image_url = local_assigns[:image_url] %>
+<% image_dark_url = local_assigns[:image_dark_url] %>
+<% icon_content = local_assigns[:icon_content] %>
+<% icon_type = local_assigns[:icon_type] %>
+<% icon_type = 'page' if icon_type.blank? && page.present? %>
+<% icon_type = 'image' if icon_type.blank? && image_url.present? %>
+<% icon_type = 'svg' if icon_type.blank? %>
+<% guide_page = page.present? && framework_guide_page?(page) %>
+
+<% base_link_classes = guide_page ? framework_card_link_classes_sage : framework_card_link_classes %>
+<% link_classes = base_link_classes.sub(' p-3', ' p-2') %>
+<%= link_to url, data: { turbo: false }, class: link_classes do %>
+  <div class="flex flex-col h-full">
+    <div class="flex flex-1 <%= compact ? 'gap-2' : 'gap-3' %> items-center">
+      <div class="flex items-center flex-shrink-0">
+        <% is_examples_page = params[:controller] == 'framework' && params[:action] == 'examples_index' %>
+        <% icon_container_classes = compact ? 'w-9 h-9 flex items-center justify-center' : 'w-14 h-14 flex items-center justify-center' %>
+        <% unless is_examples_page %>
+          <% icon_container_classes += guide_page ? ' rounded-lg bg-sage-100 dark:bg-sage-900/30' : ' rounded-lg bg-primary-100 dark:bg-primary-900/30' %>
+          <% icon_container_classes += ' p-1.5' if icon_type == 'image' && compact %>
+          <% icon_container_classes += ' p-2' if icon_type == 'image' && !compact %>
+        <% end %>
+        <div class="<%= icon_container_classes %>">
+          <% if icon_type == 'page' && page.present? %>
+            <% icon_color_classes = guide_page ? "text-sage-500 dark:text-sage-400" : "text-primary-500 dark:text-primary-400" %>
+            <%= page_icon(page, compact ? "w-5 h-5 #{icon_color_classes}" : "w-8 h-8 #{icon_color_classes}") %>
+          <% elsif icon_type == 'image' && image_url.present? %>
+            <%= image_tag image_url, alt: title, class: 'dark:hidden w-full h-full object-contain' %>
+            <%= image_tag image_dark_url, alt: title, class: 'hidden dark:block w-full h-full object-contain' if image_dark_url.present? %>
+          <% elsif icon_content.present? %>
+            <%= icon_content.html_safe %>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h2 class="<%= compact ? 'text-sm font-semibold' : 'text font-semibold' %> text-gray-900 dark:text-white"><%= title %></h2>
+        <% unless compact %>
+          <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+            <%= description %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+    <% if badge.present? %>
+      <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium <%= guide_page ? 'bg-sage-100 text-sage-700 dark:bg-sage-900/30 dark:text-sage-400' : 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400' %>">
+          <%= badge %>
+        </span>
+      </div>
+    <% end %>
+  </div>
+<% end %>

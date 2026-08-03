@@ -1,0 +1,83 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :v3_overview %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Framework v3 introduces a complete color system for ePaper devices. The framework now supports chromatic palettes, semantic color roles, and an extended grayscale scale, while shifting its internal architecture to CSS custom properties for cleaner, smaller stylesheets. Existing markup continues to work without changes.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "Most Important Upgrades") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Color support:</strong> v3 adds a complete color system with chromatic palettes, semantic color roles, and automatic adaptation to each device's supported palette and bit-depth.</li>
+            <li><strong>Architecture overhaul:</strong> the framework moves from a rules-based selector system to CSS custom properties, greatly reducing combinatorial mode rules while keeping existing class names stable.</li>
+            <li><strong>High-density support:</strong> framework rendering now supports high-density <code class="<%= framework_section_code_classes %>">1bit</code> and <code class="<%= framework_section_code_classes %>">2bit</code> output modes.</li>
+            <li><strong>Expanded 1bit grayscale:</strong> the usable <code class="<%= framework_section_code_classes %>">1bit</code> grayscale palette increases from 7 shades to 14.</li>
+            <li><strong>Raw / Preview simulation:</strong> Device Preview can compare full-bright tokens (Raw) against panel-accurate output that simulates true colors and white point.</li>
+            <% if current_docs_version == '3.1' %>
+              <li><strong>Text Scale:</strong> <%= render DocsRef.new(page: :text_scale) %> adjusts every framework font size and pixel line height without applying the same factor to interface geometry or text strokes.</li>
+              <li><strong>Fluid Mashups:</strong> <%= render DocsRef.new(page: :mashup) %> adds a three by three grid with column, row, and span modifiers for custom tilings.</li>
+            <% end %>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "What's New") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Chromatic utilities:</strong> <code class="<%= framework_section_code_classes %>">bg--red</code>, <code class="<%= framework_section_code_classes %>">bg--blue-40</code>, <code class="<%= framework_section_code_classes %>">text--green-60</code> and similar classes for all 10 hues and 14 steps.</li>
+            <li><strong>Semantic colors:</strong> <code class="<%= framework_section_code_classes %>">bg--primary</code>, <code class="<%= framework_section_code_classes %>">text--success</code>, <code class="<%= framework_section_code_classes %>">label--error</code>, <code class="<%= framework_section_code_classes %>">bg--warning</code> - intent-based styling that maps to underlying hues.</li>
+            <li><strong>Colors reference:</strong> new <%= render DocsRef.new(page: :colors) %> page documenting the full grayscale, chromatic, and semantic palette.</li>
+            <li><strong>Label color variants:</strong> <%= render DocsRef.new(page: :label) %> gains <code class="<%= framework_section_code_classes %>">label--primary</code>, <code class="<%= framework_section_code_classes %>">label--success</code>, <code class="<%= framework_section_code_classes %>">label--error</code>, and <code class="<%= framework_section_code_classes %>">label--warning</code> for colored badges.</li>
+            <li><strong>Closest-hue mapping:</strong> when a selected device cannot render a requested color directly, framework tokens map to the nearest supported hue automatically.</li>
+            <li><strong>Color pattern images:</strong> auto-generated dither patterns for limited-palette devices in <code class="<%= framework_section_code_classes %>">public/images/color-*/</code>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "What's Enhanced") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Background utility:</strong> <%= render DocsRef.new(page: :background) %> refactored to reference CSS custom properties. Now supports grayscale, chromatic, and semantic tokens in a single class, including high-density <code class="<%= framework_section_code_classes %>">1bit</code> and <code class="<%= framework_section_code_classes %>">2bit</code> rendering modes.</li>
+            <li><strong>Text utility:</strong> <%= render DocsRef.new(page: :text) %> follows the same CSS variable pattern, supporting chromatic and semantic text colors alongside grayscale.</li>
+            <li><strong>Border and Outline:</strong> <%= render DocsRef.new(page: :border) %> and <%= render DocsRef.new(page: :outline) %> use shared mixins for DRY, consistent rendering across bit-depths and color palettes, including high-density <code class="<%= framework_section_code_classes %>">1bit</code> and <code class="<%= framework_section_code_classes %>">2bit</code> modes.</li>
+            <li><strong>Dark mode:</strong> grayscale tokens invert automatically; chromatic hues stay stable while their lightness steps mirror (light to dark).</li>
+            <li><strong>Progress component:</strong> <%= render DocsRef.new(page: :progress) %> updated to render with color palette awareness.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "What's Changed") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Grayscale scale:</strong> the primary naming convention is now <code class="<%= framework_section_code_classes %>">gray-10</code> through <code class="<%= framework_section_code_classes %>">gray-75</code> (14 steps of 5). In <code class="<%= framework_section_code_classes %>">1bit</code>, the usable grayscale palette expands from 7 shades to 14. The legacy names <code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code> remain functional but are deprecated.</li>
+            <li><strong>Rendering model:</strong> mode-dependent styling (bit-depth, dark mode, palette) is driven by CSS custom properties on <code class="<%= framework_section_code_classes %>">.screen</code> rather than combinatorial selector rules. This is an internal change - existing class names are unaffected.</li>
+            <% if current_docs_version != '3.0' %>
+              <li><strong>Default font bundle:</strong> Framework 3.1 uses the TRMNL bundle from <%= render DocsRef.new(page: :font_family) %> by default on low-density displays. Add <code class="<%= framework_section_code_classes %>">screen--fonts-classic</code> to keep the 3.0 Classic typography.</li>
+            <% end %>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Start Here') %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li>Upgrading from v2? → <%= render DocsRef.new(page: :v3_upgrade_guide) %>.</li>
+            <li>Looking to use colors and the new palette system? → <%= render DocsRef.new(page: :v3_enhancement_guide) %>.</li>
+            <li>New to the framework? Start with the <%= render DocsRef.new(page: :colors) %> reference page.</li>
+          </ul>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

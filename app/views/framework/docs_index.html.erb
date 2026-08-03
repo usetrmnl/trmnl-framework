@@ -1,0 +1,64 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <div class="my-4">
+      <%= render 'shared/heading', title: 'Documentation' %>
+    </div>
+  </div>
+
+  <div class="<%= layout_single_col_classes %>">
+    <% groups = framework_nav_groups %>
+    <div class="space-y-12">
+      <% if groups[:guides] %>
+        <div>
+          <%= render FrameworkDocsSectionComponent.new(group: :guides, pages: groups[:guides], description: framework_docs_group_descriptions[:guides], variant: :regular, split_header: true) %>
+        </div>
+      <% end %>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <% if groups[:foundation] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :foundation, pages: groups[:foundation], description: framework_docs_group_descriptions[:foundation], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:typography] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :typography, pages: groups[:typography], description: framework_docs_group_descriptions[:typography], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:arrangement] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :arrangement, pages: groups[:arrangement], description: framework_docs_group_descriptions[:arrangement], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:responsive_utilities] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :responsive_utilities, pages: groups[:responsive_utilities], description: framework_docs_group_descriptions[:responsive_utilities], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:styling] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :styling, pages: groups[:styling], description: framework_docs_group_descriptions[:styling], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:runtime] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :runtime, pages: groups[:runtime], description: framework_docs_group_descriptions[:runtime], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:paint] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :paint, pages: groups[:paint], description: framework_docs_group_descriptions[:paint], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:sass] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :sass, pages: groups[:sass], description: framework_docs_group_descriptions[:sass], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:themes] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :themes, pages: groups[:themes], description: framework_docs_group_descriptions[:themes], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:variables] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :variables, pages: groups[:variables], description: framework_docs_group_descriptions[:variables], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:modulations] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :modulations, pages: groups[:modulations], description: framework_docs_group_descriptions[:modulations], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:elements] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :elements, pages: groups[:elements], description: framework_docs_group_descriptions[:elements], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+        <% if groups[:components] %>
+          <%= render FrameworkDocsSectionComponent.new(group: :components, pages: groups[:components], description: framework_docs_group_descriptions[:components], variant: :compact, compact_grid_cols: 4) %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+// ensures all Framework docs load as intended, with terminalize() being invoked
+Array.from(document.querySelectorAll('[href*="/framework/"]')).forEach(docs => { docs.dataset.turbo = false; })
+</script>

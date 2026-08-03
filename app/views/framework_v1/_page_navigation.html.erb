@@ -1,0 +1,63 @@
+<div class="space-y-4">
+  <div class="flex flex-col gap-4 md:flex-row justify-between items-stretch">
+    <div class="w-full order-2 md:order-none flex-1">
+      <% if previous_page %>
+        <%= link_to framework_page_path(previous_page, version: '1.2'), class: "w-full flex flex-col items-start space-y-4 text-gray-700 dark:text-gray-200 rounded-xl bg-gray-200 dark:bg-gray-700 p-4 hover:bg-gray-300 dark:hover:bg-gray-650 group transition duration-150 ease-in-out h-full" do %>
+          <div class="w-full flex gap-3 h-full">
+            <div class="flex items-center self-stretch">
+              <%= page_icon(previous_page, "w-12 h-12 text-gray-600 dark:text-gray-400 flex-shrink-0") %>
+            </div>
+            <div class="w-full flex flex-col h-full space-y-1">
+              <p class="leading-none text-lg font-regular"><%= previous_page.titleize %></p>
+              <p class="text-sm text-gray-550 dark:text-gray-500 flex-grow"><%= page_description(previous_page) %></p>
+            </div>
+          </div>
+          <span class="font-medium rounded-lg text-xs px-2 py-1 inline-flex items-center transition duration-150 justify-center shrink-0 gap-1.5 whitespace-nowrap text-gray-550 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 focus:outline-none">
+            <%= render 'shared/icons/arrow_left' %>
+            Previous
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="w-full order-1 md:order-none flex-1">
+      <% if next_page %>
+        <%= link_to framework_page_path(next_page, version: '1.2'), class: "w-full flex flex-col items-end space-y-4 text-gray-700 dark:text-gray-200 rounded-xl bg-gray-200 dark:bg-gray-700 p-4 hover:bg-gray-300 dark:hover:bg-gray-650 group transition duration-150 ease-in-out h-full" do %>
+          <div class="w-full flex gap-3 h-full">
+            <div class="flex items-center self-stretch">
+              <%= page_icon(next_page, "w-12 h-12 text-gray-600 dark:text-gray-400 flex-shrink-0") %>
+            </div>
+            <div class="w-full flex flex-col h-full space-y-1">
+              <p class="leading-none text-lg font-regular"><%= next_page.titleize %></p>
+              <p class="text-sm text-gray-550 dark:text-gray-500 flex-grow"><%= page_description(next_page) %></p>
+            </div>
+          </div>
+          <span class="font-medium rounded-lg text-xs px-2 py-1 inline-flex items-center transition duration-150 justify-center shrink-0 gap-1.5 whitespace-nowrap text-gray-550 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 focus:outline-none">
+            Next
+            <%= render 'shared/icons/arrow_right' %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="w-full md:w-auto order-3 md:order-none">
+    <%= link_to framework_docs_index_path(version: '1.2'), class: "flex items-center text-gray-700 dark:text-gray-200 rounded-xl bg-gray-200 dark:bg-gray-700 p-2.5 hover:bg-gray-300 dark:hover:bg-gray-650 group transition duration-150 ease-in-out" do %>
+      <div class="w-full flex items-center justify-center">
+        <span class="font-medium rounded-lg text-xs px-2 py-1 inline-flex items-center transition duration-150 justify-center shrink-0 gap-1.5 whitespace-nowrap text-gray-550 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 focus:outline-none">
+          <div class="flex-shrink-0 items-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          Framework Index
+        </span>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+// ensures all Framework docs load as intended, with terminalize() being invoked
+Array.from(document.querySelectorAll('[href*="/framework/"]')).forEach(docs => { docs.dataset.turbo = false; })
+</script>

@@ -1,0 +1,64 @@
+// ============================================
+// TRMNL Framework - Shadow Text Stroke
+// ============================================
+// Replacement for native text stroke using concentric text-shadow rings so
+// clipped semantic text fills remain visible and WebKit (which ignores
+// paint-order for text) cannot overpaint fills with the stroke. Keep this as a
+// text paint operation: long filter: drop-shadow() chains can exhaust Chrome's
+// GPU shared memory when several framework screens render on one page.
+
+@use 'sass:list';
+@use 'sass:string';
+@use 'utilities' as utilities;
+
+@function _shadow-stroke-layer($radius-scale, $x, $y) {
+    $scaled-x: $radius-scale * $x;
+    $scaled-y: $radius-scale * $y;
+
+    @return string.unquote("calc(var(--tn-shadow-stroke-radius) * #{$scaled-x}) calc(var(--tn-shadow-stroke-radius) * #{$scaled-y}) 0 var(--tn-shadow-stroke-color)");
+}
+
+@function _shadow-stroke-text-shadow-stack() {
+    // Outer ring: full radius on the axes + diagonals (dominates the silhouette;
+    // pixel-font edges are mostly axis-aligned).
+    $outer-directions: (
+        (1 0), (0.7071 0.7071), (0 1), (-0.7071 0.7071),
+        (-1 0), (-0.7071 -0.7071), (0 -1), (0.7071 -0.7071)
+    );
+    // Inner ring: 0.55x radius, rotated 22.5deg. Fills thin-stem gaps and
+    // staggers the angular sampling of the two rings. 16 layers total.
+    $inner-directions: (
+        (0.9239 0.3827), (0.3827 0.9239), (-0.3827 0.9239), (-0.9239 0.3827),
+        (-0.9239 -0.3827), (-0.3827 -0.9239), (0.3827 -0.9239), (0.9239 -0.3827)
+    );
+    $layers: ();
+
+    @each $direction in $inner-directions {
+        $layers: list.append($layers, _shadow-stroke-layer(0.55, list.nth($direction, 1), list.nth($direction, 2)), $separator: comma);
+    }
+    @each $direction in $outer-directions {
+        $layers: list.append($layers, _shadow-stroke-layer(1, list.nth($direction, 1), list.nth($direction, 2)), $separator: comma);
+    }
+
+    @return $layers;
+}
+
+@mixin shadow-text-stroke(
+    $width: 3.5px,
+    $color: var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)),
+    // Native strokes were center-aligned (half the width painted outside the
+    // glyph), so visual parity needs radius = width/2.
+    $radius: clamp(0.85px, calc(#{$width} * 0.5), 3.75px)
+) {
+    // Radius can be tuned per utility size via CSS vars to better match
+    // native stroke progression while reusing one rendering algorithm.
+    --tn-shadow-stroke-width: #{$width};
+    --tn-shadow-stroke-radius: #{$radius};
+    --tn-shadow-stroke-color: #{$color};
+    // The rings are a text paint, so this clears any filter the element carries
+    // from a sibling utility. Written through the shared channel it still
+    // resolves to `none` on its own, and `invert text-stroke` keeps inverting.
+    @include utilities.filter-from-vars;
+    text-shadow: _shadow-stroke-text-shadow-stack();
+    overflow: visible;
+}

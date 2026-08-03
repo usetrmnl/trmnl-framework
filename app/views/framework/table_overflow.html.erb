@@ -1,0 +1,165 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :table_overflow %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:table_overflow) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic usage') %>
+          <p class="<%= framework_section_description_classes %>">To enable table overflow handling, add <code class="<%= framework_section_code_classes %>">data-table-limit="true"</code> to your <code class="<%= framework_section_code_classes %>">&lt;table&gt;</code> <%= render DocsRef.new(page: :table) %>. Control the maximum height with <code class="<%= framework_section_code_classes %>">data-table-max-height</code> using a pixel value (for example, <code class="<%= framework_section_code_classes %>">240</code>) or set <code class="<%= framework_section_code_classes %>">auto</code> to inherit from the parent container. When rows exceed the available height, a trailing "and X more" row is added automatically.</p>
+          <div class="<%= framework_docs_table_wrapper_classes %>">
+            <div class="<%= framework_docs_table_card_classes %>">
+              <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Attribute</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Default</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Description</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">data-table-limit="true"</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">-</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Enable overflow handling and trailing "and X more" row</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">data-table-max-height</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">auto</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Maximum table height (px). Use <code class="<%= framework_section_code_classes %>">auto</code> to inherit from parent</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <code class="text-sm font-mono text-syntax-string">data-table-overflow-counter</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">true</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Set to <code class="<%= framework_section_code_classes %>">false</code> to hide the "and X more" counter row while still clipping overflow rows</td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<table class="table" data-table-limit="true" data-table-max-height="auto">...</table>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Table Overflow') %>
+          <p class="<%= framework_section_description_classes %>">A regular-sized table demonstrating the overflow behavior within a fixed height budget.</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(condensed: false, size: nil, attrs: { 'data-table-limit': 'true' }) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Table Overflow</span>
+                      <span class="instance">Regular • Auto height</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(condensed: false)
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Small table overflow') %>
+          <p class="<%= framework_section_description_classes %>">When a table uses <code class="<%= framework_section_code_classes %>">table--small</code> or <code class="<%= framework_section_code_classes %>">table--xsmall</code>, the "and X more" counter row automatically scales to match using a smaller label style.</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(condensed: false, size: :small, attrs: { 'data-table-limit': 'true' }) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Table Overflow</span>
+                      <span class="instance">Small • Auto height</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(size: :small)
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Hidden counter') %>
+          <p class="<%= framework_section_description_classes %>">Use <code class="<%= framework_section_code_classes %>">data-table-overflow-counter="false"</code> to clip the table at its height budget without showing the "and X more" row. The legacy <code class="<%= framework_section_code_classes %>">table-overflow-counter</code> attribute still works for existing plugins, but the <code class="<%= framework_section_code_classes %>">data-</code> prefixed form is valid HTML and preferred.</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(condensed: false, size: nil, attrs: { 'data-table-limit': 'true', 'data-table-overflow-counter': 'false' }) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Table Overflow</span>
+                      <span class="instance">Regular • Counter hidden</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(condensed: false).sub('data-table-limit="true"', 'data-table-limit="true" data-table-overflow-counter="false"')
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>
+
+

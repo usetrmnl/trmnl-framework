@@ -1,0 +1,150 @@
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f1f5f9;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #0f172a;
+  }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .subtitle { color: #475569; font-size: 13px; margin-bottom: 24px; line-height: 1.5; }
+
+  .bundle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  .bundle-col { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
+  .bundle-title { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
+  .bundle-title h2 { font-size: 16px; font-weight: 700; }
+  .bundle-title code { font-size: 11px; color: #64748b; font-family: "SF Mono", monospace; }
+
+  .scenario-label { font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.6px; color: #64748b; margin: 0 0 8px; }
+
+  .screen-frame { display: flex; justify-content: center; padding: 16px;
+    background: #f8fafc; border-radius: 8px; margin-bottom: 16px; }
+
+  .legend { font-size: 12px; color: #475569; line-height: 1.6; margin-bottom: 24px;
+    padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+  .legend code { font-family: "SF Mono", monospace; font-size: 11px;
+    background: #fff; padding: 1px 6px; border-radius: 4px; border: 1px solid #e2e8f0; }
+</style>
+
+<%# "framework" was the bundle's pre-rename asset name; the build target is "plugins"
+    (this page 500s in core for the same reason). %>
+<%= stylesheet_link_tag "plugins", media: "all" %>
+
+<h1>Font Bundle Visual QA</h1>
+<p class="subtitle">
+  Each row renders the same Framework markup with the
+  <code>screen--fonts-classic</code> bundle on the left and
+  <code>screen--fonts-trmnl</code> bundle on the right. High-density rows add
+  <code>screen--density-2x</code> to verify those bundle classes resolve to
+  Inter instead. Use this page to spot visual regressions when changing the
+  per-bundle font variables.
+</p>
+
+<div class="legend">
+  Low-density rows mount the same DOM at <code>2bit</code>. High-density rows
+  mount it at <code>4bit</code> with <code>screen--density-2x</code>. Compare
+  line-heights, weight rendering, descender/ascender positioning, and pixel
+  snapping across both rows.
+</div>
+
+<%
+  bundles = [
+    { id: 'classic', label: 'Classic',  class_name: 'screen--fonts-classic' },
+    { id: 'trmnl',   label: 'TRMNL',    class_name: 'screen--fonts-trmnl' }
+  ]
+
+  scenarios = [
+    {
+      label: 'Title bar + title + label',
+      body: ->(bundle_label) {
+        <<~HTML.html_safe
+          <div class="view view--full">
+            <div class="title_bar">
+              <span class="title">#{bundle_label} bundle</span>
+              <span class="instance">title_bar default</span>
+            </div>
+            <div class="layout layout--col gap--medium">
+              <span class="title">Title (default size)</span>
+              <span class="title title--small">Title (small)</span>
+              <span class="label">Label (default)</span>
+              <span class="label label--small">Label (small)</span>
+              <span class="label label--large">Label (large)</span>
+            </div>
+          </div>
+        HTML
+      }
+    },
+    {
+      label: 'Description + value + rich text',
+      body: ->(_bundle_label) {
+        <<~HTML.html_safe
+          <div class="view view--full">
+            <div class="layout layout--col gap--medium">
+              <span class="description">Description default 12px-equivalent line of body copy</span>
+              <span class="description description--large">Description large 16px-equivalent line of copy</span>
+              <span class="value value--xxsmall">value xxsmall</span>
+              <span class="value">value default</span>
+              <p class="richtext">Rich text default. The quick brown fox jumps over the lazy dog.</p>
+              <p class="richtext richtext--small">Rich text small. The quick brown fox jumps over the lazy dog.</p>
+              <p class="richtext richtext--large">Rich text large.</p>
+            </div>
+          </div>
+        HTML
+      }
+    },
+    {
+      label: 'text--{size} utilities (regular + bold)',
+      body: ->(_bundle_label) {
+        <<~HTML.html_safe
+          <div class="view view--full">
+            <div class="layout layout--col gap--small">
+              <span class="text--small">text--small regular</span>
+              <span class="text--small font--bold">text--small bold</span>
+              <span class="text--base">text--base regular</span>
+              <span class="text--base font--bold">text--base bold</span>
+              <span class="text--large">text--large regular</span>
+              <span class="text--large font--bold">text--large bold</span>
+            </div>
+          </div>
+        HTML
+      }
+    }
+  ]
+%>
+
+<% scenarios.each do |scenario| %>
+  <h3 class="scenario-label"><%= scenario[:label] %></h3>
+  <div class="bundle-row">
+    <% bundles.each do |bundle| %>
+      <div class="bundle-col">
+        <div class="bundle-title">
+          <h2><%= bundle[:label] %></h2>
+          <code><%= bundle[:class_name] %></code>
+        </div>
+        <div class="screen-frame">
+          <div class="screen screen--md screen--2bit <%= bundle[:class_name] %>">
+            <%= scenario[:body].call(bundle[:label]) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <h3 class="scenario-label"><%= scenario[:label] %> &middot; high-density override</h3>
+  <div class="bundle-row">
+    <% bundles.each do |bundle| %>
+      <div class="bundle-col">
+        <div class="bundle-title">
+          <h2><%= bundle[:label] %></h2>
+          <code><%= bundle[:class_name] %> screen--density-2x</code>
+        </div>
+        <div class="screen-frame">
+          <div class="screen screen--md screen--4bit screen--density-2x <%= bundle[:class_name] %>">
+            <%= scenario[:body].call("#{bundle[:label]} high-density") %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

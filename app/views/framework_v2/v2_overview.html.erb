@@ -1,0 +1,73 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :v2_overview %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="<%= framework_section_description_classes %>">
+      Welcome to Framework v2 - the first open-source ePaper adaptive front-end framework. This release introduces support for multiple devices, orientations, and bit-depths, while making layouts and utilities smarter and more automatic. The overview highlights the key improvements, new features, and breaking changes, and points you to detailed guides for upgrading and getting the most out of v2.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Highlights') %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Adaptive in Context:</strong> the framework automatically adapts to the current bit-depth, size, and orientation. Layouts adjust with automatic enhancement on richer devices and graceful degradation on limited ones.</li>
+            <li><strong>Expanded palette:</strong> from 1-bit (2 shades) to 4-bit (16 shades).</li>
+            <li><strong>Dynamic Engines:</strong> engines like <%= render DocsRef.new(page: :overflow) %> and <%= render DocsRef.new(page: :clamp) %> are now smart enough to calculate available space themselves. No more hard-coded pixel values required.</li>
+            <li><strong>Backwards compatibility:</strong> existing code continues to work, enhancing automatically when displayed on more capable devices.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "What's New") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>New utilities:</strong> <%= render DocsRef.new(page: :scale) %>, <%= render DocsRef.new(page: :visibility) %>, <%= render DocsRef.new(page: :aspect_ratio) %>, <%= render DocsRef.new(page: :rounded) %>.</li>
+            <li><strong>New element:</strong> <%= render DocsRef.new(page: :divider) %>.</li>
+            <li><strong>New component:</strong> <%= render DocsRef.new(page: :progress) %> bar.</li>
+            <li><strong>Table overflow engine:</strong> <%= render DocsRef.new(page: :table_overflow) %> - new engine for tables, automatically handling row overflows and adding an “and X more” row.</li>
+            <li><strong>Extended utilities:</strong> <%= render DocsRef.new(page: :text) %>, <%= render DocsRef.new(page: :border) %>, and <%= render DocsRef.new(page: :background) %> are now adaptive across bit-depths and contexts.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "What's Enhanced") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Clamp engine:</strong> <%= render DocsRef.new(page: :clamp) %> rebuilt as a true JavaScript DOM engine, integrated with other engines like <%= render DocsRef.new(page: :overflow) %>.</li>
+            <li><strong>Overflow engine:</strong> <%= render DocsRef.new(page: :overflow) %> adds smarter features like smart columns, clamp-aware distribution, group headers, and harmonious group columns.</li>
+            <li><strong>Content limiter engine:</strong> <%= render DocsRef.new(page: :content_limiter) %> enhanced to drop fixed values and calculate available space dynamically.</li>
+            <li><strong>Item component:</strong> <%= render DocsRef.new(page: :item) %> adds new meta-emphasis classes to emphasise items.</li>
+            <li><strong>Table component:</strong> <%= render DocsRef.new(page: :table) %> adds new style variants, including small tables, large tables, and index tables.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, "What's Changed") %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li><strong>Border utility:</strong> <%= render DocsRef.new(page: :border) %> expanded from 1-bit only → now works across 1, 2, and 4-bit spaces. Requires new class names.</li>
+            <li><strong>Clamping:</strong> <%= render DocsRef.new(page: :title) %>, <%= render DocsRef.new(page: :label) %>, and <%= render DocsRef.new(page: :description) %> are now unclamped by default. Developers must explicitly clamp if needed.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Start Here') %>
+          <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
+            <li>Upgrading from v1? → <%= render DocsRef.new(page: :upgrade_guide) %>.</li>
+            <li>Looking to take advantage of new features? → <%= render DocsRef.new(page: :enhancement_guide) %>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,119 @@
+// ============================================
+// TRMNL Framework - Gap Utilities
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../config/tokens' as vars;
+@use 'sass:map';
+@use '../mixins/factorized_utilities' as fz;
+
+// A container's own default gap, published by the container so the rollback
+// below can land on it. Registered so it does not inherit: a `gap--8` typo on a
+// child of a `.flex` has to revert its layer, not pick up the parent's default.
+// `syntax: "*"` with no initial value leaves it guaranteed-invalid when unset,
+// which is what makes the var() fallback fire.
+@property --tn-gap-default {
+    syntax: "*";
+    inherits: false;
+}
+
+$gap-variants: (
+    '': var(--gap),
+    '--base': var(--gap),
+    '--xsmall': var(--gap-xsmall),
+    '--small': var(--gap-small),
+    '--medium': var(--gap-medium),
+    '--large': var(--gap-large),
+    '--xlarge': var(--gap-xlarge),
+    '--xxlarge': var(--gap-xxlarge),
+    '--none': 0px
+);
+
+@include mixins.trmnl-namespace {
+    @include fz.each-size-orientation-gate using ($prefix, $screen-selectors) {
+        @each $modifier, $value in $gap-variants {
+            @include fz.bind-token-vars-scoped(
+                '#{$prefix}gap#{$modifier}',
+                ('--tn-gap': $value),
+                $screen-selectors
+            );
+        }
+        @include fz.bind-token-vars-scoped(
+            '#{$prefix}gap--auto',
+            ('--tn-gap': 0px),
+            $screen-selectors
+        );
+        @include fz.bind-token-vars-scoped(
+            '#{$prefix}gap--distribute',
+            ('--tn-gap': 0px),
+            $screen-selectors
+        );
+        @include fz.bind-token-vars-scoped(
+            '#{$prefix}gap--space-between',
+            ('--tn-gap': 0px),
+            $screen-selectors
+        );
+        // The selector matches the whole `gap--` namespace, so it also catches
+        // a token this file never bound: a typo (`gap--8`), an arbitrary value
+        // past the loop below (`gap--[60px]`), or a prefixed arbitrary gap the
+        // family does not publish (`md:gap--[25px]`). Without the fallback the
+        // declaration lands with a guaranteed-invalid var and resolves to the
+        // property's initial value, so a misspelled class actively erased the
+        // gap a lower layer had set. `revert-layer` makes the unbound case
+        // inert instead: tn--utilities steps aside and the layer underneath
+        // keeps its value. A bound token still resolves and still wins.
+        //
+        // The rollback is per layer, not per rule, so a container that declares
+        // its own default gap in this same layer (`.flex`, `.grid`) would be
+        // rolled back with it. --tn-gap-default is how those containers hand
+        // that default over, so `class="flex gap--8"` keeps the gap a bare
+        // `.flex` has instead of landing on `normal`. A default from an earlier
+        // layer (`.layout` in tn--base, `.item` in tn--components) survives the
+        // rollback on its own and sets nothing here.
+        @include fz.emit-class-apply(
+            fz.prefixed-class-selectors('gap--', $prefix, 'gap'),
+            $screen-selectors
+        ) {
+            gap: var(--tn-gap, var(--tn-gap-default, revert-layer));
+        }
+    }
+
+    // Arbitrary gaps carry no variants. The Gap docs say so in three places and
+    // the sibling `rounded--[Npx]` loop has always emitted that way; only this
+    // loop sat inside the gate mixin above, where it picked up all twelve size
+    // and orientation gates and published 561 rules no reader could find from
+    // the docs. A responsive gap comes from the token scale (`md:gap--large`),
+    // and an exact pixel value is a base-only escape hatch.
+    @for $i from 0 through 50 {
+        @include fz.bind-token-vars(
+            'gap--[#{$i}px]',
+            ('--tn-gap': vars.content-scaled($i * 1px))
+        );
+    }
+
+    // Auto distribution utility (even spacing at edges and between)
+    .gap--auto {
+        @include responsive.with-size-and-orientation-variants {
+            gap: 0px;
+            justify-content: space-evenly;
+        }
+    }
+    
+    // Distribute utility (first item at start, last at end, space between)
+    .gap--distribute {
+        @include responsive.with-size-and-orientation-variants {
+            gap: 0px;
+            justify-content: space-between;
+        }
+    }
+    
+    // Keep legacy .gap--space-between as space-evenly for compatibility (original behavior)
+    .gap--space-between {
+        @include responsive.with-size-and-orientation-variants {
+            gap: 0px;
+            justify-content: space-evenly;
+        }
+    }
+    
+} 

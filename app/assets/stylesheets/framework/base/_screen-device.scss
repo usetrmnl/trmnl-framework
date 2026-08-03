@@ -1,0 +1,93 @@
+// ============================================
+// TRMNL Framework - Screen Component Device Overrides
+// ============================================
+// Dark-mode background overrides for components are no longer needed here.
+// Background rendering adapts automatically via --bg-* mode variables
+// defined in _screen-mode-vars.scss.
+
+@use '../mixins' as mixins;
+@use '../config/tokens' as vars;
+
+@include mixins.trmnl-namespace {
+    // The rails that paint a 1px gray line as a clean solid take the surface
+    // and the solid frame. The limited palettes keep the 1-bit dotted frame:
+    // every token there dithers to fixed inks, so a solid border would dither
+    // too, and the dots are the intended 1-bit treatment for that rail.
+    // components/_progress-device.scss extends to color-full the same way.
+    @include mixins.for-screen-modifier('2bit', '4bit', 'color-full') {
+        .mashup .view--quadrant,
+        .mashup .view--half_vertical,
+        .mashup .view--half_horizontal,
+        .mashup .mashup-cell {
+            background-color: transparent;
+            z-index: -2;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: var(--framework-semantic-surface-bg-color, var(--framework-surface-bg));
+                background-image: var(--framework-semantic-surface-bg-image, none);
+                background-repeat: repeat;
+                background-size: var(--dither-bg-size, auto);
+                border-radius: vars.ui-scaled(7px);
+                z-index: -2;
+            }
+
+            &::after {
+                background: none;
+                border: 1px solid var(--framework-border-muted);
+                border-radius: vars.ui-scaled(7px);
+            }
+
+            .title_bar {
+                z-index: -1;
+            }
+        }
+
+        // Dynamic cell owns the surface + solid border; the inner view is a
+        // plain content holder, so drop its stacking offset and its pseudos.
+        .mashup .mashup-cell > .view {
+            z-index: auto;
+
+            &::before,
+            &::after {
+                display: none;
+            }
+
+            .title_bar {
+                z-index: auto;
+            }
+        }
+
+        &.screen--backdrop:has(> .mashup) {
+            background-color: var(--framework-semantic-backdrop-bg-color, var(--framework-backdrop-bg));
+            background-image: var(--framework-semantic-backdrop-bg-image, none);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+        }
+
+        &.screen--backdrop .mashup .view--quadrant,
+        &.screen--backdrop .mashup .view--half_vertical,
+        &.screen--backdrop .mashup .view--half_horizontal,
+        &.screen--backdrop .mashup .mashup-cell {
+            background-color: var(--framework-semantic-surface-bg-color, var(--framework-surface-bg));
+            background-image: var(--framework-semantic-surface-bg-image, none);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+            z-index: auto;
+
+            &::before,
+            &::after {
+                display: none;
+            }
+
+            .title_bar {
+                z-index: auto;
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+<% composition_modes = [
+  ['composition-1bit', 'screen--1bit'],
+  ['composition-1bit-dark', 'screen--1bit screen--dark-mode'],
+  ['composition-2bit', 'screen--2bit'],
+  ['composition-color-4bwry', 'screen--color-4bwry screen--preview-colors'],
+  ['composition-theme-black-yellow', 'screen--color-4bwry screen--preview-colors screen--theme-black-and-yellow'],
+  ['composition-theme-white-red', 'screen--color-4bwry screen--preview-colors screen--theme-white-and-red'],
+  ['composition-theme-dark', 'screen--color-4bwry screen--preview-colors screen--theme-dark'],
+  ['composition-theme-dark-1bit', 'screen--1bit screen--theme-dark']
+] %>
+
+<style>
+  .visual-composition-frame,
+  .visual-composition-screen {
+    width: 800px !important;
+    height: 480px !important;
+  }
+
+  .visual-composition-screen {
+    position: relative !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+</style>
+
+<main class="visual-page" data-visual-ready="true">
+  <% composition_modes.each do |visual_id, screen_classes| %>
+    <%= render 'framework_tests/visual/dashboard', visual_id:, screen_classes: %>
+  <% end %>
+</main>

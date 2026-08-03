@@ -1,0 +1,142 @@
+// ============================================
+// TRMNL Framework - Progress Component Device Overrides
+// ============================================
+// Background rendering adapts via --bg-* mode variables.
+// This file retains non-background device-specific overrides
+// (border styles, font weights, color palette specifics).
+
+@use '../mixins' as mixins;
+@use '../config/tokens' as vars;
+
+@include mixins.trmnl-namespace {
+    @include mixins.for-2bit {
+        .progress-bar {
+            .track {
+                border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
+                border-style: solid;
+                border-width: 1px;
+            }
+        }
+
+        .progress-dots {
+            .dot {
+                border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
+
+                &--filled {
+                    background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+                    background-image: var(--framework-semantic-fill-strong-bg-image, none);
+                }
+            }
+        }
+    }
+
+    @include mixins.for-4bit {
+        .progress-bar {
+            .track {
+                background-image: none;
+                border-radius: vars.ui-scaled(4px);
+                border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
+            }
+
+            &--xsmall .track {
+                border-radius: vars.ui-scaled(2px);
+            }
+
+            .fill {
+                background-image: none;
+            }
+        }
+        .progress-dots {
+            .dot {
+                background-image: none;
+                border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
+
+                &--filled {
+                    background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+                    background-image: var(--framework-semantic-fill-strong-bg-image, none);
+                }
+
+                &--current {
+                    background-image: none;
+                }
+            }
+        }
+    }
+
+    @include mixins.for-screen-modifier('2bit', '4bit') {
+        .progress-bar {
+            &--emphasis-3 {
+                .fill {
+                    background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+                    background-image: var(--framework-semantic-fill-strong-bg-image, none);
+                }
+            }
+        }
+
+        .progress-bar,
+        .progress-dots {
+            .label {
+                font-weight: var(--label-font-weight);
+                font-variation-settings: 'wght' var(--label-font-weight);
+            }
+
+            .value {
+                font-weight: var(--value-xxsmall-font-weight);
+                font-variation-settings: 'wght' var(--value-xxsmall-font-weight);
+            }
+        }
+    }
+
+    // Full-spectrum color palette variants
+    @include mixins.for-color-full {
+        .progress-bar {
+            .track {
+                background-color: var(--framework-slot-progress-track-bg-color, transparent);
+                background-image: var(--framework-slot-progress-track-bg-image, none);
+                border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
+            }
+
+            .fill {
+                background-color: var(--framework-slot-progress-fill-bg-color, transparent);
+                background-image: var(--framework-slot-progress-fill-bg-image, none);
+            }
+
+            &--emphasis-2 {
+                .fill {
+                    background-color: var(--framework-slot-progress-fill-emphasis-2-bg-color, transparent);
+                    background-image: var(--framework-slot-progress-fill-emphasis-2-bg-image, none);
+                }
+            }
+
+            &--emphasis-3 {
+                .fill {
+                    background-color: var(--framework-slot-progress-fill-emphasis-3-bg-color, transparent);
+                    background-image: var(--framework-slot-progress-fill-emphasis-3-bg-image, none);
+                }
+            }
+        }
+
+        .progress-dots {
+            .dot {
+                background-color: var(--framework-slot-progress-dot-bg-color, transparent);
+                background-image: var(--framework-slot-progress-dot-bg-image, none);
+                border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
+
+                &--filled {
+                    background-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+                    background-image: var(--framework-semantic-fill-strong-bg-image, none);
+                }
+
+                &--current {
+                    background-color: var(--framework-slot-progress-dot-current-bg-color, transparent);
+                    background-image: var(--framework-slot-progress-dot-current-bg-image, none);
+                }
+            }
+        }
+    }
+
+    // Limited color palettes need no override here: the base component already
+    // paints every track, fill and dot from --framework-slot-progress-*, and the
+    // palette rails in base/_screen-mode-vars.scss fill those slots with the
+    // palette's own ink for light, preview, dark and inverse alike.
+}

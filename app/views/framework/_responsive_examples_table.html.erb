@@ -1,0 +1,53 @@
+<%# The mixin half is styled by framework/responsive_test.css, which only the release a
+    track pins can supply. A track whose release predates the harness has no copy of it, so
+    the column is dropped rather than filled from a later release the page does not link. %>
+<% mixin_column = docs_responsive_test_css_url.present? %>
+<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+  <div class="overflow-x-auto">
+    <div class="grid" style="grid-template-columns: <%= mixin_column ? '1fr auto auto' : '1fr auto' %>">
+      <div class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap bg-gray-75 dark:bg-gray-800">Test Case</div>
+      <% if mixin_column %>
+        <div class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap bg-gray-75 dark:bg-gray-800">SCSS Mixin Result</div>
+      <% end %>
+      <div class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap bg-gray-75 dark:bg-gray-800">CSS Class Result</div>
+
+      <% (rows || []).each do |row| %>
+        <div class="px-6 py-4 whitespace-nowrap bg-gray-75 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 min-w-0">
+          <% if row[:test_case_html] %>
+            <%= row[:test_case_html].to_s.html_safe %>
+          <% else %>
+            <% if row[:class] %>
+              <div class="text-sm font-mono text-syntax-string"><%= row[:class] %></div>
+            <% end %>
+            <% if row[:mixin] %>
+              <div class="text-xs font-mono text-syntax-string mt-1"><%= row[:mixin] %></div>
+            <% end %>
+            <% if row[:description] %>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1"><%= row[:description] %></div>
+            <% end %>
+          <% end %>
+        </div>
+        <% if mixin_column %>
+          <div class="px-6 py-4 bg-gray-75 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-right">
+            <div class="inline-flex justify-end">
+              <div class="screen-container trmnl <%= framework_example_wrapper_classes %> <%= row[:mixin_container_class] %>">
+                <div class="screen">
+                  <%= row[:mixin_inner_html].to_s.html_safe %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <div class="px-6 py-4 bg-gray-75 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-right">
+          <div class="inline-flex justify-end">
+            <div class="screen-container trmnl <%= framework_example_wrapper_classes %> <%= row[:class_container_class] %>">
+              <div class="screen">
+                <%= row[:class_inner_html].to_s.html_safe %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

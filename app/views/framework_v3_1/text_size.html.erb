@@ -1,0 +1,181 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :text_size %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:text_size) %>
+
+    <div class="space-y-16">
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Size Utilities') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use <code class="<%= framework_section_code_classes %>">text--{size}</code> utility classes to set
+            font family, size, line-height, and smoothing in one declaration. Density decides which font family
+            the utility resolves to. On low-density displays, the three smallest sizes use the active pixel-font
+            bundle (Classic NicoPups/NicoClean/BlockKie or TRMNL TRMNL12/16/21). On high-density displays,
+            every text size uses Inter Variable regardless of bundle. Sizes from xlarge onward use Inter Variable
+            on every display, and so does every size when a Scale or Text Scale modifier other than Regular
+            is active, because pixel bundles only render correctly at their native sizes.
+          </p>
+          <% if current_docs_version == '3.1' %>
+            <p class="<%= framework_section_description_classes %>">
+              Text Size selects one typography role for an element. Use <%= render DocsRef.new(page: :text_scale) %> to adjust every typography role from the screen.
+            </p>
+          <% end %>
+        </div>
+
+        <%= render 'framework/high_density_font_notice' %>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Class</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Size</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Line-height</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Classic (low-density)</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">TRMNL (low-density)</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">High-density</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <%
+                  font_sizes = [
+                    { class_name: 'text--small',    size: '12px',  lh: '1',     classic: 'NicoPups @ 16px',  trmnl: 'TRMNL12',        hi: 'Inter Variable' },
+                    { class_name: 'text--base',     size: '16px',  lh: '1.25',  classic: 'NicoClean',         trmnl: 'TRMNL16',        hi: 'Inter Variable' },
+                    { class_name: 'text--large',    size: '21px',  lh: '1',     classic: 'BlockKie @ 26px',   trmnl: 'TRMNL21',        hi: 'Inter Variable' },
+                    { class_name: 'text--xlarge',   size: '26px',  lh: '29px',  classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' },
+                    { class_name: 'text--xxlarge',  size: '38px',  lh: '42px',  classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' },
+                    { class_name: 'text--xxxlarge', size: '58px',  lh: '70px',  classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' },
+                    { class_name: 'text--mega',     size: '74px',  lh: '86px',  classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' },
+                    { class_name: 'text--giga',     size: '96px',  lh: '108px', classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' },
+                    { class_name: 'text--tera',     size: '128px', lh: '128px', classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' },
+                    { class_name: 'text--peta',     size: '170px', lh: '180px', classic: 'Inter Variable',    trmnl: 'Inter Variable', hi: 'Inter Variable' }
+                  ]
+                %>
+                <% font_sizes.each do |fs| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <code class="text-sm font-mono text-syntax-string"><%= fs[:class_name] %></code>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><%= fs[:size] %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><%= fs[:lh] %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= fs[:classic] %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= fs[:trmnl] %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= fs[:hi] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <%
+          font_size_previews = [
+            { name: 'Small',    class_name: 'text--small' },
+            { name: 'Base',     class_name: 'text--base' },
+            { name: 'Large',    class_name: 'text--large' },
+            { name: 'XLarge',   class_name: 'text--xlarge' },
+            { name: 'XXLarge',  class_name: 'text--xxlarge' },
+            { name: 'XXXLarge', class_name: 'text--xxxlarge' }
+          ]
+        %>
+
+        <% font_size_previews.each do |preview| %>
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <%= framework_heading(4, preview[:name]) %>
+              <p class="<%= framework_subsection_description_classes %>">
+                The <code class="<%= framework_section_code_classes %>"><%= preview[:class_name] %></code> class.
+                Low-density previews show the active pixel-font bundle where that size supports it; high-density previews show Inter.
+              </p>
+            </div>
+
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--large">
+                        <span class="<%= preview[:class_name] %>">The quick brown fox jumps over the lazy dog</span>
+                        <span class="<%= preview[:class_name] %> font--bold">The quick brown fox jumps over the lazy dog</span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Text Size</span>
+                        <span class="instance"><%= preview[:name] %></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: "<span class=\"#{preview[:class_name]}\">Regular text</span>\n<span class=\"#{preview[:class_name]} font--bold\">Bold text</span>"
+              ) %>
+            </div>
+          </div>
+        <% end %>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive & bit-depth variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            All text size utilities support responsive, orientation, and bit-depth prefixes.
+            Combine them to fine-tune typography across screen sizes and display types.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Variant</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Example</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Description</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <% [
+                  ['Responsive',  'md:text--large',       'Apply at medium breakpoint and up'],
+                  ['Orientation', 'portrait:text--small', 'Apply in portrait orientation'],
+                  ['Bit-depth',   '4bit:text--xlarge',    'Apply on 4-bit displays only'],
+                  ['Combined',    'md:4bit:text--xxlarge', 'Apply at medium breakpoint on 4-bit displays']
+                ].each do |variant, example, description| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100"><%= variant %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <code class="text-sm font-mono text-syntax-string"><%= example %></code>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= description %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<span class="text--base md:text--large portrait:text--small">
+  Responsive text sizing
+</span>
+<span class="text--base 4bit:text--xlarge">
+  Larger on 4-bit displays
+</span>'
+          ) %>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

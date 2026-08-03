@@ -1,0 +1,262 @@
+<% variants = [
+  { classes: 'screen screen--og screen--landscape' },
+  { classes: 'screen screen--og screen--portrait' },
+  { classes: 'screen screen--v2 screen--4bit screen--lg screen--landscape' },
+  { classes: 'screen screen--v2 screen--4bit screen--lg screen--portrait' }
+] %>
+
+<%# Example 1: Overflow: single column (data-overflow-max-cols=1) %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Overflow: Max 1 Column (no clamp)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="1">
+            <div class="column">
+              <% overflow_demo_content[:extended_tasks].each do |task| %>
+                <%= render_task_item(task) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Overflow</span>
+          <span class="instance">No clamp, Max 1 Column</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Example 7: Overflow + Clamp: Mixed (Title 1 + Description 3), Max 2 Columns %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Overflow + Clamp: Mixed, Max 2 Columns (Title 1 + Description 3)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="2">
+            <div class="column">
+              <% overflow_demo_content[:extended_tasks].each do |task| %>
+                <%= render_task_item(task.merge(
+                  title_attributes: { 'data-clamp': '1' },
+                  description_attributes: { 'data-clamp': '3' }
+                )) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Overflow + Clamp</span>
+          <span class="instance">Title 1 + Description 3, Max 2 Columns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Overflow: Max 2 Columns (no clamp) %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Overflow: Max 2 Columns (no clamp)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="2">
+            <div class="column">
+              <% overflow_demo_content[:extended_tasks].each do |task| %>
+                <%= render_task_item(task) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Overflow</span>
+          <span class="instance">No clamp, Max 2 Columns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Example 2: Overflow + Clamp: up to 2 columns, clamp description to 3 lines %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Overflow: Max 3 Columns (no clamp)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="3">
+            <div class="column">
+              <% overflow_demo_content[:extended_tasks].each do |task| %>
+                <%= render_task_item(task) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Overflow</span>
+          <span class="instance">No clamp, Max 3 Columns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Example 3: Grouped Headings: multi-column with duplicate headers and no dangling headers %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Groups: Headings with spillover (no clamp)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="3">
+            <div class="column">
+              <% groups = overflow_grouped_from_extended_tasks %>
+              <%= render_group_header("Today") %>
+              <% groups[:today].each do |task| %>
+                <%= render_task_item(task) %>
+              <% end %>
+
+              <%= render_group_header("Tomorrow") %>
+              <% groups[:tomorrow].each do |task| %>
+                <%= render_task_item(task) %>
+              <% end %>
+
+              <%= render_group_header("This Week") %>
+              <% groups[:this_week].each do |task| %>
+                <%= render_task_item(task) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Groups</span>
+          <span class="instance">Duplicate spill headers, no dangling headers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Overflow + Clamp: up to 3 columns, clamp description to 2 lines %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Overflow + Clamp: Description, Max 3 Columns (Clamp 2 lines)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="3">
+            <div class="column">
+              <% overflow_demo_content[:extended_tasks].each do |task| %>
+                <%= render_task_item(task.merge(
+                  description_attributes: { 'data-clamp': '2' }
+                )) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Overflow + Clamp</span>
+          <span class="instance">Description clamp 2, Max 3 Columns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Example 5: Standalone Clamp: outside of .columns %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Clamp: Description (Standalone 1–4 lines)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="item">
+            <div class="content">
+              <span class="title title--small">Long description (1 lines)</span>
+              <span class="description" data-clamp="1">
+                This is a very long standalone description used to verify the clamp engine in isolation. It repeats concepts to guarantee overflow so truncation is visible and predictable across widths and fonts. The purpose is to be long enough to always require clamping. This is a very long standalone description used to verify the clamp engine in isolation. It repeats concepts to guarantee overflow so truncation is visible and predictable across widths and fonts. The purpose is to be long enough to always require clamping.
+              </span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content">
+              <span class="title title--small">Long description (2 lines)</span>
+              <span class="description" data-clamp="2">
+                This is a very long standalone description used to verify the clamp engine in isolation. It repeats concepts to guarantee overflow so truncation is visible and predictable across widths and fonts. The purpose is to be long enough to always require clamping. This is a very long standalone description used to verify the clamp engine in isolation. It repeats concepts to guarantee overflow so truncation is visible and predictable across widths and fonts. The purpose is to be long enough to always require clamping.
+              </span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content">
+              <span class="title title--small">Long description (3 lines)</span>
+              <span class="description" data-clamp="3">
+                Another extensive paragraph to ensure clamping works reliably over varying widths and fonts. It preserves original content in data-clamp-original, recalculates single-line height accurately, and trims by words before appending an ellipsis. The text is intentionally 3× longer to force clamping in all variants. Another extensive paragraph to ensure clamping works reliably over varying widths and fonts. It preserves original content in data-clamp-original, recalculates single-line height accurately, and trims by words before appending an ellipsis.
+              </span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content">
+              <span class="title title--small">Long description (4 lines)</span>
+              <span class="description" data-clamp="4">
+                This block validates four-line clamping. It contains sufficient length to exceed four lines in every screen variant, ensuring the engine truncates at the correct boundary with a word-based ellipsis. The goal is deterministic truncation regardless of column widths or device scale. This block validates four-line clamping. It contains sufficient length to exceed four lines in every screen variant, ensuring the engine truncates at the correct boundary with a word-based ellipsis. The goal is deterministic truncation regardless of column widths or device scale.
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Clamp</span>
+          <span class="instance">Standalone: Description 1–4 lines</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<%# Example 6: Title Clamp: Items with long titles, 1-line clamp %>
+<div style="font-size: 32px; font-weight: bold; margin: 30px 0;">Overflow + Clamp: Titles, Max 2 Columns (Clamp 1 line)</div>
+<% variants.each_with_index do |variant, idx| %>
+  <div class="example trmnl">
+    <div class="<%= variant[:classes] %>">
+      <div class="view view--full">
+        <div class="layout layout--col">
+          <div class="columns" data-overflow-max-cols="2">
+            <div class="column">
+              <% overflow_demo_content[:extended_tasks].each do |task| %>
+                <%= render_task_item(task.merge(title_attributes: { 'data-clamp': '1' })) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Plugin Icon" %>
+          <span class="title">Overflow + Clamp</span>
+          <span class="instance">Title clamp 1, Max 2 Columns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

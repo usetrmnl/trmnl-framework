@@ -1,0 +1,37 @@
+<%# Copy Page dropdown button.
+    Every item here reads the page's .md twin. `rake framework:generate_markdown`
+    writes those under the engine's own public/, they are gitignored, and neither
+    bin/setup nor bin/dev runs the task, so a fresh clone has none. The menu is
+    rendered only where the file the links point at exists; copy_page_controller
+    keeps its own 404 check as a backstop for a twin removed after render. %>
+<% markdown_twin = Framework.public_root.join("#{request.path.delete_prefix('/')}.md") %>
+<% if markdown_twin.file? %>
+<div class="relative" data-controller="copy-page">
+  <button data-action="click->copy-page#toggle"
+          class="<%= menubar_dropdown_trigger_classes(theme: :framework) %>">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+    </svg>
+    <span data-copy-page-target="buttonText">Copy page</span>
+    <%= menubar_dropdown_chevron %>
+  </button>
+
+  <div data-copy-page-target="dropdown"
+       class="right-0 w-48 <%= menubar_dropdown_menu_classes(theme: :framework) %>"
+       hidden>
+    <button data-action="click->copy-page#copyMarkdown"
+            class="text-left <%= menubar_dropdown_item_classes(active: false) %>">
+      Copy as Markdown
+    </button>
+    <a href="<%= request.path %>.md" target="_blank"
+       data-action="click->copy-page#viewMarkdown"
+       class="<%= menubar_dropdown_item_classes(active: false) %>">
+      View as Markdown
+    </a>
+    <button data-action="click->copy-page#copyLink"
+            class="text-left <%= menubar_dropdown_item_classes(active: false) %>">
+      Copy Markdown link
+    </button>
+  </div>
+</div>
+<% end %>

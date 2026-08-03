@@ -1,0 +1,172 @@
+@use '../mixins' as mixins;
+@use '../config/tokens' as vars;
+
+// ============================================
+// TRMNL Framework - Table Component
+// ============================================
+// Row borders use --border-{level}-{dir}-* CSS variables.
+// bit-depth, dark-mode, and palette adaptation is automatic.
+
+@mixin table-row-heights($thead-var, $tbody-var) {
+    thead tr { height: var($thead-var); }
+    tbody tr { height: var($tbody-var); }
+}
+
+// Row height is layout, so a table modifier takes size and orientation
+// variants but no bit-depth. The emitters need the class name spelled out:
+// the current selector is `.table`, not the modifier being varied.
+@mixin table-size-variants($class-name, $thead-var, $tbody-var) {
+    @include mixins.generate-responsive-variants($class-name) {
+        @include table-row-heights($thead-var, $tbody-var);
+    }
+    @include mixins.generate-orientation-variants($class-name) {
+        @include table-row-heights($thead-var, $tbody-var);
+    }
+    @include mixins.generate-responsive-orientation-variants($class-name) {
+        @include table-row-heights($thead-var, $tbody-var);
+    }
+}
+
+@include mixins.trmnl-namespace {
+    .table {
+        th,
+        td {
+            @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+        }
+
+        thead, tbody {
+            tr {
+                position: relative;
+                text-align: left;
+                background-repeat: repeat-x;
+                background-position: bottom left;
+                @include mixins.crisp-edges;
+            }
+        }
+
+        thead tr {
+            height: var(--table-thead-height);
+            background-color: var(--framework-slot-table-head-row-border-color, transparent);
+            background-image: var(--framework-slot-table-head-row-border-image, none);
+            background-repeat: repeat-x;
+            background-size: var(--framework-slot-table-head-row-border-size, auto);
+            background-position: bottom left;
+        }
+
+        tbody tr {
+            height: var(--table-tbody-height);
+            background-color: var(--framework-slot-table-body-row-border-color, transparent);
+            background-image: var(--framework-slot-table-body-row-border-image, none);
+            background-repeat: repeat-x;
+            background-size: var(--framework-slot-table-body-row-border-size, auto);
+            background-position: bottom left;
+        }
+
+        tbody tr:last-child {
+            background-image: none;
+        }
+
+        &.table--base {
+            thead tr { height: var(--table-thead-height); }
+            tbody tr { height: var(--table-tbody-height); }
+        }
+
+        &.table--large {
+            thead tr { height: var(--table-large-thead-height); }
+            tbody tr { height: var(--table-large-tbody-height); }
+        }
+
+        &.table--xlarge {
+            thead tr { height: var(--table-xlarge-thead-height); }
+            tbody tr { height: var(--table-xlarge-tbody-height); }
+        }
+
+        // Regular is the default (no modifier)
+        &.table--small {
+            thead tr { height: var(--table-small-thead-height); }
+            tbody tr { height: var(--table-small-tbody-height); }
+        }
+
+        &.table--xsmall {
+            thead tr { height: var(--table-xsmall-thead-height); }
+            tbody tr { height: var(--table-xsmall-tbody-height); }
+        }
+
+        &.table--condensed {
+            thead tr { height: var(--table-small-thead-height); }
+            tbody tr { height: var(--table-small-tbody-height); }
+        }
+
+        // Emit variants after all base modifiers so lg:* can override
+        // non-responsive classes like table--condensed when both are present.
+        @include table-size-variants('table--base', --table-thead-height, --table-tbody-height);
+        @include table-size-variants('table--large', --table-large-thead-height, --table-large-tbody-height);
+        @include table-size-variants('table--xlarge', --table-xlarge-thead-height, --table-xlarge-tbody-height);
+        @include table-size-variants('table--small', --table-small-thead-height, --table-small-tbody-height);
+        @include table-size-variants('table--xsmall', --table-xsmall-thead-height, --table-xsmall-tbody-height);
+        // Backward compatibility → small
+        @include table-size-variants('table--condensed', --table-small-thead-height, --table-small-tbody-height);
+
+        // Meta Index cell (opt-in via markup): mirrors Item component
+        thead tr {
+            th {
+                .meta {
+                    display: block;
+                    width: var(--item-meta-width);
+                }
+            }
+        }
+
+        tbody tr {
+            td {
+                position: relative;
+
+                .meta {
+                    display: block;
+                    width: var(--item-meta-width);
+                    background-color: var(--framework-slot-table-meta-bg-color, transparent);
+                    background-image: var(--framework-slot-table-meta-bg-image, none);
+                    @include mixins.dither-ready;
+                    border-radius: vars.ui-scaled(3px);
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+
+                    .index {
+                        @include mixins.shadow-text-stroke(vars.ui-scaled(3.5px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1.75px));
+                        @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+                        overflow: visible;
+                        font-family: var(--item-index-font-family);
+                        -webkit-font-smoothing: var(--item-index-font-smoothing);
+                        font-size: var(--item-index-font-size);
+                        line-height: var(--item-index-line-height);
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                }
+            }
+        }
+
+        &.table--indexed {
+            tbody tr {
+                td {
+                    .meta {
+                        top: vars.ui-scaled(4px);
+                        bottom: vars.ui-scaled(4px);
+                        left: 0;
+                        transform: none;
+                        margin: 0;
+                    }
+
+                    &:has(.meta) {
+                        padding-left: calc(var(--item-meta-width) + var(--gap-small));
+                    }
+                }
+            }
+        }
+    }
+}

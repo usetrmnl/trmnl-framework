@@ -1,0 +1,132 @@
+// ============================================
+// TRMNL Framework - Rich Text Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+
+// Shared content size styles (base uses --richtext-*; others use --richtext-<size>-*).
+// Used for both the low-specificity base rule and variant rules so variants win.
+@mixin _richtext-content-size-styles($size) {
+    @if $size == 'base' {
+        font-family: var(--richtext-font-family);
+        -webkit-font-smoothing: var(--richtext-font-smoothing);
+        font-size: var(--richtext-font-size);
+        font-weight: var(--richtext-font-weight);
+        line-height: var(--richtext-line-height);
+    } @else {
+        font-family: var(--richtext-#{$size}-font-family);
+        -webkit-font-smoothing: var(--richtext-#{$size}-font-smoothing);
+        font-size: var(--richtext-#{$size}-font-size);
+        font-weight: var(--richtext-#{$size}-font-weight);
+        line-height: var(--richtext-#{$size}-line-height);
+    }
+}
+
+@include mixins.trmnl-namespace {
+    .richtext {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &--left {
+            align-items: start;
+        }
+
+        &--center {
+            align-items: center;
+        }
+
+        &--right {
+            align-items: end;
+        }
+
+        .content {
+            max-height: 100%;
+            max-width: var(--richtext-content-max-width);
+            word-break: break-word;
+            @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+
+            display: flex;
+            flex-direction: column;
+
+            // Bare .trmnl .content* aliases are deprecated; removal deferred to 4.0, see docs/V4_BREAKING.md.
+            //
+            // This one has no modifier to match on, so it reached every .content
+            // on the page, including the Item component's own wrapper, which
+            // declares no typography of its own to win with. The guard keeps the
+            // alias off the elements another component owns; `:where()` keeps it
+            // at the weight the size aliases have to outrank.
+            @at-root .trmnl .content:where(:not(.item *)), .trmnl .richtext .content {
+                @include _richtext-content-size-styles('base');
+            }
+
+            &--left {
+                align-items: start;
+            }
+
+            &--center {
+                align-items: center;
+                text-align: center; // needed for centering on 4bit, where richtext content doesn't get split into multiple blocks
+            }
+
+            &--right {
+                align-items: end;
+            }
+
+            &--base {
+                @at-root .trmnl .content--base, .trmnl .richtext .content--base {
+                    @include _richtext-content-size-styles('base');
+                }
+                @include responsive.with-all-variants($include-base: false) {
+                    @include _richtext-content-size-styles('base');
+                }
+            }
+
+            &--small {
+                @at-root .trmnl .content--small, .trmnl .richtext .content--small {
+                    @include _richtext-content-size-styles('small');
+                }
+                @include responsive.with-all-variants($include-base: false) {
+                    @include _richtext-content-size-styles('small');
+                }
+            }
+
+            &--large {
+                @at-root .trmnl .content--large, .trmnl .richtext .content--large {
+                    @include _richtext-content-size-styles('large');
+                }
+                @include responsive.with-all-variants($include-base: false) {
+                    @include _richtext-content-size-styles('large');
+                }
+            }
+
+            &--xlarge {
+                @at-root .trmnl .content--xlarge, .trmnl .richtext .content--xlarge {
+                    @include _richtext-content-size-styles('xlarge');
+                }
+                @include responsive.with-all-variants($include-base: false) {
+                    @include _richtext-content-size-styles('xlarge');
+                }
+            }
+
+            &--xxlarge {
+                @at-root .trmnl .content--xxlarge, .trmnl .richtext .content--xxlarge {
+                    @include _richtext-content-size-styles('xxlarge');
+                }
+                @include responsive.with-all-variants($include-base: false) {
+                    @include _richtext-content-size-styles('xxlarge');
+                }
+            }
+
+            &--xxxlarge {
+                @at-root .trmnl .content--xxxlarge, .trmnl .richtext .content--xxxlarge {
+                    @include _richtext-content-size-styles('xxxlarge');
+                }
+                @include responsive.with-all-variants($include-base: false) {
+                    @include _richtext-content-size-styles('xxxlarge');
+                }
+            }
+        }
+    }
+}

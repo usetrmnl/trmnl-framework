@@ -1,0 +1,160 @@
+<!-- BEGIN app/views/plugins/weather/full.html.erb
+-->  <!-- BEGIN app/views/plugins/weather/_weatherapi_full.html.erb
+--><div class="view view--full">
+  <div class="layout layout--col gap--space-between">
+    <div class="grid grid--cols-6">
+      <div class="row row--center col--span-2 portrait:col--span-6 col--end">
+        <img class="image--adaptive w--[22cqw] h--auto portrait:w--auto portrait:h--[40cqh] lg:w--[28cqw] lg:h--[28cqw] lg:portrait:w--auto lg:portrait:h--[33cqh]" src="/images/plugins/weather/wi-day-sunny.svg" />
+      </div>
+      <div class="col col--span-2 portrait:col--span-3 col--end">
+        <div class="item grow">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xxxlarge lg:value--giga" data-fit-value="true">77°</span>
+            <span class="label">Temperature (<!-- BEGIN app/views/plugins/weather/_render_time.html.erb
+-->5:55 PM
+<!-- END app/views/plugins/weather/_render_time.html.erb -->)</span>
+          </div>
+        </div>
+      </div>
+      <div class="col col--span-2 portrait:col--span-3 col--end gap--medium">
+        <div class="item">
+          <div class="meta"></div>
+          <div class="icon">
+            <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="Temperature" src="/images/plugins/weather/wi-thermometer.svg" />
+          </div>
+          <div class="content">
+            <span class="value value--xsmall lg:value--large">80°</span>
+            <span class="label">Feels Like</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="icon">
+            <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="Humidity" src="/images/plugins/weather/wi-raindrops.svg" />
+          </div>
+          <div class="content">
+            <span class="value value--xsmall lg:value--large">45%</span>
+            <span class="label">Humidity</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="icon">
+            <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" src="/images/plugins/weather/wi-day-sunny.svg" />
+          </div>
+          <div class="content">
+            <span class="value value--xsmall lg:value--base">Sunny</span>
+            <span class="label">Right Now</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="grid">
+      <div class="col gap--large">
+          <div class="grid">
+            <div class="item col--span-3 grow">
+              <div class="meta"></div>
+              <div class="icon">
+                <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="Today weather condition" src="/images/plugins/weather/wi-day-cloudy.svg" />
+              </div>
+              <div class="content">
+                <span class="value value--xsmall lg:value--base">Partly cloudy</span>
+                <span class="label">Jul 9</span>
+              </div>
+            </div>
+
+            <div class="item col--span-3 grow">
+              <div class="meta"></div>
+              <div class="icon portrait:hidden">
+                <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="UV Index" src="/images/plugins/weather/wi-hot.svg" />
+              </div>
+              <div class="content">
+                <span class="value value--xsmall lg:value--base">High (8)</span>
+                <span class="label">UV</span>
+              </div>
+            </div>
+
+            <div class="row col--span-3 grow">
+              <div class="item">
+                <div class="meta"></div>
+                <div class="icon portrait:hidden">
+                  <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="Temperature" src="/images/plugins/weather/wi-thermometer.svg" />
+                </div>
+                <div class="content">
+                  <div class="flex flex--row gap--xlarge portrait:gap">
+                    <div class="content">
+                      <span class="value value--xsmall lg:value--base">70°</span>
+                      <span class="label">Low</span>
+                    </div>
+                    <div class="content">
+                      <span class="value value--xsmall lg:value--base">86°</span>
+                      <span class="label">High</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="item col--span-3 grow">
+              <div class="meta"></div>
+              <div class="icon">
+                <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="Tomorrow weather condition" src="/images/plugins/weather/wi-day-showers.svg" />
+              </div>
+              <div class="content">
+                <span class="value value--xsmall lg:value--base">Light Rain</span>
+                <span class="label">Jul 10</span>
+              </div>
+            </div>
+
+            <div class="item col--span-3 grow">
+              <div class="meta"></div>
+              <div class="icon portrait:hidden">
+                <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="UV Index" src="/images/plugins/weather/wi-hot.svg" />
+              </div>
+              <div class="content">
+                <span class="value value--xsmall lg:value--base">Moderate (5)</span>
+                <span class="label">UV</span>
+              </div>
+            </div>
+
+            <div class="row col--span-3 grow">
+              <div class="item">
+                <div class="meta"></div>
+                <div class="icon portrait:hidden">
+                  <img class="image--adaptive w--[6cqw] h--[6cqw] portrait:w--[10cqw] portrait:h--[10cqw]" alt="Temperature" src="/images/plugins/weather/wi-thermometer.svg" />
+                </div>
+                <div class="content">
+                  <div class="flex flex--row gap--xlarge portrait:gap">
+                    <div class="content">
+                      <span class="value value--xsmall lg:value--base">65°</span>
+                      <span class="label">Low</span>
+                    </div>
+                    <div class="content">
+                      <span class="value value--xsmall lg:value--base">79°</span>
+                      <span class="label">High</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image image--adaptive" alt="" src="/images/plugins/weather--render.svg" />
+    <h1 class="title">Weather</h1>
+    <span class="instance">Las Vegas</span>
+  </div>
+</div>
+
+<!-- BEGIN app/views/plugins/weather/_common.html.erb
+--><!-- END app/views/plugins/weather/_common.html.erb -->
+<!-- END app/views/plugins/weather/_weatherapi_full.html.erb -->
+<!-- END app/views/plugins/weather/full.html.erb -->

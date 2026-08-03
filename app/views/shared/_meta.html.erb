@@ -1,0 +1,33 @@
+<%# Simplified from core (no metamagic gem, no structured-data partial): the docs
+    harness only needs sane titles + OG tags. %>
+<% @og_title ||= 'TRMNL Framework' %>
+
+<% default_description = 'TRMNL Framework: the design system for TRMNL ePaper displays.' %>
+<% page_description = @meta_description || @og_description || default_description %>
+<% og_description = @og_description || page_description %>
+<% og_image = asset_url(@og_image || 'og/framework.png') %>
+
+<title><%= @og_title %></title>
+<meta name="description" content="<%= page_description %>">
+
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f4f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1a1a">
+
+<%# Use property=, not name=: crawlers ignore name="og:*". %>
+<meta property="og:title" content="<%= @og_title %>">
+<meta property="og:description" content="<%= og_description %>">
+<meta property="og:image" content="<%= og_image %>">
+<meta property="og:type" content="<%= @og_type || 'website' %>">
+<meta property="og:url" content="<%= canonical_url %>">
+<meta property="og:site_name" content="TRMNL Framework">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= @og_title %>">
+<meta name="twitter:description" content="<%= og_description %>">
+<meta name="twitter:image" content="<%= og_image %>">
+
+<link rel="canonical" href="<%= canonical_url %>">
+
+<% if @robots_meta.present? %>
+  <meta name="robots" content="<%= @robots_meta %>">
+<% end %>

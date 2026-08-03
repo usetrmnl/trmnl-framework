@@ -1,0 +1,417 @@
+@use "sass:map";
+// ============================================
+// TRMNL Framework - Screen Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/theme-slots' as theme-slots;
+@use '../config/custom' as custom;
+@use '../config/variables_overrides' as device-vars;
+@use '../config/tokens' as tokens;
+
+@mixin _semantic-icon-default {
+    --framework-semantic-icon-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
+    --framework-semantic-icon-image: var(--framework-semantic-text-primary-text-image, none);
+    --framework-semantic-icon-under: var(--framework-semantic-text-primary-text-under, transparent);
+}
+
+@mixin _chart-series-default {
+    @include theme-slots.chart-series-ramp(tokens.$grayscale-ramp, $span: 11);
+}
+
+@mixin _role-aliases {
+    --framework-canvas-bg: var(--framework-semantic-canvas-bg-color, var(--white));
+    --framework-surface-bg: var(--framework-semantic-surface-bg-color, var(--white));
+    --framework-backdrop-bg: var(--framework-semantic-backdrop-bg-color, var(--gray-55));
+    --framework-text-primary: var(--framework-semantic-text-primary-text-color, var(--black));
+    --framework-text-secondary: var(--framework-semantic-text-secondary-text-color, var(--gray-30));
+    --framework-text-inverse: var(--framework-semantic-text-inverse-text-color, var(--white));
+    --framework-border-strong: var(--framework-semantic-border-strong-border-color, var(--black));
+    --framework-border-muted: var(--framework-semantic-border-muted-border-color, var(--gray-65));
+    --framework-stroke-contrast: var(--framework-semantic-stroke-contrast-stroke-color, var(--white));
+    --framework-fill-strong: var(--framework-semantic-fill-strong-bg-color, var(--black));
+    --framework-fill-muted: var(--framework-semantic-fill-muted-bg-color, var(--gray-60));
+    --framework-fill-soft: var(--framework-semantic-fill-soft-bg-color, var(--gray-70));
+    --framework-outline-strong: var(--framework-border-strong);
+}
+
+// The title bar reads this internal pair, not the slot vars directly, so the
+// pair has to be re-declared wherever the slot can be rebound below the screen
+// root: an inherited custom property carries the value it resolved where it was
+// declared, so without a local re-alias an inverse subtree's title bars would
+// keep the screen root's paint.
+@mixin _title-bar-internal-alias {
+    --framework-internal-title-bar-bg-color: var(--framework-slot-title-bar-bg-color, transparent);
+    --framework-internal-title-bar-bg-image: var(--framework-slot-title-bar-bg-image, none);
+}
+
+// The chip pair is the framework's marker box: a solid field with legible text
+// on it, the paint intent plugin surfaces reach for when no component fits.
+// Its default names the semantic channels instead of a token, the one slot that
+// does, because the pairing it stands for is fill-strong under text-inverse. A
+// token would freeze that pairing at the framework's own black-and-white; the
+// chain keeps an unthemed screen, a dark screen and any theme that stays quiet
+// painting the chip exactly as those two channels already resolve on the screen
+// it renders on. A theme that wants its own marker box states both halves with
+// bg-slot and text-slot.
+@mixin _chip-slot-default {
+    --framework-slot-chip-bg-color: var(--framework-semantic-fill-strong-bg-color, var(--framework-fill-strong));
+    --framework-slot-chip-bg-image: var(--framework-semantic-fill-strong-bg-image, none);
+    --framework-slot-chip-text-color: var(--framework-semantic-text-inverse-text-color, var(--framework-text-inverse));
+    --framework-slot-chip-text-image: var(--framework-semantic-text-inverse-text-image, none);
+    --framework-slot-chip-text-clip: var(--framework-semantic-text-inverse-text-clip, border-box);
+    --framework-slot-chip-text-under: var(--framework-semantic-text-inverse-text-under, transparent);
+}
+
+@mixin _component-slot-defaults {
+    @include theme-slots.bg-slot('title-bar', 'gray-70');
+    @include theme-slots.bg-slot('screen-backdrop', 'gray-40');
+    @include theme-slots.bg-slot('item-meta', 'gray-70');
+    @include theme-slots.bg-slot('item-meta-emphasis-2', 'gray-40');
+    @include theme-slots.bg-slot('item-meta-emphasis-3', 'gray-20');
+    @include theme-slots.bg-slot('progress-track', 'gray-70');
+    @include theme-slots.bg-slot('progress-fill', 'gray-40');
+    @include theme-slots.bg-slot('progress-fill-emphasis-2', 'gray-20');
+    @include theme-slots.bg-slot('progress-fill-emphasis-3', 'gray-10');
+    @include theme-slots.bg-slot('progress-dot', 'gray-60');
+    @include theme-slots.bg-slot('progress-dot-current', 'gray-40');
+    @include theme-slots.bg-slot('table-meta', 'gray-60');
+    @include theme-slots.bg-slot('table-meta-device', 'gray-75');
+    @include theme-slots.text-slot('label-gray', 'gray-40');
+    @include theme-slots.border-level-slot('table-head-row', 4);
+    @include theme-slots.border-level-slot('table-body-row', 6);
+    @include _chip-slot-default;
+    @include _title-bar-internal-alias;
+}
+
+@mixin _light-semantic-defaults {
+    @include theme-slots.semantic-bg('canvas', 'white');
+    @include theme-slots.semantic-bg('surface', 'white');
+    @include theme-slots.semantic-bg('backdrop', 'gray-55');
+    @include theme-slots.semantic-bg('fill-strong', 'black');
+    @include theme-slots.semantic-bg('fill-muted', 'gray-60');
+    @include theme-slots.semantic-bg('fill-soft', 'gray-70');
+    @include theme-slots.semantic-text('text-primary', 'black');
+    @include theme-slots.semantic-text('text-secondary', 'gray-30');
+    @include theme-slots.semantic-text('text-inverse', 'white');
+    @include theme-slots.semantic-stroke('stroke-contrast', 'white');
+    @include theme-slots.semantic-border('border-strong', 'black');
+    @include theme-slots.semantic-border('border-muted', 'gray-65');
+}
+
+@mixin _dark-semantic-defaults {
+    @include theme-slots.semantic-bg('canvas', 'black', $raw: true);
+    @include theme-slots.semantic-bg('surface', 'black', $raw: true);
+    @include theme-slots.semantic-bg('backdrop', 'gray-10', $raw: true);
+    @include theme-slots.semantic-bg('fill-strong', 'white', $raw: true);
+    @include theme-slots.semantic-bg('fill-muted', 'gray-70', $raw: true);
+    @include theme-slots.semantic-bg('fill-soft', 'gray-60', $raw: true);
+    @include theme-slots.semantic-text('text-primary', 'white', $raw: true);
+    @include theme-slots.semantic-text('text-secondary', 'gray-70', $raw: true);
+    @include theme-slots.semantic-text('text-inverse', 'black', $raw: true);
+    @include theme-slots.semantic-stroke('stroke-contrast', 'black', $raw: true);
+    @include theme-slots.semantic-border('border-strong', 'white', $raw: true);
+    @include theme-slots.semantic-border('border-muted', 'gray-25', $raw: true);
+}
+
+@include mixins.trmnl-namespace {
+    .screen {
+        // Device density and the explicit scale modifier are independent inputs.
+        // Components consume their product; plugin layout utilities consume only
+        // the modifier so a device's native density is never applied twice.
+        --ui-scale: calc(var(--device-ui-scale) * var(--modifier-scale));
+        --content-scale: var(--modifier-scale);
+        --text-ui-scale: calc(var(--ui-scale) * var(--modifier-text-scale));
+
+        @include device-vars.base-scaled-display-variables;
+
+        // Public rounding utilities belong to plugin content geometry. The pill
+        // sentinel stays fixed because any sufficiently large value yields the
+        // same fully rounded shape.
+        --rounded-none: 0px;
+        --rounded-xsmall: calc(5px * var(--content-scale));
+        --rounded-small: calc(7px * var(--content-scale));
+        --rounded: calc(10px * var(--content-scale));
+        --rounded-medium: calc(15px * var(--content-scale));
+        --rounded-large: calc(20px * var(--content-scale));
+        --rounded-xlarge: calc(25px * var(--content-scale));
+        --rounded-xxlarge: calc(30px * var(--content-scale));
+        --rounded-full: 9999px;
+
+        --gap-xsmall: calc(5px * var(--gap-scale) * var(--content-scale));
+        --gap-small: calc(7px * var(--gap-scale) * var(--content-scale));
+        --gap: calc(10px * var(--gap-scale) * var(--content-scale));
+        --gap-medium: calc(16px * var(--gap-scale) * var(--content-scale));
+        --gap-large: calc(20px * var(--gap-scale) * var(--content-scale));
+        --gap-xlarge: calc(30px * var(--gap-scale) * var(--content-scale));
+        --gap-xxlarge: calc(40px * var(--gap-scale) * var(--content-scale));
+        --list-gap-small: calc(8px * var(--gap-scale) * var(--content-scale));
+        --full-w: calc(var(--screen-w) - var(--gap) * 2);
+        --full-h: calc(var(--screen-h) - var(--gap) * 2);
+        --quadrant-w: calc((var(--screen-w) - var(--gap) * 2) / 2 - var(--gap) / 2);
+        --quadrant-h: calc((var(--screen-h) - var(--gap) * 2) / 2 - var(--gap) / 2);
+        --half_vertical-w: calc((var(--screen-w) - var(--gap) * 2) / 2 - var(--gap) / 2);
+        --half_vertical-h: calc(var(--screen-h) - var(--gap) * 2);
+        --half_horizontal-w: calc(var(--screen-w) - var(--gap) * 2);
+        --half_horizontal-h: calc((var(--screen-h) - var(--gap) * 2) / 2 - var(--gap) / 2);
+
+        // Semantic smart render defaults (all channels resolve through engine vars).
+        @include _light-semantic-defaults;
+        @include _semantic-icon-default;
+
+        // Chart series ramp (TRMNLCharts.series): ink -> canvas, 16 steps. Base is
+        // the grayscale ladder; themes override via chart-series-ramp() so series
+        // stay legible on their own canvas. $span: 11, because the grayscale ladder is
+        // near-fully usable against a lightness-extreme canvas; themes narrow it.
+        @include _chart-series-default;
+
+        // Backward-compatible role aliases now point to semantic channel outputs.
+        @include _role-aliases;
+        // Default slot mappings. Themes can remap slots without touching engine vars.
+        @include _component-slot-defaults;
+
+        display: flex;
+        width: var(--screen-w);
+        height: var(--screen-h);
+        font-variant-ligatures: none;
+        transform: scale(var(--pixel-ratio));
+        transform-origin: 0 0;
+        padding: var(--gap);
+        margin-right: calc(var(--screen-w) * (var(--pixel-ratio) - 1));
+        margin-bottom: calc(var(--screen-h) * (var(--pixel-ratio) - 1));
+        background-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
+        background-image: var(--framework-semantic-canvas-bg-image, none);
+        background-repeat: repeat;
+        background-size: var(--dither-bg-size, auto);
+        // The -solid companion, because inherited color cannot clip a tile:
+        // a theme whose ink dithers on this rail still reads as a solid here.
+        color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+        overflow: hidden;
+
+        &--no-bleed {
+            padding: 0;
+
+            .view.view--full,
+            .view.view--full .layout {
+                width: var(--screen-w);
+                height: var(--screen-h);
+            }
+        }
+
+        &:has(> .mashup) {
+            background-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
+            background-image: var(--framework-semantic-canvas-bg-image, none);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+        }
+
+        .mashup .view--quadrant,
+        .mashup .view--half_vertical,
+        .mashup .view--half_horizontal,
+        .mashup .mashup-cell {
+            position: relative;
+
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                @include mixins.outline-dots;
+            }
+
+            .title_bar {
+                border-bottom-left-radius: tokens.ui-scaled(7px);
+                border-bottom-right-radius: tokens.ui-scaled(7px);
+            }
+        }
+
+        // In the dynamic grid the .mashup-cell owns the frame; suppress the
+        // inner view's own frame so the cell never shows a double border.
+        .mashup .mashup-cell > .view::after {
+            display: none;
+        }
+
+        &--backdrop {
+            &:has(> .mashup) {
+                background-color: var(--framework-slot-screen-backdrop-bg-color, transparent);
+                background-image: var(--framework-slot-screen-backdrop-bg-image, none);
+                @include mixins.dither-ready;
+            }
+
+            .mashup .view--quadrant,
+            .mashup .view--half_vertical,
+            .mashup .view--half_horizontal,
+            .mashup .mashup-cell {
+                &::after {
+                    display: none;
+                }
+
+                .title_bar {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+            }
+        }
+        
+        @each $device-name, $device-config in custom.$all-devices {
+            &--#{$device-name} {
+                @include device-vars.device-variables($device-name);
+            }
+        }
+        
+        @each $device-name, $device-config in custom.$all-devices {
+            $size: map.get($device-config, 'size');
+            @if $size {
+                &--#{$device-name} {
+                    @extend .screen--#{$size} !optional;
+                }
+            }
+        }
+
+        @each $device-name, $device-config in custom.$all-devices {
+            $density-tier: map.get($device-config, 'density-tier');
+            @if $density-tier {
+                &--#{$device-name} {
+                    @extend .screen--density-#{$density-tier} !optional;
+                }
+            }
+        }
+        
+        &--sm {
+            @include device-vars.sm-display-variables;
+        }
+        &--md {
+            @include device-vars.md-display-variables;
+        }
+        &--lg {
+            @include device-vars.lg-display-variables;
+        }
+        
+        // Font bundles. `default-fonts` is the implicit fallback when no
+        // `screen--fonts-*` class is present; explicit bundle classes still
+        // override it before the density layer runs.
+        & {
+            @include device-vars.default-fonts;
+        }
+
+        &.screen--fonts-classic {
+            @include device-vars.classic-fonts;
+        }
+
+        &.screen--fonts-trmnl {
+            @include device-vars.trmnl-fonts;
+        }
+
+        &--2bit {
+            @include device-vars.two-bit-display-variables;
+        }
+
+        &--4bit,
+        &--8bit,
+        &--16bit {
+            @include device-vars.four-bit-and-up-display-variables;
+        }
+
+        // Density is the final display layer. It overrides both bit-depth and
+        // explicit bundle choices when high-density screens need Inter.
+        &.screen--density-2x {
+            @include device-vars.density-2x-display-variables;
+        }
+
+        // Bitmap fonts only render crisply at native pixel sizes, so any scale or text-scale
+        // modifier forces the vector face while the active bundle keeps its sizes and line heights.
+        &.screen--scale-xxsmall,
+        &.screen--scale-xsmall,
+        &.screen--scale-small,
+        &.screen--scale-large,
+        &.screen--scale-xlarge,
+        &.screen--scale-xxlarge,
+        &.screen--text-scale-small,
+        &.screen--text-scale-large,
+        &.screen--text-scale-xlarge {
+            @include device-vars.vector-font-face-variables;
+        }
+
+        &.screen--preview-colors.screen--preview-white-limited {
+            --white: #{tokens.$preview-limited-palette-white-hex};
+        }
+
+        // Portrait orientation overrides
+        &--portrait {
+            --screen-w: var(--screen-h-original);
+            --screen-h: var(--screen-w-original);
+            
+            --full-w: calc(var(--screen-w) - var(--gap) * 2);
+            --full-h: calc(var(--screen-h) - var(--gap) * 2);
+            
+            --quadrant-w: calc((var(--screen-w) - var(--gap) * 2) / 2 - var(--gap) / 2);
+            --quadrant-h: calc((var(--screen-h) - var(--gap) * 2) / 2 - var(--gap) / 2);
+            
+            --half_vertical-w: calc((var(--screen-w) - var(--gap) * 2) / 2 - var(--gap) / 2);
+            --half_vertical-h: calc((var(--screen-h) - var(--gap) * 2));
+            
+            --half_horizontal-w: calc((var(--screen-w) - var(--gap) * 2));
+            --half_horizontal-h: calc((var(--screen-h) - var(--gap) * 2) / 2 - var(--gap) / 2);
+            
+            --richtext-content-max-width: calc(var(--screen-w) - var(--gap) * 2);
+        }
+    }
+
+    .screen.screen--dark-mode#{mixins.$theme-exempt} {
+        // $raw: true bypasses the paint pipeline to avoid double-inversion.
+        // The paint layer already remaps grayscale tokens (black↔white, gray-N↔gray-(75-N))
+        // for utility classes; semantic vars express explicit dark-mode intent and must
+        // reference root palette vars directly.
+        // Themed screens are exempt (mixins.$theme-exempt): a theme's semantic
+        // channels must not fall back to dark defaults for channels it omits.
+        @include _dark-semantic-defaults;
+        @include _role-aliases;
+    }
+
+    // Inverse is an explicit local color scheme. The subject paints its own
+    // canvas and re-aliases every indirection var, because an inherited custom
+    // property carries the value it resolved at the screen root: without the
+    // local re-alias, a role alias or the title-bar pair would keep the outer
+    // scheme's paint no matter what the subtree rebinds.
+    .screen .inverse {
+        @include _semantic-icon-default;
+        @include _role-aliases;
+        @include _title-bar-internal-alias;
+
+        background-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
+        background-image: var(--framework-semantic-canvas-bg-image, none);
+        background-repeat: repeat;
+        background-size: var(--dither-bg-size, auto);
+        color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+    }
+
+    // The framework's own scheme flip: dark semantic channels and mirrored
+    // slot defaults, rebinding every channel on the subject so screen-level
+    // values cannot leak into the subtree. Unthemed screens only: a theme is a
+    // complete color statement, and its `.screen--theme-<id> .inverse` block
+    // (see themes/_theme-boilerplate.scss) states the flipped scheme in the
+    // theme's own tokens, resolved against the screen's own paint rail.
+    .screen#{mixins.$theme-exempt} .inverse {
+        @include _dark-semantic-defaults;
+        @include _chart-series-default;
+        @include _component-slot-defaults;
+    }
+
+    // Inverse is relative to the screen scheme. A higher-specificity local
+    // light stack flips an unthemed dark screen back without changing siblings.
+    .screen.screen--dark-mode#{mixins.$theme-exempt} .inverse {
+        @include _light-semantic-defaults;
+        @include _semantic-icon-default;
+        @include _chart-series-default;
+        @include _role-aliases;
+        @include _component-slot-defaults;
+    }
+}
+
+// Preview-only fallback for non-retina displays:
+// keep density-2x typography/layout, but render dither tiles at 1x.
+@media (max-resolution: 1.99dppx) {
+    .trmnl .screen.screen--preview.screen--density-2x {
+        --dither-ratio-override: 1;
+    }
+}

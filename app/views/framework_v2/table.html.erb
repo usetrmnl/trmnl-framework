@@ -1,0 +1,375 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :table %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:table) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Base Structure') %>
+          <p class="<%= framework_section_description_classes %>">
+            Tables are built using standard HTML table elements with additional classes for styling.
+            The base structure includes headers and data cells with consistent spacing and typography.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Default Table') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">table</code> class provides
+              the standard table styling with comfortable spacing and clear visual hierarchy.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(condensed: false, size: nil, attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">Regular</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(include_index: false)
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Indexed Table') %>
+            <p class="<%= framework_subsection_description_classes %>">Add an opt‑in index column by placing a meta block in the cells you want indexed: <code class="<%= framework_section_code_classes %>">td .meta &gt; span.index</code>. Add <code class="<%= framework_section_code_classes %>">table--indexed</code> to dock the meta block to the left and add padding for that column.</p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <table class="table table--indexed" data-table-limit="true">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th><span class="title title--small text--gray-45">Employee</span></th>
+                            <th><span class="title title--small text--gray-45">Role</span></th>
+                            <th><span class="title title--small text--gray-45">Pranks</span></th>
+                            <th><span class="title title--small text--gray-45">Sales</span></th>
+                            <th><span class="title title--small text--gray-45">Score</span></th>
+                            <th><span class="title title--small text--gray-45">Fun Fact</span></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% framework_table_overflow_rows.each do |row| %>
+                            <tr>
+                              <td><span class="meta"><span class="index"><%= row[0] %></span></span></td>
+                              <td><span class="label"><%= row[1] %></span></td>
+                              <td><span class="label label--small"><%= row[2] %></span></td>
+                              <td><span class="label label--small"><%= row[3] %></span></td>
+                              <td><span class="label label--small"><%= row[4] %></span></td>
+                              <td><span class="label label--small"><%= row[5] %></span></td>
+                              <td><span class="label label--small" data-clamp="1"><%= row[6] %></span></td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">Indexed</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: <<~HTML.strip
+                <table class="table table--indexed" data-table-limit="true">
+                  <thead>
+                    <tr>
+                      <th><span class="title title--small"></span></th>
+                      <th><span class="title title--small">Employee</span></th>
+                      <th><span class="title title--small">Role</span></th>
+                      <th><span class="title title--small">Pranks</span></th>
+                      <th><span class="title title--small">Sales</span></th>
+                      <th><span class="title title--small">Score</span></th>
+                      <th><span class="title title--small">Fun Fact</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="meta"><span class="index">1</span></span></td>
+                      <td><span class="label">Pam Beesly</span></td>
+                      <td><span class="label label--small">Receptionist</span></td>
+                      <td><span class="label label--small">3</span></td>
+                      <td><span class="label label--small">$0</span></td>
+                      <td><span class="label label--small">0.00</span></td>
+                      <td><span class="label label--small" data-clamp="1">Loves drawing</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              HTML
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">Tables support five sizes: Base, Large, XLarge, Small, and XSmall. Use modifier classes to change row heights.</p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Base') %>
+            <p class="<%= framework_subsection_description_classes %>">The <code class="<%= framework_section_code_classes %>">table</code> class without size modifiers
+              and the <code class="<%= framework_section_code_classes %>">table--base</code> class both produce the same visual result,
+              providing the standard table styling with comfortable spacing and clear visual hierarchy.
+              Use <code class="<%= framework_section_code_classes %>">table--base</code> when you need to explicitly set the base size
+              in responsive contexts, such as <code class="<%= framework_section_code_classes %>">table--small lg:table--base</code>.</p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <% base_table = render_framework_table_overflow_table(condensed: false, size: nil, attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                      <%= base_table.sub(/class="table"/, 'class="table table--base"').html_safe %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">Base</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <% base_demo = framework_table_overflow_demo_code(include_index: false) %>
+            <%= render CodeExampleComponent.new(
+              demo_code: base_demo.sub(/class="table"/, 'class="table table--base"')
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Large') %>
+            <p class="<%= framework_subsection_description_classes %>">Use <code class="<%= framework_section_code_classes %>">table--large</code> to increase row heights for more spacious tables.</p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(size: :large, attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">Large</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(size: :large, include_index: false)
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">Use <code class="<%= framework_section_code_classes %>">table--xlarge</code> for larger screens. Pairs well with larger font-sizes.</p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <% xlarge_table = render_framework_table_overflow_table(size: :large, attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                      <%= xlarge_table.sub('table--large', 'table--xlarge').html_safe %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">XLarge</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <% xlarge_demo = framework_table_overflow_demo_code(size: :large, include_index: false) %>
+            <%= render CodeExampleComponent.new(
+              demo_code: xlarge_demo.sub('table--large', 'table--xlarge')
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Small') %>
+            <p class="<%= framework_subsection_description_classes %>">Use <code class="<%= framework_section_code_classes %>">table--small</code> for a compact table with reduced row heights. The older <code class="<%= framework_section_code_classes %>">table--condensed</code> class remains supported as a backward-compatible alias.</p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(size: :small, attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">Small</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(size: :small, include_index: false)
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XSmall') %>
+            <p class="<%= framework_subsection_description_classes %>">Use <code class="<%= framework_section_code_classes %>">table--xsmall</code> for the most compact row heights.</p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(size: :xsmall, attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">XSmall</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(size: :xsmall, include_index: false)
+            ) %>
+          </div>
+        </div>
+      </section>
+      
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Overflow Engine') %>
+          <p class="<%= framework_section_description_classes %>">Demonstrates the Overflow behavior <%= render DocsRef.new(page: :table_overflow) %> and trailing “and X more” row when content exceeds the height budget.</p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <%= render_framework_table_overflow_table(attrs: { 'data-table-limit': 'true' }, include_index: false) %>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Table</span>
+                    <span class="instance">Overflow</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: framework_table_overflow_demo_code(include_index: false)
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Clamp Engine') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply <code class="<%= framework_section_code_classes %>">data-clamp</code> <%= render DocsRef.new(page: :clamp) %> to each cell’s content to ensure consistent single-line truncation with ellipsis. This works with the Table Overflow behavior <%= render DocsRef.new(page: :table_overflow) %>.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout">
+                      <%= render_framework_table_overflow_table(attrs: { 'data-table-limit': 'true' }, clamp_lines: 1, include_index: false) %>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Table</span>
+                      <span class="instance">Clamp: 1 line</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: framework_table_overflow_demo_code(clamp_lines: 1, include_index: false)
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

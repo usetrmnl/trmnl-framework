@@ -1,0 +1,106 @@
+<div class="layout layout--col gap--space-between">
+  <div class="grid grid--cols-2 portrait:grid--cols-1 gap--[9px]" data-adjust-grid-gaps="false">
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value lg:value--large value--tnums" data-value-type="number">$159,022</span>
+        <span class="label">Total Sales</span>
+      </div>
+    </div>
+    <div class="item">
+      <div id="chart-01fb188a4a69" class="w--full"></div>
+      <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+      <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+      <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+      <script type="text/javascript">document.addEventListener("DOMContentLoaded", () => {
+          var data = [{"name":"Current","data":[["2024-12-01",946.02],["2024-12-02",1441.82],["2024-12-03",449.37],["2024-12-04",452.0],["2024-12-05",705.0],["2024-12-06",936.43],["2024-12-07",2681.07],["2024-12-08",3770.49],["2024-12-09",2260.71],["2024-12-10",3609.26],["2024-12-11",4116.29],["2024-12-12",2447.15],["2024-12-13",1180.39],["2024-12-14",714.16],["2024-12-15",1863.91],["2024-12-16",1512.0],["2024-12-17",867.28],["2024-12-18",1673.34],["2024-12-19",13877.3],["2024-12-20",32002.05],["2024-12-21",17434.28],["2024-12-22",12187.9],["2024-12-23",10076.88],["2024-12-24",4633.01],["2024-12-25",4358.82],["2024-12-26",5784.35],["2024-12-27",6120.38],["2024-12-28",3170.55],["2024-12-29",3004.26],["2024-12-30",10763.44],["2024-12-31",3982.23]]},{"name":"Comparison","data":[["2024-12-01",425.28],["2024-12-03",326.3],["2024-12-04",462.96],["2024-12-05",294.26],["2024-12-06",751.98],["2024-12-08",296.12],["2024-12-09",131.78],["2024-12-10",619.4],["2024-12-11",616.0],["2024-12-12",462.0],["2024-12-14",9524.06],["2024-12-15",7180.58],["2024-12-16",2815.0],["2024-12-17",2194.1],["2024-12-18",909.08],["2024-12-19",1499.78],["2024-12-20",2029.41],["2024-12-21",884.0],["2024-12-22",972.72],["2024-12-23",909.0],["2024-12-24",151.99],["2024-12-25",1824.98],["2024-12-26",748.73],["2024-12-27",1064.97],["2024-12-28",772.56],["2024-12-29",1478.86],["2024-12-30",590.56]]}];
+          var el = 'chart-01fb188a4a69';
+          // Wait for Highcharts (CDN) and the framework's TRMNLCharts helper
+          // (bundled in the plugin runtime) before building the chart.
+          function whenReady(cb) {
+            if (window.TRMNLCharts && window.Highcharts) return cb();
+            window.addEventListener('load', function () {
+              if (window.TRMNLCharts && window.Highcharts) cb();
+            }, { once: true });
+          }
+          whenReady(function () {
+            // watch() rebuilds when the screen's mode/dark/theme classes change,
+            // re-reading adaptive paint (series ramp, gridlines, labels) each time.
+            TRMNLCharts.watch(el, function () {
+              return Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
+                chart: { type: 'spline', height: null, width: null, spacing: [10, 10, 5, 10] },
+                series: [{
+                  data: data[0].data,
+                  name: data[0].name,
+                  lineWidth: 4,
+                  color: TRMNLCharts.series(0, 2, { el: el }),
+                  zIndex: 2
+                }, {
+                  data: data[1].data,
+                  name: data[1].name,
+                  lineWidth: 5,
+                  color: TRMNLCharts.series(1, 2, { el: el }),
+                  zIndex: 1
+                }],
+                yAxis: { gridLineDashStyle: 'shortdot', tickAmount: 5 },
+                xAxis: {
+                  type: 'datetime',
+                  labels: { padding: 5, y: 25 },
+                  lineWidth: 0,
+                  gridLineDashStyle: 'dot',
+                  tickWidth: 1,
+                  tickLength: 0,
+                  tickPixelInterval: 120
+                }
+              }));
+            });
+          });
+        });</script>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="grid grid--cols-2 portrait:grid--cols-1">
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--xsmall lg:value--base value--tnums" data-value-type="number">763</span>
+        <span class="label">Pending Orders</span>
+      </div>
+    </div>
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--xsmall lg:value--base value--tnums" data-value-type="number">254</span>
+        <span class="label">Fulfilled Orders</span>
+      </div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="grid grid--cols-2 portrait:grid--cols-1">
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--xxsmall lg:value--small value--tnums" data-value-type="date">
+          <div class="w--12 h--1.5 mb--2 bg--gray-5"></div>
+          Nov 01 -
+              Nov 30
+        </span>
+      </div>
+    </div>
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--xxsmall lg:value--small value--tnums" data-value-type="date">
+          <div class="w--12 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
+          Dec 01 -
+                Dec 31
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="title_bar">
+  <img class="image image--adaptive" alt="" src="/images/plugins/shopify--render.svg">
+  <span class="title">Shopify</span>
+  <span class="instance">trmnl.com</span>
+</div>

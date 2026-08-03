@@ -1,0 +1,25 @@
+// ============================================
+// TRMNL Framework - Scale Utility
+// ============================================
+
+@use '../mixins' as mixins;
+
+// Scale values
+$scale-values: (
+    'xxsmall': 0.66,
+    'xsmall': 0.75,
+    'small': 0.875,
+    'regular': 1,
+    'large': 1.125,
+    'xlarge': 1.25,
+    'xxlarge': 1.5
+);
+
+@include mixins.trmnl-namespace {
+    // Generate scale modifier classes for screen
+    @each $size-name, $scale-value in $scale-values {
+        .screen--scale-#{$size-name} {
+            --modifier-scale: #{$scale-value};
+        }
+    }
+}

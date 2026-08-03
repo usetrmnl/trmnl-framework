@@ -1,0 +1,589 @@
+// ============================================
+// TRMNL Framework - Flexbox Utilities
+// ============================================
+
+@use 'sass:list';
+@use 'sass:map';
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+@use '../config/tokens' as vars;
+
+// Base flex styles. --tn-gap-default publishes this container's own gap to the
+// gap utility, which rolls its layer back on an unbound token and would take
+// the line above with it (see _gap.scss). Read by _visibility.scss too, for the
+// bit-depth and dark gates of the same classes.
+$flex-base-styles: (
+    display: flex,
+    gap: var(--gap),
+    '--tn-gap-default': var(--gap)
+);
+
+// Direction modifiers
+$direction-modifiers: (
+    'col': (
+        flex-direction: column,
+        align-items: center
+    ),
+    'col-reverse': (
+        flex-direction: column-reverse,
+        align-items: center
+    ),
+    'row': (
+        flex-direction: row,
+        align-items: center,
+        justify-content: center
+    ),
+    'row-reverse': (
+        flex-direction: row-reverse,
+        align-items: center,
+        justify-content: center
+    )
+);
+
+// Wrapping controls
+$wrap-modifiers: (
+    'wrap': (flex-wrap: wrap),
+    'nowrap': (flex-wrap: nowrap),
+    'wrap-reverse': (flex-wrap: wrap-reverse)
+);
+
+// A column wraps into the height it is given, so a column direction paired with
+// either wrap modifier takes the full height of its parent. nowrap is not in the
+// list: it has nothing to wrap into.
+$col-directions: ('col', 'col-reverse');
+$col-wrap-modifiers: ('wrap', 'wrap-reverse');
+$col-wrap-styles: (height: 100%);
+
+// Basic alignment modifiers (for when no direction is specified). A bare
+// .flex lays out as a row, so the horizontal names ride the main axis
+// (justify-content) and the vertical ones the cross axis (align-items),
+// exactly as the row table below reads them.
+$basic-alignment: (
+    'left': (justify-content: flex-start),
+    'start': (justify-content: flex-start),
+    'right': (justify-content: flex-end),
+    'end': (justify-content: flex-end),
+    'top': (align-items: flex-start),
+    'bottom': (align-items: flex-end),
+    'center': (align-items: center),
+    'center-x': (justify-content: center),
+    'center-y': (align-items: center)
+);
+
+// Row-specific alignment
+$row-alignment: (
+    'left': (justify-content: flex-start),
+    'start': (justify-content: flex-start),
+    'center-x': (justify-content: center),
+    'right': (justify-content: flex-end),
+    'end': (justify-content: flex-end),
+    'top': (align-items: flex-start),
+    'center-y': (align-items: center),
+    'bottom': (align-items: flex-end),
+    'center': (
+        align-items: center,
+        justify-content: center
+    )
+);
+
+    // Column-specific alignment
+    $col-alignment: (
+        'left': (
+            align-items: flex-start,
+            justify-content: center
+        ),
+        'center-x': (
+            align-items: center,
+            justify-content: center
+        ),
+        'right': (
+            align-items: flex-end,
+            justify-content: center
+        ),
+        'top': (justify-content: flex-start),
+        'start': (justify-content: flex-start),
+        'center-y': (justify-content: center),
+        'bottom': (justify-content: flex-end),
+        'end': (justify-content: flex-end),
+        'center': (
+            align-items: center,
+            justify-content: center
+        )
+    );
+
+// Main axis distribution helpers (affect justify-content)
+$distribution: (
+    'between': (justify-content: space-between),
+    'around': (justify-content: space-around),
+    'evenly': (justify-content: space-evenly)
+);
+
+// Multi-line content alignment (requires wrap to have effect)
+$align-content: (
+    'content-start': (align-content: flex-start),
+    'content-center': (align-content: center),
+    'content-end': (align-content: flex-end),
+    'content-between': (align-content: space-between),
+    'content-around': (align-content: space-around),
+    'content-evenly': (align-content: space-evenly),
+    'content-stretch': (align-content: stretch)
+);
+
+// Stretch modifiers for containers
+$container-stretch: (
+    'stretch': (
+        align-items: stretch,
+        '> *': (
+            flex: 1 1 0%
+        )
+    )
+);
+
+// Row-specific stretch
+$row-stretch: (
+    'stretch-x': (
+        '> *': (
+            flex: 1 1 0%
+        )
+    ),
+    'stretch-y': (
+        align-items: stretch,
+        justify-content: center
+    )
+);
+
+// Column-specific stretch
+$col-stretch: (
+    'stretch-x': (
+        align-items: stretch
+    ),
+    'stretch-y': (
+        '> *': (
+            flex: 1 1 0%
+        )
+    )
+);
+
+// Child utilities.
+//
+// The min-* floors are defaults, not a statement about this element's size, so
+// they read the size channel (utilities/_size.scss) with the floor as the
+// fallback. These rules carry a parent guard and weigh one class more than a
+// size utility can, so `class="stretch w--min-32"` had no way to win the floor
+// back; through the channel the utility sets the value the winning rule reads,
+// and no weight moves. It is the same contract `:where(.flex) > *` states for
+// flex children that carry no stretch class.
+$child-utilities: (
+    'stretch': (
+        align-self: stretch,
+        flex: 1 1 0%,
+        min-height: var(--tn-size-h-min, 0),
+        min-width: var(--tn-size-w-min, 0)
+    ),
+    'stretch-x': (
+        flex: 1 1 0%,
+        min-width: var(--tn-size-w-min, 0)
+    ),
+    'stretch-y': (
+        align-self: stretch,
+        flex: 0 1 auto,
+        min-height: var(--tn-size-h-min, 0)
+    ),
+    // Synonym of the item-level `shrink-0` in $item-flex: same declaration, same
+    // gates. The docs teach `shrink-0`; both names ship.
+    'no-shrink': (
+        flex-shrink: 0
+    )
+);
+
+// Standalone only: stretch-x / stretch-y are scoped to .flex > or .layout > (no global rule)
+$child-utilities-standalone: (
+    'stretch': map.get($child-utilities, 'stretch'),
+    'no-shrink': map.get($child-utilities, 'no-shrink')
+);
+
+// Item-level alignment utilities (align-self)
+$self-alignment: (
+    'self--start': (align-self: flex-start),
+    'self--center': (align-self: center),
+    'self--end': (align-self: flex-end),
+    'self--stretch': (align-self: stretch)
+);
+
+// Item-level flex utilities
+$item-flex: (
+    'grow': (flex-grow: 1),
+    'grow-0': (flex-grow: 0),
+    'shrink-0': (flex-shrink: 0),
+    'flex-auto': (flex: 1 1 auto),
+    'flex-initial': (flex: 0 1 auto),
+    'flex-none': (flex: none)
+);
+
+// Item order utilities
+$order-special: (
+    'order--first': (order: -9999),
+    'order--last': (order: 9999)
+);
+
+// Build numeric order map from -10 to 10
+$order-numeric: ();
+@for $i from -10 through 10 {
+    $key: 'order--' + $i;
+    $order-numeric: map.merge($order-numeric, ($key: (order: $i)));
+}
+
+// Context-aware child overrides. The full width a column's stretch-x takes is a
+// default like the floors above, so it reads the same channel.
+$context-child-overrides: (
+    'flex--col > .stretch-x': (
+        width: var(--tn-size-w, 100%),
+        flex: 0 0 auto
+    ),
+    'flex--row > .stretch-x': (
+        flex: 1 1 0%
+    ),
+    'flex--row > .stretch-y': (
+        align-self: stretch,
+        flex: 0 1 auto
+    ),
+    'flex--col > .stretch-y': (
+        flex: 1 1 0%,
+        align-self: auto
+    )
+);
+
+// The direction guard, spelled out so the companion emitter reuses the exact
+// selector the unprefixed rule carries. The arguments are bare classes: `&`
+// inside :not() would expand to the whole parent selector, and :not() takes the
+// specificity of its most specific argument.
+//
+// The guard rides :where() and so costs nothing. That is the point: the
+// directionless table then weighs exactly what the row and column tables weigh
+// in the same gate tier, so a gated direction can win the axis. Three classes
+// decide it, not five, which is what lets `flex md:flex--row flex--left` reach
+// the row table at md while the directionless reading still answers at sm,
+// where no direction is active. Reverse directions are in the list because they
+// choose an axis too.
+//
+// The guard names bare classes on purpose. A prefixed direction is inert at the
+// gates below its own, so excluding it everywhere would leave `flex
+// md:flex--col flex--left` with no alignment at sm. The cost is that where a
+// prefixed direction is active, the directionless reading still supplies the
+// axis its table leaves alone: `flex md:flex--col flex--top` takes
+// justify-content from the column table and align-items from this one. Closing
+// that would mean pinning both axes in every table entry, which is what breaks
+// `flex--col flex--left flex--top` into a single-axis modifier.
+$basic-companion: '.flex:where(:not(.flex--row):not(.flex--col):not(.flex--row-reverse):not(.flex--col-reverse))';
+
+// Content alignment on a row also resets the default main-axis centering.
+@function row-content-styles($modifier, $styles) {
+    $main-axis-resets: (
+        'content-start': flex-start,
+        'content-end': flex-end,
+        'content-between': space-between,
+        'content-around': space-around,
+        'content-evenly': space-evenly
+    );
+    $reset: map.get($main-axis-resets, $modifier);
+
+    @return if($reset, map.merge($styles, (justify-content: $reset)), $styles);
+}
+
+// The alignment, stretch, distribution and content tables one direction reads.
+// A reverse direction reads its base direction's table: it lays out on the same
+// axis, so every modifier has to resolve on that axis. Before this the reverse
+// classes had no table of their own and the directionless one answered for
+// them, which put `flex--row-reverse flex--left` on the cross axis.
+@function direction-alignment-styles($axis) {
+    $content: ();
+    @each $modifier, $styles in $align-content {
+        $resolved: if($axis == 'row', row-content-styles($modifier, $styles), $styles);
+        $content: map.merge($content, ($modifier: $resolved));
+    }
+
+    @return map.merge(
+        map.merge(
+            if($axis == 'row', $row-alignment, $col-alignment),
+            if($axis == 'row', $row-stretch, $col-stretch)
+        ),
+        map.merge($distribution, $content)
+    );
+}
+
+// Which axis each direction lays out on. Row before column, the order the two
+// tables were written in and the order the bundle already carried, so an
+// element wearing both direction classes resolves the way it always did.
+$direction-axes: (
+    'row': 'row',
+    'row-reverse': 'row',
+    'col': 'col',
+    'col-reverse': 'col'
+);
+
+@include mixins.trmnl-namespace {
+    // Base flex container, on the same gate set _visibility.scss publishes
+    // `display: flex` under, so `hidden 2bit:flex` and `dark:flex` get the gap
+    // that `md:flex` gets instead of a display switch alone. The direction and
+    // alignment modifiers below stay after it and keep winning their ties.
+    .flex {
+        @include responsive.with-dark-all-variants {
+            @include mixins.apply-styles($flex-base-styles);
+        }
+
+        // Direction modifiers
+        @each $modifier, $styles in $direction-modifiers {
+            &--#{$modifier} {
+                @include responsive.with-size-and-orientation-variants {
+                    @include mixins.apply-styles($styles);
+                }
+            }
+        }
+
+        // Column wrapping takes the full height of the parent. The wrap class is
+        // a companion on the same element, so the pairing goes through the
+        // companion emitter and $companion-class publishes the direction's
+        // prefixed form: `md:flex--col md:flex--wrap` reaches the same rule the
+        // unprefixed pair does. Nested inside the direction's own variants it
+        // reached only the pairs where exactly one of the two classes carried the
+        // gate, so switching both responsively lost the height.
+        //
+        // One call per wrap modifier. An emitter parses a single class per block,
+        // so the grouped `&.flex--wrap, &.flex--wrap-reverse` this replaces could
+        // not be handed to one.
+        @each $direction in $col-directions {
+            @each $wrap in $col-wrap-modifiers {
+                &--#{$direction}.flex--#{$wrap} {
+                    @include mixins.apply-styles($col-wrap-styles);
+                }
+
+                @include helpers.with-companion-modifier-variants(
+                    '.flex--#{$direction}',
+                    'flex--#{$wrap}',
+                    $companion-class: 'flex--#{$direction}'
+                ) {
+                    @include mixins.apply-styles($col-wrap-styles);
+                }
+            }
+        }
+
+        // Wrap modifiers
+        @each $modifier, $styles in $wrap-modifiers {
+            &--#{$modifier} {
+                @include responsive.with-size-and-orientation-variants {
+                    @include mixins.apply-styles($styles);
+                }
+            }
+        }
+
+        // Basic alignment modifiers (only when no direction is specified).
+        // The direction guard has to stay in the selector, so these go through
+        // the companion emitter: it prefixes only the modifier class, leaving
+        // `flex md:flex--center` writable. The guard is weightless, so a gated
+        // direction beats this reading of a bare modifier by the class the gate
+        // adds, and ties it when the modifier carries the same gate, where the
+        // direction tables below win on source order.
+        &:where(:not(.flex--row):not(.flex--col):not(.flex--row-reverse):not(.flex--col-reverse)) {
+            @each $modifier, $styles in $basic-alignment {
+                &.flex--#{$modifier} {
+                    @include mixins.apply-styles($styles);
+                }
+            }
+        }
+
+        @each $modifier, $styles in $basic-alignment {
+            @include helpers.with-companion-modifier-variants($basic-companion, 'flex--#{$modifier}') {
+                @include mixins.apply-styles($styles);
+            }
+        }
+
+        // Direction-specific alignment, distribution, content and stretch. The
+        // direction class is the guard, so the companion emitter keeps it in the
+        // selector; passing it as $companion-class publishes its prefixed form
+        // too, which is what makes `flex md:flex--col flex--left` a column at md
+        // instead of a directionless flex wearing a column class.
+        @each $direction, $axis in $direction-axes {
+            $direction-styles: map.merge(direction-alignment-styles($axis), $container-stretch);
+
+            &--#{$direction} {
+                @each $modifier, $styles in $direction-styles {
+                    &.flex--#{$modifier} {
+                        @include mixins.apply-styles($styles);
+                    }
+                }
+            }
+
+            @each $modifier, $styles in $direction-styles {
+                @include helpers.with-companion-modifier-variants(
+                    '.flex--#{$direction}',
+                    'flex--#{$modifier}',
+                    $companion-class: 'flex--#{$direction}'
+                ) {
+                    @include mixins.apply-styles($styles);
+                }
+            }
+        }
+
+        // Direct child modifiers. Only stretch-x / stretch-y need a prefixed form
+        // here: every other child utility has a standalone rule further down that
+        // publishes the same body under every gate, so a second copy behind the
+        // .flex guard would say nothing new. stretch-x / stretch-y have no
+        // standalone rule on purpose, so their prefixed forms take the guard.
+        @each $utility, $styles in $child-utilities {
+            > .#{$utility} {
+                @include mixins.apply-styles($styles);
+            }
+            @if not map.has-key($child-utilities-standalone, $utility) {
+                @include helpers.with-companion-modifier-variants('.flex', $utility, $combinator: '>') {
+                    @include mixins.apply-styles($styles);
+                }
+            }
+            // Responsive parent variants (e.g., portrait:flex > .stretch)
+            @include helpers.with-responsive-parent-child-variants('flex', $utility, '>') {
+                @include mixins.apply-styles($styles);
+            }
+        }
+
+        // Direct child self-alignment
+        @each $utility, $styles in $self-alignment {
+            > .#{$utility} {
+                @include mixins.apply-styles($styles);
+            }
+            // Responsive parent variants (e.g., portrait:flex > .self--start)
+            @include helpers.with-responsive-parent-child-variants('flex', $utility, '>') {
+                @include mixins.apply-styles($styles);
+            }
+        }
+
+        // Direct child item flex utilities
+        @each $utility, $styles in $item-flex {
+            > .#{$utility} {
+                @include mixins.apply-styles($styles);
+            }
+            // Responsive parent variants (e.g., portrait:flex > .grow)
+            @include helpers.with-responsive-parent-child-variants('flex', $utility, '>') {
+                @include mixins.apply-styles($styles);
+            }
+        }
+
+        // Direct child order utilities (special and numeric)
+        @each $utility, $styles in $order-special {
+            > .#{$utility} {
+                @include mixins.apply-styles($styles);
+            }
+            // Responsive parent variants
+            @include helpers.with-responsive-parent-child-variants('flex', $utility, '>') {
+                @include mixins.apply-styles($styles);
+            }
+        }
+        @each $utility, $styles in $order-numeric {
+            > .#{$utility} {
+                @include mixins.apply-styles($styles);
+            }
+            // Responsive parent variants
+            @include helpers.with-responsive-parent-child-variants('flex', $utility, '>') {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Low-specificity defaults for flex children. Uses :where() so explicit utility
+    // classes (w--min-*, h--min-*) can override. Flex items default to min-width: auto,
+    // which prevents shrinking below content size and breaks overflow/truncation.
+    :where(.flex) > * {
+        min-width: 0;
+    }
+    // min-height: 0 only when this flex is NOT the overflow target. When data-overflow="true",
+    // the Overflow engine needs the container to actually overflow (scrollHeight > budget) so it
+    // can hide items; with min-height: 0 the flex would shrink items instead and the engine
+    // would never see overflow.
+    :where(.flex:not([data-overflow="true"])) > * {
+        min-height: 0;
+    }
+
+    // Standalone child element modifiers (stretch-x / stretch-y omitted: only
+    // apply as direct children of .flex or .layout via context-aware rules)
+    @each $utility, $styles in $child-utilities-standalone {
+        .#{$utility} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Standalone self-alignment utilities
+    @each $utility, $styles in $self-alignment {
+        .#{$utility} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Standalone item flex utilities
+    @each $utility, $styles in $item-flex {
+        .#{$utility} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Standalone order utilities (special and numeric)
+    @each $utility, $styles in $order-special {
+        .#{$utility} {
+            @include responsive.with-size-and-orientation-variants { @include mixins.apply-styles($styles); }
+        }
+    }
+    @each $utility, $styles in $order-numeric {
+        .#{$utility} {
+            @include responsive.with-size-and-orientation-variants { @include mixins.apply-styles($styles); }
+        }
+    }
+
+    // Basis utilities from size tokens
+    @each $size, $value in vars.$size-scale {
+        .basis--#{$size} {
+            @include responsive.with-size-and-orientation-variants {
+                flex-basis: vars.content-scaled($value);
+            }
+        }
+    }
+    .basis--auto { @include responsive.with-size-and-orientation-variants { flex-basis: auto; } }
+
+    // Inline flex container. Its display value is in the _visibility.scss map
+    // with the rest of the family, which is what took it from 12 gates to the 96
+    // its ten siblings publish; the container body follows it here.
+    .inline-flex {
+        @include responsive.with-dark-all-variants {
+            @include mixins.apply-styles(map.set($flex-base-styles, display, inline-flex));
+        }
+    }
+
+    // Context-aware child overrides. The direction class is the guard, so it
+    // stays a plain selector and only the child takes the variant prefix:
+    // `flex flex--col` on the parent, `md:stretch-x` on the child. Handing the
+    // whole parent-child selector to the standard emitters kept only the child
+    // compound, which published one global `.md\:stretch-x` per context with
+    // whichever body came last winning everywhere.
+    //
+    // The guard is a published class, so it goes in as $companion-class too and
+    // the gate reaches `md:flex--col > .stretch-x`. Without it a responsively
+    // switched direction left its children on the generic `.flex >` body.
+    @each $selector, $styles in $context-child-overrides {
+        .#{$selector} {
+            @include mixins.apply-styles($styles);
+        }
+
+        $parts: helpers.split-parent-child($selector);
+        @include helpers.with-companion-modifier-variants(
+            '.' + list.nth($parts, 1),
+            helpers.extract-class-name(list.nth($parts, 2)),
+            $combinator: '>',
+            $companion-class: list.nth($parts, 1)
+        ) {
+            @include mixins.apply-styles($styles);
+        }
+    }
+}

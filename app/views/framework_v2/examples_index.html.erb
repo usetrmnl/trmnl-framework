@@ -1,0 +1,42 @@
+<% meta title: @og_title %>
+
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <div class="my-4">
+      <%= render 'shared/heading', title: 'Layout Examples' %>
+    </div>
+  </div>
+
+  <div class="<%= layout_single_col_classes %> space-y-12">
+    <%# Directly get examples from config since we're on examples index %>
+    <% begin %>
+      <% config = layout_examples_config %>
+      <% if config.is_a?(Hash) && config.any? %>
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Layouts') %>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% config.each do |keyname, plugin_config| %>
+              <% plugin = example_plugins_by_keyname[keyname] %>
+              <% next unless plugin %>
+              <% example_url = plugin_config[:variant].present? ? framework_example_show_path(id: keyname, variant: plugin_config[:variant]) : framework_example_show_path(id: keyname) %>
+              <%= render 'framework_v2/framework_card',
+                url: example_url,
+                title: plugin_config[:name] || plugin.name,
+                description: plugin_config[:description] || plugin.description,
+                icon_type: 'image',
+                image_url: plugin.image_url,
+                image_dark_url: plugin.image_dark_url %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% rescue => e %>
+      <p class="text-gray-500">No examples available.</p>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+// ensures all Framework docs load as intended, with terminalize() being invoked
+Array.from(document.querySelectorAll('[href*="/framework/"]')).forEach(docs => { docs.dataset.turbo = false; })
+</script>

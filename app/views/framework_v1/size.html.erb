@@ -1,0 +1,241 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :size %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Size system provides utility classes for controlling width and height dimensions.
+      It includes both fixed sizes and responsive utilities to handle various layout needs.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Fixed Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Control element widths and heights using predefined size classes. Use <code class="<%= framework_section_code_classes %>">w--{size}</code> and <code class="<%= framework_section_code_classes %>">h--{size}</code> class names with these size values:
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <% size_values = {
+            '0' => '0px',
+            '0.5' => '2px',
+            '1' => '4px',
+            '1.5' => '6px',
+            '2' => '8px',
+            '2.5' => '10px',
+            '3' => '12px',
+            '3.5' => '14px',
+            '4' => '16px',
+            '5' => '20px',
+            '6' => '24px',
+            '7' => '28px',
+            '8' => '32px',
+            '9' => '36px',
+            '10' => '40px',
+            '11' => '44px',
+            '12' => '48px',
+            '14' => '56px',
+            '16' => '64px',
+            '20' => '80px',
+            '24' => '96px',
+            '28' => '112px',
+            '32' => '128px',
+            '36' => '144px',
+            '40' => '160px',
+            '44' => '176px',
+            '48' => '192px',
+            '52' => '208px',
+            '56' => '224px',
+            '60' => '240px',
+            '64' => '256px',
+            '72' => '288px',
+            '80' => '320px',
+            '96' => '384px'
+          } %>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="flex flex-row gap my-2">
+                <div class="flex flex-col gap">
+                  <% size_values.each do |class_name, _| %>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>">w/h--<%= class_name %></code>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="flex flex-col gap">
+                  <% size_values.each do |_, pixel_value| %>
+                    <div class="flex flex--row flex--start h--2 w--32">
+                      <code class="<%= framework_section_code_classes %>"><%= pixel_value %></code>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="flex flex-col gap">
+                  <% size_values.each do |class_name, _| %>
+                    <div class="rounded-md bg-gray-400 dark:bg-gray-500 h--2 w--<%= class_name %> rounded-sm"></div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Arbitrary Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Need a specific dimension? Use arbitrary size classes for precise pixel values with <code class="<%= framework_section_code_classes %>">w--[Npx]</code> and <code class="<%= framework_section_code_classes %>">h--[Npx]</code> syntax, where N can be any value from 0 to 1000.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="flex flex-row gap my-2">
+                <div class="flex flex-col gap">
+                  <div class="flex flex--row flex--start h--2 w--32">
+                    <code class="<%= framework_section_code_classes %>">w/h--[150px]</code>
+                  </div>
+                  <div class="flex flex--row flex--start h--2 w--32">
+                    <code class="<%= framework_section_code_classes %>">w/h--[225px]</code>
+                  </div>
+                  <div class="flex flex--row flex--start h--2 w--32">
+                    <code class="<%= framework_section_code_classes %>">w/h--[300px]</code>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap">
+                  <div class="flex flex--row flex--start h--2 w--32">
+                    <code class="<%= framework_section_code_classes %>">150px</code>
+                  </div>
+                  <div class="flex flex--row flex--start h--2 w--32">
+                    <code class="<%= framework_section_code_classes %>">225px</code>
+                  </div>
+                  <div class="flex flex--row flex--start h--2 w--32">
+                    <code class="<%= framework_section_code_classes %>">300px</code>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap">
+                  <div class="rounded-md bg-gray-400 dark:bg-gray-500 h--2 w--[150px] rounded-sm"></div>
+                  <div class="rounded-md bg-gray-400 dark:bg-gray-500 h--2 w--[225px] rounded-sm"></div>
+                  <div class="rounded-md bg-gray-400 dark:bg-gray-500 h--2 w--[300px] rounded-sm"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Sizes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Responsive sizes allow you to set width and height values relative to the container or content, rather than using fixed pixel values.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Responsive Width') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">w--full</code> for full width or
+              <code class="<%= framework_section_code_classes %>">w--auto</code> for automatic width.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="border border-2 border-gray-300 border-dashed p-4 rounded-xl w--full flex flex--col gap">
+                      <div class="flex flex--row flex--center">
+                        <div class="w--full p-4 rounded-md bg-gray-100 text-center">
+                          <span class="label">Full Width</span>
+                        </div>
+                      </div>
+                      <div class="flex flex--row flex--center">
+                        <div class="w--auto p-4 rounded-md bg-gray-100 text-center">
+                          <span class="label">Auto Width</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Size</span>
+                    <span class="instance">Responsive Widths</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="w--full">Full width</div>
+<div class="w--auto">Auto width</div>'
+            ) %>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Responsive Height') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">h--full</code> for full height or
+              <code class="<%= framework_section_code_classes %>">h--auto</code> for automatic height.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap">
+                    <div class="border border-2 border-gray-300 border-dashed p-4 rounded-xl h--full flex flex--row gap">
+                      <div class="flex flex--col flex--center">
+                        <div class="h--full p-4 rounded-md bg-gray-100 flex flex--col flex--center">
+                          <span class="label">Full Height</span>
+                        </div>
+                      </div>
+                      <div class="flex flex--col flex--center">
+                        <div class="h--auto p-4 rounded-md bg-gray-100 flex flex--col flex--center">
+                          <span class="label">Auto Height</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Size</span>
+                    <span class="instance">Responsive Heights</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="h--full">Full height</div>
+<div class="h--auto">Auto height</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

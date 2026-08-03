@@ -1,0 +1,265 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :inverse %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:inverse) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Add <code class="<%= framework_section_code_classes %>">inverse</code> to a container to apply the opposite of the screen's color scheme to that container and its descendants.
+            Use it as a visual treatment, or apply it semantically to identify the active item, selected row, or current state.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="item inverse">
+  <div class="content">
+    <span class="title">Active item</span>
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Active Collection Rows') %>
+          <p class="<%= framework_section_description_classes %>">
+            Invert individual rows to make active resources scannable inside a longer collection.
+            The row background, text, item metadata, and other framework paint change together.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--stretch gap">
+                    <div class="flex flex--col flex--top w--full h--full gap--small grow bg--gray-70 p--2 rounded">
+                      <div class="item inverse item--emphasis-3 py--2 pl--2 w--full stretch rounded--xsmall">
+                        <div class="meta"></div>
+                        <div class="content w--full">
+                          <div class="flex flex--row flex--center-y gap--xlarge w--full h--full">
+                            <div class="no-shrink text--base font--bold w--32">Desk M1</div>
+                            <div class="text--base font--bold w--24 text--center">Occupied</div>
+                            <div class="grow text--base font--regular">Booked with TRMNL · 7:00 - 15:00</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="item inverse item--emphasis-3 py--2 pl--2 w--full stretch rounded--xsmall">
+                        <div class="meta"></div>
+                        <div class="content w--full">
+                          <div class="flex flex--row flex--center-y gap--xlarge w--full h--full">
+                            <div class="no-shrink text--base font--bold w--32">Desk M2</div>
+                            <div class="text--base font--bold w--24 text--center">Occupied</div>
+                            <div class="grow text--base font--regular">laura@example.com · Booked for the day</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <% [['Desk M3', ''], ['Desk M4', ''], ['Desk S1', 'Until 8:30'], ['Desk S2', '']].each do |name, detail| %>
+                        <div class="item bg--white py--2 pl--2 w--full stretch rounded--xsmall">
+                          <div class="meta"></div>
+                          <div class="content w--full">
+                            <div class="flex flex--row flex--center-y gap--xlarge w--full h--full">
+                              <div class="no-shrink text--base font--bold w--32"><%= name %></div>
+                              <div class="text--base font--regular w--24 text--center">Available</div>
+                              <div class="grow text--base font--regular"><%= detail %></div>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Bookable desks</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Active row -->
+<div class="item inverse item--emphasis-3 rounded--xsmall">
+  <div class="meta"></div>
+  <div class="content">
+    <span class="title title--small">Desk M1</span>
+    <span class="description">Occupied</span>
+  </div>
+</div>
+
+<!-- Inactive sibling -->
+<div class="item bg--white rounded--xsmall">
+  <div class="meta"></div>
+  <div class="content">
+    <span class="title title--small">Desk M3</span>
+    <span class="description">Available</span>
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Active Collection Cards') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use inverse cards when several resources share the same grid and only some need attention.
+            The stronger surface separates occupied rooms from available rooms without changing the grid structure.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout">
+                    <div class="grid grid--cols-2 w--full h--full gap--small bg--gray-70 p--2 rounded">
+                      <div class="bg--white w--full flex flex--col flex--left rounded--xsmall gap py--2 px--3">
+                        <div class="text--large font--bold w--full">Auxiliary meeting room</div>
+                        <div class="grow flex flex--col flex--left w--full">
+                          <div class="text--xxlarge font--bold grow flex flex--col flex--center">Available</div>
+                          <div class="text--base font--regular">&nbsp;</div>
+                        </div>
+                      </div>
+
+                      <div class="inverse w--full flex flex--col flex--left rounded--xsmall gap py--2 px--3">
+                        <div class="text--large font--bold w--full">Board room</div>
+                        <div class="grow flex flex--col flex--left w--full">
+                          <div class="text--xxlarge font--bold grow flex flex--col flex--center">Marketing Sync</div>
+                          <div class="text--base font--regular">11:00 - 12:30</div>
+                        </div>
+                      </div>
+
+                      <div class="inverse w--full flex flex--col flex--left rounded--xsmall gap py--2 px--3">
+                        <div class="text--large font--bold w--full">Huddle Space Alpha</div>
+                        <div class="grow flex flex--col flex--left w--full">
+                          <div class="text--xxlarge font--bold grow flex flex--col flex--center">Occupied</div>
+                          <div class="text--base font--regular">11:15 - 11:45</div>
+                        </div>
+                      </div>
+
+                      <div class="bg--white w--full flex flex--col flex--left rounded--xsmall gap py--2 px--3">
+                        <div class="text--large font--bold w--full">Huddle Space Beta</div>
+                        <div class="grow flex flex--col flex--left w--full">
+                          <div class="text--xxlarge font--bold grow flex flex--col flex--center">Available</div>
+                          <div class="text--base font--regular">&nbsp;</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Meeting rooms</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="grid grid--cols-2 gap--small">
+  <div class="bg--white rounded--xsmall p--3">
+    <div class="title">Available</div>
+  </div>
+
+  <div class="inverse rounded--xsmall p--3">
+    <div class="title">Marketing Sync</div>
+    <div class="description">11:00 - 12:30</div>
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'State Transitions') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply inverse to a larger status surface when a state transition should change the whole composition.
+            For example, an occupied meeting room can invert its schedule, dividers, and attendee details as one semantic state.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--large p--16 inverse rounded">
+                    <div class="flex flex--col flex--center gap--large h--full">
+                      <div class="text--large font--regular">11:00 - 12:30</div>
+                      <div class="divider w--full"></div>
+                      <div class="text--mega font--bold text--center">Marketing Sync</div>
+                      <div class="divider w--full"></div>
+                      <div class="text--large font--regular">laura@example.com &amp; 5 more</div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                    <span class="title">Board room</span>
+                    <span class="instance">20 seats</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="view view--full">
+  <div class="layout layout--col gap--large p--16 inverse rounded">
+    <div class="flex flex--col flex--center gap--large h--full">
+      <div class="text--large font--regular">11:00 - 12:30</div>
+      <div class="divider w--full"></div>
+      <div class="text--mega font--bold text--center">Marketing Sync</div>
+      <div class="divider w--full"></div>
+      <div class="text--large font--regular">laura@example.com &amp; 5 more</div>
+    </div>
+  </div>
+</div>'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Paint and Cascade Behavior') %>
+          <p class="<%= framework_section_description_classes %>">
+            Inverse flips framework background, text, border, stroke, semantic, icon, chart, and component-slot paint for the element subtree.
+            It applies dark paint on a light screen and light paint on a dark-mode screen without changing siblings.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A slot value declared directly on the element overrides the inverse default, and a theme can define its own inverse treatment with <code class="<%= framework_section_code_classes %>">.screen--theme-&lt;id&gt; .inverse</code>.
+            See <%= render DocsRef.new(page: :theme_slots) %> and <%= render DocsRef.new(page: :themes) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Unlike the <code class="<%= framework_section_code_classes %>">invert</code> image filter, inverse changes semantic framework paint instead of flipping pixels.
+            <code class="<%= framework_section_code_classes %>">dark:</code> utilities still require <code class="<%= framework_section_code_classes %>">screen--dark-mode</code>; inverse changes paint, not variant activation.
+          </p>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

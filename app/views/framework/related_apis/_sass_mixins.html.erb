@@ -1,0 +1,9 @@
+<div class="space-y-4">
+  <%= framework_heading(4, 'The same grammar in SCSS') %>
+  <p class="<%= framework_section_description_classes %>">
+    The screen mixins generate device-aware rules from the same size, orientation, and bit-depth grammar these
+    utility classes use, for styles that have no utility class. See
+    <%= render DocsRef.new(page: :sass_mixins) %> for the mixins and the scale functions.
+  </p>
+  <%= render CodeExampleComponent.new(demo_code: "@include trmnl.screen('md', 'portrait') {\n  .status { display: none; }\n}", language: 'scss') %>
+</div>

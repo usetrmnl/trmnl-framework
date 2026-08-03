@@ -1,0 +1,232 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :fit_value %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:fit_value) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            To enable automatic text resizing, add the <code class="<%= framework_section_code_classes %>">data-value-fit="true"</code>
+            attribute to your element. The system adjusts the element's font size and weight to fit the content
+            on a single line within the container width, for both numeric and text values.
+            For multi-line text fitting, see the <code class="<%= framework_section_code_classes %>">data-value-fit-max-height</code> option below.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true">
+                              $1,000
+                            </span>
+                            <span class="label">Dundies Budget</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true">
+                              $1,000,000
+                            </span>
+                            <span class="label">Scott's Tots</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true">
+                              $1,000,000,000
+                            </span>
+                            <span class="label">Sabre Revenue</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Fit Value</span>
+                      <span class="instance">Dunder Mifflin</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge" data-value-fit="true">$1,000</span>
+
+<span class="value value--xxxlarge" data-value-fit="true">$1,000,000</span>
+
+<span class="value value--xxxlarge" data-value-fit="true">$1,000,000,000</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Single-line Text Fitting') %>
+          <p class="<%= framework_section_description_classes %>">
+            Text values are automatically fitted to a single line when using
+            <code class="<%= framework_section_code_classes %>">data-value-fit="true"</code> without specifying a max height.
+            The system derives the single-line height from the element's computed line-height, then shrinks the font size
+            and weight until the text fits on one line within the container.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true">
+                              Assistant to the Regional Manager
+                            </span>
+                            <span class="label">Dwight's Title</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true">
+                              Threat Level Midnight
+                            </span>
+                            <span class="label">Michael's Film</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true">
+                              World's Best Boss
+                            </span>
+                            <span class="label">Michael's Mug</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Fit Value</span>
+                      <span class="instance">Dunder Mifflin</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge" data-value-fit="true">Assistant to the Regional Manager</span>
+
+<span class="value value--xxxlarge" data-value-fit="true">Threat Level Midnight</span>
+
+<span class="value value--xxxlarge" data-value-fit="true">World&#39;s Best Boss</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Multi-line Text Fitting') %>
+          <p class="<%= framework_section_description_classes %>">
+            To allow text to wrap across multiple lines while still fitting within a constrained area, specify a maximum height
+            using the <code class="<%= framework_section_code_classes %>">data-value-fit-max-height</code> attribute (in pixels).
+            This overrides the default single-line behavior, allowing the text to wrap while ensuring it stays within both
+            width and height constraints through automatic font size and weight adjustments.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+                              Would I rather be feared or loved? Easy. Both. I want people to be afraid of how much they love me.
+                            </span>
+                            <span class="label">Michael Scott</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+                              Identity theft is not a joke, Jim! Millions of families suffer every year.
+                            </span>
+                            <span class="label">Dwight Schrute</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+                              That's what she said.
+                            </span>
+                            <span class="label">Michael Scott</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Fit Value</span>
+                      <span class="instance">Dunder Mifflin</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+  Would I rather be feared or loved? Easy. Both. I want people to be afraid of how much they love me.
+</span>
+
+<span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+  Identity theft is not a joke, Jim! Millions of families suffer every year.
+</span>
+
+<span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+  That&#39;s what she said.
+</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

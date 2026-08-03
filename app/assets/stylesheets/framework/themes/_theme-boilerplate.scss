@@ -1,0 +1,102 @@
+// ============================================
+// TRMNL Framework - Theme Boilerplate (V3)
+// ============================================
+// Safe theme authoring rules:
+// 1) Theme files may set framework semantic channel + slot token refs via
+//    @include theme-slots.* mixins.
+// 2) Theme files must NOT set framework-owned paint variables:
+//    - --bg-* (mode/palette-controlled backgrounds)
+//    - --text-* (mode/palette-controlled text rendering)
+//    - --border-* (mode/palette-controlled border rendering)
+// 3) Theme files must NOT set root palette variables:
+//    - --white / --black
+//    - --gray-*
+//    - --color-*
+// 4) Keep selectors scoped to `.trmnl .screen--theme-<name>`.
+// 5) Emit the framework layer order (`@include layers.order;`) above the
+//    theme's own `@layer tn--themes` block. A theme file is loaded as its own
+//    <link>, and cascade layer order is fixed by the first stylesheet that
+//    names the layers, so without it a theme parsed before plugins.css loses
+//    to the framework defaults.
+//
+// Use this as a starting point when creating a new standalone theme file.
+
+@use '../config/layers' as layers;
+@use '../mixins/theme-slots' as theme-slots;
+
+@include layers.order;
+
+@layer tn--themes {
+    .trmnl .screen--theme-example {
+        // Semantic channel refs (safe)
+        @include theme-slots.semantic-bg('canvas', 'white');
+        @include theme-slots.semantic-bg('surface', 'white');
+        @include theme-slots.semantic-bg('backdrop', 'gray-50');
+        @include theme-slots.semantic-bg('fill-strong', 'black');
+        @include theme-slots.semantic-bg('fill-muted', 'gray-60');
+        @include theme-slots.semantic-bg('fill-soft', 'gray-70');
+        @include theme-slots.semantic-text('text-primary', 'black');
+        @include theme-slots.semantic-text('text-secondary', 'gray-30');
+        @include theme-slots.semantic-text('text-inverse', 'white');
+        @include theme-slots.semantic-stroke('stroke-contrast', 'white');
+        @include theme-slots.semantic-border('border-strong', 'black');
+        @include theme-slots.semantic-border('border-muted', 'gray-60');
+
+        // Icon channel (optional): paint for adaptive images
+        // (img.image--adaptive). When omitted, adaptive icons follow the
+        // screen's text-primary paint, which fits most themes.
+        // @include theme-slots.semantic-icon('gray-20');
+
+        // Slot token refs (safe): remap component paint intent by token.
+        @include theme-slots.bg-slot('item-meta', 'yellow-40');
+        @include theme-slots.bg-slot('progress-fill', 'blue-40');
+        @include theme-slots.text-slot('label-gray', 'gray-30');
+        @include theme-slots.border-level-slot('table-head-row', 4);
+        @include theme-slots.border-token-slot('label-underline', 'gray-30');
+
+        // Utility token remaps (safe): remap raw palette utility classes.
+        // Makes bg--<from> render as bg--<to>, text--<from> as text--<to>, etc.
+        // Cascades to all variant prefixes (size, orientation, bit-depth, dark).
+        //
+        // Bulk remap all grays + white to a single hue:
+        // @include theme-slots.utility-remap-grayscale('yellow');
+        // @include theme-slots.utility-remap-border-grayscale('yellow');
+        //
+        // Or remap individual tokens:
+        // @include theme-slots.utility-bg('gray-10', 'yellow-10');
+        // @include theme-slots.utility-text('gray-30', 'yellow-30');
+        // @include theme-slots.utility-stroke('white', 'yellow-75');
+        // @include theme-slots.utility-border-token(4, h, 'yellow-40');
+        //
+        // Or point a border level at another level, which repaints .border--*,
+        // the steps that collapse onto it, .divider and the slots pointing at
+        // it. Restating a level onto itself keeps the family's own line
+        // polarity on it while the rest of the rail swaps:
+        // @include theme-slots.utility-border-level(1, h, 7);
+        // @include theme-slots.utility-border-level(4, h, 4);
+    }
+
+    // Every theme needs this block. `.inverse` is the framework's local scheme
+    // flip, but the framework's own flip is gated to unthemed screens: a theme
+    // owns its colors, so inside a themed screen an unstated inverse subtree
+    // simply keeps the screen's scheme and never flips. Restate the channels
+    // here as the opposite of the screen's, in this theme's own tokens. Tokens
+    // are literal: the screen's own paint rail stays underneath the subtree,
+    // so each one resolves exactly as it does on the screen root, dither tiles
+    // and gray fallbacks included. The slot and utility remaps above inherit
+    // in, so restate only the ones whose intent flips with the ground.
+    .trmnl .screen--theme-example .inverse {
+        @include theme-slots.semantic-bg('canvas', 'black');
+        @include theme-slots.semantic-bg('surface', 'black');
+        @include theme-slots.semantic-bg('backdrop', 'gray-20');
+        @include theme-slots.semantic-bg('fill-strong', 'white');
+        @include theme-slots.semantic-bg('fill-muted', 'gray-25');
+        @include theme-slots.semantic-bg('fill-soft', 'gray-15');
+        @include theme-slots.semantic-text('text-primary', 'white');
+        @include theme-slots.semantic-text('text-secondary', 'gray-55');
+        @include theme-slots.semantic-text('text-inverse', 'black');
+        @include theme-slots.semantic-stroke('stroke-contrast', 'black');
+        @include theme-slots.semantic-border('border-strong', 'white');
+        @include theme-slots.semantic-border('border-muted', 'gray-25');
+    }
+}

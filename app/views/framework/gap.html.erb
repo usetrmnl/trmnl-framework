@@ -1,0 +1,477 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :gap %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:gap) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            The gap system includes predefined base sizes and arbitrary pixel values. These standardized spaces
+            help maintain consistent spacing across your application's grid and flex layouts.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Base') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The base <code class="<%= framework_section_code_classes %>">gap</code> class without size modifiers
+              and the <code class="<%= framework_section_code_classes %>">gap--base</code> class both produce the same visual result,
+              providing the standard spacing. Use <code class="<%= framework_section_code_classes %>">gap--base</code> when you need
+              to explicitly set the base size in responsive contexts. See the <%= link_to 'Responsive Gaps', '#responsive-gap', class: 'hover:underline' %> section for examples.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--col p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium w--full gap">
+                        <div class="grid grid--cols-3 gap--none">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--none</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--none</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--none</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap--xsmall">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xsmall</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xsmall</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xsmall</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap--small">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--small</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--small</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--small</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap--medium">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--medium</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--medium</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--medium</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap--large">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--large</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--large</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--large</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap--xlarge">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xlarge</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xlarge</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xlarge</span>
+                          </div>
+                        </div>
+                        <div class="grid grid--cols-3 gap--xxlarge">
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xxlarge</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xxlarge</span>
+                          </div>
+                          <div class="bg--white p--2.5 rounded--small text--center">
+                            <span class="label">gap--xxlarge</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Predefined Gaps</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Available base gap sizes from smallest to largest -->
+<div class="grid grid--cols-3 gap--none">...</div>
+<div class="grid grid--cols-3 gap--xsmall">...</div>
+<div class="grid grid--cols-3 gap--small">...</div>
+<div class="grid grid--cols-3 gap">...</div>
+<div class="grid grid--cols-3 gap--medium">...</div>
+<div class="grid grid--cols-3 gap--large">...</div>
+<div class="grid grid--cols-3 gap--xlarge">...</div>
+<div class="grid grid--cols-3 gap--xxlarge">...</div>
+
+<!-- Or using the base modifier -->
+<div class="flex flex--col gap--base">...</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Arbitrary') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use <code class="<%= framework_section_code_classes %>">gap--[Npx]</code> syntax to specify
+              exact pixel values from <strong>0px to 50px</strong>. This works with both grid and flex layouts, but does not support responsive variants.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid grid--cols-3 gap--[0px] p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[0px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[0px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[0px]</span>
+                        </div>
+                      </div>
+                      <div class="grid grid--cols-3 gap--[10px] p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[10px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[10px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[10px]</span>
+                        </div>
+                      </div>
+                      <div class="grid grid--cols-3 gap--[30px] p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[30px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[30px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[30px]</span>
+                        </div>
+                      </div>
+                      <div class="grid grid--cols-3 gap--[50px] p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[50px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[50px]</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--[50px]</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Arbitrary Pixel Gaps</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Custom gap values from 0px to 50px (no responsive support) -->
+<div class="grid grid--cols-3 gap--[0px]">...</div>
+<div class="grid grid--cols-3 gap--[10px]">...</div>
+<div class="grid grid--cols-3 gap--[30px]">...</div>
+<div class="grid grid--cols-3 gap--[50px]">...</div>
+
+<!-- Works with flex containers too -->
+<div class="flex flex--col gap--[25px]">...</div>'
+            ) %>
+          </div>
+
+          <div class="<%= message_sage_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  Arbitrary gap values using the <code class="font-mono">gap--[Npx]</code> syntax do not support responsive variants. Use predefined gap classes if you need responsive behavior.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Distribution Modifiers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Beyond fixed gaps, you can use special modifiers to control how space is distributed between elements.
+            These modifiers are particularly useful for creating flexible, dynamic layouts.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Auto Distribution') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">gap--auto</code> modifier
+              distributes available space evenly between elements, including equal spacing at the edges.
+              This uses <code class="<%= framework_section_code_classes %>">justify-content: space-evenly</code>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--col gap--auto h--52 p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--auto</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--auto</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--auto</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Auto Distribution Gap</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Auto distribution in a flex container -->
+<div class="flex flex--col gap--auto h--52">
+  <div>...</div>
+  <div>...</div>
+  <div>...</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Distribute') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">gap--distribute</code> modifier
+              places the first item at the start of the container and the last item at the end, with equal spacing between items.
+              This uses <code class="<%= framework_section_code_classes %>">justify-content: space-between</code>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="flex flex--col gap--distribute h--52 p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--distribute</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--distribute</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">gap--distribute</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Distribute Gap</span>
+                      <span class="instance">Design System</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Distribute spacing in a flex container -->
+<div class="flex flex--col gap--distribute h--52">
+  <div>First item (at start)</div>
+  <div>Middle item</div>
+  <div>Last item (at end)</div>
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Legacy: Space Between') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">gap--space-between</code> modifier
+              is maintained for backwards compatibility. It behaves the same as <code class="<%= framework_section_code_classes %>">gap--auto</code>,
+              using <code class="<%= framework_section_code_classes %>">justify-content: space-evenly</code>.
+              For the actual <code class="<%= framework_section_code_classes %>">space-between</code> behavior, use <code class="<%= framework_section_code_classes %>">gap--distribute</code>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="responsive-gap" class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Gaps') %>
+          <p class="<%= framework_section_description_classes %>">
+            Gap utilities support size-based breakpoints, orientation variants, and their combination.
+            Use prefixes like <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">portrait:</code>,
+            and <code class="<%= framework_section_code_classes %>">md:portrait:</code> to target conditions.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Responsive Gap Examples') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Apply different gap values at different breakpoints using the size-based responsive system.
+              The framework follows a mobile-first approach where larger breakpoints inherit smaller ones.
+              The <code class="<%= framework_section_code_classes %>">--base</code> modifier
+              is particularly useful for resetting to the default size at specific breakpoints.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="grid grid--cols-3 gap--small md:gap--large lg:gap--xlarge portrait:gap--medium md:portrait:gap--xlarge p--2.5 bg--gray-65 2bit:bg--gray-75 4bit:bg--gray-70 rounded--medium">
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Responsive Gap</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Responsive Gap</span>
+                        </div>
+                        <div class="bg--white p--2.5 rounded--small text--center">
+                          <span class="label">Responsive Gap</span>
+                        </div>
+                      </div>
+                      <div class="mt-4">
+                        <span class="description">Small by default, large on md+, xlarge on lg+, medium gap in portrait, xlarge in md+ portrait</span>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Responsive Gaps</span>
+                      <span class="instance">Size-Based</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Size + orientation examples -->
+<div class="grid grid--cols-3 gap--small md:gap--large lg:gap--xlarge portrait:gap--medium md:portrait:gap--xlarge">
+  <div>...</div>
+  <div>...</div>
+  <div>...</div>
+</div>
+
+<!-- Examples of different responsive patterns -->
+<div class="flex flex--col gap md:gap--large portrait:gap--small">...</div>
+<div class="grid grid--cols-2 gap--xsmall lg:gap--medium md:portrait:gap--large">...</div>
+
+<!-- Using base modifier to reset to default size at breakpoint -->
+<div class="grid grid--cols-3 gap--small lg:gap--base">
+  <div>...</div>
+  <div>...</div>
+  <div>...</div>
+</div>'
+            ) %>
+          </div>
+
+          <div class="<%= message_sage_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  Gap utilities only support size-based responsive variants. Bit-depth variants (like <code class="font-mono">1bit:</code> or <code class="font-mono">4bit:</code>) are not available for gap classes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

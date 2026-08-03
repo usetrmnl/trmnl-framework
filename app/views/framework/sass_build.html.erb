@@ -1,0 +1,182 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :sass_build %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:sass_build) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Toolchain') %>
+          <p class="<%= framework_section_description_classes %>">
+            The framework compiles with Dart Sass; the module system rules out LibSass and node-sass. Releases pin
+            <code class="<%= framework_section_code_classes %>">sass-embedded</code> 1.93.3 so published artifacts
+            reproduce byte for byte, and any current Dart Sass produces equivalent CSS.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Compiling plugins.css') %>
+          <p class="<%= framework_section_description_classes %>">
+            Create an entrypoint that loads the framework module, then compile it with the framework source on the
+            load path. <code class="<%= framework_section_code_classes %>">bin/build</code> in the repository runs
+            exactly this for the released artifacts.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// my-build.scss
+@use \'framework\';', language: 'scss') %>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'sass --style=compressed --no-source-map \
+  --load-path=trmnl-framework/app/assets/stylesheets \
+  my-build.scss plugins.css', language: 'bash') %>
+        </div>
+
+        <div class="space-y-4">
+          <p class="<%= framework_section_description_classes %>">
+            To bake your own device profiles into the build, configure the module at the same
+            <code class="<%= framework_section_code_classes %>">@use</code> site. See
+            <%= render DocsRef.new(page: :sass_devices) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The compiled stylesheet embeds every dither tile as data URIs, so it is large on disk. Serve it
+            compressed; the release pipeline ships a <code class="<%= framework_section_code_classes %>">.gz</code>
+            next to every artifact for the same reason.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Fonts') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every <code class="<%= framework_section_code_classes %>">@font-face</code> block in the framework points
+            at a root-relative <code class="<%= framework_section_code_classes %>">/fonts/</code> URL, so a host has to
+            serve those files. Without them the pixel families fall back to the browser default. Nothing errors, the
+            type is simply wrong at every size.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Font URLs resolve against the host that serves the stylesheet, not the page. Link
+            <code class="<%= framework_section_code_classes %>">plugins.css</code> from the releases CDN and the fonts
+            load from the same host. Serve your own build and you serve
+            <code class="<%= framework_section_code_classes %>">/fonts</code> with it.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <%= framework_heading(4, 'What the host serves') %>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">TRMNL12</code>,
+              <code class="<%= framework_section_code_classes %>">TRMNL16</code>, and
+              <code class="<%= framework_section_code_classes %>">TRMNL21</code> in Regular and Bold, each as
+              <code class="<%= framework_section_code_classes %>">.woff2</code>,
+              <code class="<%= framework_section_code_classes %>">.woff</code>, and
+              <code class="<%= framework_section_code_classes %>">.ttf</code> (18 files).
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">NicoPups-Regular.ttf</code>,
+              <code class="<%= framework_section_code_classes %>">NicoClean-Regular.ttf</code>, and
+              <code class="<%= framework_section_code_classes %>">BlockKie.ttf</code> for the Classic bundle (3 files).
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">Inter.ttf</code> and
+              <code class="<%= framework_section_code_classes %>">Inter-Italic.ttf</code>, which both bundles use on
+              high-density displays (2 files).
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Both bundles download as zips from
+            <%= link_to 'Releases', framework_releases_index_path, class: 'font-medium hover:underline' %>, each with a
+            README of per-font credits and its license text. Extract the font files into the directory the host serves
+            at <code class="<%= framework_section_code_classes %>">/fonts</code>, and keep the credits and license
+            files with your build. <%= render DocsRef.new(page: :font_family) %> covers which bundle renders what.
+          </p>
+        </div>
+
+        <div class="<%= message_warning_classes %>">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/warning' %>
+            </div>
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="leading-none text-sm font-medium">
+                The framework release zip holds no fonts. They ship as their own bundles, so a stack assembled from
+                that zip alone renders with no pixel fonts at all.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Palette tiles') %>
+          <p class="<%= framework_section_description_classes %>">
+            The compiled stylesheet embeds every dither tile as a data URI, on grayscale screens and color palettes
+            alike. Fonts are the only asset it loads by URL, so a custom stack has no pattern images to serve.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Themes') %>
+          <p class="<%= framework_section_description_classes %>">
+            Themes are not bundled into <code class="<%= framework_section_code_classes %>">plugins.css</code>. Each
+            theme under <code class="<%= framework_section_code_classes %>">framework/themes/</code> compiles to its
+            own stylesheet and loads as a second <code class="<%= framework_section_code_classes %>">&lt;link&gt;</code>
+            next to the framework. Usage is on <%= render DocsRef.new(page: :themes) %>; the authoring contract is
+            on <%= render DocsRef.new(page: :theme_authoring) %>.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'sass --style=compressed --no-source-map \
+  --load-path=trmnl-framework/app/assets/stylesheets \
+  trmnl-framework/app/assets/stylesheets/framework/themes/black-and-yellow-theme.scss \
+  themes/black-and-yellow-theme.css', language: 'bash') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The JavaScript runtime') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">plugins.js</code> is hand-authored and ships verbatim:
+            no bundler, no build step. Copy
+            <code class="<%= framework_section_code_classes %>">app/javascript/plugin-render/plugins.js</code> next to
+            your compiled CSS and serve both. It provides the render-time engines
+            (<%= render DocsRef.new(page: :framework_runtime) %>) and TRMNLPaint
+            (<%= render DocsRef.new(page: :paint_api) %>).
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Releases and minification') %>
+          <p class="<%= framework_section_description_classes %>">
+            The repository's release task compiles, minifies, and precompresses (gzip and brotli) every published version reproducibly; those
+            artifacts are what the releases CDN serves. If you don't need a modified build, serve a released version
+            directly and skip the toolchain entirely.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Minifying your own build is optional. If you do, keep custom properties intact: the framework's JavaScript
+            reads public <code class="<%= framework_section_code_classes %>">--*</code> variables from the live
+            cascade.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

@@ -1,0 +1,267 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :paint_borders %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:paint_borders) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Borders and dividers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every resolver takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
+            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code> ancestor
+            supplies the paint. The probe technique is documented on <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">border(spec, { dir, el })</code>: a border rail as a
+              <code class="<%= framework_section_code_classes %>">BorderFill</code>. The
+              <code class="<%= framework_section_code_classes %>">spec</code> is a shade step
+              from 10 to 75 or the literal
+              <code class="<%= framework_section_code_classes %>">'black'</code> /
+              <code class="<%= framework_section_code_classes %>">'white'</code> rails;
+              <code class="<%= framework_section_code_classes %>">dir</code> is
+              <code class="<%= framework_section_code_classes %>">'h'</code> (default) or
+              <code class="<%= framework_section_code_classes %>">'v'</code>. Framework borders paint as a background
+              on a pseudo-element, so the resolved paint is read there.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">divider({ dir, el })</code>: the level-6
+              <code class="<%= framework_section_code_classes %>">.divider</code> rail as a
+              <code class="<%= framework_section_code_classes %>">BorderFill</code>, probed on the element itself.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            Dither-mode lines are multi-layer and list-valued, so
+            <code class="<%= framework_section_code_classes %>">BorderFill</code> keeps
+            <code class="<%= framework_section_code_classes %>">size</code>,
+            <code class="<%= framework_section_code_classes %>">position</code> and
+            <code class="<%= framework_section_code_classes %>">repeat</code> as verbatim computed strings. It also
+            carries the renderer-ready SVG program declared by the same CSS rule; JavaScript never parses gradients or
+            derives their geometry.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'BorderFill = {
+  color:    string | null,  // resolved background-color (solid/black-white modes)
+  image:    string | null,  // resolved background-image gradient(s); null when "none"
+  url:      string | null,  // first url(...) ink tile (black/white rails); null otherwise
+  size:     string | null,  // VERBATIM background-size string (dither lines are list-valued)
+  position: string | null,  // VERBATIM background-position string
+  repeat:   string | null,  // VERBATIM background-repeat string
+  render: {                  // CSS-declared; copied verbatim by renderer adapters
+    stroke:  string | null,
+    width:   string | null,
+    height:  string | null,
+    viewBox: string | null,
+    path1:   string | null,
+    color1:  string | null,
+    path2:   string | null,
+    color2:  string | null,
+  } | null,
+  dir:      "h" | "v",      // which pseudo/orientation was probed
+}', language: 'javascript') %>
+        </div>
+
+        <div class="space-y-4 mt-4">
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">border()</code> is the guaranteed-hairline path: it
+            probes the fill-backed <code class="<%= framework_section_code_classes %>">.border--*</code> utilities,
+            which carry real ink in every mode and pick up theme tinting for free.
+            <code class="<%= framework_section_code_classes %>">semantic('border-strong')</code> and
+            <code class="<%= framework_section_code_classes %>">semantic('border-muted')</code> describe the semantic
+            role's token tile, not the directional rail art. Draw rails with
+            <code class="<%= framework_section_code_classes %>">border()</code>; reach for
+            <code class="<%= framework_section_code_classes %>">semantic('border-*')</code> only when you need the
+            role as a Fill.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// Framework rail utilities, resolved for the current mode/theme.
+var gridRail = TRMNLPaint.border(65, { el: "my-chart" });     // -> BorderFill
+var axisRail = TRMNLPaint.border("black", { dir: "v", el: "my-chart" });
+var step40 = TRMNLPaint.border(40, { el: "my-chart" });', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Painting rails') %>
+          <p class="<%= framework_section_description_classes %>">
+            A resolved rail is written back verbatim, so it paints exactly as the CSS
+            <code class="<%= framework_section_code_classes %>">.border--*</code> utilities do. Wrap paints in
+            <code class="<%= framework_section_code_classes %>">watch()</code> so rails re-resolve on mode, dark and
+            theme changes; see <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">applyBorder(node, borderFill)</code>: writes a
+              <code class="<%= framework_section_code_classes %>">BorderFill</code> onto a node as its five background
+              longhands, verbatim, so a solid, a flat gradient and a multi-layer dither line all round-trip unchanged.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Highcharts axes') %>
+          <p class="<%= framework_section_description_classes %>">
+            The axis adapters copy a resolved rail into Highcharts' native options; the fill adapter and the
+            adapter ground rules live on <%= render DocsRef.new(page: :paint_charts) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">toHighchartsAxis(borderFill)</code>: turns a
+              <code class="<%= framework_section_code_classes %>">BorderFill</code> into a
+              <code class="<%= framework_section_code_classes %>">{ gridLineColor, gridLineWidth, gridLineDashStyle, lineColor, tickColor }</code>
+              block.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">applyHighchartsAxisPaint()</code>: carries the
+              resolved BorderFill into Highcharts' render cycle and copies its CSS-declared SVG program onto the
+              rendered grid, axis and tick paths. Flat modes declare a stroke; patterned modes declare their complete
+              tile, paths and colors.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// Rails into Highcharts axis/grid options.
+var grid = TRMNLPaint.toHighchartsAxis(
+  TRMNLPaint.border(65, { el: "my-chart" }));
+// TRMNLCharts.options() applies the BorderFill pattern to rendered SVG paths.', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Live example') %>
+          <p class="<%= framework_section_description_classes %>">
+            The separator under each schedule row is painted with
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.border()</code> and
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.applyBorder()</code>, wrapped in
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.watch()</code>. Each row uses a different
+            spec (shade steps 65 and 40, the literal black and white rails), labelled on the right. Change the
+            device mode or Style in the picker and the rails re-resolve, picking up dither art and theme tinting.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div id="border-strip" class="flex flex--col w--full"></div>
+                  </div>
+
+                  <div class="title_bar">
+                    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                    <span class="title">Paint API</span>
+                    <span class="instance">TRMNLPaint.applyBorder</span>
+                  </div>
+                </div>
+
+                <script type="text/javascript">
+                  function whenReady(cb) {
+                    if (window.TRMNLPaint) return cb();
+                    window.addEventListener("load", function () {
+                      if (window.TRMNLPaint) cb();
+                    }, { once: true });
+                  }
+
+                  whenReady(function () {
+                    var el = "border-strip";
+                    var ROWS = [
+                      { time: "9:00",  what: "Conference room meeting",   spec: 65 },
+                      { time: "11:30", what: "Diversity Day training",    spec: 40 },
+                      { time: "14:00", what: "Dundies rehearsal",         spec: "black" },
+                      { time: "16:00", what: "Party Planning Committee",  spec: "white" }
+                    ];
+                    // watch() re-resolves each rail whenever the screen device/scale/mode/dark/theme changes.
+                    TRMNLPaint.watch(el, function () {
+                      var box = document.getElementById(el);
+                      if (!box) return;
+                      box.innerHTML = "";
+                      ROWS.forEach(function (r) {
+                        var row = document.createElement("div");
+                        row.className = "flex flex--row flex--center-y gap";
+                        row.style.cssText = "padding:12px 0;";
+                        var time = document.createElement("span");
+                        time.className = "label label--small";
+                        time.style.cssText = "width:56px;flex:none;";
+                        time.textContent = r.time;
+                        var what = document.createElement("span");
+                        what.className = "title title--small";
+                        what.style.cssText = "flex:1;";
+                        what.textContent = r.what;
+                        var cap = document.createElement("span");
+                        cap.className = "label label--small";
+                        cap.textContent = "border(" + JSON.stringify(r.spec) + ")";
+                        row.appendChild(time);
+                        row.appendChild(what);
+                        row.appendChild(cap);
+                        var rail = document.createElement("div");
+                        rail.style.cssText = "height:2px;width:100%;";
+                        // applyBorder writes the five background longhands verbatim, so the
+                        // rail paints exactly as the CSS .border--* utilities do.
+                        TRMNLPaint.applyBorder(rail, TRMNLPaint.border(r.spec, { el: el }));
+                        box.appendChild(row);
+                        box.appendChild(rail);
+                      });
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<div id="border-strip" class="flex flex--col w--full"></div>
+
+<script type="text/javascript">
+  // plugins.js bundles TRMNLPaint; wait for it before painting.
+  function whenReady(cb) {
+    if (window.TRMNLPaint) return cb();
+    window.addEventListener("load", function () {
+      if (window.TRMNLPaint) cb();
+    }, { once: true });
+  }
+
+  whenReady(function () {
+    var el = "border-strip";
+    var SPECS = [65, 40, "black", "white"];
+    // watch() re-resolves each rail whenever the screen device/scale/mode/dark/theme changes.
+    TRMNLPaint.watch(el, function () {
+      var box = document.getElementById(el);
+      if (!box) return;
+      box.innerHTML = "";
+      SPECS.forEach(function (spec) {
+        var row = document.createElement("div");
+        row.style.cssText = "padding:12px 0;";
+        row.textContent = "border(" + JSON.stringify(spec) + ")";
+        var rail = document.createElement("div");
+        rail.style.cssText = "height:2px;width:100%;";
+        // applyBorder writes the five background longhands verbatim, so the
+        // rail paints exactly as the CSS .border--* utilities do.
+        TRMNLPaint.applyBorder(rail, TRMNLPaint.border(spec, { el: el }));
+        box.appendChild(row);
+        box.appendChild(rail);
+      });
+    });
+  });
+</script>', language: 'html') %>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

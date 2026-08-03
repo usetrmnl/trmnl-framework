@@ -1,0 +1,226 @@
+// ============================================
+// TRMNL Framework - Text Utilities
+// ============================================
+// Text color utilities reference --text-{token}-color, --text-{token}-image,
+// and --text-{token}-clip CSS custom properties set on .screen by
+// base/_screen-mode-vars.scss. Mode-dependent rendering (pattern vs solid,
+// dark-mode inversion) is handled entirely through variable cascade.
+
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../mixins/factorized_utilities' as fz;
+@use 'sass:list';
+@use 'sass:string';
+
+// --tn-text-under carries the ink tile's light tone as a background-color
+// clipped by the same text clip, so pattern fills stay one image layer.
+@mixin apply-text-paint-vars {
+    color: var(--tn-text-color, inherit);
+    background-color: var(--tn-text-under, transparent);
+    background-image: var(--tn-text-image, none);
+    background-size: var(--dither-bg-size, auto);
+    -webkit-background-clip: var(--tn-text-clip, border-box);
+    background-clip: var(--tn-text-clip, border-box);
+}
+
+// Composed bg+text keeps the bg field on background-color (clipped by the
+// LAST layer, border-box), so the text field rides a middle gradient layer
+// clipped to the glyphs together with the text ink.
+@mixin apply-composed-text-bg-paint-vars {
+    color: var(--tn-text-color, inherit);
+    background-color: var(--tn-bg-color, transparent);
+    background-image: var(--tn-text-image, none), linear-gradient(var(--tn-text-under, transparent), var(--tn-text-under, transparent)), var(--tn-bg-image, none);
+    background-repeat: repeat, repeat, repeat;
+    background-size: var(--dither-bg-size, auto), auto, var(--dither-bg-size, auto);
+    -webkit-background-clip: var(--tn-text-clip, border-box), var(--tn-text-clip, border-box), border-box;
+    background-clip: var(--tn-text-clip, border-box), var(--tn-text-clip, border-box), border-box;
+}
+
+// Build composed selectors for one gate. For a non-null prefix P and
+// screen-selectors S, produce 12 selectors covering the three shapes the
+// previous per-gate code emitted as separate rules:
+//   - bg has prefix, text base:    [class^="P:bg--"][class^="text--"], …
+//   - text has prefix, bg base:    [class^="bg--"][class^="P:text--"], …
+//   - both prefixed:               [class^="P:bg--"][class^="P:text--"], …
+// For prefix=null we emit only the base shape (4 selectors).
+@function _composed-paint-selectors-for-gate($variant-prefix, $screen-selectors) {
+    $bg-base: fz.prefix-pair-selector('bg--');
+    $text-base: fz.prefix-pair-selector('text--');
+
+    $class-selectors: ();
+    @if $variant-prefix == null {
+        $class-selectors: (string.unquote('#{$bg-base}#{$text-base}'),);
+    } @else {
+        $bg-prefixed: fz.prefix-pair-selector('#{$variant-prefix}bg--');
+        $text-prefixed: fz.prefix-pair-selector('#{$variant-prefix}text--');
+        $class-selectors: (
+            string.unquote('#{$bg-prefixed}#{$text-base}'),
+            string.unquote('#{$bg-base}#{$text-prefixed}'),
+            string.unquote('#{$bg-prefixed}#{$text-prefixed}'),
+        );
+    }
+
+    @if list.length($screen-selectors) == 0 {
+        @return $class-selectors;
+    }
+    $scope: mixins.scope-selector($screen-selectors);
+    $scoped: ();
+    @each $cls in $class-selectors {
+        $scoped: list.append($scoped, string.unquote('#{$scope} #{$cls}'), comma);
+    }
+    @return $scoped;
+}
+
+@mixin emit-all-composed-text-bg-paint {
+    $selectors: ();
+
+    @include fz.each-utility-gate using ($prefix, $screens) {
+        @each $sel in _composed-paint-selectors-for-gate($prefix, $screens) {
+            $selectors: list.append($selectors, $sel, comma);
+        }
+    }
+
+    #{$selectors} {
+        @include apply-composed-text-bg-paint-vars;
+    }
+}
+
+@mixin emit-factorized-text-variants {
+    // Build a deduped (class-token, resolved-token) list. Both
+    // $palette-shades and $palette-shades-extended carry 'black' and
+    // 'white', so we filter by the class-token name to avoid duplicate
+    // rules.
+    $token-bindings: ();
+    $seen: ();
+    $sources: (
+        vars.$palette-shades,
+        vars.$palette-shades-extended,
+        vars.$color-palette-framework
+    );
+    @each $source in $sources {
+        @each $name, $_ in $source {
+            @if list.index($seen, $name) == null {
+                $token-bindings: list.append($token-bindings, ($name, $name));
+                $seen: list.append($seen, $name);
+            }
+        }
+    }
+    @each $name, $token in vars.$semantic-colors {
+        @if list.index($seen, $name) == null {
+            $token-bindings: list.append($token-bindings, ($name, $token));
+            $seen: list.append($seen, $name);
+        }
+    }
+
+    // One rule per token, with selectors covering every variant gate. Each
+    // rule carries both the token's --tn-text-* bindings and the paint
+    // declarations that read them, so paint rides the enumerated color
+    // classes and nothing else.
+    //
+    // A `[class^="text--"]` prefix matcher used to carry the paint instead.
+    // It also selected .text--center/--left/--right/--justify and the
+    // .text--small through .text--peta size utilities, none of which bind
+    // --tn-text-*, so it repainted them with its inert fallbacks (inherit,
+    // transparent, none, border-box) from tn--utilities, the last cascade
+    // layer, and wiped whatever an element or component had painted
+    // underneath. `label label--filled text--center` lost its fill that way.
+    // An exclusion list cannot fix it: :not() reads the whole class
+    // attribute, so excluding `text--center` would also strip the paint from
+    // `text--black text--center`.
+    //
+    // A token class weighs exactly what the prefix matcher weighed (one class
+    // versus one :is() of attribute selectors), and source order still places
+    // these before .text--default / .text--muted / .text--inverse, so the
+    // semantic text classes and the composed bg+text rule below keep winning.
+    //
+    // Property names go through interpolation so the compressed compiler
+    // emits them without the post-`:` whitespace it preserves for literal
+    // custom-property declarations, matching the previous output format the
+    // regression matchers depend on.
+    @each $pair in $token-bindings {
+        $class-token: list.nth($pair, 1);
+        $resolved-token: list.nth($pair, 2);
+        $selectors: fz.gate-selectors-for-token('text--#{$class-token}');
+        $vars: (
+            '--tn-text-color': var(--theme-text-#{$class-token}-color, var(--text-#{$resolved-token}-color)),
+            '--tn-text-image': var(--theme-text-#{$class-token}-image, var(--text-#{$resolved-token}-image, none)),
+            '--tn-text-clip': var(--theme-text-#{$class-token}-clip, var(--text-#{$resolved-token}-clip, border-box)),
+            '--tn-text-under': var(--theme-text-#{$class-token}-under, var(--text-#{$resolved-token}-under, transparent)),
+        );
+
+        #{$selectors} {
+            @each $name, $value in $vars {
+                #{$name}: #{$value};
+            }
+            @include apply-text-paint-vars;
+        }
+    }
+
+    // Single composed bg+text paint rule covering all gates.
+    @include emit-all-composed-text-bg-paint;
+}
+
+@include mixins.trmnl-namespace {
+    // ── Text alignment (mode-independent, keep with-all-variants) ──
+    .text--center {
+        @include mixins.with-dark-all-variants {
+            text-align: center;
+        }
+    }
+
+    .text--left {
+        @include mixins.with-dark-all-variants {
+            text-align: left;
+        }
+    }
+
+    .text--right {
+        @include mixins.with-dark-all-variants {
+            text-align: right;
+        }
+    }
+
+    .text--justify {
+        @include mixins.with-dark-all-variants {
+            text-align: justify;
+        }
+    }
+
+    @include emit-factorized-text-variants;
+
+    // ── Framework semantic text roles ──
+    // Bit depth included, like the semantic background roles in
+    // _background.scss: the two sets are documented as mirror images, so
+    // `2bit:bg--canvas` compiling while `2bit:text--muted` did not was a hole in
+    // the pair, not a decision.
+    .text--default {
+        @include responsive.with-dark-all-variants {
+            @include apply-text-paint-vars;
+            --tn-text-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
+            --tn-text-image: var(--framework-semantic-text-primary-text-image, none);
+            --tn-text-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+            --tn-text-under: var(--framework-semantic-text-primary-text-under, transparent);
+        }
+    }
+
+    .text--muted {
+        @include responsive.with-dark-all-variants {
+            @include apply-text-paint-vars;
+            --tn-text-color: var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary));
+            --tn-text-image: var(--framework-semantic-text-secondary-text-image, none);
+            --tn-text-clip: var(--framework-semantic-text-secondary-text-clip, border-box);
+            --tn-text-under: var(--framework-semantic-text-secondary-text-under, transparent);
+        }
+    }
+
+    .text--inverse {
+        @include responsive.with-dark-all-variants {
+            @include apply-text-paint-vars;
+            --tn-text-color: var(--framework-semantic-text-inverse-text-color, var(--framework-text-inverse));
+            --tn-text-image: var(--framework-semantic-text-inverse-text-image, none);
+            --tn-text-clip: var(--framework-semantic-text-inverse-text-clip, border-box);
+            --tn-text-under: var(--framework-semantic-text-inverse-text-under, transparent);
+        }
+    }
+}

@@ -1,0 +1,320 @@
+// ============================================
+// TRMNL Framework - Layout Component
+// ============================================
+
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use 'sass:map';
+
+// Define layout properties in a structured way
+$layout-base-styles: (
+    display: flex,
+    overflow: hidden,
+    justify-content: center,
+    align-items: center,
+    gap: var(--gap)
+);
+
+// Define all layout modifiers in maps for DRY generation
+$direction-modifiers: (
+    'col': (flex-direction: column),
+    'row': (flex-direction: row)
+);
+
+$stretch-modifiers: (
+    'stretch': (
+        '> *': (
+            flex: 1 1 0%,
+            align-self: stretch
+        )
+    ),
+    'stretch-main': (
+        '> *': (
+            flex: 1 1 0%
+        )
+    ),
+    'stretch-cross': (
+        '> *': (
+            align-self: stretch
+        )
+    ),
+    'stretch-x': (
+        '> *': (
+            flex: 1 1 0%
+        )
+    ),
+    'stretch-y': (
+        '> *': (
+            align-self: stretch
+        )
+    )
+);
+
+// Physical alignment modifiers
+$physical-alignment: (
+    'justify-start': (justify-content: flex-start),
+    'justify-center': (justify-content: center),
+    'justify-end': (justify-content: flex-end),
+    'align-start': (align-items: flex-start),
+    'align-center': (align-items: center),
+    'align-end': (align-items: flex-end)
+);
+
+// Logical alignment modifiers
+$logical-alignment: (
+    'start': (
+        justify-content: flex-start,
+        align-items: flex-start
+    ),
+    'center': (
+        justify-content: center,
+        align-items: center
+    ),
+    'end': (
+        justify-content: flex-end,
+        align-items: flex-end
+    )
+);
+
+// Semantic alignment modifiers
+$semantic-alignment: (
+    'left': (justify-content: flex-start),
+    'right': (justify-content: flex-end),
+    'top': (align-items: flex-start),
+    'bottom': (align-items: flex-end),
+    'center-x': (justify-content: center),
+    'center-y': (align-items: center)
+);
+
+// Context-aware overrides for columns
+$column-overrides: (
+    'stretch-x': (
+        '> *': (
+            flex: initial,
+            align-self: stretch
+        )
+    ),
+    'stretch-y': (
+        '> *': (
+            align-self: initial,
+            flex: 1 1 0%
+        )
+    ),
+    'left': (
+        align-items: flex-start,
+        justify-content: center
+    ),
+    'right': (
+        align-items: flex-end,
+        justify-content: center
+    ),
+    'top': (
+        justify-content: flex-start,
+        align-items: center
+    ),
+    'bottom': (
+        justify-content: flex-end,
+        align-items: center
+    ),
+    'center-x': (
+        align-items: center
+    ),
+    'center-y': (
+        justify-content: center
+    )
+);
+
+// Context-aware overrides for rows
+$row-overrides: (
+    'stretch-x': (
+        '> *': (
+            flex: 1 1 0%
+        )
+    ),
+    'stretch-y': (
+        '> *': (
+            align-self: stretch
+        )
+    ),
+    'left': (
+        justify-content: flex-start,
+        align-items: center
+    ),
+    'right': (
+        justify-content: flex-end,
+        align-items: center
+    ),
+    'top': (
+        align-items: flex-start,
+        justify-content: center
+    ),
+    'bottom': (
+        align-items: flex-end,
+        justify-content: center
+    ),
+    'center-x': (
+        justify-content: center
+    ),
+    'center-y': (
+        align-items: center
+    )
+);
+
+@include mixins.trmnl-namespace {
+    // Base layout class
+    .layout {
+        // Establishes .layout as the container query context for child elements.
+        // This enables the w--[Ncqw], h--[Ncqh], and related sizing utilities
+        // generated in _size.scss to work. These utilities use CSS container query
+        // units (cqw/cqh) which represent percentages of the nearest container's
+        // dimensions. Without this, cqw/cqh units have no reference point.
+        container-type: size;
+        
+        @include responsive.with-size-and-orientation-variants {
+            @include mixins.apply-styles($layout-base-styles);
+        }
+    }
+
+    // Generate direction modifiers
+    @each $modifier, $styles in $direction-modifiers {
+        .layout--#{$modifier} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Generate stretch modifiers
+    @each $modifier, $styles in $stretch-modifiers {
+        .layout--#{$modifier} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Generate physical alignment modifiers
+    @each $modifier, $styles in $physical-alignment {
+        .layout--#{$modifier} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Generate logical alignment modifiers
+    @each $modifier, $styles in $logical-alignment {
+        .layout--#{$modifier} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Generate semantic alignment modifiers (bit-depth-independent)
+    @each $modifier, $styles in $semantic-alignment {
+        .layout--#{$modifier} {
+            @include responsive.with-size-and-orientation-variants {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Generate context-aware overrides for columns and rows. The direction class
+    // stays a plain selector and only the modifier takes the variant prefix, so
+    // `layout layout--col md:layout--center-y` resolves. Passing the compound to
+    // the standard emitters would escape it whole into an unwritable class.
+    //
+    // The direction is a published class, so it goes in as $companion-class too
+    // and each gate also pairs its prefixed form with the modifier. Without that
+    // `layout md:layout--col layout--left` kept the row reading at md: the
+    // override tested the bare class and `md:layout--col` is a different string.
+    @each $direction, $overrides in ('col': $column-overrides, 'row': $row-overrides) {
+        @each $modifier, $styles in $overrides {
+            .layout--#{$direction}.layout--#{$modifier} {
+                @include mixins.apply-styles($styles);
+            }
+
+            @include mixins.with-companion-modifier-variants(
+                '.layout--#{$direction}',
+                'layout--#{$modifier}',
+                $companion-class: 'layout--#{$direction}'
+            ) {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+
+    // Child utilities (direct children of .layout only). stretch-x / stretch-y are
+    // defined below per direction so they always mean physical X/Y.
+    $child-utilities: (
+        'stretch': (
+            align-self: stretch,
+            flex: 1 1 0%
+        ),
+        'no-shrink': (
+            flex-shrink: 0
+        )
+    );
+
+    // stretch and no-shrink already have standalone rules in _flexbox.scss that
+    // publish the same body under every gate, so the prefixed forms need nothing
+    // here and the parent guard stays on the unprefixed rule alone.
+    @each $utility, $styles in $child-utilities {
+        .layout > .#{$utility} {
+            @include mixins.apply-styles($styles);
+        }
+    }
+
+    // Stretch-x / stretch-y: only when directly nested in layout, axis-correct
+    // (stretch-x = X, stretch-y = Y). Plain .layout defaults to row direction.
+    //
+    // The direction guard is what makes these mean anything, so it stays a plain
+    // selector and only the child takes the variant prefix: `md:stretch-y` on a
+    // child of `layout--col`. Running the standard emitters over the whole
+    // parent-child selector kept only the child compound, so each context
+    // published its own global `.md\:stretch-y` and the last one won everywhere.
+    // The directionless guard rides :where() and costs nothing, so a gated
+    // direction context outranks it by the one class the direction adds. At full
+    // weight it beat every `md:layout--col > .stretch-y` the gate below
+    // publishes, and a responsively switched direction kept the plain-layout
+    // body on its children.
+    $stretch-contexts: (
+        '.layout:where(:not(.layout--row):not(.layout--col))': (
+            'stretch-x': (flex: 1 1 0%),
+            'stretch-y': (align-self: stretch, flex: 0 1 auto)
+        ),
+        '.layout--col': (
+            'stretch-y': (flex: 1 1 0%, align-self: auto),
+            'stretch-x': (align-self: stretch, flex: 0 1 auto)
+        ),
+        '.layout--row': (
+            'stretch-x': (flex: 1 1 0%),
+            'stretch-y': (align-self: stretch, flex: 0 1 auto)
+        )
+    );
+
+    // The class each context prefixes at a gate. The guard compound has none:
+    // there is no single class to write `md:` in front of.
+    $stretch-context-classes: (
+        '.layout--col': 'layout--col',
+        '.layout--row': 'layout--row'
+    );
+
+    @each $context, $utilities in $stretch-contexts {
+        @each $utility, $styles in $utilities {
+            #{$context} > .#{$utility} {
+                @include mixins.apply-styles($styles);
+            }
+
+            @include mixins.with-companion-modifier-variants(
+                $context,
+                $utility,
+                $combinator: '>',
+                $companion-class: map.get($stretch-context-classes, $context)
+            ) {
+                @include mixins.apply-styles($styles);
+            }
+        }
+    }
+}

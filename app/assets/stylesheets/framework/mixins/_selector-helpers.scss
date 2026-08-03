@@ -1,0 +1,698 @@
+// ============================================
+// TRMNL Framework - Selector Helper Functions
+// ============================================
+// Common functions for parsing and manipulating selectors
+// Used by screen-bit-depth, screen-orientation, and screen-size mixins
+
+@use 'sass:selector';
+@use 'sass:string';
+@use 'sass:list';
+@use 'sass:meta';
+
+// Define the hierarchy of sizes (mobile-first approach)
+$size-hierarchy: ('sm', 'md', 'lg');
+
+// Define supported bit depths. 3-bit is intentionally not part of the
+// framework contract; devices must identify as one of the supported modes.
+$bit-depths: (1, 2, 4);
+
+// Define orientations
+$orientations: ('landscape', 'portrait');
+
+// Helper function to get size index in hierarchy
+@function size-index($size) {
+    @return list.index($size-hierarchy, $size);
+}
+
+// Helper function to check if a size is active based on screen size class
+@function is-size-active($target-size, $screen-size) {
+    $target-index: size-index($target-size);
+    $screen-index: size-index($screen-size);
+    
+    @if $target-index == null or $screen-index == null {
+        @return false;
+    }
+    
+    // Mobile-first: target size is active if screen size is equal or larger
+    @return $screen-index >= $target-index;
+}
+
+// Collapse a gate's screen scopes into one :is() selector. Safe because each
+// gate's scopes share one specificity tier: :is() takes the weight of its
+// heaviest argument, so scopes of unequal weight would publish the heaviest one
+// to every screen the gate covers.
+@function scope-selector($screen-selectors) {
+    @if list.length($screen-selectors) == 1 {
+        @return list.nth($screen-selectors, 1);
+    }
+    $inner: '';
+    @each $screen in $screen-selectors {
+        $inner: $inner + if($inner == '', '', ',') + '#{$screen}';
+    }
+    @return string.unquote(':is(#{$inner})');
+}
+
+// Themed screens are exempt from dark mode: a theme is a complete color
+// statement, so the framework's dark remap must not restyle it. Every
+// dark-mode scope carries this gate; a theme can still opt into dark
+// styling from its own file via `.screen--theme-<id>.screen--dark-mode`
+// (the tn--themes layer outranks the gated base rules). `:where()` keeps
+// the gate at zero specificity so dark rules keep their exact weight.
+$theme-exempt: ':where(:not([class*="screen--theme-"]))';
+
+// Collapse dark-gate screen scopes into one :is() with the theme exemption
+// attached to the subject compound.
+@function dark-scope($screen-selectors) {
+    @return string.unquote('#{scope-selector($screen-selectors)}#{$theme-exempt}');
+}
+
+// A grayscale mode class names the rail a screen paints only when nothing
+// declared later answers for it. Every paint block in base/_screen-mode-vars.scss
+// carries the same one class of weight, so the last one declared paints, and the
+// solid rails and the palette rails are declared after the grayscale ones: a
+// screen wearing `screen--2bit screen--color-7a` paints palette inks and palette
+// lines, which is what the file's own depth table publishes and what
+// spec/assets/stylesheets/framework_screen_paint_depth_spec.rb pins.
+//
+// So a rule that restates the art a grayscale class selects has to say the rail,
+// not the class. Gate it with this, or it lands on screens whose art comes from
+// elsewhere and restates it on top: the Dark theme's 2-bit level mirror is the
+// call that needs it, because mirroring a palette rail the line polarity swap has
+// already mirrored puts black ink back on the theme's black canvas.
+//
+// One attribute test covers the limited palettes and the full-spectrum rail
+// together, the way $theme-exempt covers every theme. `:where()` keeps the guard
+// at zero specificity, so the rule it gates keeps its own weight.
+$grayscale-rail-only: ':where(:not([class*="screen--color-"]):not(.screen--4bit):not(.screen--8bit):not(.screen--16bit))';
+
+// Every rail that resolves a chromatic token through $color-to-gray-fallback:
+// the two dither rails and the solid rails, which differ only in the art they
+// give the gray they land on. A screen with no mode class at all paints real
+// hexes, so the compound names the bit-depth classes rather than excluding the
+// palettes alone, and the same precedence rule as $grayscale-rail-only drops a
+// screen that also wears a palette class. The `:is()` carries one class of
+// weight; the `:where()` guard carries none.
+$color-to-gray-rail: ':is(.screen--1bit, .screen--2bit, .screen--4bit, .screen--8bit, .screen--16bit):where(:not([class*="screen--color-"]))';
+
+// The scope a variant gate has to sit in when its unprefixed rule is scoped
+// too. Returns the ancestor plus its descendant combinator, or nothing at all,
+// so an emitter can splice it in front of the class unconditionally.
+@function ancestor-scope($ancestor) {
+    @return if($ancestor, string.unquote('#{$ancestor} '), '');
+}
+
+// Suffix that gates an already-anchored .screen--* compound to an orientation.
+// Landscape is the framework default and has no class of its own, so it matches
+// any screen that is not explicitly portrait. The bare :not() adds one class of
+// weight here on purpose: `.screen--md:not(.screen--portrait)` has to weigh what
+// `.screen--md.screen--portrait` weighs, or a two-modifier landscape gate would
+// stop outranking the one-modifier gates it is supposed to beat.
+@function orientation-suffix($orientation) {
+    @return if($orientation == 'landscape', ':not(.screen--portrait)', '.screen--#{$orientation}');
+}
+
+// Standalone orientation scopes, for gates where the orientation is the whole
+// screen compound. The landscape default needs the .screen anchor here, since
+// a bare :not() would reach every ancestor on the page.
+//
+// The guard rides :where() so this scope weighs one class, exactly what
+// .screen--portrait weighs. Written bare it weighed two, which put every
+// one-modifier `landscape:` variant level with the two-modifier `md:landscape:`
+// gates and left the "more modifiers wins" hierarchy true for portrait and
+// false for landscape. There is no .screen--landscape alternative because the
+// picker never emits that class, and a screen that does carry it still matches:
+// it is a .screen and it is not portrait.
+@function orientation-screens($orientation) {
+    @if $orientation == 'landscape' {
+        @return (string.unquote('.screen:where(:not(.screen--portrait))'),);
+    }
+    @return (string.unquote('.screen--#{$orientation}'),);
+}
+
+// Screen classes activating a mobile-first size gate: .screen--sm and larger.
+@function active-size-screens($target-size, $extra-classes: '') {
+    $screens: ();
+    @each $screen-size in $size-hierarchy {
+        @if is-size-active($target-size, $screen-size) {
+            $screens: list.append($screens, string.unquote('.screen--#{$screen-size}#{$extra-classes}'), comma);
+        }
+    }
+    @return $screens;
+}
+
+// Combinators that make a block a parent-child rule. The class-name-extracting
+// emitters keep only the last compound, so a block written across one of these
+// publishes the child's variants with the parent guard dropped. A descendant
+// space is not in this list: `.richtext .content--large` deliberately publishes
+// the bare `.content--large` alias too, so that shape is a supported call.
+//
+// No emitter reads a combinator out of the block it was handed. The one that
+// did, `with-screen-variants`, split a ` > ` selector itself and published the
+// three parent-child gates from the caller's own block; it was never called and
+// is gone. Both live paths take the parent and the child as arguments instead:
+// with-companion-modifier-variants prefixes only the child,
+// with-responsive-parent-child-variants prefixes the parent. Reach for those
+// before teaching an emitter to parse a selector again.
+$structural-combinators: (' > ', ' + ', ' ~ ');
+
+@function contains-structural-combinator($selector) {
+    $selector-str: #{$selector};
+    @each $combinator in $structural-combinators {
+        @if string.index($selector-str, $combinator) != null {
+            @return true;
+        }
+    }
+    @return false;
+}
+
+// Helper function to split parent-child selector
+@function split-parent-child($selector) {
+    $selector-str: #{$selector};
+    $index: string.index($selector-str, ' > ');
+    
+    @if $index {
+        $parent: string.slice($selector-str, 1, $index - 1);
+        $child: string.slice($selector-str, $index + 3);
+        @return ($parent, $child);
+    }
+    
+    @return null;
+}
+
+// Helper function to extract class name from selector
+@function extract-class-name($selector) {
+    $selector-str: #{$selector};
+    
+    // Remove .trmnl namespace if present
+    @if string.index($selector-str, '.trmnl ') == 1 {
+        $selector-str: string.slice($selector-str, 8);
+    }
+    
+    // Find the last class in the selector
+    $last-dot: 0;
+    @for $i from 1 through string.length($selector-str) {
+        @if string.slice($selector-str, $i, $i) == '.' {
+            $last-dot: $i;
+        }
+    }
+    
+    @if $last-dot > 0 {
+        @return string.slice($selector-str, $last-dot + 1);
+    }
+    
+    @return $selector-str;
+}
+
+// Helper function to parse selector and extract component parts
+// Returns the variant class name(s) - one per complex selector - using only the
+// last compound (the element being styled). This ensures nested selectors like
+// .trmnl .richtext .content--large yield "content--large", not "richtextcontent--large".
+@function parse-selector-components($selector) {
+    $parts: selector.parse($selector);
+    $components: ();
+
+    @each $complex in $parts {
+        $len: list.length($complex);
+        @if $len > 0 {
+            $last-compound: list.nth($complex, $len);
+            $compound-str: #{$last-compound};
+            $component: '';
+            @if $compound-str != '.trmnl' and string.index($compound-str, '.') == 1 {
+                $component: string.slice($compound-str, 2);
+            }
+            @if $component != '' {
+                $components: list.append($components, $component);
+            }
+        }
+    }
+
+    @return $components;
+}
+
+// Helper function to extract all classes from a compound selector
+@function extract-compound-classes($selector) {
+    $selector-str: #{$selector};
+    
+    // Remove .trmnl namespace if present
+    @if string.index($selector-str, '.trmnl ') == 1 {
+        $selector-str: string.slice($selector-str, 8);
+    }
+    
+    // Extract all classes from the compound selector
+    $classes: ();
+    $temp-class: '';
+    $in-class: false;
+    
+    @for $i from 1 through string.length($selector-str) {
+        $char: string.slice($selector-str, $i, $i);
+        
+        @if $char == '.' {
+            @if $in-class and $temp-class != '' {
+                $classes: list.append($classes, $temp-class);
+            }
+            $temp-class: '';
+            $in-class: true;
+        } @else if $in-class {
+            $temp-class: $temp-class + $char;
+        }
+    }
+    
+    // Add the last class
+    @if $temp-class != '' {
+        $classes: list.append($classes, $temp-class);
+    }
+    
+    @return $classes;
+} 
+
+// Escape a class token for use in a CSS selector
+// - Escapes a leading digit using the \3N  syntax (e.g., 1bit -> \31 bit)
+// - Escapes special characters that would otherwise break class selectors
+@function escape-class-token($token) {
+    $str: #{$token};
+    // Escape leading digit
+    $first: string.slice($str, 1, 1);
+    @if list.index(('0','1','2','3','4','5','6','7','8','9'), $first) {
+        $str: '\\3' + $first + ' ' + string.slice($str, 2);
+    }
+    // Escape special characters, but do not double-escape if already escaped
+    $specials: ('.', '/', '[', ']', '(', ')', '%');
+    $escaped: '';
+    $prev-backslash: false;
+    @for $i from 1 through string.length($str) {
+        $ch: string.slice($str, $i, $i);
+        @if $ch == '\\' {
+            // Preserve existing escape and mark flag
+            $escaped: $escaped + $ch;
+            $prev-backslash: true;
+        } @else if list.index($specials, $ch) and $prev-backslash == false {
+            $escaped: $escaped + '\\' + $ch;
+            $prev-backslash: false;
+        } @else {
+            $escaped: $escaped + $ch;
+            $prev-backslash: false;
+        }
+    }
+    @return $escaped;
+}
+
+// ============================================
+// Generic Screen Modifier Mixins
+// ============================================
+// These mixins provide a DRY way to generate screen-specific selectors
+// for size, bit-depth, and orientation variants
+
+// Generic mixin for simple screen modifiers (e.g., for-sm, for-portrait, for-1bit)
+@mixin for-screen-modifier($modifiers...) {
+    @at-root {
+        // Parse the current selector to get just the component part (everything after .trmnl)
+        $current: #{&};
+        $parts: selector.parse($current);
+        
+        // Build selectors for each part of a comma-separated list
+        $selectors: ();
+        
+        @each $complex in $parts {
+            $component: '';
+            @each $compound in $complex {
+                @if $compound != '.trmnl' {
+                    $component: $component + ' ' + $compound;
+                }
+            }
+            
+            // Add each modifier version for this selector
+            @each $modifier in $modifiers {
+                $selectors: list.append($selectors, '.trmnl .screen--#{$modifier}#{$component}', comma);
+            }
+        }
+        
+        // Output all selectors
+        #{$selectors} {
+            @content;
+        }
+    }
+}
+
+// Variants for a modifier that only applies alongside a companion selector,
+// either on the same element (`.flex--row.flex--center`) or as its direct child
+// (`.flex--col > .stretch-x`). The companion stays a plain selector and only the
+// modifier takes the variant prefix, so an author writes
+// `flex flex--row md:flex--center`, or `md:stretch-x` on a child of `flex--col`.
+//
+// The standard emitters cannot express either shape. They read the class name
+// off the current selector, so a compound arrives as one string and gets escaped
+// whole, producing a class nobody can write (`.md\:flex--row\.flex--center`),
+// and a parent-child block keeps only the child compound, which drops the parent
+// guard and publishes the child class to the whole page.
+//
+// $companion is the selector that precedes the modifier, written as it appears
+// after `.trmnl` (for example '.flex--row' or
+// '.layout:not(.layout--row):not(.layout--col)'). $combinator is '' for a
+// compound and '>' for a direct child. Emits size, orientation, and
+// size+orientation gates; the caller keeps the unprefixed rule where it is.
+//
+// $companion-class names the companion's own class when the companion is a
+// single variant-published class rather than a guard compound. Given it, each
+// gate also pairs the companion's prefixed form with the modifier, so a
+// direction that switches responsively takes its own table along. Without it
+// only the bare companion is published, which is all a guard compound like
+// '.flex:where(:not(.flex--row))' can offer.
+@mixin with-companion-modifier-variants($companion, $modifier-class, $combinator: '', $companion-class: null) {
+    $ec: escape-class-token($modifier-class);
+    $comb: if($combinator == '>' or $combinator == ' > ', ' > ', '');
+
+    @at-root {
+        @each $size in $size-hierarchy {
+            $head: '.trmnl #{scope-selector(active-size-screens($size))}';
+            $gate: '#{escape-class-token($size)}#{'\\:'}';
+            #{companion-gate-selectors($head, $companion, $companion-class, $comb, $gate, $ec)} {
+                @content;
+            }
+        }
+
+        @each $orientation in $orientations {
+            $gate: '#{escape-class-token($orientation)}#{'\\:'}';
+            $selectors: ();
+            @each $screen in orientation-screens($orientation) {
+                $selectors: list.join(
+                    $selectors,
+                    companion-gate-selectors('.trmnl #{$screen}', $companion, $companion-class, $comb, $gate, $ec),
+                    comma
+                );
+            }
+            #{$selectors} {
+                @content;
+            }
+        }
+
+        @each $size in $size-hierarchy {
+            @each $orientation in $orientations {
+                $head: '.trmnl #{scope-selector(active-size-screens($size, orientation-suffix($orientation)))}';
+                $gate: '#{escape-class-token($size)}#{'\\:'}#{escape-class-token($orientation)}#{'\\:'}';
+                #{companion-gate-selectors($head, $companion, $companion-class, $comb, $gate, $ec)} {
+                    @content;
+                }
+            }
+        }
+    }
+}
+
+// The selectors one gate publishes for a companion pair, all at the same
+// weight: two classes behind the scope, whichever of the pair carries the
+// prefix.
+//
+// The companion-prefixed forms exist because a guard that tests a bare class
+// cannot see `md:flex--row`. Without them `flex md:flex--row flex--left` had no
+// row rule at md, and the directionless table answered instead, on the cross
+// axis. Three selectors per gate is the shape with-responsive-parent-child-
+// variants already uses, and the same-gate contract comes with it: a gate pairs
+// with itself, never across gates.
+@function companion-gate-selectors($head, $companion, $companion-class, $combinator, $gate, $modifier) {
+    $selectors: (string.unquote('#{$head} #{$companion}#{$combinator}.#{$gate}#{$modifier}'),);
+
+    @if $companion-class != null {
+        $gated: '.#{$gate}#{escape-class-token($companion-class)}';
+        $selectors: list.append(
+            $selectors,
+            string.unquote('#{$head} #{$gated}#{$combinator}.#{$modifier}'),
+            comma
+        );
+        $selectors: list.append(
+            $selectors,
+            string.unquote('#{$head} #{$gated}#{$combinator}.#{$gate}#{$modifier}'),
+            comma
+        );
+    }
+
+    @return $selectors;
+}
+
+// Generic core mixin for generating variant-specific selectors
+// This is the main building block for all screen utilities
+@mixin for-screen-variant($screen-modifier, $variant-prefix, $class-name) {
+    @at-root {
+        $ep: escape-class-token($variant-prefix);
+        $ec: escape-class-token($class-name);
+
+        // Orientations go through orientation-screens, which expands the
+        // landscape default into two scopes: the explicit class, and any screen
+        // that is not portrait. Sizes and bit-depths take their class directly.
+        $screens: if(
+            list.index($orientations, $screen-modifier),
+            orientation-screens($screen-modifier),
+            (string.unquote('.screen--#{$screen-modifier}'),)
+        );
+
+        $selectors: ();
+        @each $screen in $screens {
+            $selectors: list.append(
+                $selectors,
+                string.unquote('.trmnl #{$screen} .#{$ep}#{'\\:'}#{$ec}'),
+                comma
+            );
+        }
+
+        #{$selectors} {
+            @content;
+        }
+    }
+}
+
+// Like for-screen-variant, for a prebuilt set of screen scopes (already
+// gathered by an activation function) collapsed into one :is() rule.
+@mixin for-screen-scopes($screen-selectors, $variant-prefix, $class-name) {
+    @if list.length($screen-selectors) > 0 {
+        @at-root {
+            $ep: escape-class-token($variant-prefix);
+            $ec: escape-class-token($class-name);
+            .trmnl #{scope-selector($screen-selectors)} .#{$ep}\:#{$ec} {
+                @content;
+            }
+        }
+    }
+}
+
+@function active-screen-scopes($variant, $variant-list, $activation-fn) {
+    $screens: ();
+    @each $screen-modifier in $variant-list {
+        @if meta.call($activation-fn, $variant, $screen-modifier) {
+            $screens: list.append($screens, string.unquote('.screen--#{$screen-modifier}'), comma);
+        }
+    }
+    @return $screens;
+}
+
+// Generic utility generator
+// Enhanced with optional activation function for mobile-first behavior
+@mixin generate-screen-utilities($variant-list, $variant-prefix-fn: null, $class-name: null, $activation-fn: null) {
+    $current-selector: #{&};
+
+    // A parent-child block cannot go through here. This emitter keeps only the
+    // last compound, so it would publish the child's variants with the parent
+    // guard gone: `.flex--col > .stretch-x` became a global `.md\:stretch-x`,
+    // and the four context bodies overwrote each other on every element that
+    // carried the class. Every umbrella emitter reaches this mixin first, so one
+    // check here closes the whole shape.
+    @if contains-structural-combinator($current-selector) {
+        @error "generate-screen-utilities: '#{$current-selector}' is a parent-child selector, " +
+            "whose variants would drop the parent guard. Use with-companion-modifier-variants " +
+            "to keep the parent plain and prefix only the child, or " +
+            "with-responsive-parent-child-variants to prefix the parent.";
+    }
+
+    // If no class name provided, extract from current selector
+    @if $class-name == null {
+        $components: parse-selector-components($current-selector);
+        @if list.length($components) > 0 {
+            $class-name: list.nth($components, 1);
+        }
+    }
+
+    // A selector whose last compound is a tag (`.grid .row img`) yields no class
+    // at all, and the prefix then went out on its own: `.trmnl :is(...) .sm\:`,
+    // a class nobody can write, in place of the variants the block asked for.
+    // Same check `generate-responsive-variants` makes, and the sibling of the
+    // combinator guard above.
+    @if $class-name == null {
+        @error "generate-screen-utilities: could not extract a class name from selector " +
+            "'#{$current-selector}'. Its variants would be published as a bare gate prefix " +
+            "with no class behind it. Give the emitter a class to prefix, or drop it and " +
+            "let the parent's variants carry this body.";
+    }
+
+    // Generate variants
+    @each $variant in $variant-list {
+        $prefix: if($variant-prefix-fn, 
+            meta.call($variant-prefix-fn, $variant), 
+            $variant);
+        
+        // If activation function provided, collapse the active screen modifiers
+        @if $activation-fn {
+            @include for-screen-scopes(active-screen-scopes($variant, $variant-list, $activation-fn), $prefix, $class-name) {
+                @content;
+            }
+        } @else {
+            // No activation function, use variant as modifier directly
+            @include for-screen-variant($variant, $prefix, $class-name) {
+                @content;
+            }
+        }
+    }
+}
+
+// ============================================
+// Responsive Parent-Child Variant Generator
+// ============================================
+// Generates selectors for responsive parent variants with nested child classes.
+// This solves the problem where `.parent .child` works but `.portrait\:parent .child` doesn't.
+//
+// Usage:
+//   @include with-responsive-parent-child-variants('grid', 'col--span-6') {
+//       grid-column: span 6;
+//   }
+//
+//   @include with-responsive-parent-child-variants('flex', 'stretch', $combinator: '>') {
+//       flex: 1 1 0%;
+//   }
+//
+// Generates:
+//   - .portrait\:grid .col--span-6 { ... }
+//   - .portrait\:grid .portrait\:col--span-6 { ... }
+//   - .sm\:grid .col--span-6 { ... } (on sm, md, lg screens)
+//   - .sm\:portrait\:grid .col--span-6 { ... }
+//   - etc.
+//
+// $neutral-parent-scope wraps the whole parent context (the screen scope and
+// the variant parent class) in :where(), leaving the child class alone to
+// decide the rule's weight. Callers whose declarations have to lose a
+// same-tier tie need it: the screen scope here gates the parent's variant, not
+// the child's, so counting it would rank a base child above the base utilities
+// it competes with. Off by default; a caller that wants the parent context to
+// outrank something keeps it off.
+
+@function _parent-context($scope, $parent-selector, $neutral-parent-scope) {
+    @if $neutral-parent-scope {
+        @return string.unquote(':where(#{$scope} #{$parent-selector})');
+    }
+    @return string.unquote('#{$scope} #{$parent-selector}');
+}
+
+@mixin with-responsive-parent-child-variants(
+    $parent-class,
+    $child-class,
+    $combinator: ' ',
+    $include-variant-children: true,
+    $neutral-parent-scope: false
+) {
+    $escaped-parent: escape-class-token($parent-class);
+    $escaped-child: escape-class-token($child-class);
+
+    // Build combinator string (normalize '>' to ' > ')
+    $comb: if($combinator == '>' or $combinator == ' > ', ' > ', ' ');
+
+    @at-root {
+        // 1. Orientation-variant parents with base children
+        // e.g., .portrait\:grid .col--span-6
+        @each $orientation in $orientations {
+            $eo: escape-class-token($orientation);
+            $selectors: ();
+            @each $screen in orientation-screens($orientation) {
+                $context: _parent-context($screen, '.#{$eo}#{'\\:'}#{$escaped-parent}', $neutral-parent-scope);
+                $selectors: list.append(
+                    $selectors,
+                    string.unquote('.trmnl #{$context}#{$comb}.#{$escaped-child}'),
+                    comma
+                );
+            }
+            #{$selectors} {
+                @content;
+            }
+        }
+
+        // 2. Orientation-variant parents with orientation-variant children
+        // e.g., .portrait\:grid .portrait\:col--span-6
+        @if $include-variant-children {
+            @each $orientation in $orientations {
+                $eo: escape-class-token($orientation);
+                $selectors: ();
+                @each $screen in orientation-screens($orientation) {
+                    $context: _parent-context($screen, '.#{$eo}#{'\\:'}#{$escaped-parent}', $neutral-parent-scope);
+                    $selectors: list.append(
+                        $selectors,
+                        string.unquote('.trmnl #{$context}#{$comb}.#{$eo}#{'\\:'}#{$escaped-child}'),
+                        comma
+                    );
+                }
+                #{$selectors} {
+                    @content;
+                }
+            }
+        }
+
+        // 3. Size-variant parents with base children (mobile-first)
+        // e.g., .sm\:grid .col--span-6 (active on sm, md, lg screens)
+        @each $size in $size-hierarchy {
+            $es: escape-class-token($size);
+            $context: _parent-context(
+                scope-selector(active-size-screens($size)),
+                '.#{$es}\\:#{$escaped-parent}',
+                $neutral-parent-scope
+            );
+            .trmnl #{$context}#{$comb}.#{$escaped-child} {
+                @content;
+            }
+        }
+
+        // 4. Size-variant parents with size-variant children (mobile-first)
+        // e.g., .sm\:grid .sm\:col--span-6
+        @if $include-variant-children {
+            @each $size in $size-hierarchy {
+                $es: escape-class-token($size);
+                $context: _parent-context(
+                    scope-selector(active-size-screens($size)),
+                    '.#{$es}\\:#{$escaped-parent}',
+                    $neutral-parent-scope
+                );
+                .trmnl #{$context}#{$comb}.#{$es}\:#{$escaped-child} {
+                    @content;
+                }
+            }
+        }
+
+        // 5. Combined size + orientation variant parents with base children
+        // e.g., .sm\:portrait\:grid .col--span-6
+        @each $size in $size-hierarchy {
+            @each $orientation in $orientations {
+                $es: escape-class-token($size);
+                $eo: escape-class-token($orientation);
+                $context: _parent-context(
+                    scope-selector(active-size-screens($size, orientation-suffix($orientation))),
+                    '.#{$es}\\:#{$eo}\\:#{$escaped-parent}',
+                    $neutral-parent-scope
+                );
+                .trmnl #{$context}#{$comb}.#{$escaped-child} {
+                    @content;
+                }
+            }
+        }
+
+        // 6. Combined size + orientation variant parents with matching variant children
+        // e.g., .sm\:portrait\:grid .sm\:portrait\:col--span-6
+        @if $include-variant-children {
+            @each $size in $size-hierarchy {
+                @each $orientation in $orientations {
+                    $es: escape-class-token($size);
+                    $eo: escape-class-token($orientation);
+                    $context: _parent-context(
+                        scope-selector(active-size-screens($size, orientation-suffix($orientation))),
+                        '.#{$es}\\:#{$eo}\\:#{$escaped-parent}',
+                        $neutral-parent-scope
+                    );
+                    .trmnl #{$context}#{$comb}.#{$es}\:#{$eo}\:#{$escaped-child} {
+                        @content;
+                    }
+                }
+            }
+        }
+    }
+}

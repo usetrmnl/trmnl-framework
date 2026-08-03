@@ -1,0 +1,115 @@
+<% paint_modes = [
+  ['paint-1bit', 'screen--1bit'],
+  ['paint-1bit-dark', 'screen--1bit screen--dark-mode'],
+  ['paint-2bit', 'screen--2bit'],
+  ['paint-2bit-dark', 'screen--2bit screen--dark-mode'],
+  ['paint-preview-white', 'screen--1bit screen--preview-colors screen--preview-white-limited'],
+  ['paint-color-4bwry', 'screen--color-4bwry screen--preview-colors'],
+  ['paint-color-7a', 'screen--color-7a'],
+  ['paint-theme-black-yellow', 'screen--color-4bwry screen--preview-colors screen--theme-black-and-yellow'],
+  ['paint-theme-white-red', 'screen--color-4bwry screen--preview-colors screen--theme-white-and-red'],
+  ['paint-theme-dark', 'screen--color-4bwry screen--preview-colors screen--theme-dark'],
+  ['paint-theme-dark-1bit', 'screen--1bit screen--theme-dark'],
+  ['paint-theme-dark-2bit', 'screen--2bit screen--theme-dark']
+] %>
+<% grayscale_tokens = %w[black gray-10 gray-15 gray-20 gray-25 gray-30 gray-35 gray-40 gray-45 gray-50 gray-55 gray-60 gray-65 gray-70 gray-75 white] %>
+<% color_tokens = %w[red red-20 red-45 orange orange-50 yellow yellow-40 green green-55 cyan cyan-30 blue blue-60 violet purple pink-30] %>
+<% semantic_tokens = %w[primary success warning error info gray-20 gray-40 gray-55 gray-70 red-20 red-45 blue-30 green-55 black white] %>
+
+<style>
+  .visual-paint-screen {
+    position: relative !important;
+    display: grid !important;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 8px;
+    width: 800px !important;
+    height: 256px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 16px !important;
+    box-sizing: border-box;
+    transform: none !important;
+  }
+
+  .visual-paint-frame {
+    width: 800px;
+    height: 256px;
+  }
+
+  .visual-paint-strip {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .visual-paint-swatch {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .visual-paint-composed {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .visual-paint-stack {
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .visual-paint-stack > div {
+    width: 100%;
+    height: 100%;
+  }
+
+  .visual-paint-composed .progress-bar {
+    align-self: center;
+    padding: 8px;
+  }
+</style>
+
+<main class="visual-page" data-visual-ready="true">
+  <% paint_modes.each do |visual_id, mode_classes| %>
+    <div id="<%= visual_id %>" class="trmnl visual-paint-frame" data-visual>
+      <div class="screen screen--og screen--landscape <%= mode_classes %> visual-paint-screen">
+      <div class="visual-paint-strip">
+        <% grayscale_tokens.each do |token| %>
+          <div class="visual-paint-swatch bg--<%= token %>"></div>
+        <% end %>
+      </div>
+
+      <div class="visual-paint-strip">
+        <% color_tokens.each do |token| %>
+          <div class="visual-paint-swatch bg--<%= token %>"></div>
+        <% end %>
+      </div>
+
+      <div class="visual-paint-strip">
+        <% semantic_tokens.each do |token| %>
+          <div class="visual-paint-swatch bg--<%= token %>"></div>
+        <% end %>
+      </div>
+
+        <div class="visual-paint-composed">
+        <div class="visual-paint-stack bg--gray-55">
+          <div class="bg--gray-70"></div>
+        </div>
+        <div class="visual-paint-stack bg--red-20">
+          <div class="bg--red-60"></div>
+        </div>
+        <div class="visual-paint-stack bg--blue-30">
+          <div class="bg--yellow-55"></div>
+        </div>
+        <div class="progress-bar">
+          <div class="track">
+            <div class="fill" style="width: 60%"></div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</main>

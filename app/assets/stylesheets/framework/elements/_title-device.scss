@@ -1,0 +1,52 @@
+// ============================================
+// TRMNL Framework - Title Device Overrides
+// ============================================
+// Device-specific styles for the title component
+// This file is imported in the device-overrides layer
+
+@use '../mixins/responsive' as responsive;
+@use '../mixins/selector-helpers' as helpers;
+
+// Map of class names to their font-weight CSS variables. Bare `title` is the
+// element class and carries no responsive variants of its own, so it appears
+// only in $title-base-only below.
+$title-sizes: (
+    'title--base': '--title-font-weight',
+    'title--small': '--title-small-font-weight',
+    'title--large': '--title-large-font-weight',
+    'title--xlarge': '--title-xlarge-font-weight',
+    'title--xxlarge': '--title-xxlarge-font-weight'
+);
+
+// The element class takes the unprefixed override only. Running the variant
+// ladder over it would publish classes like sm:title that the base layer never
+// defines, so they would carry this weight and nothing else.
+$title-base-only: ('title': '--title-font-weight');
+
+// 4-bit only. Nothing pins the wght axis on the other depths, so the size
+// classes there already reach their weight through font-weight.
+$title-bit-depths: (4);
+
+@each $class-name, $weight-var in $title-base-only {
+    @each $bit-depth in $title-bit-depths {
+        .trmnl .screen--#{$bit-depth}bit .#{helpers.escape-class-token($class-name)} {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}
+
+@each $class-name, $weight-var in $title-sizes {
+    @each $bit-depth in $title-bit-depths {
+        // Base bit-depth styles
+        .trmnl .screen--#{$bit-depth}bit .#{helpers.escape-class-token($class-name)} {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+
+        // Every prefixed gate the class itself is published under. Without them
+        // md:title--large renders at the size of a large title and the weight of
+        // a plain one, since the rule above pins the axis for the whole element.
+        @include responsive.device-variants-for-bit-depth($class-name, $bit-depth) {
+            font-variation-settings: 'wght' var(#{$weight-var});
+        }
+    }
+}

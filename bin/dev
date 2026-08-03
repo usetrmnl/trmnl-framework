@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Dev loop: docs server + live Sass/Tailwind rebuilds. Edit scss/, watch it
+# recompile, eyeball the page.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
+
+# The docs serve the live build by default, and that needs the whole set compiled:
+# one missing theme or harness stylesheet sends every page back to the released
+# bundles. Fresh checkouts have none of them, and a half-built tree is the case the
+# old tailwind.css-only check walked straight past.
+SS=app/assets/stylesheets
+OUT=server/app/assets/builds
+required=( "$OUT/plugins.css" "$OUT/framework/responsive_test.css" "$OUT/tailwind.css" )
+for theme in "$SS"/framework/themes/[a-z]*-theme.scss; do
+  required+=( "$OUT/themes/$(basename "$theme" .scss).css" )
+done
+
+missing=""
+for file in "${required[@]}"; do
+  [ -f "$file" ] || missing="$missing $file"
+done
+
+if [ -n "$missing" ]; then
+  echo "== Missing build output:${missing} =="
+  # A checkout that never ran setup has no gems and no asset symlinks either, so the
+  # build tasks would compile nothing. Everything else just needs the three builds.
+  if [ -e server/app/assets/stylesheets ] && bundle check > /dev/null 2>&1; then
+    bin/rails framework:colors
+    bin/rails dartsass:build
+    bin/rails tailwindcss:build
+  else
+    bin/setup
+  fi
+fi
+
+# Foreman assigns PORT from 5000 unless overridden; docs server listens on 3001.
+export PORT="${PORT:-3001}"
+
+exec foreman start -f Procfile.dev "$@"

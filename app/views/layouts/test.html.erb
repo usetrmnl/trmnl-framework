@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <% if params[:controller] == 'framework_v1' || request.path.start_with?('/framework/docs/1.2', '/framework/docs/v1') %>
+      <%= stylesheet_link_tag "plugins_legacy", "data-turbo-track": "reload" %>
+      <%= javascript_include_tag "plugin_legacy", "data-turbo-track": "reload" %>
+    <% else %>
+      <%= stylesheet_link_tag "plugins", "data-turbo-track": "reload" %>
+      <%= javascript_include_tag "plugin-render/plugins", "data-turbo-track": "reload" %>
+    <% end %>
+
+    <style>
+      body { background-color: #eee; padding: 30px; }
+      .screen { visibility: visible; }
+      .example { margin-bottom: 24px; }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+  <script>
+    window.addEventListener('load', function() {
+      if (typeof window.terminalize === 'function') { window.terminalize(); }
+    });
+  </script>
+</html>
+
+

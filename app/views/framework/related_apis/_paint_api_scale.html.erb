@@ -1,0 +1,18 @@
+<%# locals: kind ('ui' or 'text'), example %>
+<div class="space-y-4">
+  <%= framework_heading(4, 'Reading scale factors from JavaScript') %>
+  <p class="<%= framework_section_description_classes %>">
+    The <code class="<%= framework_section_code_classes %>">scale({ el })</code> and
+    <code class="<%= framework_section_code_classes %>">px(value, { el, kind })</code> helpers read the resolved
+    scale factors from the live screen, so JavaScript-drawn visuals follow the factors this page documents.
+    <% if kind == 'text' %>
+      Pass <code class="<%= framework_section_code_classes %>">kind: "text"</code> to scale framework typography
+      with the text scale.
+    <% else %>
+      <code class="<%= framework_section_code_classes %>">px()</code> scales by the content scale by default; pass
+      <code class="<%= framework_section_code_classes %>">kind: "ui"</code> for framework geometry.
+    <% end %>
+    See <%= render DocsRef.new(page: :paint_api) %>.
+  </p>
+  <%= render CodeExampleComponent.new(demo_code: example, language: 'javascript') %>
+</div>

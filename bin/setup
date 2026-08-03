@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# One-shot setup: gems, npm (release tooling), generated tokens, and all CSS builds.
+# app/assets/builds is gitignored under the docs server, so a fresh checkout MUST run
+# this (or bin/dev) before the docs render correctly.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+echo "== Installing gems =="
+bundle check > /dev/null 2>&1 || bundle install
+
+echo "== Installing npm packages (minify tooling for releases) =="
+# npm ci, not npm install: the lockfile pins the cssnano and terser builds a release
+# is byte-compared against, and npm install rewrites the lockfile on a fresh checkout.
+npm ci --silent
+
+echo "== Linking server asset paths to gem source =="
+ASSETS=server/app/assets
+mkdir -p "$ASSETS"
+for pair in \
+  "images:../../../app/assets/images" \
+  "static:../../../app/assets/static" \
+  "stylesheets:../../../app/assets/stylesheets" \
+  "tailwind:../../../app/assets/tailwind"; do
+  name="${pair%%:*}"
+  target="${pair#*:}"
+  rm -f "$ASSETS/$name"
+  ln -s "$target" "$ASSETS/$name"
+done
+
+echo "== Generating color tokens =="
+bin/rails framework:colors
+
+echo "== Building framework CSS (dartsass) =="
+bin/rails dartsass:build
+
+echo "== Building docs chrome CSS (tailwind) =="
+bin/rails tailwindcss:build
+
+echo
+echo "✓ Ready. Run bin/dev (or bin/rails server) and open http://localhost:3001/framework"

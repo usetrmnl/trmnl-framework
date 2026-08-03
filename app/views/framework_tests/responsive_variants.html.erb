@@ -1,0 +1,41 @@
+<%# Fixtures for test/runtime/framework/responsive-variants.spec.js.
+    Every responsive_test parity row is rendered three times against the live
+    build, each in its own screen so nothing shares a flex or grid container:
+
+      subject  the markup as authored, carrying the variant class
+      plain    the same markup with the variant class removed
+      base     the same markup with the variant's unprefixed class instead
+
+    The spec asserts subject matches base while the gate is active and plain
+    while it is not. Comparing against base rather than "differs from plain"
+    keeps rows honest where the unprefixed class happens to be a no-op in its
+    fixture, which says nothing about whether the variant resolves. %>
+<div class="responsive-variant-probes">
+  <% framework_responsive_variant_row_groups.each do |group, rows| %>
+    <% rows.each_with_index do |row, index| %>
+      <% variant_class = row[:class].to_s %>
+      <% next if variant_class.exclude?(':') %>
+      <% markup = row[:class_inner_html].to_s %>
+      <% base_class = variant_class.split(':').last %>
+      <% variants = {
+           'subject' => markup,
+           'plain' => markup.sub(variant_class, ''),
+           'base' => markup.sub(variant_class, base_class)
+         } %>
+      <% variants.each do |role, html| %>
+        <%# screen--og pins every probe to one 800x480 box. Without a device the
+            screens size from flow and land on fractional widths, so the three
+            roles resolve different sub-pixel geometry and every comparison of a
+            width or a grid track is noise. %>
+        <div class="screen-container trmnl"
+             data-variant-probe="<%= group %>-<%= index %>"
+             data-variant-role="<%= role %>"
+             data-variant-class="<%= variant_class %>">
+          <div class="screen screen--og">
+            <%= html.html_safe %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

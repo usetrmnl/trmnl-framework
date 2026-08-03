@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# `bin/rails dartsass:watch` segfaults the embedded compiler on macOS, so this watches
+# with the sass binary directly instead (the one the sass-embedded gem ships).
+# Outputs land in the docs server builds dir (Rails.root).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [ -n "${SASS_BIN:-}" ]; then
+  SASS=( "$SASS_BIN" )
+elif bundle exec sass --version >/dev/null 2>&1; then
+  SASS=( bundle exec sass )
+elif command -v sass >/dev/null 2>&1; then
+  SASS=( sass )
+else
+  echo "error: no sass-embedded / sass binary found (run 'bundle install')" >&2
+  exit 1
+fi
+
+SS=app/assets/stylesheets
+OUT=server/app/assets/builds
+mkdir -p "$OUT" "$OUT/framework" "$OUT/themes"
+
+PAIRS=(
+  "$SS/plugins.scss:$OUT/plugins.css"
+  "$SS/plugins_legacy.scss:$OUT/plugins_legacy.css"
+  "$SS/framework/responsive_test.scss:$OUT/framework/responsive_test.css"
+)
+for theme in "$SS"/framework/themes/[a-z]*-theme.scss; do
+  PAIRS+=("$theme:$OUT/themes/$(basename "$theme" .scss).css")
+done
+
+exec "${SASS[@]}" --watch --style=compressed --no-source-map --load-path="$SS" "${PAIRS[@]}"

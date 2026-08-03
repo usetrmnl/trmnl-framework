@@ -1,0 +1,251 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :font_family %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:font_family) %>
+
+    <div class="space-y-16">
+
+      <%
+        trmnl_default = current_docs_version != '3.0'
+        default_bundle_id = trmnl_default ? 'trmnl' : 'classic'
+        bundles = framework_fonts_config.bundles.transform_keys(&:to_s)
+      %>
+
+      <%= render FrameworkComparisonComponent.new(variant: :classic_vs_trmnl) do |c| %>
+        <% c.with_left_message do %>
+          <p class="text-sm font-medium">The original pixel set. Three single-weight fonts: NicoPups, NicoClean, BlockKie. Default in Framework 3.0.</p>
+        <% end %>
+        <% c.with_right_message do %>
+          <p class="text-sm font-medium">The new pixel set. Three font families with Regular and Bold weights: TRMNL12, TRMNL16, TRMNL21. Default in Framework 3.1.</p>
+        <% end %>
+        <% c.with_left_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="screen screen--fonts-classic">...</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+        <% c.with_right_code do %>
+          <%= render CodeExampleComponent.new(
+            demo_code: '<div class="screen screen--fonts-trmnl">...</div>',
+            extra_classes: '!rounded-t-none'
+          ) %>
+        <% end %>
+      <% end %>
+
+      <p class="<%= framework_section_description_classes %>">
+        Both bundles are available in Framework 3.x. Which one a screen renders depends on the display and the
+        active scale:
+      </p>
+      <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+        <li>
+          <strong>Low-density displays:</strong> the selected pixel-font bundle.
+        </li>
+        <li>
+          <strong>High-density displays:</strong> <strong>Inter Variable</strong>, regardless of bundle or bit depth.
+        </li>
+        <li>
+          <strong>Any Scale or Text Scale other than Regular:</strong> Inter Variable, because pixel bundles only
+          render correctly at their native sizes.
+        </li>
+        <li>
+          <% if trmnl_default %>
+            <strong>No font-bundle class:</strong> in Framework <%= current_docs_version %> the screen uses <strong>TRMNL</strong>; add
+            <code class="<%= framework_section_code_classes %>">screen--fonts-classic</code> to opt into Classic.
+          <% else %>
+            <strong>No font-bundle class:</strong> in Framework <%= current_docs_version %> the screen uses <strong>Classic</strong>; add
+            <code class="<%= framework_section_code_classes %>">screen--fonts-trmnl</code> to opt into TRMNL.
+          <% end %>
+        </li>
+      </ul>
+
+      <section id="font-bundle-selector">
+        <div class="flex flex-wrap gap-2">
+          <% bundles.each_with_index do |(bundle_id, bundle), i| %>
+            <button
+              type="button"
+              data-bundle="<%= bundle_id %>"
+              class="bundle-switch-btn px-4 py-2 text-xs font-mono rounded-lg border transition-colors
+                     <%= bundle_id == default_bundle_id ? 'border-gray-900 bg-gray-900 text-white dark:border-gray-200 dark:bg-gray-200 dark:text-gray-900' : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500' %>">
+              <%= bundle[:label] %> bundle
+            </button>
+          <% end %>
+        </div>
+      </section>
+
+      <% bundles.each do |bundle_id, bundle| %>
+        <section class="space-y-8" data-bundle-section="<%= bundle_id %>" <%= 'hidden' if bundle_id != default_bundle_id %>>
+          <div class="space-y-4">
+            <%= framework_heading(3, "#{bundle[:label]} bundle") %>
+            <p class="<%= framework_section_description_classes %>">
+              <%= bundle[:blurb] %>
+              <% if bundle_id == default_bundle_id %>
+                Framework <%= current_docs_version %> uses it when no font-bundle class is present, so add
+                <code class="<%= framework_section_code_classes %>"><%= bundle[:class_name] %></code> only to pin the bundle explicitly.
+              <% else %>
+                Activate by adding <code class="<%= framework_section_code_classes %>"><%= bundle[:class_name] %></code> to the screen root.
+              <% end %>
+              This controls pixel-font output on low-density displays; high-density displays still resolve to Inter.
+            </p>
+          </div>
+
+          <% bundle[:fonts].each do |font| %>
+            <div class="space-y-4">
+              <%= framework_heading(4, font[:family]) %>
+              <p class="<%= framework_section_description_classes %>">
+                Designed at <strong><%= font[:size] %></strong> pixel height. <%= font[:desc] %>
+              </p>
+
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="grid grid-cols-1 <%= font[:weights].size > 1 ? 'md:grid-cols-2' : '' %> gap-x-6 p-6 pb-0">
+                  <% font[:weights].each do |weight| %>
+                    <div class="flex flex-col min-w-0">
+                      <div class="<%= tab_gray_classes %>">
+                        <% if weight == 'normal' %>
+                          Regular <span class="font-normal opacity-50">400</span>
+                        <% else %>
+                          Bold <span class="font-normal opacity-50">700</span>
+                        <% end %>
+                      </div>
+                      <div class="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-5 min-h-[120px] relative z-10" style="font-family: '<%= font[:family] %>'; font-weight: <%= weight %>; font-size: <%= font[:size] %>; line-height: 1.6;">
+                        <p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+                        <p>abcdefghijklmnopqrstuvwxyz</p>
+                        <p>0123456789</p>
+                        <p>!@#$%^&amp;*()-=+[]{}|;:',./&lt;&gt;?</p>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="px-4 py-2.5 mt-6 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-xs font-mono text-gray-600 dark:text-gray-300">
+                  font-family: "<%= font[:family] %>" &middot; font-size: <%= font[:size] %>
+                </div>
+                <%= render 'framework/font_credits', font: font %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="space-y-3">
+            <%= framework_heading(4, 'On-device preview') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen <%= bundle[:class_name] %>">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--medium">
+                        <span class="text--small">text--small &middot; <%= bundle[:label] %></span>
+                        <span class="text--base">text--base &middot; <%= bundle[:label] %></span>
+                        <span class="text--large">text--large &middot; <%= bundle[:label] %></span>
+                        <span class="text--base text--bold">text--base text--bold &middot; <%= bundle[:label] %></span>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                        <span class="title"><%= bundle[:label] %> bundle</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <%= render 'framework/high_density_font_notice' %>
+          </div>
+        </section>
+      <% end %>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Component-by-component bundle map') %>
+          <p class="<%= framework_section_description_classes %>">
+            Each component picks the appropriate font based on the active bundle. On high-density
+            displays Inter Variable is used for every component regardless of bundle.
+          </p>
+        </div>
+
+        <div class="<%= framework_docs_table_wrapper_classes %>">
+          <div class="<%= framework_docs_table_card_classes %>">
+            <table class="<%= framework_docs_table_classes %>">
+              <thead>
+                <tr>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">Component</th>
+                  <th data-bundle-col="classic" <%= 'hidden' if default_bundle_id != 'classic' %> class="<%= framework_docs_table_header_cell_classes %>">Classic (low-density)</th>
+                  <th data-bundle-col="trmnl" <%= 'hidden' if default_bundle_id != 'trmnl' %> class="<%= framework_docs_table_header_cell_classes %>">TRMNL (low-density)</th>
+                  <th class="<%= framework_docs_table_header_cell_classes %>">High-density</th>
+                </tr>
+              </thead>
+              <tbody class="<%= framework_docs_table_body_classes %>">
+                <% [
+                  ['Title Bar',           'NicoClean',      'TRMNL16'],
+                  ['Title',               'BlockKie',       'TRMNL21'],
+                  ['Title (small)',       'NicoClean',      'TRMNL16'],
+                  ['Label',               'NicoClean',      'TRMNL16'],
+                  ['Label (small)',       'NicoPups',       'TRMNL12'],
+                  ['Description',         'NicoPups',       'TRMNL12'],
+                  ['Description (large)', 'NicoClean',      'TRMNL16'],
+                  ['Value (xxsmall)',     'NicoClean',      'TRMNL16'],
+                  ['Value (other sizes)', 'Inter Variable', 'Inter Variable'],
+                  ['Rich Text',           'NicoClean',      'TRMNL16'],
+                  ['Rich Text (small)',   'NicoPups',       'TRMNL12'],
+                  ['Rich Text (large)',   'BlockKie',       'TRMNL21'],
+                  ['Item Index',          'NicoPups',       'TRMNL12']
+                ].each do |component, classic, trmnl| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100"><%= component %></td>
+                    <td data-bundle-col="classic" <%= 'hidden' if default_bundle_id != 'classic' %> class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= classic %></td>
+                    <td data-bundle-col="trmnl" <%= 'hidden' if default_bundle_id != 'trmnl' %> class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"><%= trmnl %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Inter Variable</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <% framework_fonts_config.shared.each do |shared_font| %>
+        <section class="space-y-4">
+          <%= framework_heading(3, "High-density: #{shared_font[:family]}") %>
+          <p class="<%= framework_section_description_classes %>">
+            <%= shared_font[:desc] %>
+          </p>
+          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900">
+            <%= render 'framework/font_credits', font: shared_font %>
+          </div>
+        </section>
+      <% end %>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var activeCls = 'border-gray-900 bg-gray-900 text-white dark:border-gray-200 dark:bg-gray-200 dark:text-gray-900';
+  var inactiveCls = 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500';
+
+  var buttons = document.querySelectorAll('.bundle-switch-btn');
+  if (!buttons.length) return;
+
+  function setActive(id) {
+    buttons.forEach(function(b) {
+      var isActive = b.dataset.bundle === id;
+      activeCls.split(' ').forEach(function(c) { b.classList.toggle(c, isActive); });
+      inactiveCls.split(' ').forEach(function(c) { b.classList.toggle(c, !isActive); });
+    });
+
+    document.querySelectorAll('[data-bundle-section]').forEach(function(el) {
+      el.hidden = el.dataset.bundleSection !== id;
+    });
+
+    document.querySelectorAll('[data-bundle-col]').forEach(function(el) {
+      el.hidden = el.dataset.bundleCol !== id;
+    });
+  }
+
+  buttons.forEach(function(btn) {
+    btn.addEventListener('click', function() { setActive(btn.dataset.bundle); });
+  });
+})();
+</script>

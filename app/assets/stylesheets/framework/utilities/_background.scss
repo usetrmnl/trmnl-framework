@@ -1,0 +1,121 @@
+// ============================================
+// TRMNL Framework - Background Utilities
+// ============================================
+// Utility classes reference --bg-{token}-color and --bg-{token}-image
+// CSS custom properties set on .screen by base/_screen-mode-vars.scss.
+// Mode-dependent rendering (bit-depth, dark-mode, palettes) is handled
+// entirely through variable cascade, no per-mode selectors here.
+
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use '../mixins/responsive' as responsive;
+@use '../mixins/factorized_utilities' as fz;
+@use 'sass:list';
+
+// Apply background paint from per-element utility vars.
+@mixin apply-bg-paint-vars {
+    background-color: var(--tn-bg-color, transparent);
+    background-image: var(--tn-bg-image, none);
+    background-size: var(--dither-bg-size, auto);
+}
+
+@mixin emit-factorized-bg-variants {
+    // Token bindings: grayscale + extended + framework chromatic + semantic
+    // palette. We intentionally dedupe by class-token name so the
+    // same class (e.g. 'black' or 'white' which appear in both
+    // $palette-shades and $palette-shades-extended) doesn't bind twice.
+    $token-bindings: ();
+    $seen: ();
+    $sources: (
+        vars.$palette-shades,
+        vars.$palette-shades-extended,
+        vars.$color-palette-framework
+    );
+    @each $source in $sources {
+        @each $name, $_ in $source {
+            @if list.index($seen, $name) == null {
+                $token-bindings: list.append($token-bindings, ($name, $name));
+                $seen: list.append($seen, $name);
+            }
+        }
+    }
+    @each $name, $token in vars.$semantic-colors {
+        @if list.index($seen, $name) == null {
+            $token-bindings: list.append($token-bindings, ($name, $token));
+            $seen: list.append($seen, $name);
+        }
+    }
+
+    // One rule per token, with selectors covering every variant gate. Each rule
+    // carries both the token's --tn-bg-* bindings and the paint declarations
+    // that read them, so paint rides the enumerated color classes and nothing
+    // else.
+    //
+    // A `[class^="bg--"]` prefix matcher used to carry the paint instead. It
+    // also selected any class that merely starts with the prefix and binds no
+    // token, a typo such as `bg--gray-99`, and repainted it with the inert
+    // fallbacks (transparent, none) from tn--utilities, the last cascade layer,
+    // wiping whatever a component had painted underneath. An exclusion list
+    // cannot fix it: :not() reads the whole class attribute. Text and Size made
+    // the same move, and Gap and Spacing kept their matcher but read through
+    // `revert-layer`.
+    //
+    // Property names go through interpolation so Sass treats them as
+    // ordinary declarations (and the compressed compiler drops the space
+    // after `:`), matching the previous output format used by the regression
+    // matchers.
+    @each $pair in $token-bindings {
+        $class-token: list.nth($pair, 1);
+        $resolved-token: list.nth($pair, 2);
+        $selectors: fz.gate-selectors-for-token('bg--#{$class-token}');
+        $vars: (
+            '--tn-bg-color': var(--theme-bg-#{$class-token}-color, var(--bg-#{$resolved-token}-color, transparent)),
+            '--tn-bg-image': var(--theme-bg-#{$class-token}-image, var(--bg-#{$resolved-token}-image, none)),
+        );
+
+        #{$selectors} {
+            @each $name, $value in $vars {
+                #{$name}: #{$value};
+            }
+            @include apply-bg-paint-vars;
+        }
+    }
+}
+
+@include mixins.trmnl-namespace {
+    @include emit-factorized-bg-variants;
+
+    // ── Framework semantic background roles ──
+    .bg--canvas {
+        @include responsive.with-dark-all-variants {
+            --tn-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
+            --tn-bg-image: var(--framework-semantic-canvas-bg-image, none);
+            background-color: var(--tn-bg-color);
+            background-image: var(--tn-bg-image);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+        }
+    }
+
+    .bg--surface {
+        @include responsive.with-dark-all-variants {
+            --tn-bg-color: var(--framework-semantic-surface-bg-color, var(--framework-surface-bg));
+            --tn-bg-image: var(--framework-semantic-surface-bg-image, none);
+            background-color: var(--tn-bg-color);
+            background-image: var(--tn-bg-image);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+        }
+    }
+
+    .bg--backdrop {
+        @include responsive.with-dark-all-variants {
+            --tn-bg-color: var(--framework-semantic-backdrop-bg-color, var(--framework-backdrop-bg));
+            --tn-bg-image: var(--framework-semantic-backdrop-bg-image, none);
+            background-color: var(--tn-bg-color);
+            background-image: var(--tn-bg-image);
+            background-repeat: repeat;
+            background-size: var(--dither-bg-size, auto);
+        }
+    }
+}

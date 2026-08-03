@@ -1,0 +1,30 @@
+<%#
+  Renders a small public credits/license footer for a single font entry.
+
+  Locals:
+    font - Hash with symbol keys: :family, :designer, :designer_url,
+           :license, :license_url
+%>
+<dl class="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-300">
+  <% if font[:designer].present? %>
+    <dt class="font-semibold uppercase tracking-wider text-[10px] text-gray-500 dark:text-gray-400 self-center">Designer</dt>
+    <dd class="leading-5">
+      <% if font[:designer_url].present? %>
+        <a href="<%= font[:designer_url] %>" target="_blank" rel="noopener" class="text-syntax-string hover:underline"><%= font[:designer] %></a>
+      <% else %>
+        <%= font[:designer] %>
+      <% end %>
+    </dd>
+  <% end %>
+
+  <% if font[:license].present? %>
+    <dt class="font-semibold uppercase tracking-wider text-[10px] text-gray-500 dark:text-gray-400 self-center">License</dt>
+    <dd class="leading-5">
+      <% if font[:license_url].present? %>
+        <a href="<%= font[:license_url] %>" target="_blank" rel="noopener" class="text-syntax-string hover:underline"><%= font[:license] %></a>
+      <% else %>
+        <%= font[:license] %>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>

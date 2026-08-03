@@ -1,0 +1,1659 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :chart %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:chart) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Any CDN-enabled JavaScript library may be used to develop charting interfaces,
+            however the examples below leverage <%= link_to 'Highcharts', 'https://highcharts.com', target: :_blank, class: 'underline' %>
+            and <%= link_to 'Chartkick', 'https://chartkick.com', target: :_blank, class: 'underline' %>.
+          </p>
+
+          <p class="<%= framework_section_description_classes %>">
+            If you set the <code class="<%= framework_section_code_classes %>">height: null</code> within your highchart's settings, the chart will automatically expand to fill the available space.
+          </p>
+
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/warning' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="leading-none text-sm font-medium">
+                  Take care to disable animation effects, otherwise your chart may be only partially captured by TRMNL's screenshot rendering service.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Line Chart') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Line charts effectively display trends over time. This example shows a simple line chart with customized styling to match the TRMNL aesthetic.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+                  <script data-trmnl-src="https://trmnl.com/js/chartkick/5.0.1/chartkick.min.js"></script>
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--tnums">25,388</span>
+                            <span class="label">Pageviews</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--tnums">4,771</span>
+                            <span class="label">Visitors</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--tnums">2.23</span>
+                            <span class="label">Mins on Page</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="chart-123" class="w--full"></div>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image" src="https://trmnl.com/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Charts</span>
+                      <span class="instance">Line Chart</span>
+                    </div>
+                  </div>
+
+                  <script type="text/trmnl-example">
+                    var data = [["2024-06-09", 975],["2024-06-10", 840],["2024-06-11", 1004],["2024-06-12", 1308],["2024-06-13", 753],["2024-06-14", 600],["2024-06-15", 710],
+                                ["2024-06-16", 489],["2024-06-17", 510],["2024-06-18", 590],["2024-06-19", 610],["2024-06-20", 671],["2024-06-21", 512],["2024-06-22", 550],
+                                ["2024-06-23", 421],["2024-06-24", 315],["2024-06-25", 604],["2024-06-26", 672],["2024-06-27", 601],["2024-06-28", 705],["2024-06-29", 800],
+                                ["2024-06-30", 912],["2024-07-01", 1503],["2024-07-02", 1273],["2024-07-03", 1250],["2024-07-04", 1198],["2024-07-05", 1005],["2024-07-06", 1300],
+                                ["2024-07-07", 1103],["2024-07-08", 1004],["2024-07-09", 600]];
+
+                    var createChart = function() {
+                      new Chartkick["LineChart"](
+                      "chart-123",
+                      data,
+                      {
+                        adapter: "highcharts",
+                        prefix: "",
+                        thousands: ",",
+                        points: false,
+                        colors: ["black"],
+                        curve: true,
+                        library: {
+                          chart: {
+                            height: 260,
+                            backgroundColor: 'transparent'
+                          },
+                          plotOptions: {
+                            series: {
+                              animation: false,
+                              lineWidth: 4
+                            }
+                          },
+                          yAxis: {
+                            labels: {
+                              style: {
+                                fontSize: "16px",
+                                color:"#000000"
+                              }
+                            },
+                            gridLineDashStyle: "shortdot",
+                            gridLineWidth: 1,
+                            gridLineColor: "#000000",
+                            tickAmount: 5
+                          },
+                          xAxis: {
+                            type: "daytime",
+                            labels: {
+                              style: {
+                                fontSize: "16px",
+                                color: "#000000"
+                              }
+                            },
+                            lineWidth: 0,
+                            gridLineDashStyle: "dot",
+                            tickWidth: 1,
+                            tickLength: 0,
+                            gridLineWidth: 1,
+                            gridLineColor: "#000000",
+                            tickPixelInterval: 120
+                          }
+                        }
+                      });
+                    };
+                    if ("Chartkick" in window) {
+                      createChart();
+                    } else {
+                      window.addEventListener("chartkick:load", createChart, true);
+                    }
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- import Highcharts + Chartkick libraries -->
+<script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+<script src="https://trmnl.com/js/chartkick/5.0.1/chartkick.min.js"></script>
+
+<!-- markup with empty, ID\'d element for chart injection -->
+<div class="view view--full">
+  <div class="layout layout--col gap--space-between">
+    <div class="grid grid--cols-3">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--tnums">25,388</span>
+          <span class="label">Pageviews</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--tnums">4,771</span>
+          <span class="label">Visitors</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--tnums">2.23</span>
+          <span class="label">Mins on Page</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="chart-123" class="w--full"></div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image" src="https://trmnl.com/images/plugins/simple-analytics--render.svg" alt="Simple Analytics Logo">
+    <span class="title">Simple Analytics</span>
+    <span class="instance">trmnl.com</span>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var data = [["2024-06-09", 975],["2024-06-10", 840],["2024-06-11", 1004],["2024-06-12", 1308],["2024-06-13", 753],["2024-06-14", 600],["2024-06-15", 710],
+              ["2024-06-16", 489],["2024-06-17", 510],["2024-06-18", 590],["2024-06-19", 610],["2024-06-20", 671],["2024-06-21", 512],["2024-06-22", 550],
+              ["2024-06-23", 421],["2024-06-24", 315],["2024-06-25", 604],["2024-06-26", 672],["2024-06-27", 601],["2024-06-28", 705],["2024-06-29", 800],
+              ["2024-06-30", 912],["2024-07-01", 1503],["2024-07-02", 1273],["2024-07-03", 1250],["2024-07-04", 1198],["2024-07-05", 1005],["2024-07-06", 1300],
+              ["2024-07-07", 1103],["2024-07-08", 1004],["2024-07-09", 600]];
+
+  // recommended configs to achieve the TRMNL Framework aesthetic
+  var createChart = function() {
+    new Chartkick["LineChart"](
+    "chart-123",
+    data,
+    {
+      adapter: "highcharts", // chartjs, google, etc available
+      prefix: "",
+      thousands: ",",
+      points: false,
+      colors: ["black"],
+      curve: true,
+      library: {
+        chart: {
+          height: 260,
+          backgroundColor: \'transparent\'
+        },
+        plotOptions: {
+          series: {
+            animation: false,
+            lineWidth: 4
+          }
+        },
+        yAxis: {
+          labels: {
+            style: {
+              fontSize: "16px",
+              color:"#000000"
+            }
+          },
+          gridLineDashStyle: "shortdot",
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickAmount: 5
+        },
+        xAxis: {
+          type: "daytime",
+          labels: {
+            style: {
+              fontSize: "16px",
+              color: "#000000"
+            }
+          },
+          lineWidth: 0,
+          gridLineDashStyle: "dot",
+          tickWidth: 1,
+          tickLength: 0,
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickPixelInterval: 120
+        }
+      }
+    });
+  };
+
+  // ensure your chart loads before plugin render is generated
+  if ("Chartkick" in window) {
+    createChart();
+  } else {
+    window.addEventListener("chartkick:load", createChart, true);
+  }
+</script>') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Multi-Series Line Chart') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              For comparing data across multiple time periods or categories, multi-series line charts are ideal. This example demonstrates a comparison between current and previous period data with distinct styling for each series.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+                      <div class="grid">
+                        <div class="row">
+                          <div class="grid">
+                            <div class="item col--span-2">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--large value--tnums">$85,240</span>
+                                <span class="label">Total Sales</span>
+                              </div>
+                            </div>
+
+                            <div class="item col--span-1">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--small value--tnums">32</span>
+                                <span class="label">Pending Orders</span>
+                              </div>
+                            </div>
+
+                            <div class="item col--span-1">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--xsmall value--tnums">
+                                  <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
+                                  Jul 01 - Jul 15
+                                </span>
+                                <span class="label">Current</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="border--h-5 w--full"></div>
+
+                      <div class="grid">
+                        <div class="row">
+                          <div class="grid">
+                            <div class="item col--span-2">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--tnums">$128</span>
+                                <span class="label">AOV</span>
+                              </div>
+                            </div>
+
+                            <div class="item col--span-1">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--small value--tnums">665</span>
+                                <span class="label">Fulfilled Orders</span>
+                              </div>
+                            </div>
+
+                            <div class="item col--span-1">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--xsmall value--tnums">
+                                  <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
+                                  Jun 15 - Jun 30
+                                </span>
+                                <span class="label">Previous</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="multi-series-chart" class="w--full"></div>
+
+                      <script type="text/trmnl-example">
+                        var currentPeriod = [
+                          ["2024-07-01", 3500], ["2024-07-02", 4200], ["2024-07-03", 3800],
+                          ["2024-07-04", 5100], ["2024-07-05", 4800], ["2024-07-06", 3600],
+                          ["2024-07-07", 2900], ["2024-07-08", 4300], ["2024-07-09", 5200],
+                          ["2024-07-10", 6100], ["2024-07-11", 5700], ["2024-07-12", 4900],
+                          ["2024-07-13", 5300], ["2024-07-14", 5800], ["2024-07-15", 6500]
+                        ];
+
+                        var previousPeriod = [
+                          ["2024-07-01", 2800], ["2024-07-02", 3100], ["2024-07-03", 3400],
+                          ["2024-07-04", 3900], ["2024-07-05", 4500], ["2024-07-06", 4100],
+                          ["2024-07-07", 3700], ["2024-07-08", 3300], ["2024-07-09", 4200],
+                          ["2024-07-10", 4800], ["2024-07-11", 5100], ["2024-07-12", 4700],
+                          ["2024-07-13", 5400], ["2024-07-14", 5800], ["2024-07-15", 5600]
+                        ];
+
+                        var formattedData = [
+                          { name: "Current", data: currentPeriod },
+                          { name: "Previous", data: previousPeriod }
+                        ];
+
+                        Highcharts.chart('multi-series-chart', {
+                          chart: {
+                            type: 'spline',
+                            height: 203,
+                            width: null,
+                            animation: false,
+                            spacing: [10, 10, 5, 10],
+                            backgroundColor: 'transparent'
+                          },
+                          title: {
+                            text: null
+                          },
+                          plotOptions: {
+                            series: {
+                              animation: false,
+                              enableMouseTracking: false,
+                              states: {
+                                hover: { enabled: false }
+                              },
+                              marker: {
+                                enabled: false
+                              }
+                            }
+                          },
+                          series: [{
+                            data: formattedData[0].data,
+                            lineWidth: 4,
+                            color: '#000000',
+                            name: formattedData[0].name,
+                            zIndex: 2
+                          }, {
+                            data: formattedData[1].data,
+                            lineWidth: 5,
+                            name: formattedData[1].name,
+                            zIndex: 1,
+                            color: {
+                              pattern: {
+                                image: 'https://trmnl.com/images/grayscale/gray-5.png',
+                                width: 12,
+                                height: 12
+                              }
+                            }
+                          }],
+                          tooltip: { enabled: false },
+                          legend: { enabled: false },
+                          yAxis: {
+                            labels: {
+                              style: { fontSize: '16px', color: '#000000' }
+                            },
+                            gridLineDashStyle: 'shortdot',
+                            gridLineWidth: 1,
+                            gridLineColor: '#000000',
+                            tickAmount: 5,
+                            title: {
+                              text: null
+                            }
+                          },
+                          xAxis: {
+                            type: 'datetime',
+                            labels: {
+                              style: { fontSize: '16px', color: '#000000' },
+                              padding: 5,
+                              y: 25
+                            },
+                            lineWidth: 0,
+                            gridLineDashStyle: 'dot',
+                            tickWidth: 1,
+                            tickLength: 0,
+                            gridLineWidth: 1,
+                            gridLineColor: '#000000',
+                            tickPixelInterval: 120,
+                            title: {
+                              text: null
+                            }
+                          },
+                          credits: {
+                            enabled: false
+                          }
+                        });
+                      </script>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image" src="https://trmnl.com/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Charts</span>
+                      <span class="instance">Multi-Series Line Chart</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- import required libraries -->
+<script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+<script src="https://trmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+<script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+
+<div class="view view--full">
+  <div class="layout layout--col gap--space-between">
+    <!-- Optional data metrics displayed above chart -->
+    <div class="grid">
+      <div class="row">
+        <div class="grid">
+          <div class="item col--span-2">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--large value--tnums">$85,240</span>
+              <span class="label">Total Sales</span>
+            </div>
+          </div>
+
+          <div class="item col--span-1">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--small value--tnums">32</span>
+              <span class="label">Pending Orders</span>
+            </div>
+          </div>
+
+          <div class="item col--span-1">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--xsmall value--tnums">
+                <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
+                Jul 01 - Jul 15
+              </span>
+              <span class="label">Current</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border--h-5 w--full"></div>
+
+    <!-- More metrics if needed -->
+    <div class="grid">
+      <div class="row">
+        <div class="grid">
+          <div class="item col--span-2">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--tnums">$128</span>
+              <span class="label">AOV</span>
+            </div>
+          </div>
+
+          <div class="item col--span-1">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--small value--tnums">665</span>
+              <span class="label">Fulfilled Orders</span>
+            </div>
+          </div>
+
+          <div class="item col--span-1">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--xsmall value--tnums">
+                <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
+                Jun 15 - Jun 30
+              </span>
+              <span class="label">Previous</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart container with unique ID -->
+    <div id="multi-series-chart" class="w--full"></div>
+
+    <script type="text/javascript">
+      // Using same date range for both series to ensure proper overlap
+      var currentPeriod = [
+        ["2024-07-01", 3500], ["2024-07-02", 4200], ["2024-07-03", 3800],
+        ["2024-07-04", 5100], ["2024-07-05", 4800], ["2024-07-06", 3600],
+        ["2024-07-07", 2900], ["2024-07-08", 4300], ["2024-07-09", 5200],
+        ["2024-07-10", 6100], ["2024-07-11", 5700], ["2024-07-12", 4900],
+        ["2024-07-13", 5300], ["2024-07-14", 5800], ["2024-07-15", 6500]
+      ];
+
+      // Using same date range but different values for comparison
+      var previousPeriod = [
+        ["2024-07-01", 2800], ["2024-07-02", 3100], ["2024-07-03", 3400],
+        ["2024-07-04", 3900], ["2024-07-05", 4500], ["2024-07-06", 4100],
+        ["2024-07-07", 3700], ["2024-07-08", 3300], ["2024-07-09", 4200],
+        ["2024-07-10", 4800], ["2024-07-11", 5100], ["2024-07-12", 4700],
+        ["2024-07-13", 5400], ["2024-07-14", 5800], ["2024-07-15", 5600]
+      ];
+
+      var formattedData = [
+        { name: "Current", data: currentPeriod },
+        { name: "Previous", data: previousPeriod }
+      ];
+
+      // Initialize chart with multiple series
+      Highcharts.chart("multi-series-chart", {
+        chart: {
+          type: "spline",
+          height: 203,
+          width: null,
+          animation: false,
+          spacing: [10, 10, 5, 10],
+          backgroundColor: "transparent"
+        },
+        title: {
+          text: null
+        },
+        plotOptions: {
+          series: {
+            animation: false,
+            enableMouseTracking: false,
+            states: {
+              hover: { enabled: false }
+            },
+            marker: {
+              enabled: false
+            }
+          }
+        },
+        // Define series with different styles
+        series: [{
+          data: formattedData[0].data,
+          lineWidth: 4,
+          color: "#000000",
+          name: formattedData[0].name,
+          zIndex: 2  // Higher zIndex brings this series to front
+        }, {
+          data: formattedData[1].data,
+          lineWidth: 5,
+          name: formattedData[1].name,
+          zIndex: 1,
+          // Pattern fill for second series
+          color: {
+            pattern: {
+              image: "https://trmnl.com/images/grayscale/gray-5.png",
+              width: 12,
+              height: 12
+            }
+          }
+        }],
+        tooltip: { enabled: false },
+        legend: { enabled: false },
+        yAxis: {
+          labels: {
+            style: { fontSize: "16px", color: "#000000" }
+          },
+          gridLineDashStyle: "shortdot",
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickAmount: 5,
+          title: {
+            text: null
+          }
+        },
+        xAxis: {
+          type: "datetime",
+          labels: {
+            style: { fontSize: "16px", color: "#000000" },
+            padding: 5,
+            y: 25
+          },
+          lineWidth: 0,
+          gridLineDashStyle: "dot",
+          tickWidth: 1,
+          tickLength: 0,
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickPixelInterval: 120,
+          title: {
+            text: null
+          }
+        },
+        credits: {
+          enabled: false
+        }
+      });
+    </script>
+  </div>
+
+  <div class="title_bar">
+    <img class="image" src="https://trmnl.com/images/plugins/trmnl--render.svg">
+    <span class="title">Charts</span>
+    <span class="instance">Multi-Series Line Chart</span>
+  </div>
+</div>') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Bar Chart') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Bar charts are ideal for comparing discrete categories side by side. This example displays four different metrics across multiple time periods.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--space-between">
+
+                      <div class="grid grid--cols-4">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
+                            <span class="value value--tnums">$31,883</span>
+                            <span class="label">Revenue</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <div class="w--14 h--1.5 mb--2 bg--gray-3"></div>
+                            <span class="value value--tnums">$22,910</span>
+                            <span class="label">Expenses</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
+                            <span class="value value--tnums">$8,990</span>
+                            <span class="label">Marketing</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <div class="w--14 h--1.5 mb--2 bg--gray-7"></div>
+                            <span class="value value--tnums">$14,930</span>
+                            <span class="label">Operations</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="example-bar-chart" class="w--full"></div>
+
+                      <script type="text/trmnl-example">
+                        var revenueData = [
+                          ["Jan", 5883],
+                          ["Feb", 5260],
+                          ["Mar", 4760],
+                          ["Apr", 5120],
+                          ["May", 5540],
+                          ["Jun", 6320]
+                        ];
+
+                        var expensesData = [
+                          ["Jan", 3580],
+                          ["Feb", 3210],
+                          ["Mar", 3620],
+                          ["Apr", 3950],
+                          ["May", 4120],
+                          ["Jun", 4430]
+                        ];
+
+                        var marketingData = [
+                          ["Jan", 1120],
+                          ["Feb", 980],
+                          ["Mar", 1320],
+                          ["Apr", 1650],
+                          ["May", 1820],
+                          ["Jun", 2100]
+                        ];
+
+                        var operationsData = [
+                          ["Jan", 2240],
+                          ["Feb", 2170],
+                          ["Mar", 2380],
+                          ["Apr", 2520],
+                          ["May", 2730],
+                          ["Jun", 2890]
+                        ];
+
+                        var formattedBarData = [
+                          { name: "Revenue", data: revenueData },
+                          { name: "Expenses", data: expensesData },
+                          { name: "Marketing", data: marketingData },
+                          { name: "Operations", data: operationsData }
+                        ];
+
+                        Highcharts.chart('example-bar-chart', {
+                          chart: {
+                            type: 'column',
+                            height: 284,
+                            width: null,
+                            animation: false,
+                            spacing: [10, 10, 5, 10],
+                            backgroundColor: 'transparent'
+                          },
+                          title: {
+                            text: null
+                          },
+                          plotOptions: {
+                            series: {
+                              animation: false,
+                              enableMouseTracking: false,
+                              states: {
+                                hover: { enabled: false }
+                              },
+                              pointPadding: 0.05,
+                              groupPadding: 0.1,
+                              borderWidth: 0
+                            }
+                          },
+                          series: [{
+                            data: formattedBarData[0].data,
+                            color: '#000000',
+                            name: formattedBarData[0].name,
+                            zIndex: 4
+                          }, {
+                            data: formattedBarData[1].data,
+                            name: formattedBarData[1].name,
+                            zIndex: 3,
+                            color: {
+                              pattern: {
+                                image: 'https://trmnl.com/images/grayscale/gray-3.png',
+                                width: 12,
+                                height: 12
+                              }
+                            }
+                          }, {
+                            data: formattedBarData[2].data,
+                            name: formattedBarData[2].name,
+                            zIndex: 2,
+                            color: {
+                              pattern: {
+                                image: 'https://trmnl.com/images/grayscale/gray-5.png',
+                                width: 12,
+                                height: 12
+                              }
+                            }
+                          }, {
+                            data: formattedBarData[3].data,
+                            name: formattedBarData[3].name,
+                            zIndex: 1,
+                            color: {
+                              pattern: {
+                                image: 'https://trmnl.com/images/grayscale/gray-7.png',
+                                width: 12,
+                                height: 12
+                              }
+                            }
+                          }],
+                          tooltip: { enabled: false },
+                          legend: { enabled: false },
+                          yAxis: {
+                            labels: {
+                              style: { fontSize: '16px', color: '#000000' }
+                            },
+                            gridLineDashStyle: 'shortdot',
+                            gridLineWidth: 1,
+                            gridLineColor: '#000000',
+                            tickAmount: 5,
+                            title: {
+                              text: null
+                            }
+                          },
+                          xAxis: {
+                            type: 'category',
+                            labels: {
+                              style: { fontSize: '16px', color: '#000000' },
+                              padding: 5,
+                              y: 25
+                            },
+                            lineWidth: 0,
+                            gridLineDashStyle: 'dot',
+                            tickWidth: 0,
+                            tickLength: 0,
+                            gridLineWidth: 1,
+                            gridLineColor: '#000000',
+                            title: {
+                              text: null
+                            }
+                          },
+                          credits: {
+                            enabled: false
+                          }
+                        });
+                      </script>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image" src="https://trmnl.com/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Charts</span>
+                      <span class="instance">Bar Chart</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- import Highcharts library -->
+<script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+<script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+
+<div class="view view--full">
+  <div class="layout layout--col gap--space-between">
+    <!-- Business metrics displayed above chart -->
+    <div class="grid grid--cols-4">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
+          <span class="value value--tnums">$31,883</span>
+          <span class="label">Revenue</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div class="w--14 h--1.5 mb--2 bg--gray-3"></div>
+          <span class="value value--tnums">$22,910</span>
+          <span class="label">Expenses</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
+          <span class="value value--tnums">$8,990</span>
+          <span class="label">Marketing</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div class="w--14 h--1.5 mb--2 bg--gray-7"></div>
+          <span class="value value--tnums">$14,930</span>
+          <span class="label">Operations</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="border--h-5 w--full"></div>
+
+    <!-- Chart container with unique ID -->
+    <div id="example-bar-chart" class="w--full"></div>
+
+    <script type="text/javascript">
+      // Simplified regional data across four quarters
+      var revenueData = [
+        ["Jan", 5883],
+        ["Feb", 5260],
+        ["Mar", 4760],
+        ["Apr", 5120],
+        ["May", 5540],
+        ["Jun", 6320]
+      ];
+
+      var expensesData = [
+        ["Jan", 3580],
+        ["Feb", 3210],
+        ["Mar", 3620],
+        ["Apr", 3950],
+        ["May", 4120],
+        ["Jun", 4430]
+      ];
+
+      var marketingData = [
+        ["Jan", 1120],
+        ["Feb", 980],
+        ["Mar", 1320],
+        ["Apr", 1650],
+        ["May", 1820],
+        ["Jun", 2100]
+      ];
+
+      var operationsData = [
+        ["Jan", 2240],
+        ["Feb", 2170],
+        ["Mar", 2380],
+        ["Apr", 2520],
+        ["May", 2730],
+        ["Jun", 2890]
+      ];
+
+      var formattedBarData = [
+        { name: "Revenue", data: revenueData },
+        { name: "Expenses", data: expensesData },
+        { name: "Marketing", data: marketingData },
+        { name: "Operations", data: operationsData }
+      ];
+
+      // Initialize chart with bar/column configuration for 4 series
+      Highcharts.chart("example-bar-chart", {
+        chart: {
+          type: "column",
+          height: 284,
+          width: null,
+          animation: false,
+          spacing: [10, 10, 5, 10],
+          backgroundColor: "transparent"
+        },
+        title: {
+          text: null
+        },
+        plotOptions: {
+          series: {
+            animation: false,
+            enableMouseTracking: false,
+            states: {
+              hover: { enabled: false }
+            },
+            pointPadding: 0.05,  // Reduced padding for more bars
+            groupPadding: 0.1,
+            borderWidth: 0
+          }
+        },
+        // Define all four series with different styles
+        series: [{
+          data: formattedBarData[0].data,
+          color: "#000000",
+          name: formattedBarData[0].name,
+          zIndex: 4  // Highest zIndex to keep this in front
+        }, {
+          data: formattedBarData[1].data,
+          name: formattedBarData[1].name,
+          zIndex: 3,
+          color: {
+            pattern: {
+              image: "https://trmnl.com/images/grayscale/gray-3.png",
+              width: 12,
+              height: 12
+            }
+          }
+        }, {
+          data: formattedBarData[2].data,
+          name: formattedBarData[2].name,
+          zIndex: 2,
+          color: {
+            pattern: {
+              image: "https://trmnl.com/images/grayscale/gray-5.png",
+              width: 12,
+              height: 12
+            }
+          }
+        }, {
+          data: formattedBarData[3].data,
+          name: formattedBarData[3].name,
+          zIndex: 1,
+          color: {
+            pattern: {
+              image: "https://trmnl.com/images/grayscale/gray-7.png",
+              width: 12,
+              height: 12
+            }
+          }
+        }],
+        tooltip: { enabled: false },
+        legend: { enabled: false },
+        yAxis: {
+          labels: {
+            style: { fontSize: "16px", color: "#000000" }
+          },
+          gridLineDashStyle: "shortdot",
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickAmount: 5,
+          title: {
+            text: null
+          }
+        },
+        xAxis: {
+          type: "category",
+          labels: {
+            style: { fontSize: "16px", color: "#000000" },
+            padding: 5,
+            y: 25
+          },
+          lineWidth: 0,
+          gridLineDashStyle: "dot",
+          tickWidth: 0,
+          tickLength: 0,
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          title: {
+            text: null
+          }
+        },
+        credits: {
+          enabled: false
+        }
+      });
+    </script>
+  </div>
+</div>') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Gauge Chart') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Gauge charts can effectively display single metrics or scores. This example shows multiple gauges in a row with a main summary gauge,
+              perfect for displaying daily and weekly metrics like sleep quality scores.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+                  <script data-trmnl-src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--none">
+                      <div class="grid grid--cols-7 mb--5">
+                        <div class="h--32">
+                          <div id="day_0" class="h--24"></div>
+                          <span class="description text--center">Monday</span>
+                        </div>
+                        <div class="h--32">
+                          <div id="day_1" class="h--24"></div>
+                          <span class="description text--center">Tuesday</span>
+                        </div>
+                        <div class="h--32">
+                          <div id="day_2" class="h--24"></div>
+                          <span class="description text--center">Wednesday</span>
+                        </div>
+                        <div class="h--32">
+                          <div id="day_3" class="h--24"></div>
+                          <span class="description text--center">Thursday</span>
+                        </div>
+                        <div class="h--32">
+                          <div id="day_4" class="h--24"></div>
+                          <span class="description text--center">Friday</span>
+                        </div>
+                        <div class="h--32">
+                          <div id="day_5" class="h--24"></div>
+                          <span class="description text--center">Saturday</span>
+                        </div>
+                        <div class="h--32">
+                          <div id="day_6" class="h--24"></div>
+                          <span class="description text--center">Sunday</span>
+                              </div>
+                            </div>
+
+                      <div class="divider"></div>
+
+
+                      <div class="grid">
+                        <div class="col--span-1 col--center">
+                          <div id="day_all" class="w-[340px] mt--5"></div>
+                        </div>
+                        <div class="col--span-1 gap--large">
+                          <div class="flex flex--col gap--medium w--full flex--center">
+                            <div class="grid grid--cols-2">
+                              <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                  <span class="value value--tnums">18%</span>
+                                  <span class="label">REM Sleep</span>
+                              </div>
+                            </div>
+                              <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                  <span class="value value--tnums">23%</span>
+                                  <span class="label">Deep Sleep</span>
+                              </div>
+                            </div>
+                          </div>
+                            <div class="divider"></div>
+                            <div class="grid grid--cols-2">
+                              <div class="item">
+                                <div class="meta"></div>
+                                <div class="content">
+                                  <span class="value value--small value--tnums">12m</span>
+                                  <span class="label">Time to Sleep</span>
+                        </div>
+                      </div>
+                              <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                  <span class="value value--small value--tnums">7h 32min</span>
+                                  <span class="label">Sleep Duration</span>
+                              </div>
+                            </div>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="grid grid--cols-2">
+                              <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                  <span class="value value--small value--tnums">8</span>
+                                  <span class="label">Toss & Turns</span>
+                              </div>
+                            </div>
+                              <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                  <span class="value value--small value--tnums">0.5%</span>
+                                  <span class="label">Snoring</span>
+                                </div>
+                              </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    <div class="title_bar">
+                      <img class="image" src="https://trmnl.com/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Charts</span>
+                      <span class="instance">Gauge Chart</span>
+                    </div>
+                  </div>
+
+                      <script type="text/trmnl-example">
+                    var dailyScores = [92, 95, 81, 56, 81, 72, 85];
+                    var weeklyScore = 82;
+
+                    function createGauge(score, day, opts) {
+                      opts ||= {
+                        title: null,
+                        height: '80%',
+                        labels: {
+                          distance: 15,
+                          style: {
+                            fontSize: '16px'
+                          }
+                        },
+                        series: {
+                          fontSize: '3em'
+                        },
+                        yAxis: {
+                          title: textRating(score)
+                        }
+                      };
+
+                      Highcharts.chart(`day_${day}`, {
+                          chart: {
+                          type: 'gauge',
+                          height: opts.height,
+                          animation: false,
+                          backgroundColor: 'transparent'
+                        },
+
+                          title: {
+                          text: opts.title
+                        },
+
+                        pane: {
+                          startAngle: -150,
+                          endAngle: 150,
+                          background: {
+                            backgroundColor: 'transparent',
+                            borderWidth: 0
+                          }
+                        },
+
+                          plotOptions: {
+                          gauge: {
+                              animation: false,
+                            pivot: {
+                              backgroundColor: 'transparent'
+                            },
+                            dial: {
+                              backgroundColor: 'transparent',
+                              baseWidth: 0,
+                            },
+                          }
+                        },
+
+                        yAxis: {
+                          min: 0,
+                          max: 100,
+                          minorTickInterval: 0,
+                          tickColor: '#ffffff',
+                          tickLength: 40,
+                          tickPixelInterval: 40,
+                          tickWidth: 0,
+                          lineWidth: 0,
+                          title: {
+                            text: opts.yAxis.title,
+                            style: {
+                              color: '#000000',
+                              fontFamily: 'NicoPups',
+                              fontSize: '16px'
+                            }
+                          },
+                          labels: {
+                            ...opts.labels,
+                            style: {
+                              fontSize: '16px'
+                            }
+                          },
+                          plotBands: [{
+                            from: 1,
+                            to: score,
+                            color: {
+                              pattern: {
+                                image: 'https://trmnl.com/images/grayscale/gray-2.png',
+                                width: 12,
+                                height: 12
+                              }
+                            },
+                            innerRadius: '82%',
+                            borderRadius: '50%'
+                          }, {
+                            from: score + 1,
+                            to: 100,
+                            color: {
+                              pattern: {
+                                image: 'https://trmnl.com/images/grayscale/gray-5.png',
+                                width: 12,
+                                height: 12
+                              }
+                            },
+                            innerRadius: '82%',
+                            borderRadius: '50%',
+                          }]
+                        },
+
+                        series: [{
+                          name: 'Score',
+                          data: [score],
+                          dataLabels: {
+                            borderWidth: 0,
+                            style: {
+                              fontSize: opts.series.fontSize,
+                              fontWeight: opts.series.fontWeight || "400",
+                              fontFamily: opts.series.fontFamily || "inherit"
+                              }
+                            }
+                          }],
+
+                        credits: {
+                          enabled: false
+                        }
+                      });
+                    }
+
+                    function textRating(score) {
+                      if (score <= 50) {
+                        return 'Low';
+                      } else if (score <= 65) {
+                        return 'Pay Attention';
+                      } else if (score < 80) {
+                        return 'Fair';
+                      } else {
+                        return 'Good';
+                      }
+                    }
+
+                    // Create small daily gauges
+                    dailyScores.forEach((score, idx) => {
+                      let opts = {
+                        title: null,
+                        labels: { enabled: false },
+                        series: {
+                          fontSize: "16px",
+                          fontWeight: "400",
+                          fontFamily: "NicoClean"
+                        },
+                          yAxis: {
+                          title: null
+                        }
+                      }
+                      createGauge(score, idx, opts);
+                    });
+
+                    // Create main weekly gauge
+                    createGauge(weeklyScore, 'all', {
+                      title: null,
+                      height: '80%',
+                            labels: {
+                        distance: 15
+                      },
+                      series: {
+                        fontSize: '3em',
+                        fontWeight: '550'
+                      },
+                      yAxis: {
+                        title: textRating(weeklyScore)
+                          }
+                        });
+                      </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- import Highcharts libraries -->
+<script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+<script src="https://trmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+<script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+
+<div class="view view--full">
+  <div class="layout layout--col gap--none">
+    <div class="grid grid--cols-7 mb--5">
+      <div class="h--32">
+        <div id="day_0" class="h--24"></div>
+        <span class="description text--center">Monday</span>
+      </div>
+      <div class="h--32">
+        <div id="day_1" class="h--24"></div>
+        <span class="description text--center">Tuesday</span>
+      </div>
+      <div class="h--32">
+        <div id="day_2" class="h--24"></div>
+        <span class="description text--center">Wednesday</span>
+      </div>
+      <div class="h--32">
+        <div id="day_3" class="h--24"></div>
+        <span class="description text--center">Thursday</span>
+      </div>
+      <div class="h--32">
+        <div id="day_4" class="h--24"></div>
+        <span class="description text--center">Friday</span>
+      </div>
+      <div class="h--32">
+        <div id="day_5" class="h--24"></div>
+        <span class="description text--center">Saturday</span>
+      </div>
+      <div class="h--32">
+        <div id="day_6" class="h--24"></div>
+        <span class="description text--center">Sunday</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="grid">
+      <div class="col--span-1 col--center">
+        <div id="day_all" class="w-[340px] mt--5"></div>
+      </div>
+      <div class="col--span-1 gap--large">
+        <div class="flex flex--col gap--medium w--full flex--center">
+          <div class="grid grid--cols-2">
+            <div class="item">
+            <div class="meta"></div>
+            <div class="content">
+                <span class="value value--tnums">18%</span>
+                <span class="label">REM Sleep</span>
+            </div>
+          </div>
+            <div class="item">
+              <div class="meta"></div>
+              <div class="content">
+                <span class="value value--tnums">23%</span>
+                <span class="label">Deep Sleep</span>
+        </div>
+      </div>
+    </div>
+          <div class="divider"></div>
+          <div class="grid grid--cols-2">
+            <div class="item">
+              <div class="meta"></div>
+              <div class="content">
+                <span class="value value--small value--tnums">12m</span>
+                <span class="label">Time to Sleep</span>
+  </div>
+          </div>
+            <div class="item">
+              <div class="meta"></div>
+              <div class="content">
+                <span class="value value--small value--tnums">7h 32min</span>
+                <span class="label">Sleep Duration</span>
+        </div>
+          </div>
+          </div>
+          <div class="divider"></div>
+          <div class="grid grid--cols-2">
+            <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                <span class="value value--small value--tnums">8</span>
+                <span class="label">Toss & Turns</span>
+                            </div>
+                          </div>
+            <div class="item">
+              <div class="meta"></div>
+              <div class="content">
+                <span class="value value--small value--tnums">0.5%</span>
+                <span class="label">Snoring</span>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <script type="text/javascript">
+  var dailyScores = [92, 95, 81, 56, 81, 72, 85];
+  var weeklyScore = 82;
+
+  function createGauge(score, day, opts) {
+    opts ||= {
+      title: null,
+      height: "80%",
+      labels: {
+        distance: 15,
+        style: {
+          fontSize: "16px"
+        }
+      },
+      series: {
+        fontSize: "3em"
+      },
+      yAxis: {
+        title: textRating(score)
+      }
+    };
+
+    Highcharts.chart(`day_${day}`, {
+                        chart: {
+        type: "gauge",
+        height: opts.height,
+        animation: false,
+        backgroundColor: "transparent"
+      },
+
+                        title: {
+        text: opts.title
+      },
+
+      pane: {
+        startAngle: -150,
+        endAngle: 150,
+        background: {
+          backgroundColor: "transparent",
+          borderWidth: 0
+        }
+      },
+
+                        plotOptions: {
+        gauge: {
+                            animation: false,
+          pivot: {
+            backgroundColor: "transparent"
+          },
+          dial: {
+            backgroundColor: "transparent",
+            baseWidth: 0,
+          },
+        }
+      },
+
+      yAxis: {
+        min: 0,
+        max: 100,
+        minorTickInterval: 0,
+        tickColor: "#ffffff",
+        tickLength: 40,
+        tickPixelInterval: 40,
+        tickWidth: 0,
+        lineWidth: 0,
+        title: {
+          text: opts.yAxis.title,
+          style: {
+            color: "#000000",
+            fontFamily: "NicoPups",
+            fontSize: "16px"
+          }
+        },
+        labels: {
+          ...opts.labels,
+          style: {
+            fontSize: "16px"
+          }
+        },
+        plotBands: [{
+          from: 1,
+          to: score,
+                          color: {
+                            pattern: {
+              image: "https://trmnl.com/images/grayscale/gray-2.png",
+                              width: 12,
+                              height: 12
+                            }
+          },
+          innerRadius: "82%",
+          borderRadius: "50%"
+                        }, {
+          from: score + 1,
+          to: 100,
+                          color: {
+                            pattern: {
+              image: "https://trmnl.com/images/grayscale/gray-5.png",
+                              width: 12,
+                              height: 12
+            }
+          },
+          innerRadius: "82%",
+          borderRadius: "50%",
+        }]
+      },
+
+      series: [{
+        name: "Score",
+        data: [score],
+        dataLabels: {
+          borderWidth: 0,
+          style: {
+            fontSize: opts.series.fontSize,
+            fontWeight: opts.series.fontWeight || "400",
+            fontFamily: opts.series.fontFamily || "inherit"
+                            }
+                          }
+                        }],
+
+      credits: {
+        enabled: false
+      }
+    });
+  }
+
+  function textRating(score) {
+    if (score <= 50) {
+      return "Low";
+    } else if (score <= 65) {
+      return "Pay Attention";
+    } else if (score < 80) {
+      return "Fair";
+    } else {
+      return "Good";
+    }
+  }
+
+  // Create small daily gauges
+  dailyScores.forEach((score, idx) => {
+    let opts = {
+      title: null,
+      labels: { enabled: false },
+      series: {
+        fontSize: "16px",
+        fontWeight: "400",
+        fontFamily: "NicoClean"
+      },
+                        yAxis: {
+        title: null
+      }
+    }
+    createGauge(score, idx, opts);
+  });
+
+  // Create main weekly gauge
+  createGauge(weeklyScore, "all", {
+    title: null,
+    height: "80%",
+                          labels: {
+      distance: 15
+    },
+    series: {
+      fontSize: "3em",
+      fontWeight: "550"
+    },
+    yAxis: {
+      title: textRating(weeklyScore)
+    }
+  });
+</script>') %>
+                  </div>
+                  </div>
+      </section>
+                </div>
+    <%= render 'framework/page_navigation' %>
+            </div>
+          </div>

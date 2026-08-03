@@ -1,0 +1,94 @@
+// ============================================
+// TRMNL Framework - Font Definitions
+// ============================================
+
+// Pixel font definitions used by the Classic and TRMNL bundles.
+@font-face {
+    font-family: 'TRMNL12';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/TRMNL12-Regular.woff2') format('woff2'),
+        url('/fonts/TRMNL12-Regular.woff') format('woff'),
+        url('/fonts/TRMNL12-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'TRMNL12';
+    font-style: normal;
+    font-weight: bold;
+    src: url('/fonts/TRMNL12-Bold.woff2') format('woff2'),
+        url('/fonts/TRMNL12-Bold.woff') format('woff'),
+        url('/fonts/TRMNL12-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'TRMNL16';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/TRMNL16-Regular.woff2') format('woff2'),
+        url('/fonts/TRMNL16-Regular.woff') format('woff'),
+        url('/fonts/TRMNL16-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'TRMNL16';
+    font-style: normal;
+    font-weight: bold;
+    src: url('/fonts/TRMNL16-Bold.woff2') format('woff2'),
+        url('/fonts/TRMNL16-Bold.woff') format('woff'),
+        url('/fonts/TRMNL16-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'TRMNL21';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/TRMNL21-Regular.woff2') format('woff2'),
+        url('/fonts/TRMNL21-Regular.woff') format('woff'),
+        url('/fonts/TRMNL21-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'TRMNL21';
+    font-style: normal;
+    font-weight: bold;
+    src: url('/fonts/TRMNL21-Bold.woff2') format('woff2'),
+        url('/fonts/TRMNL21-Bold.woff') format('woff'),
+        url('/fonts/TRMNL21-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'NicoClean';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/NicoClean-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'NicoPups';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/NicoPups-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'BlockKie';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/BlockKie.ttf') format('truetype');
+}
+
+// Universal Inter Variable (used on 4-bit+ devices regardless of font bundle)
+@font-face {
+    font-family: 'Inter Variable';
+    font-style: normal;
+    font-weight: 100 900;
+    src: url('/fonts/Inter.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Inter Variable';
+    font-style: italic;
+    font-weight: 100 900;
+    src: url('/fonts/Inter-Italic.ttf') format('truetype');
+}

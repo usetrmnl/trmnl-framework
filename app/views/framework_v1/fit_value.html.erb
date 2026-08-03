@@ -1,0 +1,164 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :fit_value %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <p class="text-gray-600 dark:text-gray-400">
+      The Text Fitting system automatically adjusts the font size, weight, and line height of text elements so that they fit
+      within their containers. This dynamic resizing is especially useful for responsive layouts where available space
+      may vary, ensuring that content is always legible.
+    </p>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            To enable automatic text resizing, add the <code class="<%= framework_section_code_classes %>">data-value-fit="true"</code>
+            attribute to your element. For numeric values, this is all you need - the system will automatically adjust the element's
+            font size and weight to fit the container width. Text content requires additional configuration (see Text Fitting below).
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--space-between">
+                    <div class="grid grid--cols-3">
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--xxxlarge" data-value-fit="true">
+                            $1,000
+                          </span>
+                          <span class="label">XXXLarge</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--xxxlarge" data-value-fit="true">
+                            $1,000,000
+                          </span>
+                          <span class="label">XXXLarge</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--xxxlarge" data-value-fit="true">
+                            $1,000,000,000
+                          </span>
+                          <span class="label">XXXLarge</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Fit Value</span>
+                    <span class="instance">Number Formatting</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge" data-value-fit="true">$1,000</span>
+
+<span class="value value--xxxlarge" data-value-fit="true">$1,000,000</span>
+
+<span class="value value--xxxlarge" data-value-fit="true">$1,000,000,000</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Text Fitting') %>
+          <p class="<%= framework_section_description_classes %>">
+            When fitting text content, you must specify a maximum height constraint using the
+            <code class="<%= framework_section_code_classes %>">data-value-fit-max-height</code> attribute (in pixels).
+            This ensures text content stays within both width and height constraints while maintaining readability through
+            automatic font size and weight adjustments.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--space-between">
+                    <div class="grid grid--cols-3">
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+                            Hello. This is a really long headline that will need to adjust significantly to fit within its container space and look good in a layout.
+                          </span>
+                          <span class="label">XXXLarge</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+                            Hello. This is a medium length headline that fits nicely.
+                          </span>
+                          <span class="label">XXXLarge</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+                            Hello.
+                          </span>
+                          <span class="label">XXXLarge</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="title_bar">
+                    <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                    <span class="title">Fit Value</span>
+                    <span class="instance">Text Formatting</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+  Hello. This is a really long headline that will need to adjust significantly to fit within its container space and look good in a layout.
+</span>
+
+<span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+  This is a medium length headline that fits nicely.
+</span>
+
+<span class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="340">
+  Hello.
+</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

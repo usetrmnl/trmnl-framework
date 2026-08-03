@@ -1,0 +1,300 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :divider %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:divider) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Use <code class="<%= framework_section_code_classes %>">divider</code> or <code class="<%= framework_section_code_classes %>">divider--h</code> for horizontal dividers,
+            and <code class="<%= framework_section_code_classes %>">divider--v</code> for vertical dividers.
+            Dividers automatically detect their background and adjust their appearance for optimal contrast.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Automatic Background Detection') %>
+            <p class="<%= framework_section_description_classes %>">
+              By default, dividers automatically detect whether they're on a white, light, dark, or black background and adjust their appearance accordingly.
+              The system categorizes backgrounds into four types for optimal contrast:
+            </p>
+            <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
+              <li><strong>White:</strong> Very light backgrounds (gray-70 to gray-75 and pure white)</li>
+              <li><strong>Light:</strong> Light gray backgrounds (gray-50 to gray-65)</li>
+              <li><strong>Dark:</strong> Dark gray backgrounds (gray-30 to gray-45)</li>
+              <li><strong>Black:</strong> Very dark backgrounds (gray-10 to gray-25 and pure black)</li>
+            </ul>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="grid grid--cols-2 gap--large w--full h--full">
+                          <!-- White background -->
+                          <div class="flex flex--col gap--medium p--4 rounded bg--white">
+                            <span class="label">White Background</span>
+                            <div class="divider"></div>
+                            <span class="description">Divider uses darkest style (level 7)</span>
+                          </div>
+
+                          <!-- Light background examples -->
+                          <div class="flex flex--col gap--medium p--4 rounded bg--gray-70">
+                            <span class="label">Light Background (gray-70)</span>
+                            <div class="divider"></div>
+                            <span class="description">Divider uses dark style (level 6)</span>
+                          </div>
+
+                          <!-- Dark background examples -->
+                          <div class="flex flex--col gap--medium p--4 rounded bg--gray-30">
+                            <span class="label text--white">Dark Background (gray-30)</span>
+                            <div class="divider"></div>
+                            <span class="description text--white">Divider uses light style (level 3)</span>
+                          </div>
+
+                          <!-- Black background -->
+                          <div class="flex flex--col gap--medium p--4 rounded bg--black">
+                            <span class="label text--white">Black Background</span>
+                            <div class="divider"></div>
+                            <span class="description text--white">Divider uses lightest style (level 1)</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Auto Background Detection</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Dividers automatically detect their background -->
+<div class="bg--white">
+  <div class="divider"></div> <!-- Automatically becomes divider--on-white -->
+</div>
+
+<div class="bg--gray-20">
+  <div class="divider"></div> <!-- Automatically becomes divider--on-light -->
+</div>
+
+<div class="bg--gray-50">
+  <div class="divider"></div> <!-- Automatically becomes divider--on-dark -->
+</div>
+
+<div class="bg--black">
+  <div class="divider"></div> <!-- Automatically becomes divider--on-black -->
+</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Manual Background Control') %>
+            <p class="<%= framework_section_description_classes %>">
+              You can manually specify the background type using <code class="<%= framework_section_code_classes %>">divider--on-white</code>,
+              <code class="<%= framework_section_code_classes %>">divider--on-light</code>, 
+              <code class="<%= framework_section_code_classes %>">divider--on-dark</code>, or
+              <code class="<%= framework_section_code_classes %>">divider--on-black</code> classes when automatic detection isn't suitable.
+            </p>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="grid grid--cols-2 gap--large w--full h--full">
+                          <!-- Show all divider variants on different backgrounds -->
+                          <div class="flex flex--col gap--medium p--4 rounded bg--white">
+                            <span class="label">All variants on white</span>
+                            <div class="divider--on-white"></div>
+                            <span class="description description--small">on-white (optimal)</span>
+                            <div class="divider--on-light"></div>
+                            <span class="description description--small">on-light</span>
+                            <div class="divider--on-dark"></div>
+                            <span class="description description--small">on-dark</span>
+                            <div class="divider--on-black"></div>
+                            <span class="description description--small">on-black (poor contrast)</span>
+                          </div>
+
+                          <div class="flex flex--col gap--medium p--4 rounded bg--black">
+                            <span class="label text--white">All variants on black</span>
+                            <div class="divider--on-white"></div>
+                            <span class="description description--small text--white">on-white (poor contrast)</span>
+                            <div class="divider--on-light"></div>
+                            <span class="description description--small text--white">on-light</span>
+                            <div class="divider--on-dark"></div>
+                            <span class="description description--small text--white">on-dark</span>
+                            <div class="divider--on-black"></div>
+                            <span class="description description--small text--white">on-black (optimal)</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Manual Background Control</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Manually specify background type -->
+<div class="divider--on-white"></div>  <!-- For white backgrounds -->
+<div class="divider--on-light"></div>  <!-- For light backgrounds -->
+<div class="divider--on-dark"></div>   <!-- For dark backgrounds -->
+<div class="divider--on-black"></div>  <!-- For black backgrounds -->
+
+<!-- Works with vertical dividers too -->
+<div class="divider--v divider--on-white"></div>
+<div class="divider--v divider--on-light"></div>
+<div class="divider--v divider--on-dark"></div>
+<div class="divider--v divider--on-black"></div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Vertical Dividers') %>
+            <p class="<%= framework_section_description_classes %>">
+              Vertical dividers work the same way as horizontal dividers, with automatic background detection for all four background types.
+            </p>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--col gap--medium w--full h--full">
+                          <!-- White background with vertical divider -->
+                          <div class="flex flex--row gap--medium p--4 rounded bg--white h--full">
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label">Left Side</span>
+                              <span class="description">White background</span>
+                            </div>
+                            <div class="divider--v"></div>
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label">Right Side</span>
+                              <span class="description">Auto-detected</span>
+                            </div>
+                          </div>
+
+                          <!-- Black background with vertical divider -->
+                          <div class="flex flex--row gap--medium p--4 rounded bg--black h--full">
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label text--white">Left Side</span>
+                              <span class="description text--white">Black background</span>
+                            </div>
+                            <div class="divider--v"></div>
+                            <div class="flex flex--col flex--center stretch">
+                              <span class="label text--white">Right Side</span>
+                              <span class="description text--white">Auto-detected</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Vertical Dividers</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Vertical divider with auto background detection -->
+<div class="divider--v"></div>
+
+<!-- Manually specified vertical dividers -->
+<div class="divider--v divider--on-white"></div>
+<div class="divider--v divider--on-light"></div>
+<div class="divider--v divider--on-dark"></div>
+<div class="divider--v divider--on-black"></div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Common Usage Patterns') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout layout--col gap--space-between">
+                        <div class="grid">
+                          <div class="row">
+                            <div class="item col--span-4">
+                              <div class="content">
+                                <span class="value">$1,234</span>
+                                <span class="label">Revenue</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="grid">
+                          <div class="row">
+                            <div class="item col--span-2">
+                              <div class="content">
+                                <span class="value value--small">42</span>
+                                <span class="label">Orders</span>
+                              </div>
+                            </div>
+                            <div class="item col--span-2">
+                              <div class="content">
+                                <span class="value value--small">$29.38</span>
+                                <span class="label">AOV</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Section Separation</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<!-- Replacing common border--h-x w--full pattern -->
+<!-- Old way: -->
+<div class="border--h-6 w--full"></div>
+
+<!-- New way (with auto background detection): -->
+<div class="divider"></div>
+
+<!-- Or with manual specification: -->
+<div class="divider--on-light"></div>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div> 

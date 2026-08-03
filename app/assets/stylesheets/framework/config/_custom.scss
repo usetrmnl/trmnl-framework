@@ -1,0 +1,66 @@
+// ============================================
+// TRMNL Framework - Custom Device Configuration
+// ============================================
+//
+// The framework's public configuration seam. A custom stack injects its own
+// device profiles when it loads the framework entrypoint:
+//
+//     @use 'framework' with (
+//         $custom-devices: (
+//             'my-panel': (
+//                 'screen-w': 1024px,
+//                 'screen-h': 758px,
+//                 'pixel-ratio': 1.0,
+//                 'dither-pixel-ratio': 1.0,
+//                 'ui-scale': 1.0,
+//                 'color-depth': 2,
+//                 'density-tier': '1x',
+//                 'gap-scale': 1.0,
+//                 'size': 'lg'
+//             )
+//         )
+//     );
+//
+// Every generator that walks the device set reads $all-devices, so a configured
+// profile gets the same treatment as a built-in device: a .screen--<name> class
+// with its device variables, size and density behavior, and the per-device
+// utility rules. Platform devices stay in _devices.scss (generated); this file
+// is hand-written.
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+@use 'devices';
+
+// Consumer-provided device profiles, keyed by device name. Each profile must
+// carry the full schema validated below. An entry that reuses a built-in
+// device name overrides that device.
+$custom-devices: () !default;
+
+$-required-keys: 'screen-w', 'screen-h', 'pixel-ratio', 'dither-pixel-ratio',
+    'ui-scale', 'color-depth', 'density-tier', 'gap-scale', 'size';
+$-valid-sizes: 'sm', 'md', 'lg';
+$-valid-density-tiers: '1x', '2x';
+
+@each $device-name, $device-config in $custom-devices {
+    @if meta.type-of($device-config) != 'map' {
+        @error "Custom device '#{$device-name}' must be a map, got #{meta.type-of($device-config)}.";
+    }
+
+    @each $key in $-required-keys {
+        @if not map.has-key($device-config, $key) {
+            @error "Custom device '#{$device-name}' is missing '#{$key}'. Required keys: #{$-required-keys}.";
+        }
+    }
+
+    @if not list.index($-valid-sizes, map.get($device-config, 'size')) {
+        @error "Custom device '#{$device-name}' has size '#{map.get($device-config, 'size')}'. Valid sizes: #{$-valid-sizes}.";
+    }
+
+    @if not list.index($-valid-density-tiers, map.get($device-config, 'density-tier')) {
+        @error "Custom device '#{$device-name}' has density-tier '#{map.get($device-config, 'density-tier')}'. Valid density tiers: #{$-valid-density-tiers}.";
+    }
+}
+
+// The full device set: built-in profiles plus any configured custom ones.
+$all-devices: map.merge(devices.$devices, $custom-devices);

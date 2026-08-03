@@ -1,0 +1,306 @@
+<style>
+  .visual-component-frame,
+  .visual-component-screen {
+    width: 800px !important;
+    height: 480px !important;
+  }
+
+  .visual-component-screen {
+    position: relative !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+</style>
+
+<main class="visual-page" data-visual-ready="true">
+  <div id="components-typography" class="trmnl visual-component-frame" data-visual>
+    <div class="screen screen--og screen--landscape screen--1bit visual-component-screen">
+      <div class="view view--full">
+        <div class="layout layout--col gap--medium">
+          <div class="grid grid--cols-2 gap--large">
+            <div class="flex flex--col gap--small">
+              <span class="title title--small">Small title</span>
+              <span class="title">Base title</span>
+              <span class="title title--large">Large title</span>
+              <span class="title title--xlarge">XLarge title</span>
+              <span class="title title--xxlarge">XXLarge</span>
+            </div>
+            <div class="flex flex--col gap--small">
+              <span class="description">Base description</span>
+              <span class="description description--large">Large description</span>
+              <span class="description description--xlarge">XLarge description</span>
+              <span class="description description--xxlarge">XXLarge description</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="grid grid--cols-4 gap--medium">
+            <span class="label label--small label--outline">Outline</span>
+            <span class="label label--underline">Underline</span>
+            <span class="label label--filled">Filled</span>
+            <span class="label label--success">Success</span>
+          </div>
+          <div class="grid grid--cols-4 gap--medium">
+            <span class="value value--small value--tnums">1,024</span>
+            <span class="value value--base value--tnums">2,048</span>
+            <span class="value value--large value--tnums">4,096</span>
+            <span class="value value--xlarge value--tnums">8</span>
+          </div>
+        </div>
+        <div class="title_bar">
+          <span class="title">Typography</span>
+          <span class="instance">Sizes and styles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="components-text-scale" class="trmnl visual-component-frame" data-visual>
+    <div class="screen screen--og screen--landscape screen--1bit screen--scale-xxsmall screen--text-scale-xlarge visual-component-screen">
+      <div class="view view--full">
+        <div class="layout layout--col gap--large">
+          <div class="grid grid--cols-3 gap--medium">
+            <% [['Berlin', '18°'], ['London', '16°'], ['Paris', '21°']].each do |city, temperature| %>
+              <div class="item rounded outline p--4">
+                <div class="content">
+                  <span class="label"><%= city %></span>
+                  <span class="value value--small"><%= temperature %></span>
+                  <span class="description">Clear</span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="divider"></div>
+          <span class="text--large">66% interface scale with 99% composed text</span>
+          <span class="label label--filled text-stroke text-stroke--small">Independent typography</span>
+        </div>
+        <div class="title_bar">
+          <span class="title">Text Scale</span>
+          <span class="instance">Dense layout</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="components-items" class="trmnl visual-component-frame" data-visual>
+    <div class="screen screen--og screen--landscape screen--1bit visual-component-screen">
+      <div class="view view--full">
+        <div class="layout">
+          <div class="columns gap--large">
+            <div class="column gap--medium">
+              <div class="item">
+                <div class="meta"></div>
+                <div class="content">
+                  <span class="title title--small">Framework review</span>
+                  <span class="description">Review component changes</span>
+                  <span class="label label--small label--underline">09:30</span>
+                </div>
+              </div>
+              <div class="item item--emphasis-2">
+                <div class="meta"></div>
+                <div class="content">
+                  <span class="title title--small">Runtime checks</span>
+                  <span class="description">Verify the local browser suite</span>
+                  <span class="label label--small label--outline">In progress</span>
+                </div>
+              </div>
+              <div class="item item--emphasis-3">
+                <div class="meta"></div>
+                <div class="content">
+                  <span class="title title--small">Release notes</span>
+                  <span class="description">Prepare the public changelog</span>
+                  <span class="label label--small label--filled">Today</span>
+                </div>
+              </div>
+            </div>
+            <div class="column gap--medium">
+              <div class="item rounded bg--gray-70 p--4">
+                <div class="content">
+                  <span class="value value--large value--tnums">72%</span>
+                  <span class="label">Launch readiness</span>
+                </div>
+              </div>
+              <div class="item rounded outline p--4">
+                <div class="content">
+                  <span class="value value--large value--tnums">14</span>
+                  <span class="label">Components reviewed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <span class="title">Items</span>
+          <span class="instance">Meta and surfaces</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% [
+    ['components-inverse', '', 'Active card'],
+    ['components-inverse-dark', 'screen--dark-mode', 'Active card on dark']
+  ].each do |visual_id, mode_class, instance| %>
+    <div id="<%= visual_id %>" class="trmnl visual-component-frame" data-visual>
+      <div class="screen screen--og screen--landscape screen--1bit <%= mode_class %> visual-component-screen">
+        <div class="view view--full">
+          <div class="layout">
+            <div class="grid grid--cols-2 gap--small h--full">
+              <% [
+                ['Auxiliary meeting room', 'Available', ''],
+                ['Board room', 'Occupied', 'inverse'],
+                ['Huddle Space Alpha', 'Available', ''],
+                ['Huddle Space Beta', 'Available', '']
+              ].each do |room, status, state_class| %>
+                <div class="flex flex--col flex--between p--4 rounded outline <%= state_class %>">
+                  <span class="title title--small"><%= room %></span>
+                  <span class="value value--large"><%= status %></span>
+                  <span class="label label--small"><%= status == 'Occupied' ? '6:57 - 7:27' : 'Ready' %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="title_bar">
+            <span class="title">Meeting rooms</span>
+            <span class="instance"><%= instance %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div id="components-progress" class="trmnl visual-component-frame" data-visual>
+    <div class="screen screen--og screen--landscape screen--1bit visual-component-screen">
+      <div class="view view--full">
+        <div class="layout">
+          <div class="columns gap--large">
+            <div class="column gap--medium">
+              <% [['progress-bar--xsmall', '20%'], ['progress-bar--small', '35%'], ['progress-bar--base', '50%'], ['', '65%'], ['progress-bar--large', '80%']].each do |size_class, value| %>
+                <div class="progress-bar <%= size_class %>">
+                  <div class="content">
+                    <span class="label label--small"><%= size_class.presence || 'regular' %></span>
+                    <span class="label label--small"><%= value %></span>
+                  </div>
+                  <div class="track"><div class="fill" style="width: <%= value %>"></div></div>
+                </div>
+              <% end %>
+            </div>
+            <div class="column gap--large">
+              <% ['', 'progress-bar--emphasis-2', 'progress-bar--emphasis-3'].each_with_index do |emphasis_class, index| %>
+                <div class="progress-bar <%= emphasis_class %>">
+                  <div class="content"><span class="label">Emphasis <%= index + 1 %></span></div>
+                  <div class="track"><div class="fill" style="width: 60%"></div></div>
+                </div>
+              <% end %>
+              <div class="progress-dots progress-dots--large">
+                <div class="content"><span class="label">Milestones</span></div>
+                <div class="track">
+                  <div class="dot dot--filled"></div>
+                  <div class="dot dot--filled"></div>
+                  <div class="dot dot--current"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="title_bar">
+          <span class="title">Progress</span>
+          <span class="instance">Sizes and emphasis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="components-table" class="trmnl visual-component-frame" data-visual>
+    <div class="screen screen--og screen--landscape screen--1bit visual-component-screen">
+      <div class="view view--full">
+        <div class="layout">
+          <table class="table table--indexed">
+            <thead>
+              <tr>
+                <th></th>
+                <th><span class="title title--small">Component</span></th>
+                <th><span class="title title--small">Owner</span></th>
+                <th><span class="title title--small">Status</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% [['1', 'Paint', 'CSS', 'Ready'], ['2', 'Borders', 'CSS', 'Ready'], ['3', 'Runtime', 'JavaScript', 'Covered'], ['4', 'Themes', 'CSS', 'Ready']].each do |row| %>
+                <tr>
+                  <td><span class="meta"><span class="index"><%= row[0] %></span></span></td>
+                  <td><span class="label"><%= row[1] %></span></td>
+                  <td><span class="label label--small"><%= row[2] %></span></td>
+                  <td><span class="label label--small label--outline"><%= row[3] %></span></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="title_bar">
+          <span class="title">Table</span>
+          <span class="instance">Indexed rows</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% [
+    ['components-inverse-theme-black-yellow', 'screen--theme-black-and-yellow'],
+    ['components-inverse-theme-white-red', 'screen--theme-white-and-red'],
+    ['components-inverse-theme-dark', 'screen--theme-dark']
+  ].each do |visual_id, theme_class| %>
+    <div id="<%= visual_id %>" class="trmnl visual-component-frame" data-visual>
+      <div class="screen screen--og screen--landscape screen--1bit screen--color-4bwry screen--preview-colors screen--preview-white-limited <%= theme_class %> visual-component-screen">
+        <div class="view view--full inverse">
+          <div class="layout layout--col gap--medium">
+            <div class="grid grid--cols-3 gap--medium">
+              <% ['', 'item--emphasis-2', 'item--emphasis-3'].each_with_index do |emphasis_class, index| %>
+                <div class="item <%= emphasis_class %>">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="title title--small">Emphasis <%= index + 1 %></span>
+                    <span class="description">Inverse item paint</span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="columns gap--large">
+              <div class="column gap--medium">
+                <% ['', 'progress-bar--emphasis-2', 'progress-bar--emphasis-3'].each_with_index do |emphasis_class, index| %>
+                  <div class="progress-bar <%= emphasis_class %>">
+                    <div class="content">
+                      <span class="label label--small">Progress <%= index + 1 %></span>
+                    </div>
+                    <div class="track"><div class="fill" style="width: <%= 45 + index * 15 %>%"></div></div>
+                  </div>
+                <% end %>
+              </div>
+              <div class="column gap--large">
+                <div class="flex flex--row flex--center gap--medium">
+                  <span class="label label--filled">Filled</span>
+                  <span class="label label--inverted">Inverted</span>
+                  <span class="label label--outline">Outline</span>
+                </div>
+                <div class="progress-dots progress-dots--large">
+                  <div class="content"><span class="label">Milestones</span></div>
+                  <div class="track">
+                    <div class="dot dot--filled"></div>
+                    <div class="dot dot--current"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="title_bar">
+            <span class="title">Inverse components</span>
+            <span class="instance">BWRY preview</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</main>

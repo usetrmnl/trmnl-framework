@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Container bootstrap: install deps if volumes are empty, then run bin/setup once.
+set -euo pipefail
+cd /app
+
+if [ ! -f bin/dev ]; then
+  echo "error: project files are not visible at /app (check bind mount)" >&2
+  exit 1
+fi
+
+bundle check >/dev/null 2>&1 || bundle install
+
+if [ ! -d node_modules/.bin ]; then
+  npm install --silent
+fi
+
+if [ ! -f server/app/assets/builds/tailwind.css ]; then
+  bin/setup
+fi
+
+# Foreman runs from /app; Rails pid files must not survive container restarts.
+rm -f tmp/pids/server.pid server/tmp/pids/server.pid
+
+exec "$@"

@@ -1,0 +1,251 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :paint_typography %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:paint_typography) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Typography') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every resolver takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
+            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code> ancestor
+            supplies the paint. The probe technique is documented on <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">type(classOrRole, { el, stroke })</code>: the
+              resolved typography of a role or class as a
+              <code class="<%= framework_section_code_classes %>">TypeSpec</code>. The role
+              <code class="<%= framework_section_code_classes %>">'chart-label'</code> maps to
+              <code class="<%= framework_section_code_classes %>">text--small</code>;
+              <code class="<%= framework_section_code_classes %>">'value'</code>,
+              <code class="<%= framework_section_code_classes %>">'label'</code>,
+              <code class="<%= framework_section_code_classes %>">'title'</code> and
+              <code class="<%= framework_section_code_classes %>">'description'</code> map to their own classes; any
+              other string passes through as a literal class list (e.g.
+              <code class="<%= framework_section_code_classes %>">'value value--xxlarge'</code>). Font family, size,
+              weight and line-height follow the active font bundle and density, so they are always probed, never read
+              from vars. Pass <code class="<%= framework_section_code_classes %>">stroke</code> (a size token, or
+              <code class="<%= framework_section_code_classes %>">true</code> for the base ring) to also resolve a
+              text-stroke onto the spec.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">strokeSpec(sizeToken, { el })</code>: the resolved
+              text-stroke ring as <code class="<%= framework_section_code_classes %>">{ color, width, radius }</code>.
+              The <code class="<%= framework_section_code_classes %>">sizeToken</code> is
+              <code class="<%= framework_section_code_classes %>">'small'</code> /
+              <code class="<%= framework_section_code_classes %>">'medium'</code> /
+              <code class="<%= framework_section_code_classes %>">'large'</code> /
+              <code class="<%= framework_section_code_classes %>">'xlarge'</code>, or
+              <code class="<%= framework_section_code_classes %>">null</code> for the base
+              <code class="<%= framework_section_code_classes %>">text-stroke</code>.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'TypeSpec = {
+  fontFamily:      string | null,  // resolved family for the active bundle x density
+  fontSize:        string | null,  // e.g. "38px" for .value
+  fontWeight:      string | null,
+  fontStyle:       string | null,
+  fontVariantNumeric: string | null,
+  fontVariationSettings: string | null,
+  webkitFontSmoothing: string | null,
+  letterSpacing:   string | null,
+  lineHeight:      string | null,
+  color:           string | null,  // exact computed color; transparent in clipped-tile modes
+  backgroundColor: string | null,  // the text tile under-field
+  backgroundImage: string | null,  // exact computed image; dither ink rides here
+  backgroundSize:  string | null,
+  backgroundPosition: string | null,
+  backgroundRepeat:string | null,
+  clip:            string | null,  // computed background-clip
+  textShadow:      string | null,  // exact 16-ring program when stroke was requested
+  filter:          string | null,
+  overflow:        string | null,
+  stroke:          null | { color, width, radius },  // present only when stroke was requested
+}', language: 'javascript') %>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// The .value role, size/family/weight resolved for the active bundle + density.
+var big = TRMNLPaint.type("value", { el: "my-chart" });       // -> TypeSpec
+var axis = TRMNLPaint.type("chart-label", { el: "my-chart" });', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Painting type') %>
+          <p class="<%= framework_section_description_classes %>">
+            A resolved spec is written back complete, so dither ink and stroke rings survive instead of collapsing to
+            a solid color. Wrap paints in <code class="<%= framework_section_code_classes %>">watch()</code> so type
+            re-resolves when the bundle, density or theme changes; see <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">applyType(node, typeSpec)</code>: writes a
+              <code class="<%= framework_section_code_classes %>">TypeSpec</code>'s exact computed font, text paint,
+              clipping and optional stroke longhands onto a node. Dither ink, its under-field and the full 16-ring
+              text-shadow round-trip instead of being reduced to a solid color.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Highcharts labels') %>
+          <p class="<%= framework_section_description_classes %>">
+            The text adapter copies a resolved spec into Highcharts' label options; the fill adapter and the
+            adapter ground rules live on <%= render DocsRef.new(page: :paint_charts) %>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">toHighchartsText(typeSpec)</code>: turns a
+              <code class="<%= framework_section_code_classes %>">TypeSpec</code> into
+              <code class="<%= framework_section_code_classes %>">{ color, textOutline, fontFamily?, fontSize?, ... }</code>.
+              Font keys appear only when resolved, and
+              <code class="<%= framework_section_code_classes %>">textOutline</code> is
+              <code class="<%= framework_section_code_classes %>">'none'</code> unless a real opaque stroke was
+              requested, which kills Highcharts' default white halo on data labels.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// Typography into Highcharts label options.
+var label = TRMNLPaint.toHighchartsText(
+  TRMNLPaint.type("chart-label", { el: "my-chart" }));
+// => { color, textOutline: "none", fontFamily, fontSize, fontWeight }', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Live example') %>
+          <p class="<%= framework_section_description_classes %>">
+            The two stat tiles below are built from plain spans that carry no framework classes.
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.type()</code> resolves the
+            <code class="<%= framework_section_code_classes %>">value</code> role (the big-number face used by stat
+            tiles) and the <code class="<%= framework_section_code_classes %>">chart-label</code> role (mapped to
+            <code class="<%= framework_section_code_classes %>">text--small</code>), and
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.applyType()</code> writes the resolved
+            font and text-paint longhands onto them. Toggle the font bundle or density in the picker and the tiles
+            follow, because family and size are probed from the live cascade rather than hardcoded.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col layout--center">
+                    <div id="type-specimen" class="grid grid--cols-2 w--full"></div>
+                  </div>
+
+                  <div class="title_bar">
+                    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                    <span class="title">Paint API</span>
+                    <span class="instance">TRMNLPaint.applyType</span>
+                  </div>
+                </div>
+
+                <script type="text/javascript">
+                  function whenReady(cb) {
+                    if (window.TRMNLPaint) return cb();
+                    window.addEventListener("load", function () {
+                      if (window.TRMNLPaint) cb();
+                    }, { once: true });
+                  }
+
+                  whenReady(function () {
+                    var el = "type-specimen";
+                    var TILES = [
+                      { value: "4,283", caption: "Reams Sold" },
+                      { value: "12", caption: "Dundie Awards" }
+                    ];
+                    TRMNLPaint.watch(el, function () {
+                      var grid = document.getElementById(el);
+                      if (!grid) return;
+                      grid.innerHTML = "";
+                      var big = TRMNLPaint.type("value", { el: el });
+                      var small = TRMNLPaint.type("chart-label", { el: el });
+                      TILES.forEach(function (t) {
+                        var cell = document.createElement("div");
+                        cell.className = "flex flex--col flex--center-x";
+                        var v = document.createElement("span");
+                        v.textContent = t.value;
+                        // applyType writes the complete TypeSpec; the spans
+                        // themselves carry no framework class.
+                        TRMNLPaint.applyType(v, big);
+                        var c = document.createElement("span");
+                        c.textContent = t.caption;
+                        TRMNLPaint.applyType(c, small);
+                        cell.appendChild(v);
+                        cell.appendChild(c);
+                        grid.appendChild(cell);
+                      });
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<div id="type-specimen" class="grid grid--cols-2 w--full"></div>
+
+<script type="text/javascript">
+  function whenReady(cb) {
+    if (window.TRMNLPaint) return cb();
+    window.addEventListener("load", function () {
+      if (window.TRMNLPaint) cb();
+    }, { once: true });
+  }
+
+  whenReady(function () {
+    var el = "type-specimen";
+    var TILES = [
+      { value: "4,283", caption: "Reams Sold" },
+      { value: "12", caption: "Dundie Awards" }
+    ];
+    // watch() re-resolves the typography whenever bundle/density/theme changes.
+    TRMNLPaint.watch(el, function () {
+      var grid = document.getElementById(el);
+      if (!grid) return;
+      grid.innerHTML = "";
+      var big = TRMNLPaint.type("value", { el: el });
+      var small = TRMNLPaint.type("chart-label", { el: el });
+      TILES.forEach(function (t) {
+        var cell = document.createElement("div");
+        cell.className = "flex flex--col flex--center-x";
+        var v = document.createElement("span");
+        v.textContent = t.value;
+        // applyType writes the complete TypeSpec; the spans themselves carry
+        // no framework class.
+        TRMNLPaint.applyType(v, big);
+        var c = document.createElement("span");
+        c.textContent = t.caption;
+        TRMNLPaint.applyType(c, small);
+        cell.appendChild(v);
+        cell.appendChild(c);
+        grid.appendChild(cell);
+      });
+    });
+  });
+</script>', language: 'html') %>
+        </div>
+      </section>
+    </div>
+
+    <%= render 'framework/page_navigation' %>
+  </div>
+</div>

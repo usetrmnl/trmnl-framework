@@ -1,0 +1,624 @@
+// ============================================
+// TRMNL Framework - Device/bit-depth overrides
+// Mixins that emit overrides for CSS variables
+// ============================================
+
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+@use 'custom';
+
+// Emit CSS custom properties from a map.
+// When $scale is true, px values are wrapped in calc(… * var(--ui-scale)).
+@mixin emit-sized-vars($vars, $scale: false) {
+    @each $prop, $value in $vars {
+        @if $scale and meta.type-of($value) == 'number' and math.unit($value) == 'px' and $value != 0px {
+            #{$prop}: calc(#{$value} * var(--ui-scale));
+        } @else {
+            #{$prop}: #{$value};
+        }
+    }
+}
+
+// ============================================
+// Shared component size maps
+// These are used by both two-bit and four-bit
+// mixins; the only difference is scaling.
+// ============================================
+
+$table-size-vars: (
+    '--table-thead-height': 36px,
+    '--table-tbody-height': 46px,
+    '--table-large-thead-height': 44px,
+    '--table-large-tbody-height': 56px,
+    '--table-xlarge-thead-height': 56px,
+    '--table-xlarge-tbody-height': 72px,
+    '--table-small-thead-height': 24px,
+    '--table-small-tbody-height': 31px,
+    '--table-xsmall-thead-height': 18px,
+    '--table-xsmall-tbody-height': 22px,
+);
+
+$progress-size-vars: (
+    '--progress-bar-height': 24px,
+    '--progress-bar-height-small': 12px,
+    '--progress-bar-height-xsmall': 6px,
+    '--progress-bar-height-large': 32px,
+    '--progress-bar-radius': 10px,
+    '--progress-dot-size': 16px,
+    '--progress-dot-size-small': 12px,
+    '--progress-dot-size-xsmall': 8px,
+    '--progress-dot-size-large': 20px,
+);
+
+// Bind every base component dimension on `.screen`, where --ui-scale is
+// resolved. Values inherited from :root would otherwise resolve against the
+// root's scale of 1 before a device or modifier can participate.
+@mixin base-scaled-display-variables {
+    // Title bar
+    --title-bar-height: calc(40px * var(--ui-scale));
+    --title-bar-small-height: calc(32px * var(--ui-scale));
+    --title-bar-font-size: calc(16px * var(--text-ui-scale));
+    --title-bar-padding-top: calc(5px * var(--ui-scale));
+    --title-bar-text-stroke-width: calc(3.5px * var(--ui-scale));
+    --title-bar-image-height: calc(28px * var(--ui-scale));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale));
+    --title-bar-border-radius: calc(10px * var(--ui-scale));
+    --title-bar-small-font-size: calc(16px * var(--text-ui-scale));
+
+    // Labels, descriptions, and titles
+    --label-font-size: calc(16px * var(--text-ui-scale));
+    --label-small-font-size: calc(16px * var(--text-ui-scale));
+    --label-large-font-size: calc(21px * var(--text-ui-scale));
+    --label-xlarge-font-size: calc(26px * var(--text-ui-scale));
+    --label-xxlarge-font-size: calc(30px * var(--text-ui-scale));
+    --description-font-size: calc(16px * var(--text-ui-scale));
+    --description-large-font-size: calc(16px * var(--text-ui-scale));
+    --description-xlarge-font-size: calc(21px * var(--text-ui-scale));
+    --description-xxlarge-font-size: calc(24px * var(--text-ui-scale));
+    --title-font-size: calc(26px * var(--text-ui-scale));
+    --title-small-font-size: calc(16px * var(--text-ui-scale));
+    --title-large-font-size: calc(30px * var(--text-ui-scale));
+    --title-xlarge-font-size: calc(35px * var(--text-ui-scale));
+    --title-xxlarge-font-size: calc(40px * var(--text-ui-scale));
+
+    // Values
+    --value-font-size: calc(38px * var(--text-ui-scale));
+    --value-line-height: calc(42px * var(--text-ui-scale));
+    --value-xxsmall-font-size: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-line-height: calc(16px * var(--text-ui-scale));
+    --value-xsmall-font-size: calc(20px * var(--text-ui-scale));
+    --value-xsmall-line-height: calc(24px * var(--text-ui-scale));
+    --value-small-font-size: calc(26px * var(--text-ui-scale));
+    --value-small-line-height: calc(29px * var(--text-ui-scale));
+    --value-large-font-size: calc(58px * var(--text-ui-scale));
+    --value-large-line-height: calc(70px * var(--text-ui-scale));
+    --value-xlarge-font-size: calc(74px * var(--text-ui-scale));
+    --value-xlarge-line-height: calc(86px * var(--text-ui-scale));
+    --value-xxlarge-font-size: calc(96px * var(--text-ui-scale));
+    --value-xxlarge-line-height: calc(108px * var(--text-ui-scale));
+    --value-xxxlarge-font-size: calc(128px * var(--text-ui-scale));
+    --value-xxxlarge-line-height: calc(128px * var(--text-ui-scale));
+    --value-mega-font-size: calc(170px * var(--text-ui-scale));
+    --value-mega-line-height: calc(180px * var(--text-ui-scale));
+    --value-giga-font-size: calc(220px * var(--text-ui-scale));
+    --value-giga-line-height: calc(230px * var(--text-ui-scale));
+    --value-tera-font-size: calc(290px * var(--text-ui-scale));
+    --value-tera-line-height: calc(300px * var(--text-ui-scale));
+    --value-peta-font-size: calc(380px * var(--text-ui-scale));
+    --value-peta-line-height: calc(390px * var(--text-ui-scale));
+
+    // Rich text
+    --richtext-content-max-width: calc(640px * var(--ui-scale));
+    --richtext-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-line-height: calc(22px * var(--text-ui-scale));
+    --richtext-large-font-size: calc(26px * var(--text-ui-scale));
+    --richtext-small-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-small-line-height: calc(16px * var(--text-ui-scale));
+    --richtext-xlarge-font-size: calc(30px * var(--text-ui-scale));
+    --richtext-xxlarge-font-size: calc(35px * var(--text-ui-scale));
+    --richtext-xxxlarge-font-size: calc(40px * var(--text-ui-scale));
+
+    // Table, item, and progress components
+    @include emit-sized-vars($table-size-vars, $scale: true);
+    --item-meta-width: calc(10px * var(--ui-scale));
+    --item-index-font-size: calc(16px * var(--text-ui-scale));
+    @include emit-sized-vars($progress-size-vars, $scale: true);
+
+    // Font utilities
+    --font-small-font-size: calc(16px * var(--text-ui-scale));
+    --font-base-font-size: calc(16px * var(--text-ui-scale));
+    --font-large-font-size: calc(26px * var(--text-ui-scale));
+    --font-xlarge-font-size: calc(26px * var(--text-ui-scale));
+    --font-xlarge-line-height: calc(29px * var(--text-ui-scale));
+    --font-xxlarge-font-size: calc(38px * var(--text-ui-scale));
+    --font-xxlarge-line-height: calc(42px * var(--text-ui-scale));
+    --font-xxxlarge-font-size: calc(58px * var(--text-ui-scale));
+    --font-xxxlarge-line-height: calc(70px * var(--text-ui-scale));
+    --font-mega-font-size: calc(74px * var(--text-ui-scale));
+    --font-mega-line-height: calc(86px * var(--text-ui-scale));
+    --font-giga-font-size: calc(96px * var(--text-ui-scale));
+    --font-giga-line-height: calc(108px * var(--text-ui-scale));
+    --font-tera-font-size: calc(128px * var(--text-ui-scale));
+    --font-tera-line-height: calc(128px * var(--text-ui-scale));
+    --font-peta-font-size: calc(170px * var(--text-ui-scale));
+    --font-peta-line-height: calc(180px * var(--text-ui-scale));
+}
+
+// SYNC-WITH: core:app/services/screen/device_css_variables.rb (the TRMNL platform repo).
+// The platform mirrors this mixin in Ruby and emits the same properties at render time,
+// so adding, removing, or renaming a --* property here needs the matching change there.
+// The parity spec that catches drift lives in that repo too
+// (core:spec/services/screen/device_css_variables_spec.rb). Nothing in this repository
+// asserts it, so treat the mirror as a manual step.
+@mixin device-variables($device-name) {
+    $device: map.get(custom.$all-devices, $device-name);
+    --screen-w: #{map.get($device, 'screen-w')};
+    --screen-h: #{map.get($device, 'screen-h')};
+    --screen-w-original: #{map.get($device, 'screen-w')};
+    --screen-h-original: #{map.get($device, 'screen-h')};
+    --pixel-ratio: #{map.get($device, 'pixel-ratio')};
+    --dither-pixel-ratio: #{map.get($device, 'dither-pixel-ratio')};
+    --device-ui-scale: #{map.get($device, 'ui-scale')};
+    --gap-scale: #{map.get($device, 'gap-scale')};
+    --color-depth: #{map.get($device, 'color-depth')};
+    --density-tier: #{map.get($device, 'density-tier')};
+    // Double quotes are load-bearing: Dart Sass 1.94+ splices custom-property
+    // text verbatim instead of re-quoting, and released CSS is byte-tracked.
+    --device-name: "#{$device-name}";
+    --gap-xsmall: calc(5px * var(--gap-scale) * var(--content-scale));
+    --gap-small: calc(7px * var(--gap-scale) * var(--content-scale));
+    --gap: calc(10px * var(--gap-scale) * var(--content-scale));
+    --gap-medium: calc(16px * var(--gap-scale) * var(--content-scale));
+    --gap-large: calc(20px * var(--gap-scale) * var(--content-scale));
+    --gap-xlarge: calc(30px * var(--gap-scale) * var(--content-scale));
+    --gap-xxlarge: calc(40px * var(--gap-scale) * var(--content-scale));
+    --list-gap-small: calc(8px * var(--gap-scale) * var(--content-scale));
+    --full-w: calc(var(--screen-w) - var(--gap) * 2);
+    --full-h: calc(var(--screen-h) - var(--gap) * 2);
+    --quadrant-w: 100%;
+    --quadrant-h: 100%;
+    --half_vertical-w: 100%;
+    --half_vertical-h: 100%;
+    --half_horizontal-w: 100%;
+    --half_horizontal-h: 100%;
+}
+
+// Vector font face: families, smoothing, and the Inter-tuned weights; sizes and
+// line heights stay with the caller (the active bundle, or the density metrics below).
+@mixin vector-font-face-variables {
+    --title-bar-font-family: "Inter Variable", Inter;
+    --title-bar-font-smoothing: auto;
+    --title-bar-font-weight: 700;
+    --title-bar-padding-top: 0px;
+    --label-font-family: "Inter Variable", Inter;
+    --label-font-smoothing: auto;
+    --label-font-weight: 500;
+    --label-small-font-family: "Inter Variable", Inter;
+    --label-small-font-smoothing: auto;
+    --label-small-font-weight: 500;
+    --label-large-font-family: "Inter Variable", Inter;
+    --label-large-font-smoothing: auto;
+    --label-large-font-weight: 500;
+    --label-xlarge-font-family: "Inter Variable", Inter;
+    --label-xlarge-font-smoothing: auto;
+    --label-xlarge-font-weight: 475;
+    --label-xxlarge-font-family: "Inter Variable", Inter;
+    --label-xxlarge-font-smoothing: auto;
+    --label-xxlarge-font-weight: 450;
+    --description-font-family: "Inter Variable", Inter;
+    --description-font-smoothing: auto;
+    --description-font-weight: 400;
+    --description-large-font-family: "Inter Variable", Inter;
+    --description-large-font-smoothing: auto;
+    --description-large-font-weight: 700;
+    --description-xlarge-font-family: "Inter Variable", Inter;
+    --description-xlarge-font-smoothing: auto;
+    --description-xlarge-font-weight: 500;
+    --description-xxlarge-font-family: "Inter Variable", Inter;
+    --description-xxlarge-font-smoothing: auto;
+    --description-xxlarge-font-weight: 475;
+    --title-font-family: "Inter Variable", Inter;
+    --title-font-smoothing: auto;
+    --title-font-weight: 400;
+    --title-small-font-family: "Inter Variable", Inter;
+    --title-small-font-smoothing: auto;
+    --title-small-font-weight: 700;
+    --title-large-font-family: "Inter Variable", Inter;
+    --title-large-font-smoothing: auto;
+    --title-large-font-weight: 425;
+    --title-xlarge-font-family: "Inter Variable", Inter;
+    --title-xlarge-font-smoothing: auto;
+    --title-xlarge-font-weight: 400;
+    --title-xxlarge-font-family: "Inter Variable", Inter;
+    --title-xxlarge-font-smoothing: auto;
+    --title-xxlarge-font-weight: 375;
+    --value-font-family: "Inter Variable", Inter;
+    --value-font-weight: 450;
+    --value-font-smoothing: auto;
+    --value-xxsmall-font-family: "Inter Variable", Inter;
+    --value-xxsmall-font-weight: 700;
+    --value-xxsmall-font-smoothing: auto;
+    --value-xsmall-font-weight: 600;
+    --value-small-font-weight: 475;
+    --value-large-font-weight: 400;
+    --value-xlarge-font-weight: 375;
+    --value-xxlarge-font-weight: 350;
+    --value-xxxlarge-font-weight: 300;
+    --value-mega-font-weight: 275;
+    --value-giga-font-weight: 250;
+    --value-tera-font-weight: 225;
+    --value-peta-font-weight: 200;
+    --richtext-font-family: "Inter Variable", Inter;
+    --richtext-font-smoothing: auto;
+    --richtext-font-weight: 500;
+    --richtext-large-font-family: "Inter Variable", Inter;
+    --richtext-large-font-smoothing: auto;
+    --richtext-large-font-weight: 500;
+    --richtext-small-font-family: "Inter Variable", Inter;
+    --richtext-small-font-smoothing: auto;
+    --richtext-small-font-weight: 500;
+    --richtext-xlarge-font-family: "Inter Variable", Inter;
+    --richtext-xlarge-font-smoothing: auto;
+    --richtext-xlarge-font-weight: 425;
+    --richtext-xxlarge-font-family: "Inter Variable", Inter;
+    --richtext-xxlarge-font-smoothing: auto;
+    --richtext-xxlarge-font-weight: 400;
+    --richtext-xxxlarge-font-family: "Inter Variable", Inter;
+    --richtext-xxxlarge-font-smoothing: auto;
+    --richtext-xxxlarge-font-weight: 375;
+    --item-index-font-family: "Inter Variable", Inter;
+    --item-index-font-smoothing: auto;
+    --item-index-font-weight: 600;
+    --font-small-font-family: "Inter Variable", Inter;
+    --font-small-font-smoothing: auto;
+    --font-base-font-family: "Inter Variable", Inter;
+    --font-base-font-smoothing: auto;
+    --font-large-font-family: "Inter Variable", Inter;
+    --font-large-font-smoothing: auto;
+}
+
+// Density-based display overrides. High-density screens use the Inter bundle
+// regardless of bit depth.
+@mixin density-2x-display-variables {
+    @include vector-font-face-variables;
+
+    // Title bar
+    --title-bar-font-size: calc(16px * var(--text-ui-scale));
+    --title-bar-line-height: calc(22px * var(--text-ui-scale));
+    --title-bar-text-stroke-width: calc(2px * var(--ui-scale));
+    --title-bar-small-font-size: calc(16px * var(--text-ui-scale));
+    // Label
+    --label-font-size: calc(16px * var(--text-ui-scale));
+    --label-small-font-size: calc(13px * var(--text-ui-scale));
+    --label-line-height: 1.25;
+    --label-small-line-height: 1;
+    --label-large-font-size: calc(21px * var(--text-ui-scale));
+    --label-large-line-height: 1.2;
+    --label-xlarge-font-size: calc(26px * var(--text-ui-scale));
+    --label-xlarge-line-height: 1.2;
+    --label-xxlarge-font-size: calc(30px * var(--text-ui-scale));
+    --label-xxlarge-line-height: 1.2;
+    // Description
+    --description-font-size: calc(13px * var(--text-ui-scale));
+    --description-line-height: 1.2;
+    --description-large-font-size: calc(16px * var(--text-ui-scale));
+    --description-large-line-height: 1.2;
+    --description-xlarge-font-size: calc(21px * var(--text-ui-scale));
+    --description-xlarge-line-height: 1.2;
+    --description-xxlarge-font-size: calc(24px * var(--text-ui-scale));
+    --description-xxlarge-line-height: 1.2;
+    // Title
+    --title-font-size: calc(21px * var(--text-ui-scale));
+    --title-line-height: 1.2;
+    --title-small-font-size: calc(16px * var(--text-ui-scale));
+    --title-small-line-height: 1.2;
+    --title-large-font-size: calc(30px * var(--text-ui-scale));
+    --title-large-line-height: 1.2;
+    --title-xlarge-font-size: calc(35px * var(--text-ui-scale));
+    --title-xlarge-line-height: 1.2;
+    --title-xxlarge-font-size: calc(40px * var(--text-ui-scale));
+    --title-xxlarge-line-height: 1.2;
+    // Value
+    --value-font-size: calc(38px * var(--text-ui-scale));
+    --value-line-height: calc(42px * var(--text-ui-scale));
+    --value-xxsmall-font-size: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-line-height: calc(14px * var(--text-ui-scale));
+    --value-xsmall-font-size: calc(20px * var(--text-ui-scale));
+    --value-xsmall-line-height: calc(24px * var(--text-ui-scale));
+    --value-small-font-size: calc(26px * var(--text-ui-scale));
+    --value-small-line-height: calc(29px * var(--text-ui-scale));
+    --value-large-font-size: calc(58px * var(--text-ui-scale));
+    --value-large-line-height: calc(70px * var(--text-ui-scale));
+    --value-xlarge-font-size: calc(74px * var(--text-ui-scale));
+    --value-xlarge-line-height: calc(86px * var(--text-ui-scale));
+    --value-xxlarge-font-size: calc(96px * var(--text-ui-scale));
+    --value-xxlarge-line-height: calc(108px * var(--text-ui-scale));
+    --value-xxxlarge-font-size: calc(128px * var(--text-ui-scale));
+    --value-xxxlarge-line-height: calc(128px * var(--text-ui-scale));
+    --value-mega-font-size: calc(170px * var(--text-ui-scale));
+    --value-mega-line-height: calc(180px * var(--text-ui-scale));
+    --value-giga-font-size: calc(220px * var(--text-ui-scale));
+    --value-giga-line-height: calc(230px * var(--text-ui-scale));
+    --value-tera-font-size: calc(290px * var(--text-ui-scale));
+    --value-tera-line-height: calc(300px * var(--text-ui-scale));
+    --value-peta-font-size: calc(380px * var(--text-ui-scale));
+    --value-peta-line-height: calc(390px * var(--text-ui-scale));
+    // Rich text
+    --richtext-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-line-height: calc(22px * var(--text-ui-scale));
+    --richtext-large-font-size: calc(21px * var(--text-ui-scale));
+    --richtext-large-line-height: 1.2;
+    --richtext-small-font-size: calc(13px * var(--text-ui-scale));
+    --richtext-small-line-height: calc(18px * var(--text-ui-scale));
+    --richtext-xlarge-font-size: calc(30px * var(--text-ui-scale));
+    --richtext-xlarge-line-height: 1.2;
+    --richtext-xxlarge-font-size: calc(35px * var(--text-ui-scale));
+    --richtext-xxlarge-line-height: 1.2;
+    --richtext-xxxlarge-font-size: calc(40px * var(--text-ui-scale));
+    --richtext-xxxlarge-line-height: 1.2;
+    // Item
+    --item-index-font-size: calc(13px * var(--text-ui-scale));
+    --item-index-line-height: 1;
+    // Font utilities
+    --font-small-font-size: calc(13px * var(--text-ui-scale));
+    --font-small-line-height: calc(18px * var(--text-ui-scale));
+    --font-base-font-size: calc(16px * var(--text-ui-scale));
+    --font-base-line-height: calc(22px * var(--text-ui-scale));
+    --font-large-font-size: calc(21px * var(--text-ui-scale));
+    --font-large-line-height: 1.2;
+}
+
+// Size-specific variable overrides
+@mixin sm-display-variables {
+    --richtext-content-max-width: calc(380px * var(--ui-scale));
+}
+
+@mixin md-display-variables {
+    --richtext-content-max-width: calc(640px * var(--ui-scale));
+}
+
+@mixin lg-display-variables {
+    --richtext-content-max-width: calc(780px * var(--ui-scale));
+}
+
+// Family-agnostic 2-bit overrides. Typography is controlled by the active font
+// bundle plus the density layer; bit depth only changes visual/layout affordances.
+@mixin two-bit-display-variables {
+    // Title bar component variables
+    --title-bar-height: calc(40px * var(--ui-scale));
+    --title-bar-small-height: calc(32px * var(--ui-scale));
+    --title-bar-text-stroke-width: calc(3.5px * var(--ui-scale));
+    --title-bar-image-height: calc(28px * var(--ui-scale));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale));
+    --title-bar-border-radius: calc(10px * var(--ui-scale));
+
+    // Table component variables
+    @include emit-sized-vars($table-size-vars, $scale: true);
+
+    // Item meta width (font properties handled per family)
+    --item-meta-width: calc(10px * var(--ui-scale));
+
+    // Progress component variables
+    @include emit-sized-vars($progress-size-vars, $scale: true);
+}
+
+// Classic font bundle (NicoClean / NicoPups / BlockKie). Activated by the
+// `screen--fonts-classic` class. This is the 3.0.x implicit default when no
+// `screen--fonts-*` modifier is present. In 3.1.x and later, the density layer
+// overrides both pixel bundles to Inter on high-density screens.
+@mixin classic-fonts {
+    // Title bar
+    --title-bar-font-size: calc(16px * var(--text-ui-scale));
+    --title-bar-font-family: "NicoClean";
+    --title-bar-font-smoothing: none;
+    --title-bar-font-weight: 400;
+    --title-bar-line-height: 1;
+    --title-bar-padding-top: calc(5px * var(--ui-scale));
+    --title-bar-small-font-size: calc(16px * var(--text-ui-scale));
+
+    // Label
+    --label-font-size: calc(16px * var(--text-ui-scale));
+    --label-font-family: "NicoClean";
+    --label-font-smoothing: none;
+    --label-font-weight: 400;
+    --label-line-height: 1.25;
+    --label-small-font-size: calc(16px * var(--text-ui-scale));
+    --label-small-font-family: "NicoPups";
+    --label-small-font-smoothing: none;
+    --label-small-font-weight: 400;
+    --label-small-line-height: 1;
+
+    // Description
+    --description-font-size: calc(16px * var(--text-ui-scale));
+    --description-font-family: "NicoPups";
+    --description-font-smoothing: none;
+    --description-font-weight: 400;
+    --description-line-height: 1;
+    --description-large-font-size: calc(16px * var(--text-ui-scale));
+    --description-large-font-family: "NicoClean";
+    --description-large-font-smoothing: none;
+    --description-large-font-weight: 400;
+    --description-large-line-height: 1.25;
+
+    // Title
+    --title-font-size: calc(26px * var(--text-ui-scale));
+    --title-font-family: "BlockKie";
+    --title-font-smoothing: none;
+    --title-font-weight: 400;
+    --title-line-height: 1;
+    --title-small-font-size: calc(16px * var(--text-ui-scale));
+    --title-small-font-family: "NicoClean";
+    --title-small-font-smoothing: none;
+    --title-small-font-weight: 400;
+    --title-small-line-height: 1;
+
+    // Value (only xxsmall is family-affected on 2-bit)
+    --value-xxsmall-font-family: "NicoClean";
+    --value-xxsmall-font-size: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-line-height: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-font-weight: 400;
+    --value-xxsmall-font-smoothing: none;
+
+    // Rich text
+    --richtext-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-font-family: "NicoClean";
+    --richtext-font-smoothing: none;
+    --richtext-font-weight: 400;
+    --richtext-line-height: calc(22px * var(--text-ui-scale));
+    --richtext-large-font-size: calc(26px * var(--text-ui-scale));
+    --richtext-large-font-family: "BlockKie";
+    --richtext-large-font-smoothing: none;
+    --richtext-large-font-weight: 400;
+    --richtext-large-line-height: 1;
+    --richtext-small-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-small-font-family: "NicoPups";
+    --richtext-small-font-smoothing: none;
+    --richtext-small-font-weight: 400;
+    --richtext-small-line-height: calc(16px * var(--text-ui-scale));
+
+    // Item index
+    --item-index-font-size: calc(16px * var(--text-ui-scale));
+    --item-index-font-family: "NicoPups";
+    --item-index-font-smoothing: none;
+    --item-index-font-weight: 400;
+    --item-index-line-height: 1;
+
+    // Font utilities (small/base/large differ per bundle; xlarge+ stays Inter Variable)
+    --font-small-font-family: "NicoPups";
+    --font-small-font-size: calc(16px * var(--text-ui-scale));
+    --font-small-line-height: 1;
+    --font-small-font-smoothing: none;
+
+    --font-base-font-family: "NicoClean";
+    --font-base-font-size: calc(16px * var(--text-ui-scale));
+    --font-base-line-height: 1.25;
+    --font-base-font-smoothing: none;
+
+    --font-large-font-family: "BlockKie";
+    --font-large-font-size: calc(26px * var(--text-ui-scale));
+    --font-large-line-height: 1;
+    --font-large-font-smoothing: none;
+}
+
+@mixin default-fonts {
+    @include trmnl-fonts;
+}
+
+// TRMNL font bundle (TRMNL12 / TRMNL16 / TRMNL21). Activated by the
+// `screen--fonts-trmnl` class and as the 3.1.x implicit default when no
+// `screen--fonts-*` modifier is present.
+@mixin trmnl-fonts {
+    // Title bar
+    --title-bar-font-size: calc(16px * var(--text-ui-scale));
+    --title-bar-font-family: "TRMNL16";
+    --title-bar-font-smoothing: none;
+    --title-bar-font-weight: 700;
+    --title-bar-line-height: 1;
+    --title-bar-padding-top: calc(1px * var(--ui-scale));
+    --title-bar-small-font-size: calc(16px * var(--text-ui-scale));
+
+    // Label
+    --label-font-size: calc(16px * var(--text-ui-scale));
+    --label-font-family: "TRMNL16";
+    --label-font-smoothing: none;
+    --label-font-weight: 700;
+    --label-line-height: 1.25;
+    --label-small-font-size: calc(12px * var(--text-ui-scale));
+    --label-small-font-family: "TRMNL12";
+    --label-small-font-smoothing: none;
+    --label-small-font-weight: 400;
+    --label-small-line-height: 1;
+
+    // Description
+    --description-font-size: calc(12px * var(--text-ui-scale));
+    --description-font-family: "TRMNL12";
+    --description-font-smoothing: none;
+    --description-font-weight: 400;
+    --description-line-height: 1;
+    --description-large-font-size: calc(16px * var(--text-ui-scale));
+    --description-large-font-family: "TRMNL16";
+    --description-large-font-smoothing: none;
+    --description-large-font-weight: 700;
+    --description-large-line-height: 1.25;
+
+    // Title
+    --title-font-size: calc(21px * var(--text-ui-scale));
+    --title-font-family: "TRMNL21";
+    --title-font-smoothing: none;
+    --title-font-weight: 400;
+    --title-line-height: 1;
+    --title-small-font-size: calc(16px * var(--text-ui-scale));
+    --title-small-font-family: "TRMNL16";
+    --title-small-font-smoothing: none;
+    --title-small-font-weight: 700;
+    --title-small-line-height: 1;
+
+    // Value (only xxsmall is family-affected on 2-bit)
+    --value-xxsmall-font-family: "TRMNL16";
+    --value-xxsmall-font-size: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-line-height: calc(16px * var(--text-ui-scale));
+    --value-xxsmall-font-weight: 700;
+    --value-xxsmall-font-smoothing: none;
+
+    // Rich text
+    --richtext-font-size: calc(16px * var(--text-ui-scale));
+    --richtext-font-family: "TRMNL16";
+    --richtext-font-smoothing: none;
+    --richtext-font-weight: 400;
+    --richtext-line-height: calc(22px * var(--text-ui-scale));
+    --richtext-large-font-size: calc(21px * var(--text-ui-scale));
+    --richtext-large-font-family: "TRMNL21";
+    --richtext-large-font-smoothing: none;
+    --richtext-large-font-weight: 400;
+    --richtext-large-line-height: 1;
+    --richtext-small-font-size: calc(12px * var(--text-ui-scale));
+    --richtext-small-font-family: "TRMNL12";
+    --richtext-small-font-smoothing: none;
+    --richtext-small-font-weight: 400;
+    --richtext-small-line-height: calc(16px * var(--text-ui-scale));
+
+    // Item index
+    --item-index-font-size: calc(12px * var(--text-ui-scale));
+    --item-index-font-family: "TRMNL12";
+    --item-index-font-smoothing: none;
+    --item-index-font-weight: 400;
+    --item-index-line-height: 1;
+
+    // Font utilities (small/base/large differ per bundle; xlarge+ stays Inter Variable)
+    --font-small-font-family: "TRMNL12";
+    --font-small-font-size: calc(12px * var(--text-ui-scale));
+    --font-small-line-height: 1;
+    --font-small-font-smoothing: none;
+
+    --font-base-font-family: "TRMNL16";
+    --font-base-font-size: calc(16px * var(--text-ui-scale));
+    --font-base-line-height: 1.25;
+    --font-base-font-smoothing: none;
+
+    --font-large-font-family: "TRMNL21";
+    --font-large-font-size: calc(21px * var(--text-ui-scale));
+    --font-large-line-height: 1;
+    --font-large-font-smoothing: none;
+}
+
+@mixin four-bit-and-up-display-variables {
+    // Four-bit+ visual/layout overrides. Typography is density-based.
+    --title-bar-padding-top: 0px;
+    --title-bar-text-stroke-width: calc(2px * var(--ui-scale));
+
+    --title-bar-height: calc(40px * var(--ui-scale));
+    --title-bar-small-height: calc(32px * var(--ui-scale));
+    --title-bar-image-height: calc(28px * var(--ui-scale));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale));
+    --title-bar-border-radius: calc(10px * var(--ui-scale));
+
+    // Table component variables
+    @include emit-sized-vars($table-size-vars, $scale: true);
+
+    // Item component variables
+    --item-meta-width: calc(10px * var(--ui-scale));
+
+    // Progress component variables
+    @include emit-sized-vars($progress-size-vars, $scale: true);
+}

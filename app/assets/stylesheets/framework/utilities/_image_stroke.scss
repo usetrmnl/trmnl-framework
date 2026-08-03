@@ -1,0 +1,115 @@
+// ============================================
+// TRMNL Framework - Image Stroke Utility
+// ============================================
+// The text-stroke file's shape for raster and vector art: size and color
+// modifiers bind --tn-image-stroke-*, and one rule turns them into the
+// drop-shadow ring. Written as a filter per class, a color modifier and a size
+// modifier could not both apply, and the family published no grayscale tokens
+// and no bit-depth variants while its text twin published both.
+//
+// Colors resolve through the same --theme-stroke-*/--stroke-* chain text-stroke
+// uses, so a theme remaps both families at once. The ring rides the shared
+// filter channel (mixins/_utilities.scss), so `invert` composes with it.
+
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use 'sass:list';
+@use 'sass:string';
+
+// Every class in the family, from the registry text-stroke reads too.
+$image-stroke-classes: mixins.stroke-family-classes('image-stroke');
+
+// Ring offset per size modifier. `base` is the explicit spelling of the default.
+$image-stroke-sizes: (
+    'base': 1.5px,
+    'small': 1px,
+    'medium': 2px,
+    'large': 2.5px,
+    'xlarge': 3px
+);
+
+@mixin image-stroke-default-vars {
+    --tn-image-stroke-width: #{vars.content-scaled(1.5px)};
+    --tn-image-stroke-color: var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast));
+}
+
+// Four corner shadows at the bound offset. Long filter chains are expensive, so
+// the ring stays four layers and the text family keeps its text-shadow program.
+@mixin image-stroke-apply-from-vars {
+    $offset: var(--tn-image-stroke-width, 1.5px);
+    $back: calc(var(--tn-image-stroke-width, 1.5px) * -1);
+    $color: var(--tn-image-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)));
+
+    --tn-image-stroke: drop-shadow(#{$offset} #{$offset} 0 #{$color}) drop-shadow(#{$back} #{$back} 0 #{$color}) drop-shadow(#{$back} #{$offset} 0 #{$color}) drop-shadow(#{$offset} #{$back} 0 #{$color});
+    @include mixins.filter-from-vars;
+}
+
+@include mixins.trmnl-namespace {
+    .image-stroke {
+        @include image-stroke-default-vars;
+
+        @each $size-name, $size in $image-stroke-sizes {
+            &--#{$size-name} {
+                --tn-image-stroke-width: #{vars.content-scaled($size)};
+            }
+        }
+
+        // Color variants bind --tn-image-stroke-color only, so a color and a
+        // size modifier compose instead of the later class deciding both.
+        @each $token in mixins.stroke-token-names() {
+            &--#{$token} {
+                --tn-image-stroke-color: var(--theme-stroke-#{$token}-color, var(--stroke-#{$token}-color, var(--#{$token})));
+            }
+        }
+    }
+
+    // Every class in the family paints on its own, which is what image-stroke
+    // has always done: a lone `image-stroke--black` draws the ring.
+    $render-selectors: ();
+    @each $class-name in $image-stroke-classes {
+        $render-selectors: list.append($render-selectors, string.unquote('.#{$class-name}'), comma);
+    }
+
+    #{$render-selectors} {
+        @include image-stroke-apply-from-vars;
+    }
+
+    // Bit-depth variant classes, matching text-stroke's tier for tier.
+    @each $bit-depth in (1, 2, 4) {
+        @include mixins.bit-depth-variant($bit-depth, 'image-stroke') {
+            @include image-stroke-default-vars;
+        }
+    }
+
+    @each $size-name, $size in $image-stroke-sizes {
+        @each $bit-depth in (1, 2, 4) {
+            @include mixins.bit-depth-variant($bit-depth, 'image-stroke--#{$size-name}') {
+                --tn-image-stroke-width: #{vars.content-scaled($size)};
+            }
+        }
+    }
+
+    @each $token in mixins.stroke-token-names() {
+        @each $bit-depth in (1, 2, 4) {
+            @include mixins.bit-depth-variant($bit-depth, 'image-stroke--#{$token}') {
+                --tn-image-stroke-color: var(--theme-stroke-#{$token}-color, var(--stroke-#{$token}-color, var(--#{$token})));
+            }
+        }
+    }
+
+    // Bit-depth-prefixed classes also paint standalone. All selectors retain
+    // their own specificity while sharing one declaration block.
+    $bit-render-selectors: ();
+    @each $bit-depth in (1, 2, 4) {
+        $escaped-prefix: mixins.escape-class-token('#{$bit-depth}bit');
+        @each $class-name in $image-stroke-classes {
+            $escaped-class: mixins.escape-class-token($class-name);
+            $selector: string.unquote('.screen--#{$bit-depth}bit .#{$escaped-prefix}\\:#{$escaped-class}');
+            $bit-render-selectors: list.append($bit-render-selectors, $selector, comma);
+        }
+    }
+
+    #{$bit-render-selectors} {
+        @include image-stroke-apply-from-vars;
+    }
+}

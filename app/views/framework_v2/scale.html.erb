@@ -1,0 +1,563 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :scale %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:scale) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Basic Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply scale modifiers to the <code class="<%= framework_section_code_classes %>">screen</code> element to scale all interface elements proportionally.
+            The scale affects fonts, spacing, dimensions, and other UI elements that use the <code class="<%= framework_section_code_classes %>">--ui-scale</code> CSS variable. Scale is available on 4bit devices.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Available Scale Levels') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The framework provides six predefined scale levels:
+            </p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Class</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Scale Factor</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Use Case</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen--scale-xsmall</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    0.75 (75%)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Maximum content density
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen--scale-small</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    0.875 (87.5%)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Increased content density
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen--scale-regular</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    1.0 (100%)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Default scale, no scaling applied
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen--scale-large</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    1.125 (112.5%)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Increased size for better readability
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen--scale-xlarge</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    1.25 (125%)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Large scale for increased readability
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen--scale-xxlarge</code>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    1.5 (150%)
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Maximum scale for accessibility needs
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Scale Examples') %>
+          <p class="<%= framework_section_description_classes %>">
+            The following examples demonstrate how scale levels affect the same content layout. Notice how all elements scale proportionally.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Extra Small Scale (75%)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Maximum content density - useful when viewing up close or when you need to fit more information on screen.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--scale-xsmall">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <!-- Today group -->
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:today].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- Tomorrow group -->
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:tomorrow].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- This Week group -->
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:this_week].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Scale Level</span>
+                      <span class="instance">Extra Small (75%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--scale-xsmall">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Small Scale (87.5%)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Reduced scale for fitting more content while maintaining good readability.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--scale-small">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <!-- Today group -->
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:today].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- Tomorrow group -->
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:tomorrow].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- This Week group -->
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:this_week].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Scale Level</span>
+                      <span class="instance">Small (87.5%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--scale-small">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Regular Scale (100%)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Default scale - this is the baseline that all other scale levels are relative to.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--scale-regular">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <!-- Today group -->
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:today].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- Tomorrow group -->
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:tomorrow].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- This Week group -->
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:this_week].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Scale Level</span>
+                      <span class="instance">Regular (100%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--scale-regular">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Large Scale (112.5%)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Increased size for better readability
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--scale-large">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <!-- Today group -->
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:today].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- Tomorrow group -->
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:tomorrow].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- This Week group -->
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:this_week].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Scale Level</span>
+                      <span class="instance">Large (112.5%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--scale-large">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Extra Large Scale (125%)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Large scale for increased readability
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--scale-xlarge">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <!-- Today group -->
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:today].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- Tomorrow group -->
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:tomorrow].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- This Week group -->
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:this_week].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Scale Level</span>
+                      <span class="instance">Extra Large (125%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--scale-xlarge">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Extra Extra Large Scale (150%)') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Maximum scale for accessibility needs
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen screen--scale-xxlarge">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="columns" data-overflow-max-cols="3">
+                        <div class="column">
+                          <!-- Today group -->
+                          <%= render_group_header("Today") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:today].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- Tomorrow group -->
+                          <%= render_group_header("Tomorrow") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:tomorrow].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+
+                          <!-- This Week group -->
+                          <%= render_group_header("This Week") %>
+                          <% overflow_demo_content[:extended_grouped_tasks][:this_week].each do |task| %>
+                            <%= render_task_item(task) %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Scale Level</span>
+                      <span class="instance">Extra Extra Large (150%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="screen screen--scale-xxlarge">
+  <!-- Your content here -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'How It Works') %>
+          <p class="<%= framework_section_description_classes %>">
+            The scale system works by modifying the <code class="<%= framework_section_code_classes %>">--ui-scale</code> CSS variable, which is used throughout the framework to calculate sizes.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Affected Properties') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              When you apply a scale modifier, it scales the following properties:
+            </p>
+          </div>
+
+            <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
+            <li>Font sizes (all text elements)</li>
+            <li>Line heights</li>
+            <li>Component dimensions (title bar height, progress bar sizes, etc.)</li>
+            <li>Spacing that uses the ui-scale multiplier</li>
+            <li>Any custom properties that reference <code class="<%= framework_section_code_classes %>">var(--ui-scale)</code></li>
+          </ul>
+
+          <div class="<%= message_sage_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  <strong>Note:</strong> The scale utility only affects elements that use the <code class="<%= framework_section_code_classes %>">--ui-scale</code> variable in their calculations. Fixed pixel values and screen dimensions remain unchanged.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Combining with Device Configurations') %>
+          <p class="<%= framework_section_description_classes %>">
+            Scale modifiers can be combined with device-specific classes to override the default UI scale for particular devices.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Class Combination</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen screen--v2</code>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Uses device default scale
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen screen--v2 screen--scale-small</code>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Overrides to 87.5% scale
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <code class="text-sm font-mono text-syntax-string">screen screen--amazon_kindle_2024 screen--scale-large</code>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    Overrides to 112.5% scale
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Use device default UI scale -->
+<div class="screen screen--v2">
+  <!-- Content -->
+</div>
+
+<!-- Override device scale with scale modifier -->
+<div class="screen screen--v2 screen--scale-small">
+  <!-- Content at 87.5% scale -->
+</div>
+
+<!-- Combine with any device configuration -->
+<div class="screen screen--amazon_kindle_2024 screen--scale-large">
+  <!-- Kindle device with 112.5% scale -->
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div> 

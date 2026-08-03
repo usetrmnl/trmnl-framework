@@ -1,0 +1,176 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :border %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:border) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Apply borders using <code class="<%= framework_section_code_classes %>">border--h-{n}</code> for horizontal borders
+            and <code class="<%= framework_section_code_classes %>">border--v-{n}</code> for vertical borders,
+            where n ranges from 1 (black) to 7 (white), with dithered values in between.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Horizontal Borders') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--row gap w--full h--full flex--stretch">
+                          <!-- White Background -->
+                          <div class="flex flex--col gap--space-between p--4 rounded">
+                            <% (1..7).each do |i| %>
+                              <div class="item border--h-<%= i %>">
+                                <span class="label mb-2"><%= i %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                          <!-- Black Background -->
+                          <div class="flex flex--col gap--space-between p--4 rounded bg-black">
+                            <% (1..7).each do |i| %>
+                              <div class="item border--h-<%= i %>">
+                                <span class="label mb-2 text--white"><%= i %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Horizontal Borders</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dark-mode-notice hidden <%= message_sage_classes %> !mt-0">
+              <div class="flex items-center w-full">
+                <div class="flex-shrink-0 items-center">
+                  <%= render 'shared/icons/info' %>
+                </div>
+                <div class="w-full flex items-center justify-between ml-3">
+                  <p class="text-sm font-medium">
+                    <strong>Dark Mode Notice:</strong> The color palette appears inverted because TRMNL's dark mode inverts the entire screen, except the images.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="border--h-1">Horizontal Border 1</div>
+<div class="border--h-2">Horizontal Border 2</div>
+<div class="border--h-3">Horizontal Border 3</div>
+<div class="border--h-4">Horizontal Border 4</div>
+<div class="border--h-5">Horizontal Border 5</div>
+<div class="border--h-6">Horizontal Border 6</div>
+<div class="border--h-7">Horizontal Border 7</div>'
+              ) %>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <%= framework_heading(4, 'Vertical Borders') %>
+            <div class="<%= framework_example_classes %>">
+              <div class="<%= framework_example_inner_classes %>">
+                <div class="<%= framework_example_wrapper_classes %>">
+                  <div class="screen">
+                    <div class="view view--full">
+                      <div class="layout">
+                        <div class="flex flex--col flex--stretch gap w--full h--full">
+                          <!-- White Background -->
+                          <div class="flex flex--row flex--stretch p--4 rounded">
+                            <% (1..7).each do |i| %>
+                              <div class="stretch border--v-<%= i %> flex flex--col flex--bottom">
+                                <span class="label ml-2"><%= i %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                          <!-- Black Background -->
+                          <div class="flex flex--row flex--stretch p--4 rounded bg-black">
+                            <% (1..7).each do |i| %>
+                              <div class="stretch border--v-<%= i %> flex flex--col flex--bottom">
+                                <span class="label ml-2 text--white"><%= i %></span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="title_bar">
+                        <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                        <span class="title">Vertical Borders</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <%= render CodeExampleComponent.new(
+                demo_code: '<div class="border--v-1">Vertical Border 1</div>
+<div class="border--v-2">Vertical Border 2</div>
+<div class="border--v-3">Vertical Border 3</div>
+<div class="border--v-4">Vertical Border 4</div>
+<div class="border--v-5">Vertical Border 5</div>
+<div class="border--v-6">Vertical Border 6</div>
+<div class="border--v-7">Vertical Border 7</div>'
+              ) %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Backward Compatibility') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Border utility in Framework v2 is <strong>not backward compatible</strong> with the legacy v1 Border utility. This is the only non-backward compatible utility in the new framework.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'What changed?') %>
+          <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
+            <li>
+              The visual scale has been redefined to a full-spectrum grayscale that works on <em>any</em> background shade: 
+              <code class="<%= framework_section_code_classes %>">1</code> = black … <code class="<%= framework_section_code_classes %>">7</code> = white.
+            </li>
+            <li>
+              In v1, borders only produced a faux grayscale on white surfaces and appeared solid black (invisible) on black surfaces. In v2, borders render consistently on both light and dark backgrounds.
+            </li>
+            <li>
+              Class names remain the same (<code class="<%= framework_section_code_classes %>">border--h-{n}</code>, <code class="<%= framework_section_code_classes %>">border--v-{n}</code>), but the visual output for a given <code class="<%= framework_section_code_classes %>">{n}</code> looks different.
+            </li>
+          </ul>
+        </div>
+
+        <div class="space-y-2">
+          <%= framework_heading(4, 'How to upgrade existing plugins') %>
+          <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
+            <li>
+              Keep your markup unchanged. Continue using <code class="<%= framework_section_code_classes %>">border--h-{n}</code> and <code class="<%= framework_section_code_classes %>">border--v-{n}</code>.
+            </li>
+            <li>
+              Re-evaluate the chosen <code class="<%= framework_section_code_classes %>">{n}</code> values based on the new scale.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,612 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework_v2/page_header', page_name: :value %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:value) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Variants') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Value system offers twelve size variants, from XXSmall to Peta.
+          </p>
+        </div>
+
+        <!-- XXSmall -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XXSmall') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xxsmall</code> class creates the smallest text size.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--xxsmall">Example</span>
+                      <span class="value value--xxsmall value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">XXSmall</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxsmall">Example</span>
+<span class="value value--xxsmall value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XSmall -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XSmall') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xsmall</code> class provides a size slightly larger than XXSmall.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--xsmall">Example</span>
+                      <span class="value value--xsmall value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">XSmall</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xsmall">Example</span>
+<span class="value value--xsmall value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Small -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Small') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--small</code> class creates a smaller text size.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--small">Example</span>
+                      <span class="value value--small value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Small</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--small">Example</span>
+<span class="value value--small value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Base -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Base') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The base <code class="<%= framework_section_code_classes %>">value</code> class without size modifiers
+              and the <code class="<%= framework_section_code_classes %>">value--base</code> class both produce the same visual result.
+              See the <%= link_to 'Responsive Values', '#responsive-values', class: 'hover:underline' %> section for examples.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value">Example</span>
+                      <span class="value value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Base</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value">Example</span>
+<span class="value value--tnums">48,206.62</span>
+
+<!-- Or using the base modifier -->
+<span class="value value--base">Example</span>
+<span class="value value--base value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Large -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Large') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--large</code> class creates larger text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--large">Example</span>
+                      <span class="value value--large value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Large</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large">Example</span>
+<span class="value value--large value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XLarge -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xlarge</code> class provides larger text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--xlarge">Example</span>
+                      <span class="value value--xlarge value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">XLarge</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xlarge">Example</span>
+<span class="value value--xlarge value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XXLarge -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XXLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xxlarge</code> class creates very large text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--xxlarge">Example</span>
+                      <span class="value value--xxlarge value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">XXLarge</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxlarge">Example</span>
+<span class="value value--xxlarge value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- XXXLarge -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'XXXLarge') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--xxxlarge</code> class provides very large text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--xxxlarge">Example</span>
+                      <span class="value value--xxxlarge value--tnums">48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">XXXLarge</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--xxxlarge">Example</span>
+<span class="value value--xxxlarge value--tnums">48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Mega -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Mega') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--mega</code> class creates extremely large text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--mega value--tnums">42</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Mega</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--mega value--tnums">42</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Giga -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Giga') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--giga</code> class provides massive text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--giga value--tnums">42</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Giga</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--giga value--tnums">42</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Tera -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Tera') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--tera</code> class creates colossal text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--tera value--tnums">42</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Tera</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--tera value--tnums">42</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Peta -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Peta') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The <code class="<%= framework_section_code_classes %>">value--peta</code> class provides the largest text.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--peta value--tnums">42</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Peta</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--peta value--tnums">42</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Numerical Display') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Value system includes special formatting options for numerical values.
+          </p>
+        </div>
+
+        <!-- Tabular Numbers -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Tabular Numbers') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Add the <code class="<%= framework_section_code_classes %>">value--tnums</code> modifier to enable tabular numbers.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--large">Regular: 48,206.62</span>
+                      <span class="value value--large value--tnums">Tabular: 48,206.62</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Tabular Numbers</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<span class="value value--large">Regular: 48,206.62</span>
+<span class="value value--large value--tnums">Tabular: 48,206.62</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
+      <section id="responsive-values" class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Responsive Values') %>
+          <p class="<%= framework_section_description_classes %>">
+            The Value system supports responsive variants using breakpoint prefixes.
+          </p>
+        </div>
+
+        <!-- Responsive Example -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Breakpoint Prefixes') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Use breakpoint prefixes like <code class="<%= framework_section_code_classes %>">sm:</code>,
+              <code class="<%= framework_section_code_classes %>">md:</code>, <code class="<%= framework_section_code_classes %>">lg:</code>
+              to apply different sizes at different screen widths.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <span class="value value--small md:value--large lg:value--xlarge">Responsive Value</span>
+                      <span class="value value--xsmall sm:value--small md:value--medium lg:value--large value--tnums">1,234.56</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Responsive</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Small by default, large on md screens, xlarge on lg screens -->
+<span class="value value--small md:value--large lg:value--xlarge">
+  Responsive Value
+</span>
+
+<!-- Progressive scaling with screen size -->
+<span class="value value--xsmall sm:value--small md:value--medium lg:value--large value--tnums">
+  1,234.56
+</span>
+
+<!-- Using base modifier to reset to default size at breakpoint -->
+<span class="value value--small lg:value--base">
+  Small by default, base on large screens
+</span>'
+            ) %>
+          </div>
+        </div>
+
+        <!-- Orientation and Size+Orientation -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Orientation and Size+Orientation') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Value sizes can adapt to orientation with <code class="<%= framework_section_code_classes %>">portrait:</code> and can be combined
+              with size breakpoints (e.g., <code class="<%= framework_section_code_classes %>">md:portrait:</code>).
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--large">
+                      <!-- Orientation only -->
+                      <span class="value value--large portrait:value--small">Orientation Variant</span>
+                      <!-- Size + orientation -->
+                      <span class="value value--small md:portrait:value--xlarge value--tnums">42,000.00</span>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image", alt: "TRMNL Logo" %>
+                      <span class="title">Value</span>
+                      <span class="instance">Orientation</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- Orientation only: smaller in portrait -->
+<span class="value value--large portrait:value--small">Orientation Variant</span>
+
+<!-- Size + orientation: xlarge only on md+ screens in portrait -->
+<span class="value value--small md:portrait:value--xlarge value--tnums">42,000.00</span>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework_v2/page_navigation' %>
+    </div>
+  </div>
+</div>

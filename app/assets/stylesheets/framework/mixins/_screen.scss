@@ -1,0 +1,391 @@
+// ============================================
+// TRMNL Framework - Unified Screen Targeting Mixins
+// ============================================
+// This is the main entry point for all screen-related mixins
+// It provides a unified API for targeting screens by size, orientation, bit-depth, and combinations
+//
+// Usage:
+//   @use 'mixins/screen' as screen;
+//   
+//   @include screen.for-md { ... }         // Medium screens and up
+//   @include screen.for-portrait { ... }   // Portrait orientation
+//   @include screen.for-4bit { ... }       // 4-bit displays
+//   @include screen.for-combo('md', 'portrait') { ... }  // Combinations
+
+@use 'sass:list';
+@use 'sass:string';
+@use 'selector-helpers' as helpers;
+@use 'screen-size' as size;
+@use 'screen-orientation' as orientation;
+@use 'screen-bit-depth' as bit-depth;
+
+// ============================================
+// Unified Screen Targeting API
+// ============================================
+// Single mixin that accepts 1-3 modifiers in specific order:
+// 1. Size (sm, md, lg)
+// 2. Orientation (portrait, landscape)
+// 3. Bit-depth (1, 2, 4, 1bit, 2bit, 4bit)
+
+// Normalize bit-depth modifiers (convert '1' to '1bit', etc.)
+@function normalize-bit-depth($modifier) {
+    $modifier-str: #{$modifier};
+    @if list.index(('1', '2', '4'), $modifier-str) {
+        @return $modifier-str + 'bit';
+    }
+    @return $modifier;
+}
+
+// Sort modifiers into the correct order: size, orientation, bit-depth
+@function sort-modifiers($modifiers) {
+    $size: null;
+    $orientation: null;
+    $bit-depth: null;
+    
+    @each $modifier in $modifiers {
+        // Check if it's a size
+        @if list.index(helpers.$size-hierarchy, $modifier) {
+            $size: $modifier;
+        }
+        // Check if it's an orientation
+        @else if list.index(helpers.$orientations, $modifier) {
+            $orientation: $modifier;
+        }
+        // Check if it's a bit-depth
+        @else {
+            $modifier-str: #{$modifier};
+            @if string.index($modifier-str, 'bit') {
+                $num: string.slice($modifier-str, 1, 1);
+                @if list.index(('1', '2', '4'), $num) {
+                    $bit-depth: normalize-bit-depth($modifier);
+                }
+            } @else if list.index(('1', '2', '4'), $modifier-str) {
+                $bit-depth: normalize-bit-depth($modifier);
+            } @else {
+                @error "Unknown modifier: #{$modifier}";
+            }
+        }
+    }
+    
+    // Build sorted list
+    $sorted: ();
+    @if $size { $sorted: list.append($sorted, $size); }
+    @if $orientation { $sorted: list.append($sorted, $orientation); }
+    @if $bit-depth { $sorted: list.append($sorted, $bit-depth); }
+    
+    @return $sorted;
+}
+
+// Main unified screen targeting mixin (mobile-first by default)
+// Usage: @include screen('md') or @include screen('md', 'portrait') or @include screen('md', 'portrait', '4bit')
+@mixin screen($modifiers...) {
+    $sorted: sort-modifiers($modifiers);
+    $count: list.length($sorted);
+    
+    @if $count == 0 {
+        @error "screen() mixin requires at least one valid modifier";
+    } @else if $count == 1 {
+        $mod: list.nth($sorted, 1);
+        
+        // Single size modifier - mobile-first
+        @if list.index(helpers.$size-hierarchy, $mod) {
+            @if $mod == 'sm' {
+                @include for-sm { @content; }
+            } @else if $mod == 'md' {
+                @include for-md { @content; }
+            } @else if $mod == 'lg' {
+                @include for-lg { @content; }
+            }
+        }
+        // Single orientation modifier
+        @else if list.index(helpers.$orientations, $mod) {
+            @if $mod == 'portrait' {
+                @include for-portrait { @content; }
+            } @else {
+                @include for-landscape { @content; }
+            }
+        }
+        // Single bit-depth modifier
+        @else {
+            @if $mod == '1bit' {
+                @include for-1bit { @content; }
+            } @else if $mod == '2bit' {
+                @include for-2bit { @content; }
+            } @else if $mod == '4bit' {
+                @include for-4bit { @content; }
+            }
+        }
+    } @else if $count == 2 {
+        $mod1: list.nth($sorted, 1);
+        $mod2: list.nth($sorted, 2);
+        
+        // Check if first is size (for mobile-first behavior)
+        @if list.index(helpers.$size-hierarchy, $mod1) {
+            @include for-combo-up($mod1, $mod2) { @content; }
+        } @else {
+            @include for-combo($mod1, $mod2) { @content; }
+        }
+    } @else if $count == 3 {
+        $mod1: list.nth($sorted, 1);
+        $mod2: list.nth($sorted, 2);
+        $mod3: list.nth($sorted, 3);
+        
+        // Check if first is size (for mobile-first behavior)
+        @if list.index(helpers.$size-hierarchy, $mod1) {
+            @include for-triple-up($mod1, $mod2, $mod3) { @content; }
+        } @else {
+            @include for-triple($mod1, $mod2, $mod3) { @content; }
+        }
+    }
+}
+
+// Exact targeting version (only targets specific size, not mobile-first)
+// Usage: @include screen-only('md') or @include screen-only('md', 'portrait')
+@mixin screen-only($modifiers...) {
+    $sorted: sort-modifiers($modifiers);
+    $count: list.length($sorted);
+    
+    @if $count == 0 {
+        @error "screen-only() mixin requires at least one valid modifier";
+    } @else if $count == 1 {
+        $mod: list.nth($sorted, 1);
+        
+        // Single size modifier - exact only
+        @if list.index(helpers.$size-hierarchy, $mod) {
+            @if $mod == 'sm' {
+                @include for-sm-only { @content; }
+            } @else if $mod == 'md' {
+                @include for-md-only { @content; }
+            } @else if $mod == 'lg' {
+                @include for-lg-only { @content; }
+            }
+        }
+        // For non-size modifiers, same as regular screen()
+        @else {
+            @include screen($mod) { @content; }
+        }
+    } @else if $count == 2 {
+        $mod1: list.nth($sorted, 1);
+        $mod2: list.nth($sorted, 2);
+        
+        // Always use exact targeting (no mobile-first)
+        @include for-combo($mod1, $mod2) { @content; }
+    } @else if $count == 3 {
+        $mod1: list.nth($sorted, 1);
+        $mod2: list.nth($sorted, 2);
+        $mod3: list.nth($sorted, 3);
+        
+        // Always use exact targeting (no mobile-first)
+        @include for-triple($mod1, $mod2, $mod3) { @content; }
+    }
+}
+
+// ============================================
+// Re-export individual screen targeting mixins
+// ============================================
+
+// Size targeting (mobile-first)
+@mixin for-sm { @include size.for-sm { @content; } }
+@mixin for-md { @include size.for-md { @content; } }
+@mixin for-lg { @include size.for-lg { @content; } }
+
+// Size targeting (exact size only)
+@mixin for-sm-only { @include size.for-sm-only { @content; } }
+@mixin for-md-only { @include size.for-md-only { @content; } }
+@mixin for-lg-only { @include size.for-lg-only { @content; } }
+
+// Orientation targeting
+@mixin for-portrait { @include orientation.for-portrait { @content; } }
+@mixin for-landscape { @include orientation.for-landscape { @content; } }
+
+// Bit-depth targeting
+@mixin for-1bit { @include bit-depth.for-1bit { @content; } }
+@mixin for-2bit { @include bit-depth.for-2bit { @content; } }
+@mixin for-4bit { @include bit-depth.for-4bit { @content; } }
+
+// Color palette targeting
+@mixin for-color-palette($id) { @include bit-depth.for-color-palette($id) { @content; } }
+@mixin for-color-full { @include bit-depth.for-color-full { @content; } }
+
+// Dark mode targeting (themed screens are exempt, see helpers.$theme-exempt)
+@mixin for-dark-mode { @include helpers.for-screen-modifier('dark-mode#{helpers.$theme-exempt}') { @content; } }
+@mixin for-dark-1bit { @include helpers.for-screen-modifier('dark-mode.screen--1bit#{helpers.$theme-exempt}') { @content; } }
+@mixin for-dark-2bit { @include helpers.for-screen-modifier('dark-mode.screen--2bit#{helpers.$theme-exempt}') { @content; } }
+@mixin for-dark-4bit { @include helpers.for-screen-modifier('dark-mode.screen--4bit#{helpers.$theme-exempt}') { @content; } }
+
+// Density targeting
+@mixin for-density($tier) { @include helpers.for-screen-modifier("density-#{$tier}") { @content; } }
+
+// ============================================
+// Utility Generation Mixins
+// ============================================
+// These are used internally by components to generate responsive variants
+
+// Generate size variants (mobile-first)
+@mixin generate-size-variants($class-name: null) {
+  @include size.generate-size-variants($class-name) { @content; }
+}
+
+// Generate orientation variants
+@mixin generate-orientation-variants($class-name: null) {
+  @include orientation.generate-orientation-variants($class-name) { @content; }
+}
+
+// Generate bit-depth variants
+@mixin generate-bit-depth-variants($class-name: null) {
+  @include bit-depth.generate-bit-depth-variants($class-name) { @content; }
+}
+
+// Simplified mixin for generating a single bit-depth variant
+// Usage: @include bit-depth-variant(1, 'bg--black') { ... }
+@mixin bit-depth-variant($bit-depth, $class-name) {
+  @include bit-depth.bit-depth-variant($bit-depth, $class-name) { @content; }
+}
+
+// ============================================
+// Combination Helpers
+// ============================================
+
+// Generic mixin for any two-way combination
+// Examples:
+// - @include for-combo('portrait', '4bit') - portrait + 4-bit screens
+// - @include for-combo('md', '2bit') - medium + 2-bit screens  
+// - @include for-combo('landscape', 'lg') - landscape + large screens
+@mixin for-combo($modifier1, $modifier2) {
+    @include helpers.for-screen-modifier('#{$modifier1}.screen--#{$modifier2}') {
+        @content;
+    }
+}
+
+// Specific helper for preview-color mode on limited color palettes.
+// Supports both selector shapes:
+// 1) .screen--preview-colors.screen--color-7a (same element)
+// 2) .screen--preview-colors .screen--color-7a (ancestor wrapper + screen)
+@mixin for-preview-color-palette($palette-id) {
+    @include for-combo('preview-colors', "color-#{$palette-id}") {
+        @content;
+    }
+
+    @include helpers.for-screen-modifier("preview-colors .screen--color-#{$palette-id}") {
+        @content;
+    }
+}
+
+// Generic mixin for any three-way combination
+// Examples:
+// - @include for-triple('lg', 'portrait', '4bit') - large + portrait + 4-bit
+// - @include for-triple('md', 'landscape', '2bit') - medium + landscape + 2-bit
+@mixin for-triple($modifier1, $modifier2, $modifier3) {
+    @include helpers.for-screen-modifier('#{$modifier1}.screen--#{$modifier2}.screen--#{$modifier3}') {
+        @content;
+    }
+}
+
+// Mobile-first combination helper for size + any modifier
+// The size parameter determines the minimum screen size where styles apply
+// Examples:
+// - @include for-combo-up('md', '4bit') - medium and up + 4-bit
+// - @include for-combo-up('sm', 'portrait') - small and up + portrait
+@mixin for-combo-up($size, $modifier) {
+    @if $size == 'sm' {
+        @include helpers.for-screen-modifier('sm.screen--#{$modifier}', 'md.screen--#{$modifier}', 'lg.screen--#{$modifier}') {
+            @content;
+        }
+    } @else if $size == 'md' {
+        @include helpers.for-screen-modifier('md.screen--#{$modifier}', 'lg.screen--#{$modifier}') {
+            @content;
+        }
+    } @else if $size == 'lg' {
+        @include helpers.for-screen-modifier('lg.screen--#{$modifier}') {
+            @content;
+        }
+    }
+}
+
+// Mobile-first triple combination helper for size + two modifiers
+// The size parameter determines the minimum screen size where styles apply
+// Examples:
+// - @include for-triple-up('md', 'portrait', '2bit') - medium and up + portrait + 2-bit
+// - @include for-triple-up('lg', 'landscape', '4bit') - large + landscape + 4-bit
+@mixin for-triple-up($size, $modifier1, $modifier2) {
+    @if $size == 'sm' {
+        @include helpers.for-screen-modifier('#{$modifier1}.screen--sm.screen--#{$modifier2}', '#{$modifier1}.screen--md.screen--#{$modifier2}', '#{$modifier1}.screen--lg.screen--#{$modifier2}') {
+            @content;
+        }
+    } @else if $size == 'md' {
+        @include helpers.for-screen-modifier('#{$modifier1}.screen--md.screen--#{$modifier2}', '#{$modifier1}.screen--lg.screen--#{$modifier2}') {
+            @content;
+        }
+    } @else if $size == 'lg' {
+        @include helpers.for-screen-modifier('#{$modifier1}.screen--lg.screen--#{$modifier2}') {
+            @content;
+        }
+    }
+}
+
+// ============================================
+// Usage Examples
+// ============================================
+// 
+// Import this module in your SCSS:
+// @use 'mixins/screen' as screen;
+// 
+// NEW UNIFIED API (Recommended):
+// ================================================
+// 
+// DEFAULT: Mobile-first behavior (size and up)
+// Single modifier:
+// @include screen.screen('md') { ... }          // md and larger (mobile-first)
+// @include screen.screen('portrait') { ... }    // Portrait orientation
+// @include screen.screen('4bit') { ... }        // 4-bit displays
+// @include screen.screen('4') { ... }           // Also accepts just '4' for bit-depth
+// 
+// Two modifiers (order: size, orientation, bit-depth):
+// @include screen.screen('md', 'portrait') { ... }    // md+ in portrait
+// @include screen.screen('landscape', '2bit') { ... } // landscape + 2-bit
+// @include screen.screen('lg', '4') { ... }           // lg+ with 4-bit
+// 
+// Three modifiers (order: size, orientation, bit-depth):
+// @include screen.screen('md', 'portrait', '2bit') { ... }  // md+ portrait 2-bit
+// @include screen.screen('lg', 'landscape', '4') { ... }    // lg+ landscape 4-bit
+// 
+// EXACT TARGETING: Only the specific size (not mobile-first)
+// @include screen.screen-only('md') { ... }               // Only md size
+// @include screen.screen-only('md', 'portrait') { ... }   // Only md in portrait
+// @include screen.screen-only('lg', '4bit') { ... }       // Only lg with 4-bit
+// @include screen.screen-only('sm', 'portrait', '2') { ... } // Only sm portrait 2-bit
+// 
+// DARK MODE (for plugin and component overrides):
+// ================================================
+// 
+// @include screen.for-dark-mode { ... }     // All dark mode screens
+// @include screen.for-dark-1bit { ... }     // Dark mode + 1-bit
+// @include screen.for-dark-2bit { ... }     // Dark mode + 2-bit
+// @include screen.for-dark-4bit { ... }     // Dark mode + 4-bit
+// 
+// LEGACY API (Still supported):
+// ================================================
+// 
+// Size only:
+// @include screen.for-md { ... }
+// 
+// Orientation only:
+// @include screen.for-portrait { ... }
+// 
+// Bit-depth only:
+// @include screen.for-4bit { ... }
+// 
+// Size + Orientation:
+// @include screen.for-combo('md', 'portrait') { ... }
+// @include screen.for-combo-up('md', 'portrait') { ... } // md and up
+// 
+// Size + Bit-depth:
+// @include screen.for-combo('lg', '2bit') { ... }
+// @include screen.for-combo-up('lg', '2bit') { ... } // lg and up
+// 
+// Orientation + Bit-depth:
+// @include screen.for-combo('landscape', '4bit') { ... }
+// 
+// All three combined:
+// @include screen.for-triple('md', 'portrait', '2bit') { ... }
+// @include screen.for-triple-up('md', 'portrait', '2bit') { ... } // md and up 
