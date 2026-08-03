@@ -146,13 +146,8 @@ npm run test:visual:update
 ```
 
 The GitHub workflow runs the Node contract suites, RSpec, a clean Sass build, and the
-runtime browser suite on Linux Chromium. The runtime job reports without blocking
-until its measured layout assertions have proven stable on Linux, then it becomes a
-required check.
-
-The visual suite still runs locally only: its baselines are per platform, and Linux
-PNGs have to be generated and committed before a job can compare against them. No paid
-visual-testing service is needed either way.
+browser suites on Linux Chromium against committed Linux visual baselines (darwin PNGs
+stay for local macOS runs). No paid visual-testing service is needed.
 
 ## Layout
 
