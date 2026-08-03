@@ -1,20 +1,24 @@
 // ============================================
 // TRMNL Framework - Visibility Utilities
 // ============================================
+// Emitted gate-outer, class-inner through the factorized engine, so every
+// narrower size gate precedes the wider gates it has to lose to. Per-class
+// emission wrote each class's whole gate set as one block, and since two size
+// gates of different breakpoints carry the same weight, the tie fell to source
+// order: `md:hidden lg:visible` stayed hidden on a large screen because the
+// hidden block was the last thing the file declared. Tier order is what
+// settles it, same as _aspect_ratio.scss.
 
-@use 'sass:string';
-@use 'sass:map';
 @use '../mixins' as mixins;
-@use '../mixins/responsive' as responsive;
-@use '../mixins/screen' as screen;
+@use '../mixins/factorized_utilities' as fz;
 
 // Define display variants for visibility utilities.
-// 'hidden' MUST stay LAST. Each entry emits `.trmnl .X { display: … }` at equal
-// specificity with no !important, so CSS last-wins decides same-element combos like
-// `class="flex hidden"`. Because `hidden` and every layout display share one variant
-// generator (with-dark-all-variants), emitting `hidden` after the layout displays makes
-// `.hidden` (and each of its dark/bit-depth/size/orientation variants) beat the matching
-// display variant. Do not reorder or alphabetize this map.
+// 'hidden' MUST stay LAST. Each gate emits its classes in map order at equal
+// specificity with no !important, so CSS last-wins decides same-gate combos
+// like `class="flex hidden"` or `class="lg:flex lg:hidden"`: `hidden` landing
+// last inside every gate is what makes it beat the display class of its own
+// gate, while a wider gate's display class still beats a narrower gate's
+// `hidden`. Do not reorder or alphabetize this map.
 $display-variants: (
     'visible': block,
     'block': block,
@@ -37,10 +41,12 @@ $display-variants: (
 // this one: a second base-gate rule here would land after `.grid--cols-2` and
 // take its template away.
 @include mixins.trmnl-namespace {
-    // Generate visibility utilities with bit-depth and responsive variants
-    @each $modifier, $value in $display-variants {
-        .#{$modifier} {
-            @include responsive.with-dark-all-variants {
+    @include fz.each-utility-gate using ($prefix, $screen-selectors) {
+        @each $modifier, $value in $display-variants {
+            @include fz.emit-class-apply(
+                fz.token-match-selectors('#{$prefix}#{$modifier}'),
+                $screen-selectors
+            ) {
                 display: $value;
             }
         }

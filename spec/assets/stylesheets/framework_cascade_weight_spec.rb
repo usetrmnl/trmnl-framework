@@ -544,6 +544,37 @@ RSpec.describe 'Framework cascade weights' do
                       "display rules emitted after their gate's hidden rule: #{late.first.to_s[0, 220]}"
     end
 
+    it 'emits the deciding rule of every size gate after the narrower gates it outranks' do
+      # Two size gates carry the same weight, so `md:hidden lg:visible` resolves
+      # at lg by source order alone. Per-class emission wrote each class's whole
+      # gate set as one block with `hidden` as the file's last block, so every
+      # `md:hidden` rule landed after every `lg:visible` rule and the element
+      # stayed hidden. Gates outer and classes inner is what keeps the wider
+      # breakpoint winning, and the last display rule per class is the one the
+      # tie hands the decision to.
+      families = %w[visible block inline inline-block flex inline-flex grid
+                    inline-grid table table-row table-cell hidden]
+
+      deciders = {}
+      display_rules.each_with_index do |(selectors, _body), order|
+        gate = subject_gate(selectors)
+        next unless %w[sm: md: lg:].include?(gate)
+
+        family = subject_class(selectors).to_s.delete_prefix(gate)
+        deciders[[gate, family]] = order if families.include?(family)
+      end
+
+      positions = deciders.group_by { |(gate, _family), _order| gate }
+                          .transform_values { |entries| entries.map(&:last) }
+
+      expect(positions.keys).to match_array(%w[sm: md: lg:])
+      positions.each do |gate, orders|
+        expect(orders.size).to eq(families.size), "#{gate} decides #{orders.size} of #{families.size} display classes"
+      end
+      expect(positions['sm:'].max).to be < positions['md:'].min
+      expect(positions['md:'].max).to be < positions['lg:'].min
+    end
+
     it 'keeps the grid parent weightless in every column span rule' do
       # `.grid` is a context guard here, not a weight. Written bare it put
       # `display: flex` one class above `.hidden`, and the variant emitters
