@@ -1136,12 +1136,34 @@ module FrameworkHelper
     'plugins_legacy.css' => 'plugins_legacy.css'
   }.freeze
 
+  # The docs chrome, which a host's own pipeline answers with a different file.
+  # `asset_path` matches on the logical name across the whole load path, so the first
+  # asset called tailwind.css wins, and on any host that runs Tailwind that is the
+  # host's bundle. The docs then rendered against a stylesheet compiled without these
+  # views in its @source list, and every utility only the docs use was simply absent:
+  # no pt-11 under the fixed nav, no sticky sidebar offset, no border-separate on the
+  # tables. The Prism theme collides the same way on a host carrying its own copy.
+  #
+  # These two come off the engine tree instead. Framework::Static resolves the chrome to
+  # the live build in this repo and the packaged snapshot everywhere else, so the docs
+  # server still serves what it just compiled. Everything else keeps the lookup above:
+  # engine-only paths cannot collide, and the plugin bundles are resolved by serving
+  # mode, where a consumer host that opts in with the development marker is asking for
+  # its own build.
+  HOST_SHADOWED_DOCS_ASSETS = %w[tailwind.css prism_trmnl.css].freeze
+
   # Above the private section on purpose: the controller resolves the docs bundle
   # through `helpers.framework_docs_asset_path`, an explicit receiver, so that the
   # layout tags and the iframe config JSON name one URL.
   def framework_docs_asset_path(logical)
+    return framework_docs_static_path(logical) if HOST_SHADOWED_DOCS_ASSETS.include?(logical)
+
     asset_path(logical)
   rescue Propshaft::MissingAssetError
+    framework_docs_static_path(logical)
+  end
+
+  def framework_docs_static_path(logical)
     public_name = DOCS_PUBLIC_ASSET_MAP.fetch(logical) { File.basename(logical) }
     file = Framework::Static.docs_file_path(public_name)
     # Framework::Static serves these straight off the engine tree, outside Propshaft's
