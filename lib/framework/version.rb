@@ -75,13 +75,13 @@ module Framework
     def css_url
       return self.class.development_asset_url("plugins.css") if self.class.development_mode?
 
-      "#{asset_host}/css/#{@number}/plugins.min.css"
+      "#{asset_host}/css/#{@number}/#{published_bundle('css')}"
     end
 
     def js_url
       return self.class.development_asset_url("plugins.js") if self.class.development_mode?
 
-      "#{asset_host}/js/#{@number}/plugins.min.js"
+      "#{asset_host}/js/#{@number}/#{published_bundle('js')}"
     end
 
     # Theme stylesheets this version publishes, keyed by theme id. Empty for versions
@@ -107,6 +107,14 @@ module Framework
     def major = Gem::Version.new(number).segments.first
 
     private
+
+    # Releases before 3.0 have no minified build and never will, so the name is checked
+    # rather than assumed.
+    def published_bundle(extension)
+      minified = "plugins.min.#{extension}"
+
+      Framework.public_root.join(extension, @number, minified).file? ? minified : "plugins.#{extension}"
+    end
 
     def asset_host
       host = Rails.application.config.asset_host

@@ -71,16 +71,44 @@ RSpec.describe Framework::Version do
     end
   end
 
-  describe '#css_url' do
-    it 'points at the version-scoped plugins stylesheet' do
-      expect(version.css_url).to end_with("/css/#{number}/plugins.min.css")
+  shared_examples 'a bundle url' do |extension|
+    context 'with a version that published a minified build' do
+      let(:number) { '3.1.8' }
+
+      it 'links the minified bundle' do
+        expect(url).to end_with("/#{extension}/#{number}/plugins.min.#{extension}")
+      end
+    end
+
+    context 'with a version released before minification' do
+      let(:number) { '1.0.0' }
+
+      it 'links the plain bundle' do
+        expect(url).to end_with("/#{extension}/#{number}/plugins.#{extension}")
+      end
+    end
+
+    context 'when serving the live build' do
+      let(:number) { '3.1.8' }
+
+      before { allow(described_class).to receive(:development_mode?).and_return(true) }
+
+      it 'links the live build instead of a release' do
+        expect(url).to start_with("/framework-dev/plugins.#{extension}")
+      end
     end
   end
 
+  describe '#css_url' do
+    let(:url) { version.css_url }
+
+    it_behaves_like 'a bundle url', 'css'
+  end
+
   describe '#js_url' do
-    it 'points at the version-scoped plugins script' do
-      expect(version.js_url).to end_with("/js/#{number}/plugins.min.js")
-    end
+    let(:url) { version.js_url }
+
+    it_behaves_like 'a bundle url', 'js'
   end
 
   describe '#theme_css_urls' do
