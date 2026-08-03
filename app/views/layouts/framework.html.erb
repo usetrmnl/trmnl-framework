@@ -11,8 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;350;375;400;450;600;700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 
-  <%# Prism.js syntax highlighting for Framework docs code examples - TRMNL theme %>
-  <%= stylesheet_link_tag "prism_trmnl", "data-turbo-track": "reload" %>
+  <%# Prism.js syntax highlighting for Framework docs code examples - TRMNL theme.
+      Resolved like the chrome below rather than by logical name: a host with its own
+      prism_trmnl.css shadows the engine's copy and colors these samples from it. %>
+  <%= stylesheet_link_tag framework_docs_asset_path('prism_trmnl.css'), "data-turbo-track": "reload" %>
   <%= javascript_include_tag "prism-1.29.0.min" %>
 
   <%= javascript_importmap_tags %>

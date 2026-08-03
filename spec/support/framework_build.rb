@@ -89,11 +89,12 @@ module FrameworkBuild
       @plugins_css ||= Rails.root.join(PLUGINS_CSS).read.freeze
     end
 
-    # The docs layout links tailwind.css, so Propshaft raises MissingAssetError
-    # without it. The variant collision guard also reads it, so presence alone is no
-    # longer the contract: a bundle built before a demo picked up a new variant class
-    # would let the guard pass on output the app no longer serves. Same digest stamp
-    # the Sass side uses, over the entry stylesheet and the trees it scans.
+    # The docs chrome the layout links, served off the engine tree, so a docs request
+    # spec that never built it grades the packaged snapshot instead of this checkout.
+    # The variant collision guard also reads it, so presence alone is no longer the
+    # contract: a bundle built before a demo picked up a new variant class would let
+    # the guard pass on output the app no longer serves. Same digest stamp the Sass
+    # side uses, over the entry stylesheet and the trees it scans.
     def tailwind!
       return if @tailwind_built
 

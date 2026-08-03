@@ -53,6 +53,40 @@ RSpec.describe 'Engine host contract' do
         expect(response).to have_http_status(:ok)
       end
     end
+
+    # tailwind.css is the name every Rails app that runs Tailwind builds for itself, and
+    # `asset_path` matches on the logical name across the host's whole load path, so the
+    # host's bundle answered for the chrome. That bundle never had these views in its
+    # @source list, so the docs lost every utility only they use: the nav sat on top of
+    # the content with no pt-11, the sidebars had no sticky offset, and the tables came
+    # out unstyled. This host builds a tailwind.css of its own, which is exactly the
+    # shape that hid the bug.
+    it 'links the engine copy rather than a host asset of the same name', type: :request do
+      get '/framework'
+      href = response.body[/<link[^>]+href="([^"]*tailwind[^"]*)"/, 1]
+
+      get href
+
+      aggregate_failures do
+        expect(href).to start_with('/framework-docs/tailwind.css')
+        expect(response.body).to include('.pt-11{')
+      end
+    end
+
+    # Same collision, one stylesheet over: core carries its own prism_trmnl.css, and the
+    # docs code samples were highlighted from it rather than from the theme this repo
+    # ships next to them.
+    it 'links the engine copy of the Prism theme', type: :request do
+      get '/framework'
+      href = response.body[/<link[^>]+href="([^"]*prism_trmnl[^"]*)"/, 1]
+
+      get href
+
+      aggregate_failures do
+        expect(href).to start_with('/framework-docs/prism_trmnl.css')
+        expect(response).to have_http_status(:ok)
+      end
+    end
   end
 
   # Same contract, one bundle over: every build path compiles plugins_legacy.css, the
