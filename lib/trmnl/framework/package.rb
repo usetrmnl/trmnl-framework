@@ -10,9 +10,9 @@ module Framework
   # names the gitignored build output that only the glob branch can ever see.
   #
   # Plain Ruby on purpose: the gemspec loads this file before any Rails is available, and
-  # the engine keeps lib/trmnl_framework out of the autoloader.
+  # the engine keeps lib/trmnl/framework out of the autoloader.
   module Package
-    ROOT = Pathname.new(__dir__).join("../..").expand_path
+    ROOT = Pathname.new(__dir__).join("../../..").expand_path
 
     # The only subtrees a package ever draws from.
     PACKAGED_SUBTREES = %w[app config db/data lib public vendor].freeze
@@ -26,7 +26,7 @@ module Framework
     # and it is named LICENSE. THIRD_PARTY_NOTICES.md travels with it because the gem
     # packages public/images and public/fonts, which is what it covers.
     PACKAGED_ROOT_FILES = %w[
-      trmnl_framework.gemspec
+      trmnl-framework.gemspec
       README.md
       LICENSE
       THIRD_PARTY_NOTICES.md

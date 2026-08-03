@@ -223,22 +223,15 @@ jobs:
           path: tmp/playwright/runtime-results
           retention-days: 7
 
-  # The 46 committed PNGs are the only thing guarding what the framework actually
-  # draws, and nothing ran them until this job: a rendering regression landed green.
-  #
-  # It reports without blocking, and the reason is the baselines rather than the
-  # suite. Browsers and fonts rasterize differently per platform, so the committed
-  # PNGs (all darwin) cannot be compared against a Linux run; CONTRIBUTING says as
-  # much. Until Linux baselines are generated and committed, this job exists to
-  # publish the diff images, which is what makes generating them possible. Drop
-  # continue-on-error in the same change that commits them, and add "Playwright
-  # visual" to the required checks on main.
+  # The 46 committed Linux PNGs under test/visual/__screenshots__/linux/ are what a
+  # ubuntu-latest runner compares against. Darwin baselines stay for local macOS
+  # runs. Update both when an intentional rendering change lands (locally with
+  # test:visual:update on each OS, or take linux actuals from this job's artifact).
   playwright-visual:
     name: Playwright visual
     runs-on: ubuntu-latest
     # Same visibility gate as the runtime job, for the same reason.
     if: ${{ !github.event.repository.private }}
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1

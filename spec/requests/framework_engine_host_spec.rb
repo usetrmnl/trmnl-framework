@@ -16,7 +16,7 @@ RSpec.describe 'Engine host contract' do
 
   describe 'docs chrome CSS' do
     it 'ships the packaged snapshot in the gem' do
-      gemspec = Gem::Specification.load(Framework::Engine.root.join('trmnl_framework.gemspec').to_s)
+      gemspec = Gem::Specification.load(Framework::Engine.root.join('trmnl-framework.gemspec').to_s)
 
       expect(gemspec.files).to include('app/assets/static/docs_chrome.css')
     end
@@ -61,7 +61,7 @@ RSpec.describe 'Engine host contract' do
   # whole chain missed and /framework-docs/plugins_legacy.css fell through to the host.
   describe 'v1.2 bundle CSS' do
     it 'ships the packaged snapshot in the gem' do
-      gemspec = Gem::Specification.load(Framework::Engine.root.join('trmnl_framework.gemspec').to_s)
+      gemspec = Gem::Specification.load(Framework::Engine.root.join('trmnl-framework.gemspec').to_s)
 
       expect(gemspec.files).to include('app/assets/static/legacy_bundle.css')
     end
@@ -433,7 +433,7 @@ RSpec.describe 'Engine host contract' do
   # Markdown pipelines want is development-only and required lazily, so a host installs
   # neither a Tailwind binary nor the whole of Rails.
   describe 'runtime dependencies' do
-    let(:gemspec) { Gem::Specification.load(Framework::Engine.root.join('trmnl_framework.gemspec').to_s) }
+    let(:gemspec) { Gem::Specification.load(Framework::Engine.root.join('trmnl-framework.gemspec').to_s) }
     let(:runtime_dependencies) { gemspec.dependencies.select { |dep| dep.type == :runtime }.map(&:name) }
     let(:build_only_gems) { %w[brotli cogger nokogiri reverse_markdown rubyzip tailwindcss-rails] }
 
@@ -484,7 +484,7 @@ RSpec.describe 'Engine host contract' do
   describe 'the Sass compiler pin' do
     let(:root) { Framework::Engine.root }
     let(:gemfile) { root.join('Gemfile').read }
-    let(:gemspec) { Gem::Specification.load(root.join('trmnl_framework.gemspec').to_s) }
+    let(:gemspec) { Gem::Specification.load(root.join('trmnl-framework.gemspec').to_s) }
     let(:pinned_version) { gemfile[/gem ["']sass-embedded["'], ["']([\d.]+)["']/, 1] }
     let(:gemspec_requirement) { gemspec.dependencies.find { |dep| dep.name == 'sass-embedded' }.requirement.to_s }
 

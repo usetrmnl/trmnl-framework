@@ -548,7 +548,7 @@ namespace :framework do
       unless Framework::Version.live_build_path('plugins.css')
         warn <<~MISSING
           No live CSS build found. Dev mode needs a compiled framework checkout:
-            1. point the Gemfile at a local checkout (gem "trmnl_framework", path: "../trmnl-framework")
+            1. point the Gemfile at a local checkout (gem "trmnl-framework", path: "../trmnl-framework")
             2. run bin/setup (or bin/rails dartsass:build) inside that checkout
           Until then /framework-dev/plugins.css has no file behind it.
         MISSING

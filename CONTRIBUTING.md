@@ -96,9 +96,11 @@ fixtures and browser errors without comparing them to headless PNGs. Use the fai
 artifacts from the headless command to review image differences.
 
 Visual baselines are platform-specific because browsers and fonts can render
-differently across operating systems. The current local baselines do not require a
-hosted visual-testing service. Linux baselines have to be generated and committed
-before a visual job can compare against them.
+differently across operating systems. Darwin and Linux PNGs both live under
+`test/visual/__screenshots__/`. Local macOS runs use the darwin set; CI compares
+against linux. After an intentional rendering change, update the baseline for the
+platform you ran on, and if only one of them changed take the other from a CI
+failure artifact (`*-actual.png` under `tmp/playwright/visual-results`).
 
 Every pull request runs the contract suites, rubocop, a Sass build that fails on any
 undefined reference, a color-tokens job that regenerates the two tracked color SCSS
@@ -119,12 +121,10 @@ job reads. Run it locally with `bundle exec rake framework:processed_bundle` fol
 to run before a release re-cut.
 [docs/BUILD_AND_SERVING.md](docs/BUILD_AND_SERVING.md) has the commands.
 
-Both browser suites have jobs, skipped while the repo is private. The runtime suite
-blocks. The visual suite reports without blocking, because the committed PNGs are darwin
-baselines and a Linux run cannot be compared against them; the job publishes the diff
-images so those baselines can be generated. A tag runs the runtime suite against the
-processed bundle regardless of repository visibility, so no version publishes without a
-browser loading the exact bytes it ships.
+Both browser suites have jobs, skipped while the repo is private. Each one blocks when
+it fails. A tag runs the runtime suite against the processed bundle regardless of
+repository visibility, so no version publishes without a browser loading the exact bytes
+it ships.
 
 ## Writing docs copy
 

@@ -40,6 +40,10 @@ Lint/ConstantDefinitionInBlock:
 Metrics/ClassLength:
   Enabled: false
 
+Naming/FileName:
+  Exclude:
+    - lib/trmnl-framework.rb
+
 Naming/VariableNumber:
   Enabled: false
 

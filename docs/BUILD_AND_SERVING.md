@@ -240,12 +240,11 @@ npm run test:visual:processed
 ```
 
 Run it before a release re-cut rather than on every pull request: the build costs about
-90 seconds, and the visual half compares darwin screenshots a Linux runner has nothing to
-match. The Release workflow runs the runtime half on every tag, so a published version is
-never one no browser loaded, and running it locally first is how you find that out before
-the tag exists. `test/runtime/release/processed-bundle.spec.js` asserts in both modes that
-the browser received the bundle and the runtime its mode names, so a swap that missed
-fails instead of reporting parity.
+90 seconds. The Release workflow runs the runtime half on every tag, so a published
+version is never one no browser loaded, and running it locally first is how you find
+that out before the tag exists. `test/runtime/release/processed-bundle.spec.js` asserts
+in both modes that the browser received the bundle and the runtime its mode names, so a
+swap that missed fails instead of reporting parity.
 
 ## Troubleshooting
 
