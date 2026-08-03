@@ -37,8 +37,8 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
-COPY Gemfile Gemfile.lock .ruby-version trmnl_framework.gemspec package.json package-lock.json ./
-COPY lib/trmnl_framework/version.rb lib/trmnl_framework/version.rb
+COPY Gemfile Gemfile.lock .ruby-version trmnl-framework.gemspec package.json package-lock.json ./
+COPY lib/trmnl/framework/version.rb lib/trmnl/framework/version.rb
 
 RUN gem install bundler -v "$(awk '/^BUNDLED WITH/{getline; gsub(/ /, ""); print}' Gemfile.lock)" --no-document
 

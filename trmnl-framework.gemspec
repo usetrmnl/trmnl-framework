@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/trmnl_framework/version"
-require_relative "lib/trmnl_framework/package"
+require_relative "lib/trmnl/framework/version"
+require_relative "lib/trmnl/framework/package"
 
 Gem::Specification.new do |spec|
-  spec.name = "trmnl_framework"
+  spec.name = "trmnl-framework"
   spec.version = Framework::VERSION
   spec.authors = ["TRMNL"]
   spec.email = ["lucian@trmnl.com"]
@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
 
   # Runtime dependencies are what mounting the engine needs and nothing else. Rails is
   # taken apart on purpose: the engine boots action_controller and action_view only
-  # (lib/trmnl_framework/engine.rb), and the reference host runs with no database, so a
+  # (lib/trmnl/framework/engine.rb), and the reference host runs with no database, so a
   # host adopting a design system should not inherit ActiveRecord, ActionMailer,
   # ActionCable and ActiveStorage with it.
   #

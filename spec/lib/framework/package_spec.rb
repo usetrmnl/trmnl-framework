@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'trmnl_framework/package'
+require 'trmnl/framework/package'
 
 # The gemspec has two ways to build the file list: `git ls-files` in the repo, and a glob
 # over the packaged subtrees when there is no .git (a source tarball). They used to

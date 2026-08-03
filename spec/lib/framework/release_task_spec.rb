@@ -272,7 +272,7 @@ RSpec.describe Framework::ReleaseTask do
     def with_gem_version_file(contents)
       Dir.mktmpdir do |dir|
         root = Pathname.new(dir)
-        path = root.join('lib', 'trmnl_framework', 'version.rb')
+        path = root.join('lib', 'trmnl', 'framework', 'version.rb')
         FileUtils.mkdir_p(path.dirname)
         path.write(contents)
         task = described_class.new('current', root_dir: root, logger: null_logger)

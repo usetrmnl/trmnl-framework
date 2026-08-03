@@ -2,7 +2,7 @@
 
 The gem is the single source of truth for the framework: docs, runtime classes,
 the versioned release archive, fonts, and pattern images. Pin it to `main` and
-deploy after `bundle update trmnl_framework`. Do not run `framework:fetch`, and
+deploy after `bundle update trmnl-framework`. Do not run `framework:fetch`, and
 do not commit copies of any gem-owned tree into the host.
 
 ## Requirements
@@ -21,9 +21,9 @@ do not commit copies of any gem-owned tree into the host.
 ## Gemfile
 
 ```ruby
-gem "trmnl_framework", git: "https://github.com/usetrmnl/trmnl-framework.git", branch: "main"
+gem "trmnl-framework", git: "https://github.com/usetrmnl/trmnl-framework.git", branch: "main"
 # Local checkout:
-# gem "trmnl_framework", path: "../trmnl-framework"
+# gem "trmnl-framework", path: "../trmnl-framework"
 ```
 
 ## Routes (config/routes.rb)
@@ -218,7 +218,7 @@ The task names whichever one is missing and stops before it writes anything.
 
 ## What the engine claims in your app
 
-The engine is deliberately not isolated (`engine_name "trmnl_framework"`, no
+The engine is deliberately not isolated (`engine_name "trmnl-framework"`, no
 `isolate_namespace`), so its names land at host level. Check these against your app
 before mounting:
 
@@ -261,7 +261,7 @@ so responses carry cache headers (`Rack::Files` sends none).
 One symlink, refreshed after each `bundle install` (do not commit it):
 
 ```bash
-ln -sfn "$(bundle show trmnl_framework)/public" /home/deploy/trmnl-worker/framework_public
+ln -sfn "$(bundle show trmnl-framework)/public" /home/deploy/trmnl-worker/framework_public
 ```
 
 nginx serves host `public/` first and falls back to the gem

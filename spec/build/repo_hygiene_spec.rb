@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'open3'
-require 'trmnl_framework/package'
+require 'trmnl/framework/package'
 
 # The repo-level files a public checkout is judged by: the README's orientation map, the
 # ignore lists, the license notices on vendored-looking assets, and the house copy rule.

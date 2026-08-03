@@ -33,7 +33,7 @@ jobs:
             exit 1
           fi
 
-          gem_version="$(sed -n 's/.*VERSION = "\([^"]*\)".*/\1/p' lib/trmnl_framework/version.rb)"
+          gem_version="$(sed -n 's/.*VERSION = "\([^"]*\)".*/\1/p' lib/trmnl/framework/version.rb)"
           if [ "$gem_version" != "$version" ]; then
             echo "::error::Tag $GITHUB_REF_NAME does not match Framework::VERSION ($gem_version)."
             exit 1

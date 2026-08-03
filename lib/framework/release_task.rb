@@ -545,7 +545,7 @@ module Framework
       logger.info { "Latest version: #{new_version}" }
     end
 
-    def gem_version_file = root_dir.join('lib', 'trmnl_framework', 'version.rb')
+    def gem_version_file = root_dir.join('lib', 'trmnl', 'framework', 'version.rb')
     def npm_manifest_file = root_dir.join('package.json')
     def npm_lockfile = root_dir.join('package-lock.json')
 

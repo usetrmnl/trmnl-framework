@@ -14,7 +14,7 @@ module Framework
   class Engine < ::Rails::Engine
     # Controllers/helpers keep host-level names (FrameworkController, FrameworkHelper)
     # so mother-app route helpers and plugin locals stay unchanged. Do not isolate.
-    engine_name "trmnl_framework"
+    engine_name "trmnl-framework"
 
     config.trmnl_framework = ActiveSupport::OrderedOptions.new
     config.trmnl_framework.parent_controller = "::ApplicationController"
@@ -31,8 +31,9 @@ module Framework
         root.join("lib/procss"),
         root.join("lib/projs"),
         root.join("lib/rulediff"),
-        root.join("lib/trmnl_framework.rb"),
-        root.join("lib/trmnl_framework")
+        root.join("lib/trmnl-framework.rb"),
+        root.join("lib/trmnl/framework.rb"),
+        root.join("lib/trmnl/framework")
       )
     end
 
@@ -44,13 +45,13 @@ module Framework
 
       app.config.after_initialize do
         mode = Framework::DocsServingMode.current
-        Rails.logger&.info("[trmnl_framework] docs assets: #{mode.explanation}")
+        Rails.logger&.info("[trmnl-framework] docs assets: #{mode.explanation}")
       end
     end
 
     # Serve gem public/ (and docs/dev fallbacks) so hosts never copy release assets.
     initializer "trmnl_framework.static", before: :build_middleware_stack do |app|
-      require "trmnl_framework/static" unless defined?(Framework::Static)
+      require "trmnl/framework/static" unless defined?(Framework::Static)
       app.middleware.unshift(Framework::Static, root)
     end
 

@@ -27,7 +27,7 @@ node_modules/
 .env
 .env.*
 !.env.example
-# Built gem, from `gem build trmnl_framework.gemspec`.
+# Built gem, from `gem build trmnl-framework.gemspec`.
 *.gem
 # Private pre-launch planning record and review logs. They stay on disk in a
 # maintainer's checkout and are read there; the public repo does not carry them.

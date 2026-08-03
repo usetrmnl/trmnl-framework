@@ -173,7 +173,7 @@ config/                  the Rails app; config/routes/framework.rb is the docs r
 db/data/                 token + release data (framework_colors.yml, framework_fonts.yml,
                          framework_versions.yml, framework_devices.yml ← exported by core)
 lib/framework/           token generators, Framework::Version, ReleaseTask, FontsReleaseTask
-lib/trmnl_framework/     the Rails engine host apps mount (Static, Package, route drawing)
+lib/trmnl/framework/     the Rails engine host apps mount (Static, Package, route drawing)
 lib/tasks/               framework.rake (tokens + releases), framework_docs.rake (markdown/llms.txt),
                          framework_themes.rake (theme lint)
 lib/procss, lib/projs    minify tooling (cssnano+postcss-rename / terser), same as core
@@ -271,14 +271,14 @@ Core is TRMNL's main application (the trmnl.com service). It is private and not 
 of this release, and nothing in this repo depends on it at runtime. Core mounts this
 gem as a Rails engine and treats it as the single source of truth:
 
-- Gemfile: `gem "trmnl_framework", git: "...", branch: "main"` (or a `path:` checkout).
+- Gemfile: `gem "trmnl-framework", git: "...", branch: "main"` (or a `path:` checkout).
 - `Framework.draw_routes(self)` mounts docs in-process under `/framework*`.
 - Released `/css|/js|<semver>/`, fonts, color manifests, and Sass load paths come from
   the gem at runtime (`Framework::Static`). No `framework:fetch`, no host vendoring.
 - `rake framework:development:enable` (in core) flips live-build mode so plugin renders
   use this checkout's current CSS/JS.
 
-Upgrade flow: land changes on `main` here → in core `bundle update trmnl_framework` → deploy.
+Upgrade flow: land changes on `main` here → in core `bundle update trmnl-framework` → deploy.
 
 ## Docs site notes
 

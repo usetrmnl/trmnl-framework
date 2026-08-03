@@ -8,7 +8,7 @@ require "action_view/railtie"
 
 Bundler.require(*Rails.groups)
 
-require "trmnl_framework"
+require "trmnl/framework"
 
 module FrameworkDocs
   class Application < Rails::Application

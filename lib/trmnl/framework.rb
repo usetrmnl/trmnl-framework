@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "trmnl_framework/version"
-require "trmnl_framework/engine"
-require "trmnl_framework/routes"
-require "trmnl_framework/static"
+require "trmnl/framework/version"
+require "trmnl/framework/engine"
+require "trmnl/framework/routes"
+require "trmnl/framework/static"
 
 module Framework
   # Source of truth for YAML data, Sass, and the release archive.

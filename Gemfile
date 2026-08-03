@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 ruby file: ".ruby-version"
 
-# Engine gem + its runtime dependencies (see trmnl_framework.gemspec).
+# Engine gem + its runtime dependencies (see trmnl-framework.gemspec).
 gemspec
 
 # Released CSS is committed byte-for-byte, so the compiler this repo builds with is
