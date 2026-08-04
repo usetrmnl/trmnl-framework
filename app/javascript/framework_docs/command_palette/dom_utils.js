@@ -1,5 +1,5 @@
 // DOM manipulation utilities for Command Palette
-import { CSS_CLASSES, DATA_ATTRIBUTES, SELECTORS } from "command_palette/constants"
+import { CSS_CLASSES, DATA_ATTRIBUTES, SELECTORS } from "framework_docs/command_palette/constants"
 
 /**
  * Safely query DOM elements with error handling

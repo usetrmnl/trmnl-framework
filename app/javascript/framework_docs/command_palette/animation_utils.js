@@ -1,5 +1,5 @@
 // Animation utilities for Command Palette
-import { ANIMATION, CSS_CLASSES } from "command_palette/constants"
+import { ANIMATION, CSS_CLASSES } from "framework_docs/command_palette/constants"
 
 export class AnimationManager {
   constructor(backdropElement, panelElement) {

@@ -1,14 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
-import { PROVIDERS, KEYBOARD, CSS_CLASSES, SELECTORS, DATA_ATTRIBUTES } from "command_palette/constants"
-import { SearchEngine } from "command_palette/search_utils"
-import { AnimationManager, scrollIntoView } from "command_palette/animation_utils"
-import { ProviderManager } from "command_palette/provider_manager"
-import { ScopeManager } from "command_palette/scope_manager"
-import { isTouchEnabled } from "lib/input_modality"
+import { PROVIDERS, KEYBOARD, CSS_CLASSES, SELECTORS, DATA_ATTRIBUTES } from "framework_docs/command_palette/constants"
+import { SearchEngine } from "framework_docs/command_palette/search_utils"
+import { AnimationManager, scrollIntoView } from "framework_docs/command_palette/animation_utils"
+import { ProviderManager } from "framework_docs/command_palette/provider_manager"
+import { ScopeManager } from "framework_docs/command_palette/scope_manager"
+import { isTouchEnabled } from "framework_docs/lib/input_modality"
 import {
   isCurrentDeviceSwitch,
   submitDeviceSwitchForm
-} from "lib/device_switch"
+} from "framework_docs/lib/device_switch"
 import {
   safeQuery,
   safeQueryAll,
@@ -20,7 +20,7 @@ import {
   isDefaultVisible,
   createElement,
   devLog
-} from "command_palette/dom_utils"
+} from "framework_docs/command_palette/dom_utils"
 
 // Command Palette Controller (Cmd+K)
 //

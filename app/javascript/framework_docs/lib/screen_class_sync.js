@@ -3,7 +3,7 @@
 // or theme. Add any new preserved screen--* modifier HERE and nowhere else.
 //
 // This file must stay loadable both as an ES module (parent page via
-// `import "lib/screen_class_sync"`) and as a classic script (example iframes
+// `import "framework_docs/lib/screen_class_sync"`) and as a classic script (example iframes
 // have no importmap, so framework_examples_controller injects it with a plain
 // script tag before the iframe bridge). Therefore: no import/export statements;
 // consumers read window.TRMNLScreenClassSync.

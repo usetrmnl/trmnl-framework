@@ -10,7 +10,7 @@ import { routeProcessedAssets } from '../../support/processed-bundle.js';
 // The margin is not a hardcoded constant: framework_examples_controller,
 // fancy_screen_picker_controller and the docs layout all read
 // window.__TRMNL_EXAMPLE_VIEWPORT_MARGIN__ first (see
-// app/javascript/controllers/framework_examples_controller.js:115). Seeding it
+// app/javascript/framework_docs/controllers/framework_examples_controller.js:115). Seeding it
 // with a page-sized margin puts every wrapper in the eager set through the
 // controller's own code path, so the specs exercise the shipped wrapping and
 // picker logic rather than a test-only branch.

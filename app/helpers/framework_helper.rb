@@ -1128,7 +1128,7 @@ module FrameworkHelper
   # engine app/javascript files. Prefer digested assets when present; otherwise use
   # /framework-docs/* served from the gem by Framework::Static.
   DOCS_PUBLIC_ASSET_MAP = {
-    'lib/screen_class_sync.js' => 'screen_class_sync.js',
+    'framework_docs/lib/screen_class_sync.js' => 'screen_class_sync.js',
     'framework_iframe_bridge.js' => 'framework_iframe_bridge.js',
     'plugin_legacy.js' => 'plugin_legacy.js',
     'plugin-render/plugins.js' => 'plugins.js',
@@ -1142,15 +1142,23 @@ module FrameworkHelper
   # host's bundle. The docs then rendered against a stylesheet compiled without these
   # views in its @source list, and every utility only the docs use was simply absent:
   # no pt-11 under the fixed nav, no sticky sidebar offset, no border-separate on the
-  # tables. The Prism theme collides the same way on a host carrying its own copy.
+  # tables. The Prism theme collides the same way on a host carrying its own copy, as do
+  # the two vendored scripts: core vendors prism-1.29.0.min.js and jquery-3.6.0.min.js
+  # under those exact names, so the docs highlighted their samples with whichever
+  # tokenizer the host's load path reached first.
   #
-  # These two come off the engine tree instead. Framework::Static resolves the chrome to
+  # These come off the engine tree instead. Framework::Static resolves the chrome to
   # the live build in this repo and the packaged snapshot everywhere else, so the docs
   # server still serves what it just compiled. Everything else keeps the lookup above:
   # engine-only paths cannot collide, and the plugin bundles are resolved by serving
   # mode, where a consumer host that opts in with the development marker is asking for
   # its own build.
-  HOST_SHADOWED_DOCS_ASSETS = %w[tailwind.css prism_trmnl.css].freeze
+  HOST_SHADOWED_DOCS_ASSETS = %w[
+    tailwind.css
+    prism_trmnl.css
+    prism-1.29.0.min.js
+    jquery-3.6.0.min.js
+  ].freeze
 
   # Above the private section on purpose: the controller resolves the docs bundle
   # through `helpers.framework_docs_asset_path`, an explicit receiver, so that the
