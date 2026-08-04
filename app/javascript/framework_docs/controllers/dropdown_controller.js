@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import {
   isCurrentDeviceSwitch,
   submitDeviceSwitchForm
-} from "lib/device_switch"
+} from "framework_docs/lib/device_switch"
 
 export default class extends Controller {
   static targets = ["menu"]

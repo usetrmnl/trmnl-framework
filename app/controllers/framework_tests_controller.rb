@@ -2,6 +2,10 @@
 # Prefixed because the engine is not isolated: a bare `TestsController` would claim a
 # generic global name in every host.
 class FrameworkTestsController < Framework.parent_controller_class
+  # Same reason as FrameworkController: these pages render the engine's chrome, and a
+  # host app's views answer for it first without this.
+  prepend_view_path Framework::Engine.root.join('app/views')
+
   layout :test_layout
 
   helper FrameworkHelper

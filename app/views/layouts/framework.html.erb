@@ -15,9 +15,11 @@
       Resolved like the chrome below rather than by logical name: a host with its own
       prism_trmnl.css shadows the engine's copy and colors these samples from it. %>
   <%= stylesheet_link_tag framework_docs_asset_path('prism_trmnl.css'), "data-turbo-track": "reload" %>
-  <%= javascript_include_tag "prism-1.29.0.min" %>
+  <%= javascript_include_tag framework_docs_asset_path('prism-1.29.0.min.js') %>
 
-  <%= javascript_importmap_tags %>
+  <%# Named entry point, not the default: a host pins an "application" of its own, and
+      whichever draws last wins the name. framework_docs/application is only ours. %>
+  <%= javascript_importmap_tags "framework_docs/application" %>
 
   <%# Docs chrome. Hosts that build Tailwind serve their own digested bundle;
       hosts that never run it fall back to the snapshot the gem ships. %>
@@ -59,14 +61,14 @@
 
   <%= render 'shared/favicon' %>
 
-  <%= javascript_include_tag "jquery-3.6.0.min" %>
+  <%= javascript_include_tag framework_docs_asset_path('jquery-3.6.0.min.js') %>
   <% fw_docs_version = current_docs_version %>
 </head>
 <body data-page-theme="system" class="<%= layout_application %>" data-controller="framework-examples"
       data-framework-examples-plugins-css-path-value="<%= plugins_bundle[:css] %>"
       data-framework-examples-plugins-js-path-value="<%= plugins_bundle[:js] %>"
       data-framework-examples-bridge-path-value="<%= framework_docs_asset_path('framework_iframe_bridge.js') %>"
-      data-framework-examples-screen-class-sync-path-value="<%= framework_docs_asset_path('lib/screen_class_sync.js') %>"
+      data-framework-examples-screen-class-sync-path-value="<%= framework_docs_asset_path('framework_docs/lib/screen_class_sync.js') %>"
       data-framework-examples-example-iframe-config-url-value="<%= framework_docs_example_iframe_config_url(version: fw_docs_version) %>"
       data-framework-examples-single-bundle-mode-value="<%= plugins_bundle[:single_bundle_mode] %>"
       data-framework-examples-frozen-runtime-value="<%= legacy_docs ? 'true' : 'false' %>"

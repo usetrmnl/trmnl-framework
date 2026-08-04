@@ -42,11 +42,17 @@ module Framework
     DEV_CACHE_CONTROL = "no-cache"
 
     DOCS_FILES = {
-      "screen_class_sync.js" => ->(root) { root.join("app/javascript/lib/screen_class_sync.js") },
+      "screen_class_sync.js" => ->(root) { root.join("app/javascript/framework_docs/lib/screen_class_sync.js") },
       "framework_iframe_bridge.js" => ->(root) { root.join("app/javascript/framework_iframe_bridge.js") },
       "plugin_legacy.js" => ->(root) { root.join("app/javascript/plugin_legacy.js") },
       "plugins.js" => ->(root) { root.join("app/javascript/plugin-render/plugins.js") },
       "prism_trmnl.css" => ->(root) { root.join("app/assets/static/prism_trmnl.css") },
+      # Vendored the same way core vendors them, under the same filenames, so the docs
+      # linked whichever copy the host's load path answered with first. Prism is the
+      # visible one: a host on a different build highlights these samples with a
+      # tokenizer the theme next to it was never matched against.
+      "prism-1.29.0.min.js" => ->(root) { root.join("vendor/javascript/prism-1.29.0.min.js") },
+      "jquery-3.6.0.min.js" => ->(root) { root.join("vendor/javascript/jquery-3.6.0.min.js") },
       # Framework.server_builds is the only live-build candidate any of these chains has.
       # dartsass and Tailwind write to the host's Rails.root, which in this repo is server/,
       # so the engine root's own app/assets/builds/ is never a build target. It was listed

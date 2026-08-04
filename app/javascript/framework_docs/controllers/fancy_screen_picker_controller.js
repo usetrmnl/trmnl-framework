@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import TRMNLPicker from '@trmnl/picker'
 // Side-effect import: window.TRMNLScreenClassSync, the shared screen-class
 // rewrite predicate (also used by the iframe bridge and layout fallback).
-import "lib/screen_class_sync"
+import "framework_docs/lib/screen_class_sync"
 
 export default class extends Controller {
   static COLOR_PREVIEW_ACTUAL = 'actual'

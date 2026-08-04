@@ -16,8 +16,8 @@
 // Scores stack: an exact title match also earns prefix + contains + fuzzy.
 // Ties broken by original DOM index (stable sort).
 //
-import { SCORING_WEIGHTS } from "command_palette/constants"
-import { devLog } from "command_palette/dom_utils"
+import { SCORING_WEIGHTS } from "framework_docs/command_palette/constants"
+import { devLog } from "framework_docs/command_palette/dom_utils"
 
 export class SearchEngine {
   constructor() {

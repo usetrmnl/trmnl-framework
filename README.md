@@ -159,7 +159,9 @@ app/assets/stylesheets/  Sass source
   framework/               the design system (config, mixins, base, elements, components, utilities, themes)
 app/javascript/          JS runtime + docs harness JS
   plugin-render/plugins.js   the terminalize engine (self-contained; published readable as plugins.js, minified as plugins.min.js)
-  controllers/               docs Stimulus controllers (examples iframes, sidebars, palette, pickers)
+  framework_docs/            everything the docs boot for themselves, namespaced so a host
+                             importmap cannot claim the same module names (controllers/ holds
+                             the Stimulus controllers: example iframes, sidebars, palette, pickers)
 app/controllers, app/views  the docs site (every doc version, releases, examples, /framework/test pages)
 app/components/          docs ViewComponents (doc cards, comparisons, code examples, docs refs)
 app/helpers/             docs page copy (framework_intro_paragraphs), class-name helpers, demo data

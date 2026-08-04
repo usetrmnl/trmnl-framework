@@ -165,7 +165,7 @@ model and needs that branch removed.
 - `app/helpers/framework_helper.rb`: the `paint_api` and `v3_enhancement_guide` intro
   paragraphs both list dark mode as a mode the cascade resolves. Reword them onto themes.
 - Docs chrome: the screen picker's dark mode toggle
-  (`app/javascript/controllers/fancy_screen_picker_controller.js`, including the
+  (`app/javascript/framework_docs/controllers/fancy_screen_picker_controller.js`, including the
   `dark_mode` query parameter, the `dark-mode-notice` reveal, and the theme-active
   disabling), the dark entries in `app/views/framework/responsive_test.html.erb`, and
   the dark baselines in `app/views/framework_tests/visual/`.

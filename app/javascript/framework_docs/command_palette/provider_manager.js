@@ -1,5 +1,5 @@
 // Provider management for Command Palette
-import { PROVIDERS, DATA_ATTRIBUTES, SELECTORS } from "command_palette/constants"
+import { PROVIDERS, DATA_ATTRIBUTES, SELECTORS } from "framework_docs/command_palette/constants"
 import { 
   safeQuery, 
   safeQueryAll, 
@@ -8,7 +8,7 @@ import {
   getDataAttribute,
   devLog,
   devError
-} from "command_palette/dom_utils"
+} from "framework_docs/command_palette/dom_utils"
 
 export class ProviderManager {
   constructor(rootElement) {

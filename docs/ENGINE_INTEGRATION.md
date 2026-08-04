@@ -143,7 +143,7 @@ chrome and the demos around it.
 
 | Origin | What it loads | Where it comes from | Blocked |
 | --- | --- | --- | --- |
-| `fonts.googleapis.com`, `fonts.gstatic.com` | Inter and EB Garamond for the docs UI, Space Mono for code, Inter again inside every demo iframe | `app/views/layouts/framework.html.erb`, the `@import` at the top of `app/assets/tailwind/application.css` (so it is baked into the `tailwind.css` the gem ships), and `buildSrcdoc` in `app/javascript/controllers/framework_examples_controller.js` | Docs chrome and demo iframes fall back to system fonts. Framework screens keep the self-hosted `/fonts` families either way. |
+| `fonts.googleapis.com`, `fonts.gstatic.com` | Inter and EB Garamond for the docs UI, Space Mono for code, Inter again inside every demo iframe | `app/views/layouts/framework.html.erb`, the `@import` at the top of `app/assets/tailwind/application.css` (so it is baked into the `tailwind.css` the gem ships), and `buildSrcdoc` in `app/javascript/framework_docs/controllers/framework_examples_controller.js` | Docs chrome and demo iframes fall back to system fonts. Framework screens keep the self-hosted `/fonts` families either way. |
 | `unpkg.com` | `@trmnl/picker`, the screen-picker web component | `config/importmap.rb` | The device picker stays blank. Every page still renders. |
 | `trmnl.com` | Highcharts and Chartkick | The chart docs page and the Shopify example fixture | Those charts render empty. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here. |
 | `cdn.jsdelivr.net` | opentype.js | The font glyphs docs page | The glyph tables stay empty. |
@@ -236,7 +236,17 @@ before mounting:
   `lib/framework`.
 - **View roots**: `app/views/{framework,framework_v1,framework_v2,framework_v3_1,framework_tests,layouts,shared}`.
   The engine claims no `layouts/application.html.erb`: both its controllers name their
-  layout, so a host's own application layout is never shadowed.
+  layout, so a host's own application layout is never shadowed. The two docs controllers
+  prepend this tree onto their own lookup, so the docs render the chrome shipped beside
+  them even where your app has a partial of the same name. `shared/` is where that bites:
+  core carries its own `_fancy_screen_picker`, `_menubar_screen_picker`, `_command_palette`
+  and a copy of every `shared/icons` partial, and before the prepend those answered for
+  the docs. Your own controllers are untouched, so your copies still render your pages.
+- **JS module names**: everything the docs boot for themselves is pinned under
+  `framework_docs/`, and the docs layout names `framework_docs/application` as its entry
+  point. A host importmap is drawn after the engine's and the later pin wins, so nothing
+  bare is safe to share. `plugin-render/*`, `plugin_legacy` and `framework_iframe_bridge`
+  stay bare on purpose: those match the names core already pins.
 - **URL prefixes**: `/css/`, `/js/`, `/fonts/`, `/images/`, `/framework/`,
   `/framework-docs/`, `/framework-dev/`, plus `llms.txt` and
   `llms-full.txt` at the root. `Framework::Static` is unshifted ahead of

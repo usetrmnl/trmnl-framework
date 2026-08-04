@@ -1,4 +1,15 @@
 class FrameworkController < Framework.parent_controller_class
+  # A host's app/views precedes an engine's in the lookup, so every partial the docs
+  # chrome renders was answerable by the host app. On core that is not hypothetical: it
+  # carries its own shared/_fancy_screen_picker, its own shared/_menubar_screen_picker,
+  # and a copy of all 181 shared/icons partials, all named the same. The docs nav asked
+  # for the picker and got core's fork of it, which predates the Style and Text Scale
+  # sections, so production served a picker two controls short of the one this repo
+  # renders. Prepending pins the docs to the views shipped beside them. Scoped to this
+  # controller: a host's own pages keep their own views, so core's visual editor still
+  # renders core's picker.
+  prepend_view_path Framework::Engine.root.join('app/views')
+
   # CONTEXT: docs pages render ~1.5MB of layout-dominated, visitor-independent
   # HTML in 1.1-1.5s, so whole responses are cached and replayed. Declared
   # before the other callbacks so a cache hit skips them (including

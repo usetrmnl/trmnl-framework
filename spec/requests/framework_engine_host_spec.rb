@@ -87,6 +87,91 @@ RSpec.describe 'Engine host contract' do
         expect(response).to have_http_status(:ok)
       end
     end
+
+    # The two vendored scripts collide by filename rather than by build: core vendors
+    # prism-1.29.0.min.js and jquery-3.6.0.min.js under exactly these names, so whichever
+    # copy the host's load path reached first is the one that highlighted the samples.
+    %w[prism-1.29.0.min.js jquery-3.6.0.min.js].each do |script|
+      it "links the engine copy of #{script}", type: :request do
+        get '/framework'
+        src = response.body[/<script[^>]+src="([^"]*#{Regexp.escape(script)}[^"]*)"/, 1]
+
+        get src
+
+        aggregate_failures do
+          expect(src).to start_with("/framework-docs/#{script}")
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
+  end
+
+  # The chrome above is only the half of the collision that shows up as a stylesheet. The
+  # views and the JS modules collide the same way, and there the docs lost whole controls:
+  # core carries its own shared/_fancy_screen_picker and its own fancy_screen_picker
+  # controller, both predating the Style and Text Scale sections, and both answered for
+  # the engine's because a host's app/views and a host's importmap are drawn last.
+  describe 'docs chrome the host cannot shadow' do
+    # Rails prepends every engine's app/views onto ActionController::Base in initializer
+    # order, so the app's own views land in front. Prepending on the docs controller is
+    # what puts the engine back ahead of them, and it gives the controller its own copy of
+    # _view_paths, which is why a later prepend on the base no longer reaches it. Remove
+    # that line and this decoy wins the lookup, exactly as core's fork does in production.
+    it 'renders its own picker rather than a host partial of the same name', type: :request do
+      Dir.mktmpdir do |dir|
+        decoy = Pathname(dir)
+        FileUtils.mkdir_p(decoy.join('shared'))
+        decoy.join('shared/_fancy_screen_picker.html.erb').write('<p>host fork of the picker</p>')
+
+        original = ActionController::Base._view_paths
+        ActionController::Base.prepend_view_path(decoy.to_s)
+        ActionView::LookupContext::DetailsKey.clear
+
+        begin
+          get '/framework'
+
+          aggregate_failures do
+            expect(response.body).not_to include('host fork of the picker')
+            expect(response.body).to include('data-fancy-screen-picker-target="textScaleMenu"')
+          end
+        ensure
+          ActionController::Base._view_paths = original
+          ActionView::LookupContext::DetailsKey.clear
+        end
+      end
+    end
+
+    # The two controls the fork was missing, named the way the picker labels them.
+    it 'reaches the page with the Style and Text Scale controls on it', type: :request do
+      get '/framework/docs/3.2'
+
+      aggregate_failures do
+        expect(response.body).to include('>Style</span>')
+        expect(response.body).to include('>Text Scale</span>')
+        expect(response.body).to include('data-fancy-screen-picker-target="themeMenu"')
+        expect(response.body).to include('data-fancy-screen-picker-target="textScaleMenu"')
+      end
+    end
+
+    # `expand_directories_into` lets the later write win and a host draws its importmap
+    # after the engine's, so every bare module name here was core's to claim: application,
+    # controllers/*, lib/*, command_palette/*. The docs booted core's Stimulus controllers
+    # against the engine's markup. Anything the docs load for themselves belongs under
+    # framework_docs/; the exceptions below are the names that match core's on purpose.
+    it 'pins its own JS under a namespace no host draws over', type: :request do
+      shareable_modules = %w[plugin_legacy framework_iframe_bridge]
+      shareable_prefixes = %w[framework_docs/ plugin-render/ @hotwired/ @trmnl/]
+
+      get '/framework'
+      map = JSON.parse(response.body[%r{<script type="importmap"[^>]*>(.*?)</script>}m, 1])
+
+      collidable = map['imports'].keys.reject do |name|
+        shareable_modules.include?(name) || shareable_prefixes.any? { |prefix| name.start_with?(prefix) }
+      end
+
+      expect(collidable).to be_empty,
+                            "a host importmap can claim #{collidable.join(', ')}; pin under framework_docs/"
+    end
   end
 
   # Same contract, one bundle over: every build path compiles plugins_legacy.css, the
@@ -368,7 +453,7 @@ RSpec.describe 'Engine host contract' do
         app/views/layouts/framework.html.erb
         app/assets/tailwind/application.css
         config/importmap.rb
-        app/javascript/controllers/framework_examples_controller.js
+        app/javascript/framework_docs/controllers/framework_examples_controller.js
       ].map { |path| root.join(path).read }
     end
 
