@@ -18,8 +18,12 @@ module Framework
     end
 
     def self.config = @config ||= YAML.load_file(config_path).freeze
-    def self.reload! = @config = nil
-    def self.version_numbers = config['versions'].map { |v| v['number'] }.freeze
+    def self.version_numbers = @version_numbers ||= config['versions'].map { |v| v['number'] }.freeze
+
+    def self.reload!
+      @config = nil
+      @version_numbers = nil
+    end
 
     # returns a format compatible with 'select' plugin field type
     def self.options

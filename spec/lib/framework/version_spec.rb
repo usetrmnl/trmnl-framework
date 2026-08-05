@@ -46,11 +46,23 @@ RSpec.describe Framework::Version do
       described_class.reload!
       expect(described_class.config).not_to be(original)
     end
+
+    it 'drops the memoized version numbers so the next read rebuilds them' do
+      original = described_class.version_numbers
+      described_class.reload!
+      expect(described_class.version_numbers).not_to be(original)
+    end
   end
 
   describe '.version_numbers' do
+    after { described_class.reload! }
+
     it 'lists every released version as a semantic-version string' do
       expect(described_class.version_numbers).to all(match(/\A\d+\.\d+\.\d+\z/))
+    end
+
+    it 'reuses the built list rather than rebuilding it' do
+      expect(described_class.version_numbers).to be(described_class.version_numbers)
     end
   end
 

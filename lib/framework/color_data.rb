@@ -12,9 +12,8 @@ module Framework
       end
     end
 
-    def self.load
-      YAML.load_file(yaml_path) || {}
-    end
+    def self.load = @data ||= (YAML.load_file(yaml_path) || {}).freeze
+    def self.reload! = @data = nil
 
     def self.color_palette
       load['color_palette'] || {}
