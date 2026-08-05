@@ -60,7 +60,7 @@
             border-radius: vars.ui-scaled(3px);
 
             .index {
-                @include mixins.shadow-text-stroke(vars.ui-scaled(3.5px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1.75px));
+                @include mixins.shadow-text-stroke(vars.ui-scaled(3.5px), mixins.contrast-stroke-color(), vars.ui-scaled(1.75px));
                 @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
                 overflow: visible;
                 font-family: var(--item-index-font-family);
