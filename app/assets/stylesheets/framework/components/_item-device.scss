@@ -7,6 +7,15 @@
 @use '../mixins' as mixins;
 @use '../mixins/responsive' as responsive;
 @use '../config/tokens' as vars;
+@use 'sass:list';
+@use 'sass:map';
+
+// Pill-style label modifiers paint their own background at the element layer.
+// The attribute form also matches their prefixed variants (md:label--filled).
+$_pill-label-exclusions: ();
+@each $modifier in list.join(('filled', 'inverted'), map.keys(vars.$semantic-colors)) {
+    $_pill-label-exclusions: list.append($_pill-label-exclusions, "[class*='label--#{$modifier}']", comma);
+}
 
 // The underline art an Item gives its labels, one level down from the bare
 // label's. Applied to the unprefixed modifier below and to every prefixed gate
@@ -31,7 +40,11 @@
 
     .item {
         .content {
-            .label {
+            // The secondary text paint lays its under-color over the label's
+            // own background, so pill-style modifiers sit out this dimming and
+            // keep the element layer's paint whole. :where() keeps the
+            // exclusion at zero specificity.
+            .label:where(:not(#{$_pill-label-exclusions})) {
                 @include mixins.for-screen-modifier('2bit', '4bit') {
                     @include mixins.semantic-text-paint('text-secondary', var(--framework-text-secondary));
                 }
@@ -62,15 +75,6 @@
 
                 @include mixins.for-4bit {
                     color: var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary)));
-                }
-            }
-
-            .label.label--filled,
-            .label.label--inverted,
-            .label.label--primary,
-            .label.label--error {
-                @include mixins.for-screen-modifier('2bit', '4bit') {
-                    @include mixins.semantic-text-paint('text-inverse', var(--framework-text-inverse));
                 }
             }
         }
