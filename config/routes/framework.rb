@@ -56,7 +56,7 @@ scope :framework do
 
     # Compatibility redirects for older non-versioned docs URLs
     framework_docs_components.each do |component|
-      get "/#{component}", to: redirect("/framework/docs/#{current_docs_version}/#{component}")
+      get "/#{component}", to: redirect("/framework/docs/#{current_docs_version}/#{component}"), as: "framework_docs_#{component}_redirect"
     end
 
     legacy_framework_docs_versions.each do |legacy_version, canonical_version|
@@ -65,7 +65,7 @@ scope :framework do
 
       framework_docs_components.each do |component|
         canonical_component = legacy_version == 'v3' && component == 'text' ? 'text_color' : component
-        get "/#{legacy_version}/#{component}", to: redirect("/framework/docs/#{canonical_version}/#{canonical_component}")
+        get "/#{legacy_version}/#{component}", to: redirect("/framework/docs/#{canonical_version}/#{canonical_component}"), as: "framework_docs_alias_#{legacy_version}_#{component}_redirect"
       end
     end
 
@@ -88,7 +88,7 @@ scope :framework do
 
   # Legacy redirects: /framework/:page -> current docs page
   framework_docs_components.each do |component|
-    get "/#{component}", to: redirect("/framework/docs/#{current_docs_version}/#{component}")
+    get "/#{component}", to: redirect("/framework/docs/#{current_docs_version}/#{component}"), as: "framework_#{component}_redirect"
   end
 
   get "/font_utilities", to: redirect("/framework/docs/text_size")
