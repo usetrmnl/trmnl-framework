@@ -23,7 +23,7 @@ RSpec.describe 'Framework item label paint' do
   it 'excludes every pill modifier from the item label dimming rule' do
     dim_rules = item_label_rules.select { |_sel, body| body.include?('text-secondary-text-under') }
     expect(dim_rules).not_to be_empty
-    dim_rules.each do |selectors, _body|
+    dim_rules.map(&:first).each do |selectors|
       pill_modifiers.each do |modifier|
         expect(selectors).to include("[class*=#{modifier}]")
       end
