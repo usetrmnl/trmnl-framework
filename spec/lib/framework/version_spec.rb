@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'tmpdir'
 
 RSpec.describe Framework::Version do
   subject(:version) { described_class.new(number) }
@@ -10,17 +9,42 @@ RSpec.describe Framework::Version do
   let(:number) { '1.0.0' }
 
   describe '.config' do
+    let(:missing_path) { Framework.data_root.join('db/data/no_such_file.yml') }
+
+    after { described_class.reload! }
+
     it 'reads the framework versions data file' do
       expect(described_class.config).to include('latest', 'versions')
     end
 
     context 'when the versions data file is missing' do
-      it 'raises rather than returning empty configuration' do
-        Dir.mktmpdir do |dir|
-          allow(described_class).to receive(:config_path).and_return(Pathname.new(dir).join('missing.yml'))
-          expect { described_class.config }.to raise_error(Errno::ENOENT)
-        end
+      before do
+        described_class.reload!
+        allow(described_class).to receive(:config_path).and_return(missing_path)
       end
+
+      it 'raises rather than returning empty configuration' do
+        expect { described_class.config }.to raise_error(Errno::ENOENT)
+      end
+    end
+
+    context 'when a deploy removes the data file after the first read' do
+      before do
+        described_class.config
+        allow(described_class).to receive(:config_path).and_return(missing_path)
+      end
+
+      it 'keeps serving the configuration it already parsed' do
+        expect(described_class.config).to include('latest', 'versions')
+      end
+    end
+  end
+
+  describe '.reload!' do
+    it 'drops the memoized configuration so the next read re-parses the file' do
+      original = described_class.config
+      described_class.reload!
+      expect(described_class.config).not_to be(original)
     end
   end
 
