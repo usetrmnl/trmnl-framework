@@ -64,4 +64,13 @@ RSpec.describe 'Docs routing versions' do
 
     expect(shadowed).to be_empty, "shadowed by an earlier route: #{shadowed.map { |verb, path| "#{verb} #{path}" }.join(', ')}"
   end
+
+  it 'claims no route name that shadows a view helper' do
+    view_helpers = ActionView::Base.instance_methods
+    shadowed = Rails.application.routes.named_routes.names.select do |name|
+      view_helpers.include?(:"#{name}_path") || view_helpers.include?(:"#{name}_url")
+    end
+
+    expect(shadowed).to be_empty, "route names shadowing a view helper: #{shadowed.join(', ')}"
+  end
 end
