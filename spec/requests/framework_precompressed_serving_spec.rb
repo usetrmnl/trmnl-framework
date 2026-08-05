@@ -8,7 +8,7 @@ require 'tmpdir'
 
 # A release publishes .gz and .br next to every served bundle, and precompressed files never
 # serve themselves: something has to map Accept-Encoding onto the sibling. Framework::Static
-# does it itself so usetrmnl.com and every self-hoster get the small bytes without front-layer
+# does it itself so trmnl.com and every self-hoster get the small bytes without front-layer
 # configuration. Serving them needs no compressor here, only the right file and header.
 #
 # The other half is tolerance: .br arrives with the 3.2.0 re-cut, and every version published
