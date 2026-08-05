@@ -17,8 +17,13 @@ module Framework
       Framework.data_root.join("db/data/framework_versions.yml")
     end
 
-    def self.config = YAML.load_file(config_path).freeze
-    def self.version_numbers = config['versions'].map { |v| v['number'] }.freeze
+    def self.config = @config ||= YAML.load_file(config_path).freeze
+    def self.version_numbers = @version_numbers ||= config['versions'].map { |v| v['number'] }.freeze
+
+    def self.reload!
+      @config = nil
+      @version_numbers = nil
+    end
 
     # returns a format compatible with 'select' plugin field type
     def self.options
