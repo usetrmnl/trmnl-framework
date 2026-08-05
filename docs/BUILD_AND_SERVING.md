@@ -193,7 +193,7 @@ Versions published before 3.2.0 carry no `.br`, and they never will: released di
 are frozen. Every consumer of the release listings treats the sibling as optional, so those
 versions serve and list exactly what they shipped.
 
-Picking the precompressed files up at the usetrmnl.com CDN edge is an ops checklist item,
+Picking the precompressed files up at the trmnl.com CDN edge is an ops checklist item,
 not a repo change.
 
 ### The processed bundle

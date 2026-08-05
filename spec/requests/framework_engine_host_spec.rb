@@ -480,7 +480,7 @@ RSpec.describe 'Engine host contract' do
 
     # Named rather than derived: the chart and font glyphs pages carry these script tags
     # both as live loads and inside code examples, and sass_api.html.erb shows a
-    # usetrmnl.com snippet it never fetches, so scanning the view tree reads copy as loads.
+    # trmnl.com snippet it never fetches, so scanning the view tree reads copy as loads.
     it 'discloses the two demo origins as well' do
       aggregate_failures do
         %w[trmnl.com cdn.jsdelivr.net].each do |origin|

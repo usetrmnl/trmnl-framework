@@ -23,7 +23,7 @@ module CoreCompatHelper
     if local.exist?
       "/images/plugins/#{file_name}"
     else
-      "https://usetrmnl.com/images/plugins/#{file_name}"
+      "https://trmnl.com/images/plugins/#{file_name}"
     end
   end
 end
