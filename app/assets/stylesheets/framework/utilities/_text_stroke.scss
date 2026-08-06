@@ -25,13 +25,13 @@ $text-stroke-sizes: (
 @mixin text-stroke-default-vars {
     --tn-text-stroke-width: #{vars.content-scaled(3.5px)};
     --tn-text-stroke-radius: #{vars.content-scaled(1.75px)};
-    --tn-text-stroke-color: var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast));
+    --tn-text-stroke-color: #{mixins.contrast-stroke-color()};
 }
 
 @mixin text-stroke-apply-from-vars {
     @include mixins.shadow-text-stroke(
         var(--tn-text-stroke-width, 3.5px),
-        var(--tn-text-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))),
+        var(--tn-text-stroke-color, #{mixins.contrast-stroke-color()}),
         var(--tn-text-stroke-radius, clamp(0.85px, calc(var(--tn-text-stroke-width, 3.5px) * 0.5), 3.75px))
     );
 }
