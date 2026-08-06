@@ -89,10 +89,12 @@
           // Wait for Highcharts (CDN) and the framework's TRMNLCharts helper
           // (bundled in the plugin runtime) before building the chart.
           function whenReady(cb) {
-            if (window.TRMNLCharts && window.Highcharts) return cb();
-            window.addEventListener('load', function () {
-              if (window.TRMNLCharts && window.Highcharts) cb();
-            }, { once: true });
+            var tries = 0;
+            (function attempt() {
+              if (window.TRMNLCharts && window.Highcharts) return cb();
+              if (++tries > 200) return;
+              setTimeout(attempt, 50);
+            })();
           }
           whenReady(function () {
             // watch() rebuilds when the screen's mode/dark/theme classes change,

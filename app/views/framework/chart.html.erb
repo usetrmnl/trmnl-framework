@@ -170,10 +170,12 @@
                     // Wait for both Chartkick and the framework's TRMNLCharts helper
                     // (bundled in the plugin runtime) before building the chart.
                     function whenReady(cb) {
-                      if (window.TRMNLCharts && window.Chartkick) return cb();
-                      window.addEventListener("load", function () {
-                        if (window.TRMNLCharts && window.Chartkick) cb();
-                      }, { once: true });
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLCharts && window.Chartkick) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
                     }
 
                     whenReady(function () {
@@ -269,10 +271,12 @@
   // Wait for Chartkick and the framework TRMNLCharts helper (bundled in the
   // plugin runtime), then read adaptive paint from the live screen.
   function whenReady(cb) {
-    if (window.TRMNLCharts && window.Chartkick) return cb();
-    window.addEventListener("load", function () {
-      if (window.TRMNLCharts && window.Chartkick) cb();
-    }, { once: true });
+    var tries = 0;
+    (function attempt() {
+      if (window.TRMNLCharts && window.Chartkick) return cb();
+      if (++tries > 200) return;
+      setTimeout(attempt, 50);
+    })();
   }
 
   whenReady(function () {
@@ -427,10 +431,12 @@
                         // Wait for both Highcharts and the framework's TRMNLCharts helper
                         // (bundled in the plugin runtime) before building the chart.
                         function whenReady(cb) {
-                          if (window.TRMNLCharts && window.Highcharts) return cb();
-                          window.addEventListener('load', function () {
-                            if (window.TRMNLCharts && window.Highcharts) cb();
-                          }, { once: true });
+                          var tries = 0;
+                          (function attempt() {
+                            if (window.TRMNLCharts && window.Highcharts) return cb();
+                            if (++tries > 200) return;
+                            setTimeout(attempt, 50);
+                          })();
                         }
 
                         whenReady(function () {
@@ -595,10 +601,12 @@
       // Wait for Highcharts and the framework TRMNLCharts helper (bundled in the
       // plugin runtime) before building the chart.
       function whenReady(cb) {
-        if (window.TRMNLCharts && window.Highcharts) return cb();
-        window.addEventListener("load", function () {
-          if (window.TRMNLCharts && window.Highcharts) cb();
-        }, { once: true });
+        var tries = 0;
+        (function attempt() {
+          if (window.TRMNLCharts && window.Highcharts) return cb();
+          if (++tries > 200) return;
+          setTimeout(attempt, 50);
+        })();
       }
 
       whenReady(function () {
@@ -755,10 +763,12 @@
                         ];
 
                         function whenReady(cb) {
-                          if (window.TRMNLCharts && window.Highcharts) return cb();
-                          window.addEventListener('load', function () {
-                            if (window.TRMNLCharts && window.Highcharts) cb();
-                          }, { once: true });
+                          var tries = 0;
+                          (function attempt() {
+                            if (window.TRMNLCharts && window.Highcharts) return cb();
+                            if (++tries > 200) return;
+                            setTimeout(attempt, 50);
+                          })();
                         }
 
                         whenReady(function () {
@@ -920,10 +930,12 @@
       // Wait for Highcharts and the framework TRMNLCharts helper (bundled in the
       // plugin runtime) before building the chart.
       function whenReady(cb) {
-        if (window.TRMNLCharts && window.Highcharts) return cb();
-        window.addEventListener("load", function () {
-          if (window.TRMNLCharts && window.Highcharts) cb();
-        }, { once: true });
+        var tries = 0;
+        (function attempt() {
+          if (window.TRMNLCharts && window.Highcharts) return cb();
+          if (++tries > 200) return;
+          setTimeout(attempt, 50);
+        })();
       }
 
       whenReady(function () {
@@ -1205,10 +1217,12 @@
                     // Wait for Highcharts + the framework's TRMNLCharts helper, then build
                     // all gauges and rebuild them whenever the screen device/scale/mode/dark/theme changes.
                     function whenReady(cb) {
-                      if (window.TRMNLCharts && window.Highcharts) return cb();
-                      window.addEventListener("load", function () {
-                        if (window.TRMNLCharts && window.Highcharts) cb();
-                      }, { once: true });
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLCharts && window.Highcharts) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
                     }
 
                     whenReady(function () {
@@ -1454,10 +1468,12 @@
   // Wait for Highcharts + the framework TRMNLCharts helper, then build all gauges
   // and rebuild them whenever the screen device/scale/mode/dark/theme changes.
   function whenReady(cb) {
-    if (window.TRMNLCharts && window.Highcharts) return cb();
-    window.addEventListener("load", function () {
-      if (window.TRMNLCharts && window.Highcharts) cb();
-    }, { once: true });
+    var tries = 0;
+    (function attempt() {
+      if (window.TRMNLCharts && window.Highcharts) return cb();
+      if (++tries > 200) return;
+      setTimeout(attempt, 50);
+    })();
   }
 
   whenReady(function () {

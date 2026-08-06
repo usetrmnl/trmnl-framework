@@ -170,10 +170,12 @@ var grid = TRMNLPaint.toHighchartsAxis(
 
                 <script type="text/javascript">
                   function whenReady(cb) {
-                    if (window.TRMNLPaint) return cb();
-                    window.addEventListener("load", function () {
-                      if (window.TRMNLPaint) cb();
-                    }, { once: true });
+                    var tries = 0;
+                    (function attempt() {
+                      if (window.TRMNLPaint) return cb();
+                      if (++tries > 200) return;
+                      setTimeout(attempt, 50);
+                    })();
                   }
 
                   whenReady(function () {
@@ -229,10 +231,12 @@ var grid = TRMNLPaint.toHighchartsAxis(
 <script type="text/javascript">
   // plugins.js bundles TRMNLPaint; wait for it before painting.
   function whenReady(cb) {
-    if (window.TRMNLPaint) return cb();
-    window.addEventListener("load", function () {
-      if (window.TRMNLPaint) cb();
-    }, { once: true });
+    var tries = 0;
+    (function attempt() {
+      if (window.TRMNLPaint) return cb();
+      if (++tries > 200) return;
+      setTimeout(attempt, 50);
+    })();
   }
 
   whenReady(function () {
