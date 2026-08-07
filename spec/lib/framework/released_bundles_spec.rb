@@ -3,12 +3,14 @@
 require 'rails_helper'
 require 'brotli'
 require 'digest'
+require 'uri'
 require 'yaml'
 require 'zlib'
 
-# The build-free half of the release parity contract, checked on every rspec run: each
-# committed archive must carry its plaintext sibling's bytes, and public/{css,js}/latest
-# must still be the copy of the released version's directory that ReleaseTask makes.
+# The build-free half of the release parity contract, checked on every rspec run: every
+# released version must publish the bundles a pinned plugin links, each committed archive
+# must carry its plaintext sibling's bytes, and public/{css,js}/latest must still be the
+# copy of the released version's directory that ReleaseTask makes.
 # bin/parity-check adds the half that needs a compile (a fresh build of the source against
 # these same committed bytes) and runs in CI when the bundles move. See RELEASE.md.
 RSpec.describe 'the committed release bundles' do
@@ -40,6 +42,22 @@ RSpec.describe 'the committed release bundles' do
   def tree_digests(dir)
     Dir.glob(dir.join('**', '*')).select { |path| File.file?(path) }.to_h do |path|
       [Pathname.new(path).relative_path_from(dir).to_s, digest(path)]
+    end
+  end
+
+  # Framework::Static answers these paths off disk, so a version that never published one
+  # serves a 404 to every plugin pinned to it and renders them unstyled. Resolved through
+  # Framework::Version rather than named here, so changing which file a pin links fails on
+  # the releases that do not carry it.
+  describe 'the bundles a pinned version links' do
+    Framework::Version.version_numbers.each do |number|
+      { css_url: 'stylesheet', js_url: 'runtime' }.each do |url_reader, bundle_name|
+        it "publishes the #{bundle_name} for #{number}" do
+          url = Framework::Version.new(number).public_send(url_reader)
+
+          expect(root.join('public', URI.parse(url).path.delete_prefix('/'))).to exist
+        end
+      end
     end
   end
 
