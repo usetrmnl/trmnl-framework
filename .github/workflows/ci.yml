@@ -252,3 +252,33 @@ jobs:
           name: playwright-visual-results
           path: tmp/playwright/visual-results
           retention-days: 7
+
+  # The released bundles are frozen, so this only has to catch a re-cut that reintroduces the
+  # fault. Firefox is here and not in the other suites because it paints every background layer
+  # with the first background-clip value: a bundle can pass in Chromium and still paint the
+  # wrong thing on the browser the render pool uses.
+  playwright-release:
+    name: Playwright release bundles
+    runs-on: ubuntu-latest
+    # Same visibility gate as the runtime job, for the same reason.
+    if: ${{ !github.event.repository.private }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm ci, not npm install: the browsers installed below are the builds pinned to
+      # the @playwright/test version in the lockfile.
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox
+      - run: npm run test:release
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-release-results
+          path: tmp/playwright/release-results
+          retention-days: 7
