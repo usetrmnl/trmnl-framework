@@ -325,6 +325,29 @@
         </div>
       </section>
 
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Patterned ink on a filled element') %>
+          <p class="<%= framework_section_description_classes %>">
+            On a screen with no true gray, a gray shade is painted through the shape of the glyphs
+            rather than as a color. An element has one background, and only one of these can use
+            it, so a patterned ink and a <code class="<%= framework_section_code_classes %>">bg--{shade}</code>
+            fill cannot sit on the same element. Put the fill on the box and the ink on an element
+            inside it, which black and white never need because they are real colors.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '<!-- Both want the one background -->
+<div class="bg--white text--gray-50">Mon 8/3</div>
+
+<!-- Fill on the box, ink on an element inside it -->
+<div class="bg--white"><span class="text--gray-50">Mon 8/3</span></div>'
+          ) %>
+        </div>
+      </section>
+
       <%= render 'framework/page_navigation' %>
     </div>
   </div>
