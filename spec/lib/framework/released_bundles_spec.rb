@@ -26,8 +26,40 @@ RSpec.describe 'the committed release bundles' do
     js_latest.join('plugins.min.js')
   ] + Framework::Themes.ids.map { |id| css_latest.join('themes', "#{id}-theme.css") }
 
+  # Blink stops registering a rule's selectors part way through a long comma list and drops the
+  # rest without warning. It kept the 1,304th and dropped the 1,404th; 1,000 stays below that.
+  # Gecko reads the whole list, so a bundle over this only loses selectors in one of the two.
+  max_selectors_per_rule = 1_000
+
   def digest(path)
     Digest::SHA256.file(path.to_s).hexdigest
+  end
+
+  # How many selectors each rule that paints a bg-- field under a text-- fill carries. The rules
+  # are found by their selectors rather than their declarations because the minified bundles
+  # rename the custom properties.
+  def composed_paint_selector_counts(css)
+    css.enum_for(:scan, /[^{}]*bg--[^{}]*text--[^{}]*\{/).filter_map do
+      list_end = Regexp.last_match.end(0) - 1
+      list_start = [css.rindex('}', list_end), css.rindex('{', list_end - 1)].compact.max
+      selectors = split_selectors(css[(list_start + 1)...list_end])
+
+      selectors.count if selectors.any? { |selector| selector.include?('bg--') && selector.include?('text--') }
+    end
+  end
+
+  # Splits on the commas between selectors, not the ones inside :is().
+  def split_selectors(selector_list)
+    depth = 0
+    selectors = [+'']
+
+    selector_list.each_char do |char|
+      depth += 1 if char == '('
+      depth -= 1 if char == ')'
+      char == ',' && depth.zero? ? selectors << +'' : selectors.last << char
+    end
+
+    selectors
   end
 
   # Streamed so the 16 MB bundles never land in memory whole.
@@ -81,6 +113,24 @@ RSpec.describe 'the committed release bundles' do
         skip "#{archive.relative_path_from(root)} is not published for this release" unless archive.exist?
 
         expect(Digest::SHA256.hexdigest(Brotli.inflate(archive.binread))).to eq(digest(bundle))
+      end
+    end
+  end
+
+  # This rule is what keeps a bg-- background alive under a text-- fill on the palettes that
+  # paint with tiles, and it names every variant gate, so its selector list runs to thousands.
+  # The ones past the limit match nothing, and the plain text-- rule wins on those elements
+  # instead and overwrites the background. Splitting the list across rules is what keeps them
+  # all reachable, so what has to hold is the count per rule, not where any one selector sits.
+  describe 'the composed bg--/text-- paint rule' do
+    Framework::Version.version_numbers.each do |number|
+      %w[plugins.css plugins.min.css].each do |file_name|
+        it "keeps every selector reachable in #{number}/#{file_name}" do
+          counts = composed_paint_selector_counts(root.join('public/css', number, file_name).read)
+          skip "#{number} was released before the rule existed" if counts.empty?
+
+          expect(counts.max).to be <= max_selectors_per_rule
+        end
       end
     end
   end

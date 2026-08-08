@@ -23,6 +23,7 @@
     "test:runtime:headed": "playwright test --config test/runtime/playwright.config.js --headed",
     "test:runtime:ui": "playwright test --config test/runtime/playwright.config.js --ui",
     "test:runtime:debug": "playwright test --config test/runtime/playwright.config.js --debug",
+    "test:release": "playwright test --config test/release/playwright.config.js",
     "test:visual": "playwright test --config test/visual/playwright.config.js",
     "test:visual:processed": "PROCESSED_BUNDLE=1 playwright test --config test/visual/playwright.config.js",
     "test:visual:update": "playwright test --config test/visual/playwright.config.js --update-snapshots",

@@ -102,6 +102,19 @@ against linux. After an intentional rendering change, update the baseline for th
 platform you ran on, and if only one of them changed take the other from a CI
 failure artifact (`*-actual.png` under `tmp/playwright/visual-results`).
 
+The release suite loads the committed bundles for older versions from the path a pinned
+plugin links, and checks that adding a `text--` utility to a `bg--` box changes neither
+its declarations nor its pixels. Run it after touching anything under `public/css`:
+
+```bash
+npx playwright install chromium firefox
+npm run test:release
+```
+
+Firefox is in this suite and no other because it paints every background layer with the
+first `background-clip` value instead of one per layer, so a bundle can pass in Chromium
+and still paint the wrong thing on the browser the render pool uses.
+
 Every pull request runs the contract suites, rubocop, a Sass build that fails on any
 undefined reference, a color-tokens job that regenerates the two tracked color SCSS
 files and fails on drift, an em-dashes job that greps the tracked tree for the banned

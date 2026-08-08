@@ -15,4 +15,5 @@ Describe the change and the reason for it. Link any related issue.
       updated in this PR.
 - [ ] Rendering change: `npm run test:runtime` and `npm run test:visual` run locally, with
       any intentional baseline updates committed.
+- [ ] Released bundle change: `npm run test:release` runs locally (Chromium and Firefox).
 - [ ] Change is small and focused (one concern).

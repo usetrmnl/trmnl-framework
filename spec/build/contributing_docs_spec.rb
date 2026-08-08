@@ -44,7 +44,8 @@ RSpec.describe 'CONTRIBUTING' do
     'rspec' => /Ruby suite/i,
     'processed-bundle' => /processed[- ]bundle/i,
     'playwright-runtime' => /runtime suite/i,
-    'playwright-visual' => /visual suite/i
+    'playwright-visual' => /visual suite/i,
+    'playwright-release' => /release suite/i
   }.freeze
 
   job_descriptions.each do |job, pattern|
