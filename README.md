@@ -1,6 +1,8 @@
 # TRMNL Framework
 
-The TRMNL ePaper design system: Sass source, the terminalize JS runtime, design
+<img width="2560" height="817" alt="readme-hero" src="https://github.com/user-attachments/assets/8a2cd2d5-65d3-4881-978a-cd9af0e0c53b" />
+
+The TRMNL ePaper design system: Sass source, the `terminalize()` JS runtime, design
 tokens, dither-pattern assets, the documentation site, and the release pipeline.
 This is what TRMNL plugin screens are built with.
 
