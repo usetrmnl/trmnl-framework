@@ -224,10 +224,13 @@ before mounting:
 
 - **Controllers**: `FrameworkController`, `FrameworkTestsController`.
 - **Helpers**: `FrameworkHelper`, `FrameworkDemoHelper`, `FrameworkImagesHelper`,
-  `FrameworkRoutesHelper`, `DocsChromeHelper`, `CoreCompatHelper`.
-  Rails includes every engine helper in every host view, so the method names are claimed
-  too. `FrameworkRoutesHelper` redefines the framework route helpers that carry no docs
-  version, so a host that renders them keeps its own `default_url_options` off them.
+  `FrameworkRoutesHelper`, `DocsChromeHelper`, `CoreCompatHelper`. The constant names are
+  claimed, the method names are not: the engine hands the host no `app/helpers` path, so
+  `helper :all` never finds these and your controllers, mailers and views keep every method
+  name they define. The two docs controllers include the modules their own pages call, which
+  is the only place engine helpers run. `FrameworkRoutesHelper` redefines the framework route
+  helpers that carry no docs version, and now only inside the docs, so a host page that
+  renders one of them gets the plain Rails helper.
 - **View components**: `AppMenubarComponent`, `CodeExampleComponent`, `DocsRef`,
   `TokensRef`, `FrameworkComparisonComponent`, `FrameworkDocCardComponent`,
   `FrameworkDocsSectionComponent`.

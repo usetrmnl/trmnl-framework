@@ -8,8 +8,9 @@ class FrameworkTestsController < Framework.parent_controller_class
 
   layout :test_layout
 
-  helper FrameworkHelper
+  helper CoreCompatHelper
   helper FrameworkDemoHelper
+  helper FrameworkHelper
 
   def overflow; end
   def fonts; end

@@ -10,6 +10,15 @@ class FrameworkController < Framework.parent_controller_class
   # renders core's picker.
   prepend_view_path Framework::Engine.root.join('app/views')
 
+  # Declared last so these answer over a same-named host helper (see Framework::Engine for
+  # why the host gets none of them).
+  helper CoreCompatHelper
+  helper DocsChromeHelper
+  helper FrameworkDemoHelper
+  helper FrameworkHelper
+  helper FrameworkImagesHelper
+  helper FrameworkRoutesHelper
+
   # CONTEXT: docs pages render ~1.5MB of layout-dominated, visitor-independent
   # HTML in 1.1-1.5s, so whole responses are cached and replayed. Declared
   # before the other callbacks so a cache hit skips them (including

@@ -37,6 +37,9 @@ RSpec.describe FrameworkHelper, type: :helper do
     end
 
     it 'renders the font weight intro markup rather than escaping it' do
+      # DocsChromeHelper wraps the paragraph and is not auto-included any more.
+      helper.extend(DocsChromeHelper)
+
       expect(helper.render_framework_intro_paragraph('font_weight')).to include('<code>text--bold</code>')
     end
   end

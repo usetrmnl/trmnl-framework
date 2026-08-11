@@ -621,7 +621,7 @@ RSpec.describe 'Engine host contract' do
       expect(Framework::MenubarTheme.fetch(:framework).divider).to be_a(String)
     end
 
-    it 'documents every helper it injects' do
+    it 'documents every helper it defines' do
       helpers = Dir.children(Framework::Engine.root.join('app/helpers')).map { |file| File.basename(file, '.rb').camelize }
       undocumented = helpers.reject { |helper| integration_doc.include?(helper) }
 
@@ -633,6 +633,36 @@ RSpec.describe 'Engine host contract' do
       undocumented = roots.reject { |root| integration_doc.include?(root) }
 
       expect(undocumented).to be_empty, "add #{undocumented.join(', ')} to the ENGINE_INTEGRATION.md constant surface list"
+    end
+  end
+
+  # Rails included every engine helper ahead of the host's own, so core's ImagesHelper#sprite_icon
+  # and PluginHelper#plugin_image_path were dead code under ours: production bug #4239.
+  describe 'helpers the host does not get' do
+    let(:engine_helpers) do
+      Dir.children(Framework::Engine.root.join('app/helpers'))
+         .map { |file| File.basename(file, '.rb').camelize.constantize }
+    end
+
+    it 'injects none of them into a host controller' do
+      expect(ApplicationController._helpers.ancestors & engine_helpers).to be_empty
+    end
+
+    it 'opts every one of them in on the docs controller' do
+      expect(FrameworkController._helpers.ancestors).to include(*engine_helpers)
+    end
+
+    it 'opts the test pages in on the helpers their views call' do
+      expect(FrameworkTestsController._helpers.ancestors)
+        .to include(FrameworkHelper, FrameworkDemoHelper, CoreCompatHelper)
+    end
+
+    context 'because the docs need the same-origin copy the gem vendors, not an asset host that 301s without CORS' do
+      it 'keeps its own stand-ins ahead of a host helper of the same name' do
+        ancestors = FrameworkController._helpers.ancestors
+
+        expect(ancestors.index(CoreCompatHelper)).to be < ancestors.index(ApplicationController._helpers)
+      end
     end
   end
 
