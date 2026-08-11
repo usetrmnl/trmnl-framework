@@ -224,7 +224,7 @@ before mounting:
 
 - **Controllers**: `FrameworkController`, `FrameworkTestsController`.
 - **Helpers**: `FrameworkHelper`, `FrameworkDemoHelper`, `FrameworkImagesHelper`,
-  `FrameworkRoutesHelper`, `DocsChromeHelper`, `CommandPaletteHelper`, `CoreCompatHelper`.
+  `FrameworkRoutesHelper`, `DocsChromeHelper`, `CoreCompatHelper`.
   Rails includes every engine helper in every host view, so the method names are claimed
   too. `FrameworkRoutesHelper` redefines the framework route helpers that carry no docs
   version, so a host that renders them keeps its own `default_url_options` off them.
@@ -239,9 +239,9 @@ before mounting:
   layout, so a host's own application layout is never shadowed. The two docs controllers
   prepend this tree onto their own lookup, so the docs render the chrome shipped beside
   them even where your app has a partial of the same name. `shared/` is where that bites:
-  core carries its own `_fancy_screen_picker`, `_menubar_screen_picker`, `_command_palette`
-  and a copy of every `shared/icons` partial, and before the prepend those answered for
-  the docs. Your own controllers are untouched, so your copies still render your pages.
+  core carries its own `_fancy_screen_picker`, `_menubar_screen_picker` and a copy of
+  every `shared/icons` partial, and before the prepend those answered for the docs. Your
+  own controllers are untouched, so your copies still render your pages.
 - **JS module names**: everything the docs boot for themselves is pinned under
   `framework_docs/`, and the docs layout names `framework_docs/application` as its entry
   point. A host importmap is drawn after the engine's and the later pin wins, so nothing
