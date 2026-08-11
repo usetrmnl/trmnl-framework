@@ -459,7 +459,10 @@ class FrameworkController < Framework.parent_controller_class
     # while the host serves live. It is nil in every deployed mode, which leaves the
     # production key shape untouched. The version is already in fullpath, so this is
     # keyed on the host's mode rather than on the page's scoped one.
-    @page_cache_key ||= ['framework-page', Rails.root.basename.to_s, request.base_url,
+    #
+    # A host that upgrades the gem moves none of the above, so the gem version is in the
+    # key too: without it the deploy that ships new chrome replays the old HTML for 12h.
+    @page_cache_key ||= ['framework-page', Framework::VERSION, Rails.root.basename.to_s, request.base_url,
                          request.fullpath, I18n.locale,
                          Framework::Version.development_mode?,
                          docs_serving_mode.build_fingerprint].compact

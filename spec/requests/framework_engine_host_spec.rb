@@ -411,11 +411,11 @@ RSpec.describe 'Engine host contract' do
   # .admin? and user_signed_in?, none of which this repo can answer, and the only view
   # that branched on them was a nav partial nothing rendered.
   describe 'no visitor contract' do
-    it 'keys the page cache on the request and the build alone', type: :request do
+    it 'keys the page cache on the request, the gem version and the build alone', type: :request do
       get "/framework/docs/#{FrameworkController::CURRENT_DOCS_VERSION}/screen"
 
       expect(controller.send(:page_cache_key)).to eq(
-        ['framework-page', Rails.root.basename.to_s, 'http://www.example.com',
+        ['framework-page', Framework::VERSION, Rails.root.basename.to_s, 'http://www.example.com',
          "/framework/docs/#{FrameworkController::CURRENT_DOCS_VERSION}/screen", :en,
          Framework::Version.development_mode?]
       )

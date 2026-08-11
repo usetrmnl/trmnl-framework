@@ -320,7 +320,7 @@ RSpec.describe 'Framework docs serving mode', type: :request do
     it 'keeps the page cache key shape it has in production' do
       get_docs(current_version)
 
-      expect(controller.send(:page_cache_key).length).to eq(6)
+      expect(controller.send(:page_cache_key).length).to eq(7)
     end
   end
 
