@@ -25,6 +25,10 @@ module Framework
     config.autoload_paths << root.join("lib")
     config.eager_load_paths << root.join("lib")
 
+    # Keeps these helpers out of the host's `helper :all`, which included them ahead of the
+    # host's own. The `app` glob above still autoloads the modules for the docs controllers.
+    config.paths["app/helpers"] = []
+
     initializer "trmnl_framework.ignore_lib_tooling" do
       Rails.autoloaders.main.ignore(
         root.join("lib/tasks"),

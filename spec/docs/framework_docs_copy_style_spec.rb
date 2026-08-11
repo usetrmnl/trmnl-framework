@@ -101,6 +101,9 @@ RSpec.describe 'Framework docs copy style' do
   end
 
   describe 'docs group descriptions', type: :helper do
+    # The docs controller opts this module in; nothing mixes it into a bare view any more.
+    before { helper.extend(FrameworkHelper) }
+
     it 'describes only groups a supported version actually renders' do
       rendered = FrameworkController::DOC_GROUPS_BY_VERSION.values.flat_map(&:keys).map(&:to_s).uniq
       described = FrameworkController::SUPPORTED_DOCS_VERSIONS.flat_map do |version|
