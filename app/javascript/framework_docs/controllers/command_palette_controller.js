@@ -1,32 +1,22 @@
 import { Controller } from "@hotwired/stimulus"
-import { PROVIDERS, KEYBOARD, CSS_CLASSES, SELECTORS, DATA_ATTRIBUTES } from "framework_docs/command_palette/constants"
+import { KEYBOARD, CSS_CLASSES, SELECTORS } from "framework_docs/command_palette/constants"
 import { SearchEngine } from "framework_docs/command_palette/search_utils"
 import { AnimationManager, scrollIntoView } from "framework_docs/command_palette/animation_utils"
-import { ProviderManager } from "framework_docs/command_palette/provider_manager"
-import { ScopeManager } from "framework_docs/command_palette/scope_manager"
 import { isTouchEnabled } from "framework_docs/lib/input_modality"
-import {
-  isCurrentDeviceSwitch,
-  submitDeviceSwitchForm
-} from "framework_docs/lib/device_switch"
 import {
   safeQuery,
   safeQueryAll,
   toggleVisibility,
   setAriaSelected,
   getDataAttribute,
-  setProviderIndicatorState,
-  defer,
   isDefaultVisible,
-  createElement,
   devLog
 } from "framework_docs/command_palette/dom_utils"
 
 // Command Palette Controller (Cmd+K)
 //
-// Architecture:
-//   Providers supply items: "application" (app pages), "framework-docs" (design system),
-//   or "unified" (both). Items are cached flat (itemsCache) and grouped into sections.
+// Items are the docs index of the page's section, server-rendered into the list. They
+// are cached flat (itemsCache) and grouped into sections on the first open.
 //
 // Search strategies (two code paths, same entry point, applyFilter):
 //   No query  → _filterSectionsDefault: show defaultVisible items, preserve section order
@@ -38,7 +28,7 @@ import {
 //   _filterSectionsGlobal detaches unmatched items; _filterSectionsDefault re-attaches them.
 //
 // Data flow:
-//   openPalette → loadInitialProvider → rebuildCache → applyFilter
+//   openPalette → loadItems → rebuildCache → applyFilter
 //   onInput → applyFilter → filterAndSortSections → updateTopResult → updateEmptyState
 //
 export default class extends Controller {
@@ -47,11 +37,6 @@ export default class extends Controller {
     "frame",
     "panel",
     "input",
-    "pillContainer",
-    "providerIndicatorContainer",
-    "providerIndicatorUniversal",
-    "providerIndicatorApp",
-    "providerIndicatorDocs",
     "list",
     "item",
     "sectionHeader",
@@ -66,40 +51,10 @@ export default class extends Controller {
     this.initializeManagers()
     this.initializeState()
     this.setupEventListeners()
-    this.hydratePluginsScope()
   }
 
   disconnect() {
     this.cleanup()
-  }
-
-  // Render-once: the plugins list is server-rendered only as the inline,
-  // searchable copy inside the application provider <template>. Clone those items
-  // into the drill-down scope <template> here so the list (capped at 100, see
-  // PluginSettingsHelper#current_plugin_settings) isn't rendered twice per page.
-  // Source items live in a provider <template> (inert until a provider is
-  // materialized on open), so read them from there rather than the live DOM.
-  hydratePluginsScope() {
-    const scopeTemplate = safeQuery(this.element, 'template[data-scope-id="plugins"]')
-    if (!scopeTemplate?.content) return
-
-    const providerTemplate =
-      safeQuery(this.element, `template[data-provider-id="${this.defaultProviderId}"]`) ||
-      safeQuery(this.element, 'template[data-provider-id="application"]')
-    if (!providerTemplate?.content) return
-
-    const sources = providerTemplate.content.querySelectorAll(`${SELECTORS.item}[data-group="Plugins"]`)
-    if (!sources.length) return
-
-    // Idempotent across Stimulus reconnects.
-    scopeTemplate.content.querySelectorAll(SELECTORS.item).forEach((el) => el.remove())
-
-    sources.forEach((source) => {
-      const clone = source.cloneNode(true)
-      clone.classList.remove(CSS_CLASSES.hidden)
-      clone.dataset.defaultVisible = "true"
-      scopeTemplate.content.appendChild(clone)
-    })
   }
 
   // ========== Lifecycle ==========
@@ -107,8 +62,6 @@ export default class extends Controller {
   initializeManagers() {
     this.searchEngine = new SearchEngine()
     this.animationManager = new AnimationManager(this.backdropTarget, this.panelTarget)
-    this.providerManager = new ProviderManager(this.element)
-    this.scopeManager = new ScopeManager(this.element)
   }
 
   initializeState() {
@@ -117,7 +70,7 @@ export default class extends Controller {
     this.previousActive = null
     this.hoverSelectionEnabled = false
 
-    // Core data: flat item list + grouped sections (rebuilt on provider/scope change)
+    // Core data: flat item list + grouped sections (built on first open)
     this.itemsCache = []
     this.sections = []
     this.topResultItem = null
@@ -129,8 +82,6 @@ export default class extends Controller {
     this._viewportLayoutFrame = null
     this._responsiveControlsState = null
     this._mobileViewportLayoutApplied = false
-
-    this.defaultProviderId = getDataAttribute(this.element, "defaultProvider", PROVIDERS.UNIFIED)
   }
   setupEventListeners() {
     this.handleGlobalKeydown = this.handleGlobalKeydown.bind(this)
@@ -176,7 +127,7 @@ export default class extends Controller {
     this.applyViewportLayout()
 
     this.resetPaletteState()
-    this.loadInitialProvider()
+    this.loadItems()
     this.attachListPointerHandlers()
     if (focus && immediateFocus) this.focusInputNow()
 
@@ -215,33 +166,13 @@ export default class extends Controller {
 
   resetPaletteState() {
     this.setInputValue("")
-    this.scopeManager.clearScope(false)
     this.selectedIndex = -1
     this.hoverSelectionEnabled = false
   }
 
-  loadInitialProvider() {
-    const providerId = this.providerManager.currentProviderId || this.defaultProviderId
-    const cacheReady = this.providerManager.isProviderLoaded(providerId, this.listTarget) && this.itemsCache.length > 0
-    const defaultRendered = cacheReady && !this.currentQuery && !this.topResultItem && !this.scopeManager.depth
-    devLog("🚀 Loading provider:", providerId)
-
-    if (!this.providerManager.loadProvider(providerId, this.listTarget)) return
-    this.updateProviderIndicators()
-
-    if (!cacheReady) {
-      this.rebuildCache()
-
-      if (providerId === PROVIDERS.UNIFIED && !this.scopeManager.depth) {
-        this.optimizeUnifiedProviderOrder()
-      }
-    }
-
-    if (defaultRendered) {
-      this.resetSelection()
-      this.scheduleViewportLayout()
-      return
-    }
+  // Cached once; a later open re-runs the filter, which re-attaches what a search detached.
+  loadItems() {
+    if (!this.itemsCache.length) this.rebuildCache()
 
     this.applyFilter("")
   }
@@ -257,14 +188,7 @@ export default class extends Controller {
 
     if (event.key === KEYBOARD.shortcuts.escape.key) {
       event.preventDefault()
-      return this.close()
-    }
-
-    if (this.isProviderCycleShortcut(event)) return this.handlePaletteTab(event)
-
-    if (this.isProviderSwitchShortcut(event)) {
-      event.preventDefault()
-      return this.selectProviderAtIndex(parseInt(event.key, 10) - 1)
+      this.close()
     }
   }
 
@@ -306,9 +230,7 @@ export default class extends Controller {
   }
 
   onInputKeydown(event) {
-    const key = event.key
-
-    switch (key) {
+    switch (event.key) {
       case KEYBOARD.navigation.down:
         event.preventDefault()
         this.navigateSelection(1)
@@ -320,15 +242,6 @@ export default class extends Controller {
       case KEYBOARD.navigation.enter:
         event.preventDefault()
         this.handleEnter()
-        break
-      case KEYBOARD.navigation.tab:
-        if (this.isProviderCycleShortcut(event)) this.handlePaletteTab(event)
-        break
-      case KEYBOARD.navigation.backspace:
-        if (this.shouldPopScope()) {
-          event.preventDefault()
-          this.popScope()
-        }
         break
     }
   }
@@ -345,12 +258,7 @@ export default class extends Controller {
     }
   }
 
-  onItemClick(event) {
-    if (this.switchDeviceOnSelect(event.currentTarget)) {
-      event.preventDefault()
-      return
-    }
-
+  onItemClick() {
     this.close()
   }
   // ========== Search & Filter (see architecture comment at top) ==========
@@ -358,14 +266,6 @@ export default class extends Controller {
   applyFilter(query) {
     devLog("🔍 applyFilter:", query || "(empty)")
     this.currentQuery = query
-
-    // NOTE: Unified provider sections are reordered by page context (app vs framework)
-    // only when there's no active query; search ranking handles ordering during search.
-    const isUnifiedIdle =
-      !query && this.providerManager.currentProviderId === PROVIDERS.UNIFIED && !this.scopeManager.depth
-    if (isUnifiedIdle && this.sections.length > 0) {
-      this.optimizeUnifiedProviderOrder()
-    }
 
     const results = this.filterAndSortSections(query)
     this.updateTopResult(query, results)
@@ -498,8 +398,6 @@ export default class extends Controller {
     this.topResultContainerTarget.appendChild(clone)
     toggleVisibility(this.topHeaderTarget, true)
 
-    this.scopeManager.injectScopeHeader(this.listTarget)
-
     this.topResultItem = {
       el: clone,
       index: -1,
@@ -519,7 +417,6 @@ export default class extends Controller {
     }
 
     this.topResultItem = null
-    this.scopeManager.removeInjectedHeader()
   }
 
   // ========== Selection & Navigation ==========
@@ -557,135 +454,11 @@ export default class extends Controller {
     const selected = visible[this.selectedIndex] || visible[0]
     if (!selected) return
 
-    if (this.switchDeviceOnSelect(selected.el)) return
-
     const link = safeQuery(selected.el, "a[href]")
     if (link) {
       this.close()
       link.click()
     }
-  }
-
-  handleTab() {
-    const selected = this.getCurrentSelectedItem()
-    if (!selected) return
-
-    // Tab drills into the selected item: device switch or scope push
-    const deviceId = getDataAttribute(selected.el, "deviceId")
-    if (deviceId) return this.handleDeviceSwitch(deviceId)
-
-    const scope = this.scopeManager.getScopeFromElement(selected.el)
-    if (scope) this.pushScope(scope)
-  }
-
-  switchDeviceOnSelect(element) {
-    if (getDataAttribute(element, "selectAction") !== "switch-device") return false
-
-    const deviceId = getDataAttribute(element, "deviceId")
-    if (!deviceId) return false
-
-    this.handleDeviceSwitch(deviceId)
-    return true
-  }
-
-  handlePaletteTab(event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    return this.hasContextualTabAction() ? this.handleTab() : this.cycleProvider()
-  }
-
-  hasContextualTabAction() {
-    const selected = this.getCurrentSelectedItem()
-    if (!selected) return false
-
-    return !!getDataAttribute(selected.el, "deviceId") || !!this.scopeManager.getScopeFromElement(selected.el)
-  }
-
-  // ========== Provider Management ==========
-
-  cycleProvider() {
-    const next = this.providerManager.getNextProvider(-1)
-    if (next && next !== this.providerManager.currentProviderId) {
-      this.switchToProvider(next)
-    }
-  }
-
-  selectProviderAtIndex(index) {
-    const provider = this.providerManager.getProviderAtIndex(index)
-    if (provider && provider !== this.providerManager.currentProviderId) {
-      this.switchToProvider(provider)
-    }
-  }
-
-  switchToProvider(providerId) {
-    this.scopeManager.clearScope()
-    this.providerManager.loadProvider(providerId, this.listTarget)
-    this.updateProviderIndicators()
-    this.setInputValue("")
-
-    defer(() => {
-      this.hoverSelectionEnabled = false
-      this.rebuildCache()
-      this.applyFilter("")
-      this.scrollListToTop()
-      this.focusInputNow()
-    })
-  }
-
-  updateProviderIndicators() {
-    if (!this.hasProviderIndicatorContainerTarget) return
-
-    const current = this.providerManager.currentProviderId
-
-    setProviderIndicatorState(this.providerIndicatorUniversalTarget, current === PROVIDERS.UNIFIED)
-
-    setProviderIndicatorState(this.providerIndicatorAppTarget, current === PROVIDERS.APPLICATION)
-
-    setProviderIndicatorState(this.providerIndicatorDocsTarget, current === PROVIDERS.FRAMEWORK_DOCS)
-  }
-
-  // NOTE: Only reorders this.sections; DOM rebuild is handled by _filterSectionsDefault
-  optimizeUnifiedProviderOrder() {
-    const preferred = this.providerManager.detectApplicableProvider()
-    devLog("🎯 Optimizing unified order for:", preferred)
-
-    this.sections = this.providerManager.reorderSectionsByProvider(this.sections, preferred)
-  }
-
-  // ========== Scope Management ==========
-
-  pushScope(scope) {
-    this.setInputValue("")
-
-    this.scopeManager.pushScope(scope, this.listTarget, () => {
-      this.rebuildCache()
-      this.applyFilter("")
-      this.scrollListToTop()
-    })
-
-    this.scopeManager.renderPills(this.pillContainerTarget)
-  }
-
-  popScope() {
-    this.scopeManager.popScope(this.listTarget, () => {
-      if (!this.scopeManager.depth) {
-        const current = this.providerManager.currentProviderId || this.defaultProviderId
-        this.providerManager.loadProvider(current, this.listTarget)
-      }
-
-      this.rebuildCache()
-      this.applyFilter("")
-      this.scrollListToTop()
-    })
-
-    this.scopeManager.renderPills(this.pillContainerTarget)
-  }
-
-  shouldPopScope() {
-    const value = this.getInputValue()
-    const cursorPosition = this.getInputCursorPosition()
-    return value.length === 0 && cursorPosition === 0 && this.scopeManager.depth > 0
   }
 
   // ========== Cache Management ==========
@@ -792,14 +565,6 @@ export default class extends Controller {
     return items
   }
 
-  getCurrentSelectedItem() {
-    const visible = this.getVisibleItems()
-    if (!visible.length) return null
-
-    const index = this.selectedIndex >= 0 ? this.selectedIndex : 0
-    return visible[index]
-  }
-
   updateEmptyState(hasResults) {
     if (!this.hasEmptyTarget) return
 
@@ -836,19 +601,6 @@ export default class extends Controller {
     } else {
       this.inputTarget.value = value
     }
-  }
-
-  getInputCursorPosition() {
-    if (!this.hasInputTarget) return 0
-    if (!this.isEditableSearchbox()) return this.inputTarget.selectionStart ?? 0
-
-    const selection = window.getSelection()
-    if (!selection?.rangeCount || !this.inputTarget.contains(selection.anchorNode)) return this.getInputValue().length
-
-    const range = selection.getRangeAt(0).cloneRange()
-    range.selectNodeContents(this.inputTarget)
-    range.setEnd(selection.anchorNode, selection.anchorOffset)
-    return range.toString().length
   }
 
   isEditableSearchbox() {
@@ -979,75 +731,11 @@ export default class extends Controller {
   handleListMouseLeave() {
     this.hoverSelectionEnabled = false
   }
-  // ========== Device Handling ==========
-
-  handleDeviceSwitch(deviceId) {
-    const success = this.postDeviceSwitch(deviceId)
-    this.close()
-
-    if (!success) {
-      safeQuery(this.element, SELECTORS.deviceLink)?.click()
-    }
-  }
-
-  postDeviceSwitch(deviceId) {
-    try {
-      const headerDropdown = document.querySelector('[data-controller="dropdown"][data-dropdown-url]')
-      const url = headerDropdown?.dataset?.dropdownUrl
-      const currentDeviceId = headerDropdown?.dataset?.dropdownCurrentDeviceIdValue
-
-      if (!url) return false
-      if (isCurrentDeviceSwitch(deviceId, currentDeviceId)) return true
-
-      const form = createElement("form", {
-        attributes: { method: "POST", action: url }
-      })
-
-      const fields = [
-        { name: "_method", value: "post" },
-        { name: "authenticity_token", value: this.getCSRFToken() },
-        { name: "device_id", value: deviceId }
-      ]
-
-      fields.forEach(({ name, value }) => {
-        const input = createElement("input", {
-          attributes: {
-            type: "hidden",
-            name,
-            value
-          }
-        })
-        form.appendChild(input)
-      })
-
-      document.body.appendChild(form)
-      submitDeviceSwitchForm(form, { deviceId, currentDeviceId })
-
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  getCSRFToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]')
-    return meta?.content || ""
-  }
   // ========== Keyboard Shortcuts ==========
 
   isToggleShortcut(event) {
     const { key } = KEYBOARD.shortcuts.toggle
     return (event.metaKey || event.ctrlKey) && event.key?.toLowerCase() === key
-  }
-
-  isProviderSwitchShortcut(event) {
-    const { key } = KEYBOARD.shortcuts.providerSwitch
-    return event.ctrlKey && event.altKey && key.test(event.key)
-  }
-
-  isProviderCycleShortcut(event) {
-    const { key } = KEYBOARD.shortcuts.providerCycle
-    return event.key === key && !event.altKey && !event.shiftKey && !event.ctrlKey && !event.metaKey
   }
 
   isAllowedLocation() {

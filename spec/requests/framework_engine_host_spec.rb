@@ -635,4 +635,16 @@ RSpec.describe 'Engine host contract' do
       expect(undocumented).to be_empty, "add #{undocumented.join(', ')} to the ENGINE_INTEGRATION.md constant surface list"
     end
   end
+
+  # The docs palette used to claim CommandPaletteHelper and a shared/_command_palette path
+  # in every host; it renders from app/views/framework now, which no host of ours has.
+  describe 'the names the docs palette gave back' do
+    it 'defines no CommandPaletteHelper' do
+      expect(Object.const_defined?(:CommandPaletteHelper)).to be(false)
+    end
+
+    it 'ships no shared/_command_palette for a host partial to share a digest with' do
+      expect(Framework::Engine.root.join('app/views/shared/_command_palette.html.erb')).not_to exist
+    end
+  end
 end
