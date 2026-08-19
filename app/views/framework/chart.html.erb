@@ -615,9 +615,9 @@
         // the current paint each time.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-          // series(i, 2) picks each line's paint (ink for the first, a legible
-          // step toward the background for the second), and applySwatches()
-          // paints the matching legend markers.
+          // series(i, 2) picks the paint for each line (ink for the first, a
+          // legible step toward the background for the second), and
+          // applySwatches() paints the matching legend markers.
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
             chart: { type: "spline", height: px(203), spacing: px([10, 10, 5, 10]) },
             series: [{
@@ -775,9 +775,9 @@
                           var el = 'example-bar-chart';
                           TRMNLCharts.watch(el, function () {
                             var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-                            // series(i, 4) picks each bar's paint, and applySwatches() paints
-                            // the matching legend markers, so bars and swatches stay in step
-                            // across bit depths, dark mode and themes.
+                            // series(i, 4) picks the paint for each bar, and applySwatches()
+                            // paints the matching legend markers, so bars and swatches stay
+                            // in step across bit depths, dark mode and themes.
                             var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
                               chart: { type: 'column', height: px(284), spacing: px([10, 10, 5, 10]) },
                               plotOptions: { series: { pointPadding: 0.05, groupPadding: 0.1, borderWidth: 0 } },
@@ -939,9 +939,9 @@
 
       whenReady(function () {
         var el = "example-bar-chart";
-        // series(i, 4) picks each bar's paint, and applySwatches() paints the
-        // matching legend markers, so bars and swatches stay in step in every
-        // bit depth, dark mode and theme.
+        // series(i, 4) picks the paint for each bar, and applySwatches() paints
+        // the matching legend markers, so bars and swatches stay in step in
+        // every bit depth, dark mode and theme.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
