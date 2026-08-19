@@ -44,6 +44,10 @@ ALLOWED_PATHS=(
     '.claude/skills/write-docs/SKILL.md'
     # This script carries the glyph it searches for.
     'bin/check-em-dashes'
+    # zero's vocabulary file for voice-memo transcription. Its documented format is one
+    # "- Term (em-dash) notes" line per entry; the em-dash is the field separator the
+    # transcription cleanup relies on, not prose copy.
+    'ZERO.md'
 )
 
 
