@@ -17,22 +17,22 @@
           </p>
 
           <p class="<%= framework_section_description_classes %>">
-            Charts paint with explicit colors, so they historically ignored bit depth, dark mode and themes
-            while the rest of the screen adapted. The plugin runtime bundles a small
-            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> helper that resolves adaptive
-            paint from the live screen at build time. The methods below are the ones these examples use;
-            <%= render DocsRef.new(page: :paint_charts) %> carries the full signature list and the resolvers behind it.
+            Charts used to carry their own fixed colors, ignoring bit depth, dark mode, and themes
+            while the rest of the screen adapted. The plugin runtime now bundles a small
+            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> helper that reads the right
+            paint from the screen as the chart builds. The methods below are the ones these examples use;
+            <%= render DocsRef.new(page: :paint_charts) %> carries the full list.
           </p>
 
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">series(i, n, { el })</code>: the fill for
-              series <em>i</em> of <em>n</em> from the screen's chart-series ramp.
+              series <em>i</em> of <em>n</em>, correct for the current device, mode, and theme.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints legend
               markers tagged <code class="<%= framework_section_code_classes %>">data-chart-series="i"</code>
-              from the same ramp.
+              with matching series colors.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">textStyle(role, { el })</code>: resolves a
@@ -180,8 +180,8 @@
 
                     whenReady(function () {
                       var el = "chart-123";
-                      // watch() rebuilds on device/scale/mode/dark/theme change; series() resolves
-                      // plotted-data paint from the framework chart ramp.
+                      // watch() rebuilds on device/scale/mode/dark/theme change; series() picks
+                      // the paint for each plotted line.
                       TRMNLCharts.watch(el, function () {
                         var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
                         var linePaint = TRMNLCharts.series(0, 1, { el: el });
@@ -281,8 +281,8 @@
 
   whenReady(function () {
     var el = "chart-123";
-    // watch() rebuilds on device/scale/mode/dark/theme change; series() resolves plotted-data
-    // paint from the framework chart ramp.
+    // watch() rebuilds on device/scale/mode/dark/theme change; series() picks the paint
+    // for each plotted line.
     TRMNLCharts.watch(el, function () {
       var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
       var linePaint = TRMNLCharts.series(0, 1, { el: el });
@@ -442,7 +442,7 @@
                         whenReady(function () {
                           var el = 'multi-series-chart';
                           // watch() rebuilds when the screen's device/scale/mode/dark/theme classes change,
-                          // re-reading adaptive paint from the live cascade each time.
+                          // re-reading the current paint each time.
                           TRMNLCharts.watch(el, function () {
                             var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
                             var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
@@ -474,7 +474,7 @@
                                 tickPixelInterval: px(120)
                               }
                             }));
-                            // Paint the legend swatches from the same ramp so they match the series.
+                            // Paint the legend swatches so they match the series.
                             TRMNLCharts.applySwatches({ el: el });
                             return chart;
                           });
@@ -612,12 +612,12 @@
       whenReady(function () {
         var el = "multi-series-chart";
         // watch() rebuilds when the screen device/scale/mode/dark/theme changes, re-reading
-        // adaptive paint from the live cascade each time.
+        // the current paint each time.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-          // series(i, 2) draws each line from the framework chart-series ramp
-          // (ink for the first, a legible step toward the canvas for the second),
-          // and applySwatches() paints the matching legend markers.
+          // series(i, 2) picks each line's paint (ink for the first, a legible
+          // step toward the background for the second), and applySwatches()
+          // paints the matching legend markers.
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
             chart: { type: "spline", height: px(203), spacing: px([10, 10, 5, 10]) },
             series: [{
@@ -775,10 +775,9 @@
                           var el = 'example-bar-chart';
                           TRMNLCharts.watch(el, function () {
                             var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-                            // series(i, 4) draws each bar from the framework chart-series ramp,
-                            // and applySwatches() paints the matching legend markers from the same
-                            // ramp, so bars and swatches stay in lockstep across bit depths, dark
-                            // mode and themes.
+                            // series(i, 4) picks each bar's paint, and applySwatches() paints
+                            // the matching legend markers, so bars and swatches stay in step
+                            // across bit depths, dark mode and themes.
                             var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
                               chart: { type: 'column', height: px(284), spacing: px([10, 10, 5, 10]) },
                               plotOptions: { series: { pointPadding: 0.05, groupPadding: 0.1, borderWidth: 0 } },
@@ -940,9 +939,9 @@
 
       whenReady(function () {
         var el = "example-bar-chart";
-        // series(i, 4) draws each bar from the framework chart-series ramp, and
-        // applySwatches() paints the matching legend markers from the same ramp,
-        // so bars and swatches stay in lockstep in every bit depth, dark mode and theme.
+        // series(i, 4) picks each bar's paint, and applySwatches() paints the
+        // matching legend markers, so bars and swatches stay in step in every
+        // bit depth, dark mode and theme.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
