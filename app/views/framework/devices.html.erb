@@ -11,12 +11,12 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'What a device profile is') %>
           <p class="<%= framework_section_description_classes %>">
-            A device profile is a named set of geometry and capability values. The framework compiles each one into a
-            <code class="<%= framework_section_code_classes %>">screen--&lt;keyname&gt;</code> class, so a screen states
-            its whole device in one class.
+            A device profile is a named set of dimensions and capabilities. The framework turns each one into a
+            <code class="<%= framework_section_code_classes %>">screen--&lt;keyname&gt;</code> class, so one class
+            tells a screen everything about its device.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The class publishes the profile as CSS variables on the
+            The class sets the profile as CSS variables on the
             <%= render DocsRef.new(page: :screen) %> element, and everything inside reads them.
           </p>
         </div>
@@ -45,7 +45,7 @@
                 </tr>
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">--device-ui-scale</code></td>
-                  <td class="px-6 py-4 text-sm">The device's native interface density factor. It composes with the Scale modifier into <code class="<%= framework_section_code_classes %>">--ui-scale</code>.</td>
+                  <td class="px-6 py-4 text-sm">The device's own interface density factor. It multiplies with the Scale modifier into <code class="<%= framework_section_code_classes %>">--ui-scale</code>.</td>
                 </tr>
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">--gap-scale</code></td>
@@ -66,9 +66,9 @@
 
         <div class="space-y-4">
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">--color-depth</code> paints nothing. The mode class on
-            the screen picks the paint rail, so a profile rated 24 renders in grayscale the moment it wears a grayscale
-            class. See <%= render DocsRef.new(page: :rendering_modes) %>.
+            <code class="<%= framework_section_code_classes %>">--color-depth</code> paints nothing. What a screen
+            prints is decided by its mode class, so a profile rated 24 still renders in grayscale the moment it
+            carries a grayscale class. See <%= render DocsRef.new(page: :rendering_modes) %>.
           </p>
           <p class="<%= framework_section_description_classes %>">
             <%= render DocsRef.new(page: :tokens) %> lists these variables with their defaults, next to every other
@@ -98,19 +98,20 @@
             <code class="<%= framework_section_code_classes %>">md</code>, or
             <code class="<%= framework_section_code_classes %>">lg</code>) and a density tier
             (<code class="<%= framework_section_code_classes %>">1x</code> or
-            <code class="<%= framework_section_code_classes %>">2x</code>). The device class inherits both, so it needs
-            no extra classes to get their variables.
+            <code class="<%= framework_section_code_classes %>">2x</code>). The device class includes both, so their
+            variables come with it.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The classes still travel on the screen, because they are what the variant prefixes and the runtime match.
+            Keep the size and density classes on the screen anyway: the responsive prefixes and the runtime match
+            those classes.
             <code class="<%= framework_section_code_classes %>">md:value--large</code> matches
             <code class="<%= framework_section_code_classes %>">screen--md</code>, never the device class that extends
             it. <%= render DocsRef.new(page: :responsive) %> covers the size grammar.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
-            <li><code class="<%= framework_section_code_classes %>">screen--sm</code>, <code class="<%= framework_section_code_classes %>">screen--md</code>, <code class="<%= framework_section_code_classes %>">screen--lg</code>: the breakpoint the device sits at, and the rich text measure that goes with it.</li>
+            <li><code class="<%= framework_section_code_classes %>">screen--sm</code>, <code class="<%= framework_section_code_classes %>">screen--md</code>, <code class="<%= framework_section_code_classes %>">screen--lg</code>: the breakpoint the device sits at, and the rich text width that goes with it.</li>
             <li><code class="<%= framework_section_code_classes %>">screen--density-2x</code>: high-DPI typography, which switches the pixel fonts for Inter Variable. See <%= render DocsRef.new(page: :font_family) %>.</li>
-            <li>Low density is the default, so it has no class. The registry stamps <code class="<%= framework_section_code_classes %>">screen--density-1x</code> as a marker, and no bundle defines rules for it.</li>
+            <li>Low density is the default and needs no class. <code class="<%= framework_section_code_classes %>">screen--density-1x</code> exists only as a marker; no CSS rule reads it.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Pick the size by the devices you want to hit rather than by a pixel count. A profile's own
@@ -124,8 +125,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Palettes select the mode, not the geometry') %>
           <p class="<%= framework_section_description_classes %>">
-            A device lists every palette its panel and its delivery pipeline can print. The palette selected for a
-            render decides the mode class; the geometry stays the device's either way.
+            A device lists every palette it can print. The palette chosen for a render decides the mode class;
+            the dimensions stay the device's either way.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The two samples below are the same panel at the same dimensions, density, and scale. Only the paint changes.
@@ -150,8 +151,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Rating a panel') %>
           <p class="<%= framework_section_description_classes %>">
-            Rate a panel by what it drives, not by what the delivery pipeline encodes. These are the four hardware
-            classes and the depth each one takes.
+            Rate a panel by what the glass can show, not by the format the image arrives in. These are the four
+            hardware classes and the depth each one takes.
           </p>
         </div>
 
@@ -193,12 +194,12 @@
 
         <div class="space-y-4">
           <p class="<%= framework_section_description_classes %>">
-            There is no 8-bit or 16-bit grayscale rating. Above 16 grays the axis is color, so a panel goes to 12 or 24
-            rather than to a deeper gray tier.
+            There is no 8-bit or 16-bit grayscale rating. Past 16 grays the next step is color, so a panel rates 12
+            or 24 instead of a deeper gray.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            A pipeline that sends a smooth 8-bit image is a delivery format, not a rating. The panel behind it still
-            prints 16 grays, and the screen still renders on
+            A smooth 8-bit image on the wire is a delivery format, not a rating. The panel behind it still
+            prints 16 grays, so the screen still renders on
             <code class="<%= framework_section_code_classes %>">screen--4bit</code>.
           </p>
           <p class="<%= framework_section_description_classes %>">
@@ -212,8 +213,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'The shipped device classes') %>
           <p class="<%= framework_section_description_classes %>">
-            Every profile in the exported registry ships a class. Some devices reuse another profile's geometry, so
-            they share its class: nine of them resolve to
+            Every profile in the registry ships a class. Devices with identical dimensions share one: nine of
+            them resolve to
             <code class="<%= framework_section_code_classes %>">screen--og</code> or
             <code class="<%= framework_section_code_classes %>">screen--ogv2</code>.
           </p>
@@ -250,9 +251,9 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Where profiles come from') %>
           <p class="<%= framework_section_description_classes %>">
-            The TRMNL Platform exports its device registry, and the framework ships that map as generated SCSS. A
-            released build therefore carries a class for every device the platform knows, and the framework cannot
-            invent one of its own.
+            The profiles come from the TRMNL Platform's own device list, which the framework ships as generated
+            SCSS. A released build carries a class for every device the platform knows; the framework never
+            invents one.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Bring your own panel in one of two ways. Apply
