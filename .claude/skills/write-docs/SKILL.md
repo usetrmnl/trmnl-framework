@@ -41,10 +41,17 @@ The 3.2 readability complaint, and the pattern to rewrite on sight: sentences bu
 - Say what the reader gets before how the framework does it. Internal rationale (why the architecture is shaped this way) stays out of intros entirely.
 - Break any sentence that chains three or more clauses, and turn a parenthetical list of three or more items into a bulleted list or its own sentence.
 - Keep the concrete device triplets ("dither patterns on 1-bit, solids on full color"); concreteness is not the problem, stacked abstraction is.
+- Say the sentence aloud to a colleague who has never read the source. Any term that needs the codebase to parse (the chart ramp, resolvers, rails, the cascade) gets replaced by what it means for the reader.
 
 Before: "Themes are standalone stylesheets that re-point semantic channels, component slots, and utility tokens at different palette tokens."
 
 After: "A theme is a stylesheet you load next to plugins.css to recolor a screen. It swaps the colors the framework classes paint with, so your markup stays exactly as written."
+
+A rewrite can still fail the bar. This one traded one set of insider words for a smaller set and was flagged by a reader anyway:
+
+Still too complex: "The chart resolvers pick evenly spaced series colors from the framework's chart ramp, adjusted to the current device, mode, and theme."
+
+Plain: "These functions pick the colors for a chart. Ask for series 2 of 5 and you get its paint, correct for the current device, mode, and theme."
 
 ## Punctuation
 
