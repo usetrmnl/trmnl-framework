@@ -11,22 +11,22 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'How it works') %>
           <p class="<%= framework_section_description_classes %>">
-            The framework paints every surface through per-mode CSS custom properties on the
-            <code class="<%= framework_section_code_classes %>">.screen</code> element, and a theme is CSS that
-            re-points those properties. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> is a
-            reader of that live cascade, never a second definition of the color system.
+            All framework colors live in CSS, as custom properties on the
+            <code class="<%= framework_section_code_classes %>">.screen</code> element; a theme is just CSS that
+            changes them. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads those
+            values, it never defines its own.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Each resolver appends a hidden probe element inside the target element, applies the framework's own
+            To answer a query, TRMNLPaint drops a hidden probe element into the target, gives it the real
             utility class (<code class="<%= framework_section_code_classes %>">bg--&lt;token&gt;</code>,
-            <code class="<%= framework_section_code_classes %>">text--&lt;token&gt;</code>, ...), and reads back the
-            browser-resolved computed style. Bit depth, dark mode, inverse subtrees that flip the screen scheme, themes, slot overrides, and
-            limited palettes are all honoured automatically, with zero token mappings duplicated in JavaScript.
+            <code class="<%= framework_section_code_classes %>">text--&lt;token&gt;</code>, ...), and reads back
+            what the browser computed. That is why everything is honored automatically: bit depth, dark mode,
+            inverse, themes, and limited palettes shape the answer the same way they shape the screen.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Every function is total: a missing <code class="<%= framework_section_code_classes %>">.screen</code> or
-            an unknown token returns a Fill with null fields instead of throwing. Plugins render on a screenshot
-            service, and a thrown error would mean a blank device screen.
+            No call ever throws: a missing <code class="<%= framework_section_code_classes %>">.screen</code> or
+            an unknown token returns a Fill with null fields instead. Plugins render on a screenshot
+            service, where a thrown error would mean a blank device screen.
           </p>
         </div>
       </section>
@@ -35,9 +35,9 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'The paint domains') %>
           <p class="<%= framework_section_description_classes %>">
-            The resolvers are documented by what they paint. Every resolver takes an optional
-            <code class="<%= framework_section_code_classes %>">{ el }</code>: the id or element whose local cascade
-            supplies the paint, with device settings from its nearest
+            The functions are documented by what they paint. Every one takes an optional
+            <code class="<%= framework_section_code_classes %>">{ el }</code>: the id or element to read the
+            paint at, with device settings from its nearest
             <code class="<%= framework_section_code_classes %>">.screen</code>. Omit it on a single-screen plugin
             and the first screen on the page is used.
           </p>
@@ -45,7 +45,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <%= render FrameworkDocCardComponent.new(icon: :colors, title: 'Painting Colors', docs_page: :paint_colors) do %>
-            <p class="<%= framework_subsection_description_classes %>">Resolve background, text, stroke, and semantic tokens as Fills, and paint them onto nodes.</p>
+            <p class="<%= framework_subsection_description_classes %>">Read background, text, stroke, and semantic colors as Fills, and paint them onto nodes.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li><code class="<%= framework_section_code_classes %>">bg()</code>, <code class="<%= framework_section_code_classes %>">text()</code>, <code class="<%= framework_section_code_classes %>">stroke()</code></li>
               <li><code class="<%= framework_section_code_classes %>">semantic()</code>, <code class="<%= framework_section_code_classes %>">textColor()</code></li>
@@ -54,7 +54,7 @@
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :chart, title: 'Painting Charts', docs_page: :paint_charts) do %>
-            <p class="<%= framework_subsection_description_classes %>">Series colors from the screen's chart ramp, and the Highcharts fill adapter.</p>
+            <p class="<%= framework_subsection_description_classes %>">Colors for chart series, and the Highcharts fill adapter.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li><code class="<%= framework_section_code_classes %>">series()</code>, <code class="<%= framework_section_code_classes %>">ramp()</code></li>
               <li><code class="<%= framework_section_code_classes %>">toHighcharts()</code></li>
@@ -62,7 +62,7 @@
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :border, title: 'Painting Borders', docs_page: :paint_borders) do %>
-            <p class="<%= framework_subsection_description_classes %>">Border and divider rails as BorderFills, for custom rails and Highcharts axes.</p>
+            <p class="<%= framework_subsection_description_classes %>">Border and divider lines as BorderFills, for your own lines and Highcharts axes.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li><code class="<%= framework_section_code_classes %>">border()</code>, <code class="<%= framework_section_code_classes %>">divider()</code></li>
               <li><code class="<%= framework_section_code_classes %>">applyBorder()</code></li>
@@ -71,7 +71,7 @@
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :text, title: 'Painting Typography', docs_page: :paint_typography) do %>
-            <p class="<%= framework_subsection_description_classes %>">Text roles and stroke rings as TypeSpecs, for custom text and chart labels.</p>
+            <p class="<%= framework_subsection_description_classes %>">Text styles and strokes as TypeSpecs, for your own text and chart labels.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li><code class="<%= framework_section_code_classes %>">type()</code>, <code class="<%= framework_section_code_classes %>">strokeSpec()</code></li>
               <li><code class="<%= framework_section_code_classes %>">applyType()</code></li>
@@ -85,7 +85,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Scale values') %>
           <p class="<%= framework_section_description_classes %>">
-            Resolve scale-aware JavaScript dimensions through <code class="<%= framework_section_code_classes %>">TRMNLPaint</code>. It reads the same custom properties as the CSS framework, so device density, Scale, and Text Scale stay in one source of truth.
+            Scale pixel numbers in JavaScript the way the framework scales its own. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads the same variables CSS uses, so device density, Scale, and Text Scale never drift apart.
           </p>
 
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -98,7 +98,7 @@
           </ul>
 
           <p class="<%= framework_section_description_classes %>">
-            Use <code class="<%= framework_section_code_classes %>">px()</code> for numeric chart options, canvas dimensions, and other library configuration. Percentages, data values, zero-width rails, and physical one-pixel strokes should remain unchanged.
+            Use <code class="<%= framework_section_code_classes %>">px()</code> for numeric chart options, canvas dimensions, and other library configuration. Leave percentages, data values, and deliberate one-pixel lines unscaled.
           </p>
         </div>
 
@@ -119,12 +119,12 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
         <div class="space-y-4">
           <%= framework_heading(3, 'The Fill type') %>
           <p class="<%= framework_section_description_classes %>">
-            Every resolver returns a canonical <code class="<%= framework_section_code_classes %>">Fill</code>, a
-            plain object describing paint independently of any charting library. A Fill with a
+            Every function returns a <code class="<%= framework_section_code_classes %>">Fill</code>, a
+            plain object that says what to paint with, tied to no charting library. A Fill with a
             <code class="<%= framework_section_code_classes %>">url</code> and
-            <code class="<%= framework_section_code_classes %>">size</code> is a dither tile pattern; a Fill with only
-            a <code class="<%= framework_section_code_classes %>">color</code> is a solid. Library-specific shaping
-            lives in adapters, never in the Fill.
+            <code class="<%= framework_section_code_classes %>">size</code> is a dither pattern; a Fill with only
+            a <code class="<%= framework_section_code_classes %>">color</code> is a solid. Anything
+            library-specific lives in the adapters, never in the Fill.
           </p>
         </div>
 
@@ -156,8 +156,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">apply(node, fill)</code>: paints a node's background
-              from a Fill, compositing the field color under the tile image with the same two-layer CSS the rest of
-              the screen uses.
+              from a Fill, layering the color under the pattern exactly as the framework itself does.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">watch(el, onChange, { immediate })</code>: runs
@@ -185,16 +184,16 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
         <div class="space-y-4">
           <%= framework_heading(3, 'Extending a theme from JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes never ship JavaScript. A theme that needs to expose extra values to plugin code (a brand accent, a
-            custom ramp) publishes additional public
-            <code class="<%= framework_section_code_classes %>">--*</code> custom properties on the screen, and JS
+            Themes never ship JavaScript. A theme that wants to hand extra values to plugin code (a brand accent,
+            say) sets its own
+            <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen, and JavaScript
             reads them back with <code class="<%= framework_section_code_classes %>">cssVar()</code>. No framework
-            release and no JS bundle per theme: just CSS that both worlds read.
+            release, no JS bundle per theme: just CSS both sides read.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">cssVar(name, { el })</code> returns the trimmed
-            computed value of any public custom property on the screen. It is the documented escape hatch for exactly
-            these theme-published values.
+            <code class="<%= framework_section_code_classes %>">cssVar(name, { el })</code> returns the computed
+            value of any public <code class="<%= framework_section_code_classes %>">--*</code> variable on the
+            screen. It exists exactly for these theme-set values.
           </p>
           <div class="<%= message_sage_classes %>">
             <div class="flex items-center w-full">
