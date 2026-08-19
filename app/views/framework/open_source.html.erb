@@ -76,7 +76,7 @@
           <li><strong>Bit-depth-aware tokens:</strong> a color resolves to dither patterns on 1-bit, palette images on limited color, and solids on full color. See <%= render DocsRef.new(page: :colors) %> and <%= render DocsRef.new(page: :tokens) %>.</li>
           <li><strong>Dither and tile backgrounds:</strong> grayscale and limited-palette fills are generated tiles, applied with <code class="<%= framework_section_code_classes %>">bg--{shade}</code>. See <%= render DocsRef.new(page: :background) %>.</li>
           <li><strong>Device screen classes:</strong> <code class="<%= framework_section_code_classes %>">.screen--&lt;device&gt;</code> bakes each device's dimensions and palette into the build. See <%= render DocsRef.new(page: :screen) %>.</li>
-          <li><strong>Themes:</strong> opt-in stylesheets repaint a whole screen while preserving device-capability rendering. See <%= render DocsRef.new(page: :themes) %>.</li>
+          <li><strong>Themes:</strong> opt-in stylesheets recolor a whole screen; the device still decides how colors print. See <%= render DocsRef.new(page: :themes) %>.</li>
         </ul>
       </section>
 
@@ -91,7 +91,7 @@
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
           <li><strong>terminalize:</strong> the layout engine that fills each device's fixed space, handling overflow columns, text clamping, value fitting, and more. See <%= render DocsRef.new(page: :framework_runtime) %>.</li>
-          <li><strong>TRMNLPaint:</strong> reads the live CSS cascade and returns canonical Fill, BorderFill, and TypeSpec objects, so any plugin can resolve framework colors from JavaScript. See <%= render DocsRef.new(page: :paint_api) %>.</li>
+          <li><strong>TRMNLPaint:</strong> returns what CSS would paint right now as Fill, BorderFill, and TypeSpec objects, so any plugin can read framework colors from JavaScript. See <%= render DocsRef.new(page: :paint_api) %>.</li>
           <li><strong>TRMNLCharts:</strong> a Highcharts adapter built on TRMNLPaint, so charts adapt to bit depth, dark mode, and themes with the rest of the screen. See <%= render DocsRef.new(page: :chart) %>.</li>
         </ul>
       </section>
@@ -104,13 +104,13 @@
             One rule shapes the whole project. Every rendering rule exists in CSS first, then <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> mirrors it.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads the live cascade and converts it. It never re-implements token mappings, adds contrast heuristics, or invents fallback values in JavaScript.
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads what CSS computed and converts it. It never re-implements color rules, adds contrast tweaks, or invents fallback values in JavaScript.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The same instinct applies to new features. Before adding a pattern, tile, gradient, or one-off variable, check whether the dither and tile system, the border pipeline, or the theme slots already express it. A new bespoke mechanism for one call site is almost always wrong.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The full mandate is in <code class="<%= framework_section_code_classes %>">AGENTS.md</code>. See <%= render DocsRef.new(page: :paint_api) %> for how the API reads the cascade.
+            The full mandate is in <code class="<%= framework_section_code_classes %>">AGENTS.md</code>. See <%= render DocsRef.new(page: :paint_api) %> for how the API does its reading.
           </p>
         </div>
       </section>
@@ -120,7 +120,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The Release Pipeline') %>
           <p class="<%= framework_section_description_classes %>">
-            Releases are reproducible and need only this repository. A release regenerates the tokens, compiles the Sass with Dart Sass, processes the CSS and the version-stamped JS runtime through the bundle pipelines, precompresses every artifact as gzip and brotli deterministically, and zips the result.
+            Releases are reproducible and need only this repository. A release regenerates the tokens, compiles the Sass, and minifies the CSS and the version-stamped JS runtime. Every artifact is then precompressed as gzip and brotli, deterministically, and zipped.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The published archive under <code class="<%= framework_section_code_classes %>">public/css</code> and <code class="<%= framework_section_code_classes %>">public/js</code> keeps every version, so the docs render each version against the exact bundle it shipped. Releases are maintainer-only.
