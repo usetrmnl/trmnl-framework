@@ -11,17 +11,17 @@
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '1. Make Your Plugin Theme-Ready') %>
-          <p class="<%= framework_section_description_classes %>">A theme restyles the whole screen by remapping which tokens paint each surface. Your plugin does not load themes itself; it renders inside a screen that may carry one. A plugin is theme-ready when everything it draws goes through framework classes and tokens.</p>
+          <p class="<%= framework_section_description_classes %>">A theme recolors the whole screen. Your plugin does not load themes itself; it renders inside a screen that may carry one. A plugin is theme-ready when everything it draws uses framework classes and colors.</p>
         </div>
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-          <li>Style with framework utilities (<code class="<%= framework_section_code_classes %>">bg--</code>, <code class="<%= framework_section_code_classes %>">text--</code>, <code class="<%= framework_section_code_classes %>">border--</code>) and elements (<code class="<%= framework_section_code_classes %>">label</code>, <code class="<%= framework_section_code_classes %>">value</code>, <code class="<%= framework_section_code_classes %>">title</code>). Themes remap all of them.</li>
-          <li>Avoid hardcoded hex colors and inline styles; a theme cannot remap paint it does not own.</li>
+          <li>Style with framework utilities (<code class="<%= framework_section_code_classes %>">bg--</code>, <code class="<%= framework_section_code_classes %>">text--</code>, <code class="<%= framework_section_code_classes %>">border--</code>) and elements (<code class="<%= framework_section_code_classes %>">label</code>, <code class="<%= framework_section_code_classes %>">value</code>, <code class="<%= framework_section_code_classes %>">title</code>). Themes recolor all of them.</li>
+          <li>Avoid hardcoded hex colors and inline styles; a theme cannot recolor them.</li>
           <li>Test with the Style selector in the docs screen picker. It applies a theme to every example on the page.</li>
         </ul>
 
         <p class="<%= framework_section_description_classes %>">
-          To theme a screen you control, include the theme stylesheet and add the theme class. Note that <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen; a theme is a complete color statement. See <%= render DocsRef.new(page: :themes) %>.
+          To theme a screen you control, include the theme stylesheet and add the theme class. Note that <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen; a theme already decides every color. See <%= render DocsRef.new(page: :themes) %>.
         </p>
 
         <div class="mt-4">
@@ -37,7 +37,7 @@
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '2. Migrate Charts to TRMNLCharts') %>
-          <p class="<%= framework_section_description_classes %>">Charts with hardcoded colors stay frozen while the rest of the screen adapts. The plugin runtime bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter that resolves series fills, grid lines, and text styles from the live screen.</p>
+          <p class="<%= framework_section_description_classes %>">Charts with hardcoded colors stay frozen while the rest of the screen adapts. The runtime bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter that takes its series colors, grid lines, and text styles from the screen.</p>
         </div>
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
@@ -61,7 +61,7 @@ TRMNLCharts.watch(el, function () {
     ]
   }));
 
-  // Paint legend markers tagged data-chart-series="i" from the same ramp.
+  // Paint legend markers tagged data-chart-series="i" with matching series colors.
   TRMNLCharts.applySwatches({ el: el });
 });', language: 'javascript') %>
         </div>
@@ -74,7 +74,7 @@ TRMNLCharts.watch(el, function () {
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '3. Mark Monochrome Icons Adaptive') %>
-          <p class="<%= framework_section_description_classes %>">Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to monochrome silhouette icons. The framework flattens the icon to its alpha shape and repaints it with the screen's icon paint, following Raw/Preview, bit depth, dark mode, and the active theme.</p>
+          <p class="<%= framework_section_description_classes %>">Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to monochrome silhouette icons. The framework takes the icon's shape and repaints it in the screen's icon color, following bit depth, dark mode, Raw/Preview, and the active theme.</p>
         </div>
 
         <div class="mt-4">
@@ -93,7 +93,7 @@ TRMNLCharts.watch(el, function () {
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '4. Resolve Paint from JavaScript') %>
-          <p class="<%= framework_section_description_classes %>">For custom JS-drawn visuals beyond Highcharts (canvas, SVG, other libraries), resolve framework paint with <code class="<%= framework_section_code_classes %>">TRMNLPaint</code>. It reads the live cascade, so bit depth, dark mode, themes, and limited palettes are already applied.</p>
+          <p class="<%= framework_section_description_classes %>">Drawing something yourself, on canvas, in SVG, or with another library? Ask <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> for the colors. It returns what CSS would paint right now, with bit depth, dark mode, and the active theme already applied.</p>
         </div>
 
         <div class="mt-4">
@@ -115,7 +115,7 @@ TRMNLPaint.watch("my-visual", function () { draw(); });', language: 'javascript'
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '5. Move Borders to the Step Rail') %>
-          <p class="<%= framework_section_description_classes %>">Replace the numbered border levels with shade-step selectors (the numbered classes still render, but they are deprecated). Steps use the same 10 to 75 scale as the background utility, and themes repaint the whole rail. The rail now renders as generated gradients instead of PNG tiles, so a bordered screen fetches no border images.</p>
+          <p class="<%= framework_section_description_classes %>">Replace the numbered border levels with shade steps; the numbered classes still render, but they are deprecated. Steps use the same 10 to 75 scale as backgrounds, and themes recolor them. Borders now render as generated gradients instead of PNG tiles, so a bordered screen fetches no images.</p>
         </div>
 
         <div class="mt-4">
@@ -130,7 +130,7 @@ TRMNLPaint.watch("my-visual", function () { draw(); });', language: 'javascript'
         </div>
 
         <p class="<%= framework_section_description_classes %>">
-          See <%= render DocsRef.new(page: :border) %> for the full step scale and the themed rendering behavior.
+          See <%= render DocsRef.new(page: :border) %> for the full step scale and how themes recolor it.
         </p>
       </section>
 
@@ -141,9 +141,9 @@ TRMNLPaint.watch("my-visual", function () { draw(); });', language: 'javascript'
         </div>
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-          <li>Add <code class="<%= framework_section_code_classes %>">text-stroke</code> to framework text over a busy background, and size it with <code class="<%= framework_section_code_classes %>">text-stroke--small</code> through <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>. The stroke renders as drop-shadow rings, so it stays behind the glyph and behind background-clipped pattern fills in every browser.</li>
+          <li>Add <code class="<%= framework_section_code_classes %>">text-stroke</code> to framework text over a busy background, and size it with <code class="<%= framework_section_code_classes %>">text-stroke--small</code> through <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>. The stroke renders as stacked drop shadows, so it stays behind the letters in every browser, even when the text is filled with a pattern.</li>
           <li>Add <code class="<%= framework_section_code_classes %>">image-stroke</code> to a transparent or vector image for the same effect, with the matching <code class="<%= framework_section_code_classes %>">--small</code> through <code class="<%= framework_section_code_classes %>">--xlarge</code> sizes.</li>
-          <li>Leave the color off to stroke with the default contrast ink, or set one with a color variant (<code class="<%= framework_section_code_classes %>">text-stroke--black</code>, <code class="<%= framework_section_code_classes %>">image-stroke--white</code>, or any palette token). Color variants resolve through the theme chain, so themed and dark-mode screens recolor the outline to match.</li>
+          <li>Leave the color off to stroke with the default contrast ink, or set one with a color variant (<code class="<%= framework_section_code_classes %>">text-stroke--black</code>, <code class="<%= framework_section_code_classes %>">image-stroke--white</code>, or any palette token). Color variants follow the theme, so themed and dark-mode screens recolor the outline to match.</li>
         </ul>
 
         <div class="mt-4">
