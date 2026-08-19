@@ -13,7 +13,7 @@
           <p class="<%= framework_section_description_classes %>">
             Use <code class="<%= framework_section_code_classes %>">divider</code> or <code class="<%= framework_section_code_classes %>">divider--h</code> for horizontal dividers,
             and <code class="<%= framework_section_code_classes %>">divider--v</code> for vertical dividers.
-            Divider uses the same rendering pipeline as border utilities and defaults to border level 6.
+            A divider is drawn the same way as the border utilities and defaults to border level 6.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The background variants (<code class="<%= framework_section_code_classes %>">divider--on-white</code>,
@@ -82,7 +82,7 @@
           <div class="space-y-4">
             <%= framework_heading(4, 'Vertical Dividers') %>
             <p class="<%= framework_section_description_classes %>">
-              Vertical dividers use the same border-level pipeline as horizontal dividers.
+              Vertical dividers draw the same way as horizontal ones.
             </p>
             <div class="<%= framework_example_classes %>">
               <div class="<%= framework_example_inner_classes %>">
@@ -203,13 +203,13 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Dividers in JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            The divider rail is readable from JS via
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider({ dir })</code>, which resolves the
-            level-6 rail straight from the live cascade (theme, bit depth and dark mode included), and
+            JavaScript can read the divider line too:
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider({ dir })</code> returns the
+            level-6 line with the theme, bit depth, and dark mode already applied, and
             <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints the returned
             <code class="<%= framework_section_code_classes %>">BorderFill</code> onto a node. Unlike the
-            <code class="<%= framework_section_code_classes %>">.border--*</code> utilities, the divider paints on the
-            element itself, so it is probed there rather than on a pseudo. See
+            <code class="<%= framework_section_code_classes %>">.border--*</code> utilities, a divider paints on the
+            element itself, so that is where the paint is read. See
             <%= render DocsRef.new(page: :paint_borders) %>.
           </p>
         </div>

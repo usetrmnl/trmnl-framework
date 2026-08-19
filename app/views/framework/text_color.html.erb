@@ -38,7 +38,7 @@
               <strong>Ink roles:</strong> <code class="<%= framework_section_code_classes %>">text--default</code>,
               <code class="<%= framework_section_code_classes %>">text--muted</code>, and
               <code class="<%= framework_section_code_classes %>">text--inverse</code> paint the screen's own text
-              roles. They resolve through the theme slot chain, so a theme repaints them, and they mirror
+              roles. A theme recolors them, and they mirror
               <code class="<%= framework_section_code_classes %>">bg--canvas</code> and its siblings on
               <%= render DocsRef.new(page: :background) %>.
             </li>
@@ -329,11 +329,11 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Patterned ink on a filled element') %>
           <p class="<%= framework_section_description_classes %>">
-            On a screen with no true gray, a gray shade is painted through the shape of the glyphs
-            rather than as a color. An element has one background, and only one of these can use
-            it, so a patterned ink and a <code class="<%= framework_section_code_classes %>">bg--{shade}</code>
-            fill cannot sit on the same element. Put the fill on the box and the ink on an element
-            inside it, which black and white never need because they are real colors.
+            On a screen with no true gray, a gray shade is painted as a pattern clipped to the letters.
+            That pattern uses the element's one background, so a patterned text color and a
+            <code class="<%= framework_section_code_classes %>">bg--{shade}</code>
+            fill cannot sit on the same element. Put the fill on the box and the text color on an element
+            inside it. Black and white never need this, because they are real colors.
           </p>
         </div>
 
