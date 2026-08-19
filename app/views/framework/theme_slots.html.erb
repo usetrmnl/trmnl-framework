@@ -11,43 +11,43 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Semantic channels') %>
           <p class="<%= framework_section_description_classes %>">
-            The semantic channels are the preferred API: a few lines re-theme the whole screen, and every
-            component that reads a channel follows. The channels are a fixed set:
+            Start with the semantic channels: a few lines recolor the whole screen, because every
+            component reads them. The set is fixed:
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
             <li>Backgrounds: <code class="<%= framework_section_code_classes %>">canvas</code>, <code class="<%= framework_section_code_classes %>">surface</code>, <code class="<%= framework_section_code_classes %>">backdrop</code>, <code class="<%= framework_section_code_classes %>">fill-strong</code>, <code class="<%= framework_section_code_classes %>">fill-muted</code>, <code class="<%= framework_section_code_classes %>">fill-soft</code></li>
             <li>Text: <code class="<%= framework_section_code_classes %>">text-primary</code>, <code class="<%= framework_section_code_classes %>">text-secondary</code>, <code class="<%= framework_section_code_classes %>">text-inverse</code></li>
             <li>Stroke: <code class="<%= framework_section_code_classes %>">stroke-contrast</code></li>
             <li>Borders: <code class="<%= framework_section_code_classes %>">border-strong</code>, <code class="<%= framework_section_code_classes %>">border-muted</code></li>
-            <li>Icon: one global channel for <code class="<%= framework_section_code_classes %>">image--adaptive</code> paint, defaulting to text-primary. See <%= render DocsRef.new(page: :image) %>.</li>
+            <li>Icon: one global channel for <code class="<%= framework_section_code_classes %>">image--adaptive</code> icons; it defaults to text-primary. See <%= render DocsRef.new(page: :image) %>.</li>
           </ul>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
-              <code class="<%= framework_section_code_classes %>">semantic-bg($semantic, $token)</code>: points a
-              background channel at a token.
+              <code class="<%= framework_section_code_classes %>">semantic-bg($semantic, $token)</code>: sets a
+              background channel to a token.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">semantic-text($semantic, $token)</code>: points a
-              text channel at a token, carrying the full text paint (ink, tile, clip).
+              <code class="<%= framework_section_code_classes %>">semantic-text($semantic, $token)</code>: sets a
+              text channel to a token, with everything text needs (color, dither pattern, clipping).
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">semantic-stroke($semantic, $token)</code>: points
-              the stroke channel at a token.
+              <code class="<%= framework_section_code_classes %>">semantic-stroke($semantic, $token)</code>: sets
+              the stroke channel to a token.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">semantic-border($semantic, $token)</code>: points a
-              border channel at a token's fill paint.
+              <code class="<%= framework_section_code_classes %>">semantic-border($semantic, $token)</code>: sets a
+              border channel to a token's fill.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">semantic-icon($token)</code>: optional paint for
+              <code class="<%= framework_section_code_classes %>">semantic-icon($token)</code>: optional color for
               adaptive icons; omit it and icons follow text-primary.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Every semantic mixin takes <code class="<%= framework_section_code_classes %>">$raw: true</code>, which
-            points the channel at a root palette variable and skips the mode pipeline. The framework uses it for its
-            own unthemed dark defaults, where the dark remap would invert the value a second time. Theme files have
-            no use for it; see <%= render DocsRef.new(page: :theme_authoring) %>.
+            writes a plain color and skips device rendering. The framework needs it for its
+            own unthemed dark defaults, where the dark remap would invert the value a second time. A theme never
+            needs it; see <%= render DocsRef.new(page: :theme_authoring) %>.
           </p>
         </div>
 
@@ -68,8 +68,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Component slots') %>
           <p class="<%= framework_section_description_classes %>">
-            Component slots tune one surface without moving a whole channel. A slot name is the variable fragment a
-            component reads, and each slot takes one kind of paint. These are the slots components consume today:
+            Component slots recolor one surface, like the title bar, without moving a whole channel. Each slot is
+            named after the part it colors and takes one kind of paint. These are the slots components read today:
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
             <li>Background slots: <code class="<%= framework_section_code_classes %>">screen-backdrop</code>, <code class="<%= framework_section_code_classes %>">title-bar</code>, <code class="<%= framework_section_code_classes %>">item-meta</code>, <code class="<%= framework_section_code_classes %>">item-meta-emphasis-2</code>, <code class="<%= framework_section_code_classes %>">item-meta-emphasis-3</code>, <code class="<%= framework_section_code_classes %>">progress-track</code>, <code class="<%= framework_section_code_classes %>">progress-fill</code>, <code class="<%= framework_section_code_classes %>">progress-fill-emphasis-2</code>, <code class="<%= framework_section_code_classes %>">progress-fill-emphasis-3</code>, <code class="<%= framework_section_code_classes %>">progress-dot</code>, <code class="<%= framework_section_code_classes %>">progress-dot-current</code>, <code class="<%= framework_section_code_classes %>">table-meta</code>, <code class="<%= framework_section_code_classes %>">table-meta-device</code>, <code class="<%= framework_section_code_classes %>">chip</code></li>
@@ -77,18 +77,17 @@
             <li>Border slots: <code class="<%= framework_section_code_classes %>">table-head-row</code>, <code class="<%= framework_section_code_classes %>">table-body-row</code>, <code class="<%= framework_section_code_classes %>">label-underline</code></li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">chip</code> is a pair, one background slot and one
-            text slot for the same surface: a solid marker box with readable text on it, for plugin surfaces the
-            framework has no component for. It is the only slot whose default names semantic channels instead of a
-            token, taking its field from <code class="<%= framework_section_code_classes %>">fill-strong</code> and
-            its text from <code class="<%= framework_section_code_classes %>">text-inverse</code>. State both halves
-            in a theme when the marker box needs its own pairing, the way White and Red gives it a white field with
-            red text.
+            <code class="<%= framework_section_code_classes %>">chip</code> is two slots for one surface: a solid
+            box with readable text on it, for markers the framework has no component for. Its defaults point at the
+            semantic channels (box from <code class="<%= framework_section_code_classes %>">fill-strong</code>,
+            text from <code class="<%= framework_section_code_classes %>">text-inverse</code>), so it follows the
+            theme on its own. Set both halves yourself when the box needs a specific pairing, the way White and Red
+            gives it a white box with red text.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Pointing a slot at a channel it does not take is silent. A background slot given
-            <code class="<%= framework_section_code_classes %>">text-slot</code> writes four variables no component
-            reads, and nothing on the screen changes.
+            Using the wrong mixin on a slot fails silently. Give a background slot
+            <code class="<%= framework_section_code_classes %>">text-slot</code> and it writes variables no component
+            reads; nothing on the screen changes.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
@@ -97,21 +96,21 @@
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">text-slot($slot, $token)</code>: a slot's text
-              paint, including the tile and clip.
+              paint, dither pattern and clipping included.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">border-level-slot($slot, $level, $dir: h)</code>:
-              points a slot's border at one of the framework border levels.
+              sets a slot's border to one of the framework border levels.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">border-token-slot($slot, $token, $dir: h)</code>:
-              points a slot's border at a token's fill paint instead of a level.
+              sets a slot's border to a token's fill instead of a level.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            Slot values cascade from the screen, so you can set them again on a component or state wrapper.
-            On unthemed screens the <code class="<%= framework_section_code_classes %>">inverse</code> class supplies local defaults for the opposite of the screen's scheme.
-            Inside a theme the subtree keeps the theme's slots, and the theme's inverse rule restates the ones that flip with the ground.
+            Slot values cascade down from the screen, so you can set them again on a component or a state wrapper.
+            On an unthemed screen, <code class="<%= framework_section_code_classes %>">inverse</code> flips its subtree to the opposite scheme.
+            On a themed screen the subtree keeps the theme's slots; the theme's own inverse rule restates the ones that should flip.
           </p>
         </div>
 
@@ -134,27 +133,27 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Utility remaps') %>
           <p class="<%= framework_section_description_classes %>">
-            Utility remaps re-point the raw palette utilities
+            Utility remaps recolor the raw palette utilities
             (<code class="<%= framework_section_code_classes %>">bg--*</code>,
             <code class="<%= framework_section_code_classes %>">text--*</code>,
-            <code class="<%= framework_section_code_classes %>">text-stroke--*</code>), so plugin markup that names
-            gray tokens follows the theme without edits.
+            <code class="<%= framework_section_code_classes %>">text-stroke--*</code>), so markup that says
+            <code class="<%= framework_section_code_classes %>">bg--gray-50</code> follows the theme without edits.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">utility-remap-grayscale($to-hue, $side)</code>: the
-              bulk remap of the whole grayscale ladder to a hue. <code class="<%= framework_section_code_classes %>">$side: 'dark'</code>
-              (default) compresses grays into the hue's dark steps 10 to 40, keeps black as ink, and sends white to
-              the hue; <code class="<%= framework_section_code_classes %>">'bright'</code> compresses into steps 45
-              to 75, sends black to the hue, and keeps white; <code class="<%= framework_section_code_classes %>">'linear'</code>
-              maps gray steps 1:1 to hue steps. Strokes are the exception: the token sent to the hue takes the
-              nearest hue step for its stroke instead (45 under bright, 40 under dark, 75 under linear), so
+              bulk remap, moving the whole grayscale ladder to a hue. <code class="<%= framework_section_code_classes %>">$side</code>
+              controls how. <code class="<%= framework_section_code_classes %>">'dark'</code> (default) presses the
+              grays into the hue's dark steps 10 to 40, keeps black as ink, and sends white to the hue.
+              <code class="<%= framework_section_code_classes %>">'bright'</code> presses them into steps 45 to 75,
+              sends black to the hue, and keeps white. <code class="<%= framework_section_code_classes %>">'linear'</code>
+              maps gray steps to hue steps 1:1. Strokes are the one exception: the token sent to the hue keeps a
+              visible stroke from the nearest hue step (45 under bright, 40 under dark, 75 under linear), so
               outlines never dissolve into the canvas.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">utility-remap-border-grayscale($to-hue, $side)</code>:
-              the same idea for the two border line inks, recoloring the staggered patterns without touching their
-              geometry.
+              the same remap for border lines: their two inks recolor, their patterns keep their shape.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">utility-bg($token, $remap-to)</code> /
@@ -168,18 +167,18 @@
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">utility-border-level($level, $dir, $from-level)</code>:
-              point one border level at another level's art, fields and render program included. This is the handle
-              the 2-bit rail needs, where the four tones are literal in the line data and no token remap can reach
-              them. Restating a level onto itself is not a no-op: it also pins that level to the family's own line
-              polarity.
+              swap one border level for another level's line art, colors and render program included. The 2-bit
+              borders need this handle: their four tones are drawn into the line itself, where no token remap can
+              reach them. Restating a level onto itself is not a no-op: it also pins that level to its family's own
+              line polarity.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The three shipped themes show every side: Black and Yellow is a dark-side remap; White and Red is a
-            bright-side remap plus one exception, <code class="<%= framework_section_code_classes %>">utility-bg("white", "red")</code>,
-            so white surfaces adopt the canvas hue while white text stays ink. Dark mirrors the grayscale axis and
-            leans on <code class="<%= framework_section_code_classes %>">utility-border-level</code> for the 2-bit
-            rail and for the one level that maps to itself.
+            The three shipped themes cover every side. Black and Yellow remaps to the dark side. White and Red
+            remaps to the bright side with one exception, <code class="<%= framework_section_code_classes %>">utility-bg("white", "red")</code>,
+            so white surfaces turn red while white text stays ink. Dark flips the grayscale and uses
+            <code class="<%= framework_section_code_classes %>">utility-border-level</code> for the 2-bit
+            borders and for the one level that maps to itself.
           </p>
         </div>
 
@@ -198,22 +197,23 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Border levels and lines') %>
           <p class="<%= framework_section_description_classes %>">
-            Border levels are the seven-step intensity scale the border pipeline renders: 1 is black, 2 through 6
+            Border levels are the seven steps the framework draws borders in: 1 is black, 2 through 6
             step through the grays (gray-15, gray-30, gray-40, gray-50, gray-65), 7 is white, each with an
             <code class="<%= framework_section_code_classes %>">h</code> and a
             <code class="<%= framework_section_code_classes %>">v</code> direction.
-            <code class="<%= framework_section_code_classes %>">border-level-slot</code> points a component slot at a
-            level; <code class="<%= framework_section_code_classes %>">utility-border-token</code> re-points a level
-            itself, and the bulk line remap recolors the two dither line inks. See
+            <code class="<%= framework_section_code_classes %>">border-level-slot</code> sets a component's border
+            to a level. <code class="<%= framework_section_code_classes %>">utility-border-token</code> recolors a
+            level itself, and <code class="<%= framework_section_code_classes %>">utility-remap-border-grayscale</code>
+            recolors the two line inks in bulk. See
             <%= render DocsRef.new(page: :border) %> and <%= render DocsRef.new(page: :divider) %> for how levels
             render.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Every border slot and remap moves two outputs: the CSS background and the SVG render program that
+            Every border slot and remap changes two things at once: the CSS line, and what
             <code class="<%= framework_section_code_classes %>">TRMNLPaint.border()</code> and
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider()</code> export. A slot bound to a
-            level carries that level's pattern program. A slot or remap bound to a token exports a flat line in the
-            token's stroke color, because a token line has no pattern program of its own.
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider()</code> hand to JavaScript.
+            Bind a slot to a level and JavaScript gets that level's pattern. Bind it to a token and JavaScript
+            gets a flat line in the token's stroke color, because only levels have patterns.
           </p>
         </div>
       </section>
@@ -222,17 +222,17 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'The chart ramp') %>
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">chart-series-ramp($tokens, $span: 6)</code> publishes
-            the theme's chart-series ramp. <code class="<%= framework_section_code_classes %>">$tokens</code> is an
-            ordered list running from the strongest contrast against the canvas (series 0) toward the canvas tone;
-            each slot aliases the token's own paint, so series inherit per-mode dithers and solids for free.
-            <code class="<%= framework_section_code_classes %>">$span</code> is the legible front of the ramp that
+            <code class="<%= framework_section_code_classes %>">chart-series-ramp($tokens, $span: 6)</code> sets
+            the colors charts pick their series from. List the tokens in order, strongest contrast against the
+            background first; series 0 gets the first one. Each entry keeps the token's own rendering, so series
+            dither or paint solid per device for free.
+            <code class="<%= framework_section_code_classes %>">$span</code> is how many entries from the front
             JavaScript spreads series across.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The ramp always publishes 16 slots, so a short list is safe: the slots past your last token are cleared
+            A short list is safe. The ramp always has 16 entries; the ones past your last token are cleared
             rather than left holding the framework grayscale, and
-            <code class="<%= framework_section_code_classes %>">$span</code> never reaches past that token.
+            <code class="<%= framework_section_code_classes %>">$span</code> never reaches past your last token.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Charts read the ramp through <code class="<%= framework_section_code_classes %>">TRMNLPaint.series()</code>;
