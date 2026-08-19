@@ -32,14 +32,14 @@
           <p class="<%= framework_section_description_classes %>">
             Each theme ships as a standalone stylesheet alongside <code class="<%= framework_section_code_classes %>">plugins.css</code>.
             Include the theme file and add <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> to your screen element.
-            Themes remap which tokens paint each surface; the screen's device mode (bit depth, palette)
-            still decides how those tokens render: dither patterns on 1-bit, solids on full color.
+            The theme picks the colors; the device still decides how they print: dither patterns
+            on 1-bit, solids on full color.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Themes are light/dark agnostic: a theme is a complete color statement, so
+            A theme already decides every color, so
             <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen.
-            A theme that wants a dark variant can style
-            <code class="<%= framework_section_code_classes %>">.screen--theme-&lt;id&gt;.screen--dark-mode</code> in its own stylesheet.
+            A theme that wants its own dark variant can style
+            <code class="<%= framework_section_code_classes %>">.screen--theme-&lt;id&gt;.screen--dark-mode</code> in its stylesheet.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Monochrome plugin icons follow the theme automatically when they carry the
@@ -77,13 +77,13 @@
           <p class="<%= framework_section_description_classes %>">
             Dark is how you render a plugin dark. Add
             <code class="<%= framework_section_code_classes %>">screen--theme-dark</code> to the screen element
-            and every surface recolors through the slot system, the same mechanism the other themes use.
+            and every surface recolors; it is a theme like any other.
             The plugin's own markup stays as written.
           </p>
           <p class="<%= framework_section_description_classes %>">
             To see them in action, open the screen picker (top right) and choose a Style. The
-            example below carries no theme of its own, so it follows both the device mode and the
-            Style you select, exactly as your plugin would on a themed screen.
+            example below has no theme of its own, so it follows the device and the Style you
+            pick, exactly as your plugin would on a themed screen.
           </p>
         </div>
 
@@ -147,19 +147,19 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Themes in JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes never ship JavaScript. A theme is only CSS, and that CSS is the single source of truth, so a theme
-            is readable from JS without any extra authoring:
+            Themes never ship JavaScript. A theme is only CSS, and JavaScript can read everything
+            it needs from that CSS:
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
-              <code class="<%= framework_section_code_classes %>">TRMNLPaint</code>: resolves every color and tile
-              pattern straight from the live cascade, so charts and other JS-driven visuals follow the active theme.
+              <code class="<%= framework_section_code_classes %>">TRMNLPaint</code>: reads every color and pattern
+              from the CSS itself, so charts and other JS-drawn visuals follow the active theme.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>: reads back the public
-              <code class="<%= framework_section_code_classes %>">--*</code> custom properties a theme publishes on the
-              screen. This is the documented extension path for a theme that wants to expose its own values to plugin
-              code, and it needs no framework changes.
+              <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>: reads any
+              <code class="<%= framework_section_code_classes %>">--*</code> variable a theme sets on the
+              screen. A theme that wants to hand its own values to plugin code just declares them;
+              no framework changes needed.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -172,9 +172,9 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'The Themes API') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes are authored against a fixed contract: slot mixins map framework surfaces to different
-            tokens, and the paint pipeline stays untouched. The two pages below carry the workflow and the
-            full slot vocabulary.
+            A theme is written against a fixed set of surfaces: it picks their colors, and rendering
+            stays the framework's job. The two pages below cover the workflow and the full list of
+            surfaces.
           </p>
         </div>
 
@@ -184,7 +184,7 @@
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :bounding_box, title: 'Theme Slots', docs_page: :theme_slots) do %>
-            <p class="<%= framework_subsection_description_classes %>">Every themable surface: semantic channels, component slots, utility remaps, border lines, and the chart ramp.</p>
+            <p class="<%= framework_subsection_description_classes %>">Every surface a theme can recolor, from semantic colors and components to utilities, borders, and chart series.</p>
           <% end %>
         </div>
       </section>
