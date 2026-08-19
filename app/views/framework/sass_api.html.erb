@@ -46,8 +46,8 @@
           <p class="<%= framework_section_description_classes %>">
             Everything compiles from one entrypoint. <code class="<%= framework_section_code_classes %>">plugins.scss</code>
             loads the <code class="<%= framework_section_code_classes %>">framework</code> module
-            (<code class="<%= framework_section_code_classes %>">framework/index.scss</code>), which composes the
-            configuration, the mixins, and the style layers in a fixed cascade order.
+            (<code class="<%= framework_section_code_classes %>">framework/index.scss</code>), which loads the
+            configuration, the mixins, and the style layers in a fixed order.
           </p>
         </div>
 
@@ -87,7 +87,7 @@
           <%= framework_heading(3, 'Public and internal surface') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><strong>Public:</strong> the <code class="<%= framework_section_code_classes %>">$custom-devices</code> configuration, the three supported <code class="<%= framework_section_code_classes %>">framework/mixins</code> families (screen targeting, scale functions, theme slots) named on <%= render DocsRef.new(page: :sass_mixins) %>, the compiled CSS classes, and the public <code class="<%= framework_section_code_classes %>">--*</code> variables listed on <%= render DocsRef.new(page: :tokens) %>.</li>
-            <li><strong>Internal:</strong> members whose names start with <code class="<%= framework_section_code_classes %>">-</code> or <code class="<%= framework_section_code_classes %>">_</code> (private to their module), every other mixin and function <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards, and the paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>) owned by the screen-mode engine. Internal members can change without notice.</li>
+            <li><strong>Internal:</strong> members whose names start with <code class="<%= framework_section_code_classes %>">-</code> or <code class="<%= framework_section_code_classes %>">_</code> (private to their module), every other mixin and function <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards, and the paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>) the framework's rendering owns. Internal members can change without notice.</li>
             <li><strong>Generated:</strong> files with a DO NOT EDIT header (the device map, the color maps) regenerate from <code class="<%= framework_section_code_classes %>">db/data/</code> via rake tasks. Configure or extend them; do not hand-edit them.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">

@@ -78,8 +78,8 @@
           <p class="<%= framework_section_description_classes %>">
             Custom stacks add device profiles without touching framework source: configure
             <code class="<%= framework_section_code_classes %>">$custom-devices</code> where you load the framework.
-            Every generator that walks the device set picks the profile up, so a configured device behaves exactly
-            like a built-in one.
+            Everything the framework generates per device includes your profile, so a configured device behaves
+            exactly like a built-in one.
           </p>
         </div>
 
@@ -123,7 +123,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'What a profile generates') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
-            <li>A <code class="<%= framework_section_code_classes %>">screen--&lt;name&gt;</code> class publishing the device variables (<code class="<%= framework_section_code_classes %>">--screen-w</code>, <code class="<%= framework_section_code_classes %>">--pixel-ratio</code>, <code class="<%= framework_section_code_classes %>">--color-depth</code>, ...).</li>
+            <li>A <code class="<%= framework_section_code_classes %>">screen--&lt;name&gt;</code> class setting the device variables (<code class="<%= framework_section_code_classes %>">--screen-w</code>, <code class="<%= framework_section_code_classes %>">--pixel-ratio</code>, <code class="<%= framework_section_code_classes %>">--color-depth</code>, ...).</li>
             <li>The size behavior of its <code class="<%= framework_section_code_classes %>">size</code> class, and the typography tier of its <code class="<%= framework_section_code_classes %>">density-tier</code>. See <%= render DocsRef.new(page: :scale) %> for how density and scale compose.</li>
             <li>The per-device utility rules, like high-DPI outline dots for profiles with a <code class="<%= framework_section_code_classes %>">dither-pixel-ratio</code> of 2 and up.</li>
           </ul>
