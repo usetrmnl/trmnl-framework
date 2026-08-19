@@ -11,7 +11,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The v3 Color Foundation') %>
           <p class="<%= framework_section_description_classes %>">
-            3.2 builds on the color system introduced in v3.0: 10 chromatic hues with 14 lightness steps, semantic roles (primary, success, error, warning), a 14-step grayscale, and per-mode CSS custom properties on <code class="<%= framework_section_code_classes %>">.screen</code>, so colors follow each device's palette and bit depth with no per-device markup. 3.1 added the TRMNL font bundle as the low-density default. See <%= render DocsRef.new(page: :colors) %> for the full palette.
+            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale. Every color adapts to the device's palette and bit depth on its own, with no per-device markup. 3.1 added the TRMNL font bundle as the low-density default. See <%= render DocsRef.new(page: :colors) %> for the full palette.
           </p>
         </div>
       </section>
@@ -20,7 +20,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Independent Text Scale') %>
           <p class="<%= framework_section_description_classes %>">
-            Text Scale adjusts every framework font size and pixel line height without applying the same factor to interface geometry or text strokes. It composes with Scale, so a dense layout can keep larger text instead of shrinking both together. See <%= render DocsRef.new(page: :text_scale) %>.
+            Text Scale resizes all framework text without touching the rest of the interface. It stacks with Scale, so a dense layout can keep its text large instead of shrinking both together. See <%= render DocsRef.new(page: :text_scale) %>.
           </p>
         </div>
       </section>
@@ -29,10 +29,10 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Themes') %>
           <p class="<%= framework_section_description_classes %>">
-            Restyle a whole screen by loading one extra stylesheet and adding <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code>. A theme remaps which tokens paint each surface; device-capability rendering is preserved, so a themed screen still dithers on 1-bit and paints solids on full color. 3.2 ships three themes: Black and Yellow, White and Red, and Dark.
+            Recolor a whole screen by loading one extra stylesheet and adding <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code>. The theme picks the colors and the device still decides how they print: dither patterns on 1-bit, solids on full color. 3.2 ships three themes: Black and Yellow, White and Red, and Dark.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li>A theme is a complete color statement: <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen.</li>
+            <li>A theme already decides every color, so <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen.</li>
             <li>Author your own theme with the <code class="<%= framework_section_code_classes %>">theme-slots</code> mixins and validate it with <code class="<%= framework_section_code_classes %>">rake framework:themes:lint</code>.</li>
             <li>Preview any docs example with a theme via the Style selector in the screen picker.</li>
           </ul>
@@ -46,14 +46,14 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'TRMNLPaint: the JavaScript Paint API') %>
           <p class="<%= framework_section_description_classes %>">
-            Resolve any framework color, border rail, typography role, or numeric scale from JavaScript. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads the live CSS cascade, with device density, scale, bit depth, dark mode, themes, and limited palettes already applied. Token mappings and scale factors are never duplicated in JS.
+            Read any framework color, border, text style, or size from JavaScript. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> returns what CSS would paint right now, with the device, scale, dark mode, and theme already applied, so your JavaScript never hardcodes a color.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li>Resolvers: <code class="<%= framework_section_code_classes %>">bg()</code>, <code class="<%= framework_section_code_classes %>">text()</code>, <code class="<%= framework_section_code_classes %>">semantic()</code>, <code class="<%= framework_section_code_classes %>">series()</code>, <code class="<%= framework_section_code_classes %>">border()</code>, <code class="<%= framework_section_code_classes %>">type()</code>, and more.</li>
             <li>Painters: <code class="<%= framework_section_code_classes %>">apply()</code>, <code class="<%= framework_section_code_classes %>">applyBorder()</code>, <code class="<%= framework_section_code_classes %>">applyType()</code> write resolved paint onto nodes.</li>
             <li><code class="<%= framework_section_code_classes %>">watch()</code> re-runs your build function whenever the screen's device, scale, mode, dark mode, or theme changes.</li>
-            <li><code class="<%= framework_section_code_classes %>">cssVar()</code> reads any public custom property, the documented extension path for themes.</li>
-            <li><code class="<%= framework_section_code_classes %>">scale()</code> reads the composed scale contract, and <code class="<%= framework_section_code_classes %>">px()</code> converts numeric JavaScript dimensions.</li>
+            <li><code class="<%= framework_section_code_classes %>">cssVar()</code> reads any public <code class="<%= framework_section_code_classes %>">--*</code> variable, which is how a theme hands values to plugin code.</li>
+            <li><code class="<%= framework_section_code_classes %>">scale()</code> reads the current scale factor, and <code class="<%= framework_section_code_classes %>">px()</code> converts pixel numbers with it.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Full reference: <%= render DocsRef.new(page: :paint_api) %>.
@@ -65,13 +65,13 @@
         <div class="space-y-2">
           <%= framework_heading(3, 'Generated Paint Assets') %>
           <p class="<%= framework_section_description_classes %>">
-            Dither paint no longer ships as PNG images. Every grayscale and limited-palette tile is generated at
-            build time as an inline ink SVG: the dark pixels are baked into the asset and the light tone rides the
-            background color, so a screen paints with zero image fetches.
+            Dither patterns no longer ship as PNG images. Every pattern is generated at build time as an
+            inline SVG: the dark pixels live in the asset, the light tone comes from the background color,
+            and a screen paints with zero image fetches.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li>One tile pipeline: CSS paints from the generated assets, and <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads the same resolved output back for JavaScript consumers.</li>
-            <li>Dark mode and Raw/Preview recolor by re-pointing tokens at other tiles from the same generated set; the geometry never forks.</li>
+            <li>CSS and JavaScript share the same generated patterns: <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads back exactly what CSS paints.</li>
+            <li>Dark mode and Raw/Preview swap in other patterns from the same generated set; the pattern shapes never fork.</li>
             <li>Regenerate from the color manifest with <code class="<%= framework_section_code_classes %>">rake framework:color_tokens</code>; hand-edited pattern assets are gone.</li>
           </ul>
         </div>
@@ -81,11 +81,11 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Adaptive Charts') %>
           <p class="<%= framework_section_description_classes %>">
-            Charts historically painted explicit colors and ignored bit depth, dark mode, and themes. The plugin runtime now bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter built on TRMNLPaint. Chart series pull from the screen's chart-series ramp, grid lines use the border system, and plotted text uses framework typography, so charts adapt with the rest of the screen.
+            Charts used to carry their own fixed colors and ignore bit depth, dark mode, and themes. The runtime now bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter built on TRMNLPaint. Series colors, grid lines, and chart text all come from the framework, so a chart adapts with the rest of the screen.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li><code class="<%= framework_section_code_classes %>">options()</code> and <code class="<%= framework_section_code_classes %>">merge()</code> give you adaptive Highcharts defaults under your own settings.</li>
-            <li><code class="<%= framework_section_code_classes %>">series(i, n)</code> resolves each series fill; <code class="<%= framework_section_code_classes %>">applySwatches()</code> paints matching legend markers.</li>
+            <li><code class="<%= framework_section_code_classes %>">series(i, n)</code> picks each series color; <code class="<%= framework_section_code_classes %>">applySwatches()</code> paints matching legend markers.</li>
             <li><code class="<%= framework_section_code_classes %>">watch()</code> rebuilds the chart on device, scale, mode, dark mode, or theme changes.</li>
             <li><code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> scales numeric chart dimensions from the same live CSS contract.</li>
           </ul>
@@ -99,7 +99,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Adaptive Icons') %>
           <p class="<%= framework_section_description_classes %>">
-            Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to a monochrome silhouette icon and the framework repaints it with the screen's icon paint, following the same Raw/Preview, bit-depth, dark-mode, and theme cascade as framework text. One set of icons works everywhere, as long as they are same-origin or CORS-readable. See <%= render DocsRef.new(page: :image) %>.
+            Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to a monochrome icon and the framework recolors it the way it colors text: it follows bit depth, dark mode, Raw/Preview, and the active theme. One set of icons works everywhere, as long as they are same-origin or CORS-readable. See <%= render DocsRef.new(page: :image) %>.
           </p>
         </div>
       </section>
@@ -108,13 +108,13 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Rebuilt Borders, Outlines, and Strokes') %>
           <p class="<%= framework_section_description_classes %>">
-            The Border, Outline, Text Stroke, and Image Stroke utilities were rebuilt on the same token model as the color and pattern system. Each one paints from semantic and theme variables, so dark mode, themes, and bit depth recolor it with no per-mode markup.
+            The Border, Outline, Text Stroke, and Image Stroke utilities were rebuilt the same way as the color system. Each one now follows bit depth, dark mode, and themes on its own, instead of carrying fixed colors.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li><strong>Borders:</strong> a shade-step rail, <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and <code class="<%= framework_section_code_classes %>">border--v-{step}</code> on the same 10 to 75 scale as backgrounds, plus semantic <code class="<%= framework_section_code_classes %>">border--h-black</code> / <code class="<%= framework_section_code_classes %>">border--h-white</code> rails. The rail renders as generated gradients instead of PNG tiles, so a bordered screen fetches no images, and themes repaint it without changing its geometry. The numbered levels <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> still work but are deprecated. See <%= render DocsRef.new(page: :border) %>.</li>
-            <li><strong>Outline:</strong> draws a pixel-perfect dotted rounded border from CSS gradients on 1-bit, and a solid rounded border on 2-bit and 4-bit. It paints from the semantic border channel, so dark mode and themes recolor it. See <%= render DocsRef.new(page: :outline) %>.</li>
-            <li><strong>Text Stroke:</strong> renders as concentric drop-shadow rings instead of native <code class="<%= framework_section_code_classes %>">-webkit-text-stroke</code>, so the stroke sits behind the glyph in every browser and survives background-clipped pattern fills. Sizes run <code class="<%= framework_section_code_classes %>">text-stroke--small</code> to <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>; colors resolve through the theme chain. See <%= render DocsRef.new(page: :text_stroke) %>.</li>
-            <li><strong>Image Stroke:</strong> outlines transparent images with the same size and color variants, now resolved through the theme and semantic layers so themed and dark-mode screens recolor them. See <%= render DocsRef.new(page: :image_stroke) %>.</li>
+            <li><strong>Borders:</strong> <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and <code class="<%= framework_section_code_classes %>">border--v-{step}</code> now use the same 10 to 75 shade scale as backgrounds, plus <code class="<%= framework_section_code_classes %>">border--h-black</code> and <code class="<%= framework_section_code_classes %>">border--h-white</code>. Lines render as generated gradients instead of PNG tiles, so a bordered screen fetches no images and themes recolor it freely. The numbered levels <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> still work but are deprecated. See <%= render DocsRef.new(page: :border) %>.</li>
+            <li><strong>Outline:</strong> draws a pixel-perfect dotted rounded border on 1-bit, and a solid rounded border on 2-bit and 4-bit. Dark mode and themes recolor it. See <%= render DocsRef.new(page: :outline) %>.</li>
+            <li><strong>Text Stroke:</strong> renders as stacked drop shadows instead of native <code class="<%= framework_section_code_classes %>">-webkit-text-stroke</code>, so the stroke sits behind the letters in every browser, even when the text is filled with a pattern. Sizes run <code class="<%= framework_section_code_classes %>">text-stroke--small</code> to <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>; dark mode and themes recolor them. See <%= render DocsRef.new(page: :text_stroke) %>.</li>
+            <li><strong>Image Stroke:</strong> outlines transparent images with the same size and color variants; themed and dark-mode screens recolor them too. See <%= render DocsRef.new(page: :image_stroke) %>.</li>
           </ul>
         </div>
       </section>
@@ -123,7 +123,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Mashup Backdrop') %>
           <p class="<%= framework_section_description_classes %>">
-            The <code class="<%= framework_section_code_classes %>">screen--backdrop</code> modifier now paints through the semantic backdrop slot. Themes restyle mashup backdrops, and dark mode gets its own backdrop treatment. See <%= render DocsRef.new(page: :mashup) %>.
+            The <code class="<%= framework_section_code_classes %>">screen--backdrop</code> modifier now follows themes and dark mode like every other surface. See <%= render DocsRef.new(page: :mashup) %>.
           </p>
         </div>
       </section>
@@ -132,7 +132,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Fluid Mashups') %>
           <p class="<%= framework_section_description_classes %>">
-            Fluid Mashups sit alongside the fixed layouts: the <code class="<%= framework_section_code_classes %>">mashup--3x3</code> layout uses <code class="<%= framework_section_code_classes %>">mashup-cell</code> placement modifiers for custom three by three tilings, with no inline grid styles. Every cell draws the window frame and a compact title bar at any size, across bit depths, dark mode, and themes. See <%= render DocsRef.new(page: :mashup) %>.
+            Fluid Mashups sit alongside the fixed layouts: place views on a three by three grid with <code class="<%= framework_section_code_classes %>">mashup--3x3</code> and the <code class="<%= framework_section_code_classes %>">mashup-cell</code> modifiers, no inline styles needed. Every cell keeps its frame and a compact title bar at any size, on every device, in dark mode, and under themes. See <%= render DocsRef.new(page: :mashup) %>.
           </p>
         </div>
       </section>
@@ -141,7 +141,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Complete Scale Modifiers') %>
           <p class="<%= framework_section_description_classes %>">
-            Scale modifiers now compose with each device's native UI density and resize framework gaps, pixel-based utilities, image presets, component geometry, radii, and strokes. The new <code class="<%= framework_section_code_classes %>">screen--scale-xxsmall</code> level adds a 66% scale for dense dynamic mashups, and <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> converts JavaScript dimensions from the same live CSS contract. See <%= render DocsRef.new(page: :scale) %>.
+            Scale modifiers now resize everything: gaps, pixel utilities, image presets, component geometry, radii, and strokes, on top of each device's own density. The new <code class="<%= framework_section_code_classes %>">screen--scale-xxsmall</code> level adds a 66% scale for dense mashups, and <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> lets JavaScript convert pixel numbers the same way. See <%= render DocsRef.new(page: :scale) %>.
           </p>
         </div>
       </section>
@@ -150,7 +150,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Under the Hood') %>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li><strong>Smaller stylesheets:</strong> utility gate selectors and responsive variants are refactored onto <code class="<%= framework_section_code_classes %>">:is()</code> screen scopes, reducing the CSS footprint.</li>
+            <li><strong>Smaller stylesheets:</strong> the responsive and device rules were refactored onto <code class="<%= framework_section_code_classes %>">:is()</code> selectors, shrinking the CSS.</li>
           </ul>
         </div>
       </section>
