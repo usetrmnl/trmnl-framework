@@ -11,20 +11,20 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'The contract') %>
           <p class="<%= framework_section_description_classes %>">
-            A theme sets token <em>references</em> through the theme-slot mixins and never touches the paint
-            pipeline directly. The screen's device mode still decides how every token renders: dither patterns
-            on 1-bit, palette images on limited color, solids on full color.
+            A theme picks colors by name, through the theme-slot mixins; it never writes raw color values.
+            Because of that, the device still decides how every color prints: dither patterns on 1-bit,
+            palette images on limited color, solids on full color.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
-            <li>Allowed: semantic channel refs (<code class="<%= framework_section_code_classes %>">theme-slots.semantic-bg/text/stroke/border</code>)</li>
-            <li>Allowed: component slot refs (<code class="<%= framework_section_code_classes %>">theme-slots.bg-slot/text-slot/border-level-slot/border-token-slot</code>)</li>
-            <li>Allowed: utility token remaps (<code class="<%= framework_section_code_classes %>">theme-slots.utility-*</code> and the bulk <code class="<%= framework_section_code_classes %>">utility-remap-*</code> helpers)</li>
-            <li>Optional: icon paint for adaptive images (<code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>). When omitted, <code class="<%= framework_section_code_classes %>">image--adaptive</code> icons follow the theme's semantic text-primary paint.</li>
-            <li>Disallowed: root palette overrides (<code class="<%= framework_section_code_classes %>">--white</code>, <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--gray-*</code>, <code class="<%= framework_section_code_classes %>">--color-*</code>)</li>
+            <li>Allowed: the semantic channels (<code class="<%= framework_section_code_classes %>">theme-slots.semantic-bg/text/stroke/border</code>)</li>
+            <li>Allowed: component slots (<code class="<%= framework_section_code_classes %>">theme-slots.bg-slot/text-slot/border-level-slot/border-token-slot</code>)</li>
+            <li>Allowed: utility remaps (<code class="<%= framework_section_code_classes %>">theme-slots.utility-*</code> and the bulk <code class="<%= framework_section_code_classes %>">utility-remap-*</code> helpers)</li>
+            <li>Optional: icon color for adaptive images (<code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>). When omitted, <code class="<%= framework_section_code_classes %>">image--adaptive</code> icons follow the theme's primary text color.</li>
+            <li>Disallowed: overriding the root palette (<code class="<%= framework_section_code_classes %>">--white</code>, <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--gray-*</code>, <code class="<%= framework_section_code_classes %>">--color-*</code>)</li>
             <li>Disallowed: framework-owned paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>)</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The full vocabulary of channels, slots, and remaps lives on <%= render DocsRef.new(page: :theme_slots) %>.
+            The full list of channels, slots, and remaps lives on <%= render DocsRef.new(page: :theme_slots) %>.
           </p>
         </div>
       </section>
@@ -34,14 +34,14 @@
           <%= framework_heading(3, 'Start from the boilerplate') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">framework/themes/_theme-boilerplate.scss</code> is the
-            starting point. A theme is one file: load the theme-slot mixins, emit the framework layer order, open the
+            starting point. A theme is one file: load the theme-slot mixins, declare the framework layer order, open the
             <code class="<%= framework_section_code_classes %>">tn--themes</code> layer, and scope every rule to
             <code class="<%= framework_section_code_classes %>">.trmnl .screen--theme-&lt;name&gt;</code>.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Keep <code class="<%= framework_section_code_classes %>">@include layers.order;</code> above the layer
-            block. Cascade layer order is fixed by whichever stylesheet the browser parses first. Without it, a theme
-            link placed before <code class="<%= framework_section_code_classes %>">plugins.css</code> loses to the
+            block. The browser locks in layer order from the first stylesheet it reads, so without that line a theme
+            loaded before <code class="<%= framework_section_code_classes %>">plugins.css</code> loses to the
             framework defaults.
           </p>
         </div>
@@ -77,10 +77,10 @@
         <div class="space-y-4">
           <p class="<%= framework_section_description_classes %>">
             Work in that order: semantic channels first, then component slots, then utility remaps. The shipped
-            themes follow the same section order, so they read as reference implementations:
-            <code class="<%= framework_section_code_classes %>">black-and-yellow-theme.scss</code> is a dark-side
-            grayscale remap, <code class="<%= framework_section_code_classes %>">white-and-red-theme.scss</code> a
-            bright-side remap with one targeted utility exception.
+            themes follow the same order, so read them as worked examples:
+            <code class="<%= framework_section_code_classes %>">black-and-yellow-theme.scss</code> turns the
+            screen dark, <code class="<%= framework_section_code_classes %>">white-and-red-theme.scss</code> keeps
+            it bright and makes one targeted utility exception.
           </p>
         </div>
       </section>
@@ -125,14 +125,14 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Dark mode') %>
           <p class="<%= framework_section_description_classes %>">
-            Themed screens are exempt from the framework's dark-mode remaps: every dark rule carries a
-            zero-specificity <code class="<%= framework_section_code_classes %>">:where(:not([class*="screen--theme-"]))</code>
-            gate, so a theme is a complete color statement and
-            <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on it.
+            <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed
+            screen: a theme already decides every color, so the framework's own dark rules step aside. They do it
+            with a zero-specificity <code class="<%= framework_section_code_classes %>">:where(:not([class*="screen--theme-"]))</code>
+            guard, which is why a theme never has to out-specify them.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            A theme that wants a dark variant styles the combination itself, with the same plain mixins as the rest
-            of the theme. There is no dark remap to work around, so the device mode still resolves every token:
+            A theme that wants a dark variant styles the combination itself, with the same mixins as the rest
+            of the theme. There is no dark remap to fight, and every color still prints the device's way:
             dither patterns on 1-bit, palette tiles on limited color, solids on full color.
           </p>
         </div>
@@ -156,7 +156,7 @@
             <div class="w-full ml-3">
               <p class="text-sm font-medium">
                 <strong>Do not use <code class="<%= framework_section_code_classes %>">$raw: true</code> in a theme.</strong>
-                It skips the mode pipeline, so the surface renders as one flat color with no dither on 1-bit and no
+                It bypasses device rendering, so the surface comes out as one flat color: no dither on 1-bit, no
                 palette tile on <code class="<%= framework_section_code_classes %>">screen--color-4bwry</code>. The
                 framework uses it only for its own unthemed dark defaults.
               </p>
@@ -169,9 +169,9 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Expose values to JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes never ship JavaScript. A theme that wants to hand extra values to plugin code publishes its own
-            public <code class="<%= framework_section_code_classes %>">--*</code> custom properties on the screen,
-            and JS reads them back with <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>.
+            Themes never ship JavaScript. A theme that wants to hand extra values to plugin code sets its own
+            <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen,
+            and JavaScript reads them back with <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>.
             See <%= render DocsRef.new(page: :paint_api) %>.
           </p>
         </div>
