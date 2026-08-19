@@ -32,6 +32,20 @@ Gold standard, a 3.2 release note that does all of the above in one paragraph:
 - No marketing filler (powerful, seamless, elegant, simply, just). No hedging.
 - Explain the why in one clause when it changes what the reader does, otherwise skip it.
 
+## Plain words first
+
+The 3.2 readability complaint, and the pattern to rewrite on sight: sentences built from framework vocabulary (semantic channels, slots, token references, the live cascade, canonical Fills) before the reader has plain-language footing.
+
+- Open with a sentence a first-time reader can parse: what the thing is or does, in everyday words.
+- Introduce a framework term only where the reader needs it to act, and ground it in the same sentence that introduces it.
+- Say what the reader gets before how the framework does it. Internal rationale (why the architecture is shaped this way) stays out of intros entirely.
+- Break any sentence that chains three or more clauses, and turn a parenthetical list of three or more items into a bulleted list or its own sentence.
+- Keep the concrete device triplets ("dither patterns on 1-bit, solids on full color"); concreteness is not the problem, stacked abstraction is.
+
+Before: "Themes are standalone stylesheets that re-point semantic channels, component slots, and utility tokens at different palette tokens."
+
+After: "A theme is a stylesheet you load next to plugins.css to recolor a screen. It swaps the colors the framework classes paint with, so your markup stays exactly as written."
+
 ## Punctuation
 
 - **Never use em-dashes**: no `—`, no `&mdash;`, no ` -- `. Rewrite with a period, comma, colon, or parentheses. This applies to all copy: docs, commit messages, code comments, notices.
