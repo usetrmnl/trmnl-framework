@@ -69,12 +69,10 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'How It Works') %>
           <p class="<%= framework_section_description_classes %>">
-            The outline utility uses 56 CSS background layers to place each dot at an exact integer pixel
-            coordinate. Four edge layers use <code class="<%= framework_section_code_classes %>">repeating-linear-gradient</code>
-            for a 1px dot every 4px, and 16 corner layers use individual
-            <code class="<%= framework_section_code_classes %>">linear-gradient</code> blocks sized to 1x1px
-            and positioned with pixel-precise offsets. The remaining 36 layers are corner fill-ins that stay
-            transparent until a device with a dither pixel ratio of 2 or more turns them on.
+            The outline draws every dot with CSS backgrounds, 56 layers in total, so each dot lands on an exact
+            pixel. Four edge layers repeat a 1px dot every 4px. Sixteen corner layers place one 1x1px dot each.
+            The remaining 36 are corner fill-ins that stay invisible until a device with a dither pixel ratio
+            of 2 or more turns them on.
           </p>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">dither-pixel-ratio</code> is a separate profile field
@@ -91,13 +89,13 @@
               guaranteeing pixel-grid alignment at any element size.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
-              The dot color resolves in three steps:
+              The dot color is looked up in three steps, first one set wins:
               <code class="<%= framework_section_code_classes %>">--framework-semantic-border-strong-border-color</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-outline-strong</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-border-strong</code>.
-              A theme repoints the first step through
+              A theme sets the first through
               <code class="<%= framework_section_code_classes %>">theme-slots.semantic-border</code>, so dark mode
-              and themes recolor the outline without separate assets.
+              and themes recolor the outline with no extra assets.
             </p>
           </div>
 
@@ -145,8 +143,8 @@
           <div class="space-y-2 mt-6">
             <%= framework_heading(4, '2-bit and 4-bit Displays') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Falls back to a standard 1px solid border for smoother rendering that takes advantage of the
-              additional grayscale capabilities. The corner radius is 7px, scaled by the content scale.
+              Draws a standard 1px solid border instead: with real grays available, a smooth line beats dots.
+              The corner radius is 7px, scaled by the content scale.
             </p>
           </div>
 
