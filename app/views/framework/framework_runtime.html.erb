@@ -77,7 +77,7 @@
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :overflow, title: 'Overflow', docs_page: :overflow) do %>
-            <p class="<%= framework_subsection_description_classes %>">Plans 1..N columns with off-screen staging and commits the best fit, then re-clamps per real column width.</p>
+            <p class="<%= framework_subsection_description_classes %>">Tries 1 to N columns off screen, keeps the layout that fits best, then re-clamps text to each real column's width.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li>Duplicates group headers across columns when needed</li>
               <li>Optional trailing "and N more" label for hidden items (enable with <code class="<%= framework_section_code_classes %>">data-overflow-counter="true"</code>)</li>
@@ -114,7 +114,7 @@
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :pixel_perfect, title: 'Pixel-Perfect Fonts', docs_page: :pixel_perfect) do %>
-            <p class="<%= framework_subsection_description_classes %>">Wraps lines in spans and enforces even/odd widths for crisp rendering; scheduled in idle time.</p>
+            <p class="<%= framework_subsection_description_classes %>">Wraps lines in spans and pins them to even or odd pixel widths so they render crisp; scheduled in idle time.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li>Skipped on higher bit-depth modes</li>
               <li>Respects centered alignment</li>
@@ -187,7 +187,7 @@ window.addEventListener("trmnl:terminalize:stats", function (event) {
 
       <section class="space-y-6">
         <%= framework_heading(3, 'Why this exists') %>
-        <p class="<%= framework_section_description_classes %>">Plugins need to fit source data into a static layout space that is device-defined and varies by model, orientation, and density. While this resembles responsive web design, the runtime provides purpose-built tools (overflow planning, per-column clamping, integer pixel alignment, and value fitting) tailored specifically for TRMNL devices.</p>
+        <p class="<%= framework_section_description_classes %>">A plugin has to fit its data into a fixed space that changes with the device, orientation, and density. That sounds like responsive web design, but the runtime's tools (column planning, per-column clamping, pixel alignment, value fitting) are built for TRMNL screens specifically.</p>
       </section>
 
       <%= render 'framework/page_navigation' %>

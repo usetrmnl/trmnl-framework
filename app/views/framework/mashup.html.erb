@@ -499,10 +499,10 @@
             Combine one modifier from each group to place a cell. Column, row, and span values range from 1 to 3.
           </p>
           <p class="<%= framework_subsection_description_classes %>">
-            Keep start plus span at 4 or less. The grid is three tracks wide, so
+            Keep start plus span at 4 or less. The grid is three columns wide, so
             <code class="<%= framework_section_code_classes %>">mashup-cell--col-2</code> with
-            <code class="<%= framework_section_code_classes %>">mashup-cell--col-span-3</code> reaches past the last
-            track and adds an auto-sized fourth column, which re-lays the whole mashup. The same holds for rows.
+            <code class="<%= framework_section_code_classes %>">mashup-cell--col-span-3</code> reaches past the
+            edge and adds an auto-sized fourth column, which re-lays the whole mashup. The same holds for rows.
           </p>
         </div>
 
@@ -647,8 +647,8 @@
             <p class="<%= framework_subsection_description_classes %>">
               Add <code class="<%= framework_section_code_classes %>">mashup-cell--col-*</code> and
               <code class="<%= framework_section_code_classes %>">mashup-cell--row-*</code> to choose the starting
-              tracks. Add the matching <code class="<%= framework_section_code_classes %>">*-span-*</code> modifiers
-              to cover up to three tracks in either direction.
+              cell. Add the matching <code class="<%= framework_section_code_classes %>">*-span-*</code> modifiers
+              to span up to three cells in either direction.
             </p>
           </div>
           <div class="<%= framework_example_classes %>">
