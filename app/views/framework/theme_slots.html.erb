@@ -174,7 +174,7 @@
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The three shipped themes cover every side. Black and Yellow remaps to the dark side. White and Red
+            The three shipped themes cover every side. Black and Yellow remaps to the dark side, and White and Red
             remaps to the bright side with one exception, <code class="<%= framework_section_code_classes %>">utility-bg("white", "red")</code>,
             so white surfaces turn red while white text stays ink. Dark flips the grayscale and uses
             <code class="<%= framework_section_code_classes %>">utility-border-level</code> for the 2-bit
@@ -202,7 +202,7 @@
             <code class="<%= framework_section_code_classes %>">h</code> and a
             <code class="<%= framework_section_code_classes %>">v</code> direction.
             <code class="<%= framework_section_code_classes %>">border-level-slot</code> sets a component's border
-            to a level. <code class="<%= framework_section_code_classes %>">utility-border-token</code> recolors a
+            to a level; <code class="<%= framework_section_code_classes %>">utility-border-token</code> recolors a
             level itself, and <code class="<%= framework_section_code_classes %>">utility-remap-border-grayscale</code>
             recolors the two line inks in bulk. See
             <%= render DocsRef.new(page: :border) %> and <%= render DocsRef.new(page: :divider) %> for how levels
@@ -223,8 +223,8 @@
           <%= framework_heading(3, 'The chart ramp') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">chart-series-ramp($tokens, $span: 6)</code> sets
-            the colors charts pick their series from. List the tokens in order, strongest contrast against the
-            background first; series 0 gets the first one. Each entry keeps the token's own rendering, so series
+            the colors charts pick their series from: list the tokens in order, strongest contrast against the
+            background first, and series 0 gets the first one. Each entry keeps the token's own rendering, so series
             dither or paint solid per device for free.
             <code class="<%= framework_section_code_classes %>">$span</code> is how many entries from the front
             JavaScript spreads series across.
