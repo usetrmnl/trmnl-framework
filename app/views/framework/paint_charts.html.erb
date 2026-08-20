@@ -20,10 +20,10 @@
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">series(i, count, { el })</code>: the paint for series
-              <em>i</em> of <em>count</em>. Series colors start at the screen's ink and spread across the legible
-              part of the range; how far is the public
-              <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> variable, so
-              a theme can narrow it from CSS.
+              <em>i</em> of <em>count</em>. Series colors start at the screen's ink and spread only as far as
+              stays readable; the public
+              <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> variable
+              sets how far, so a theme can narrow it from CSS.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">ramp({ el })</code>: every chart series color at
@@ -55,8 +55,8 @@ var fills = TRMNLPaint.ramp({ el: "my-chart" });', language: 'javascript') %>
           <p class="<%= framework_section_description_classes %>">
             Adapters translate a <code class="<%= framework_section_code_classes %>">Fill</code>,
             <code class="<%= framework_section_code_classes %>">BorderFill</code>, or
-            <code class="<%= framework_section_code_classes %>">TypeSpec</code> into the form one library expects.
-            They only copy values across; no adapter invents colors or contrast rules of its own.
+            <code class="<%= framework_section_code_classes %>">TypeSpec</code> into the shape a charting library
+            expects. They only copy values across; no adapter invents colors or contrast rules of its own.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
@@ -109,7 +109,7 @@ var css = fill.image
             <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> ships in the same
             <code class="<%= framework_section_code_classes %>">plugins.js</code> runtime as
             <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and builds Highcharts options
-            from it. It picks no colors of its own: everything it returns comes from
+            from it; every color it returns comes from
             TRMNLPaint. <%= render DocsRef.new(page: :chart) %> puts it to work in line, bar, and gauge charts.
           </p>
           <p class="<%= framework_section_description_classes %>">
@@ -211,7 +211,7 @@ TRMNLCharts.watch(el, function () {
       { name: "Read", data: [2, 4, 6], color: TRMNLCharts.series(1, 2, { el: el }) }
     ]
   }));
-  // Legend markers marked data-chart-series="0" / "1" pick up the same ramp.
+  // Legend markers tagged data-chart-series="0" / "1" get the same series colors.
   TRMNLCharts.applySwatches({ el: el });
   return chart;
 });', language: 'javascript') %>
@@ -282,8 +282,7 @@ TRMNLCharts.watch(el, function () {
                     var el = "paint-strip";
                     var DATA = [["Scranton", 12.4], ["Stamford", 9.8], ["Nashua", 8.6],
                                 ["Utica", 7.4], ["Albany", 6.2], ["Buffalo", 4.2]];
-                    // watch() repaints whenever the screen device/scale/mode/dark/theme classes change,
-                    // re-reading the current paint each time.
+                    // watch() repaints whenever the screen device/scale/mode/dark/theme classes change.
                     TRMNLPaint.watch(el, function () {
                       var box = document.getElementById(el);
                       if (!box) return;
@@ -295,20 +294,20 @@ TRMNLCharts.watch(el, function () {
                         cap.className = "label label--small";
                         cap.style.cssText = "width:88px;flex:none;";
                         cap.textContent = d[0];
-                        var rail = document.createElement("div");
-                        rail.style.cssText = "flex:1;height:16px;";
+                        var track = document.createElement("div");
+                        track.style.cssText = "flex:1;height:16px;";
                         var bar = document.createElement("div");
                         bar.style.cssText = "height:100%;border-radius:4px;width:" + (d[1] / DATA[0][1] * 100) + "%;";
                         // series(i, n) reads the paint for series i; apply() layers
                         // color and pattern like the framework does.
                         TRMNLPaint.apply(bar, TRMNLPaint.series(i, DATA.length, { el: el }));
-                        rail.appendChild(bar);
+                        track.appendChild(bar);
                         var val = document.createElement("span");
                         val.className = "label label--small";
                         val.style.cssText = "width:48px;flex:none;text-align:right;";
                         val.textContent = "$" + d[1].toFixed(1) + "k";
                         row.appendChild(cap);
-                        row.appendChild(rail);
+                        row.appendChild(track);
                         row.appendChild(val);
                         box.appendChild(row);
                       });
@@ -321,7 +320,7 @@ TRMNLCharts.watch(el, function () {
         </div>
 
         <div class="mt-4">
-          <%= render CodeExampleComponent.new(demo_code: '<!-- an empty, ID\'d container to paint into -->
+          <%= render CodeExampleComponent.new(demo_code: '<!-- an empty container with an id to paint into -->
 <div id="paint-strip" class="flex flex--col gap--small w--full"></div>
 
 <script type="text/javascript">
@@ -339,8 +338,7 @@ TRMNLCharts.watch(el, function () {
     var el = "paint-strip";
     var DATA = [["Scranton", 12.4], ["Stamford", 9.8], ["Nashua", 8.6],
                 ["Utica", 7.4], ["Albany", 6.2], ["Buffalo", 4.2]];
-    // watch() repaints whenever the screen device/scale/mode/dark/theme classes change,
-    // re-reading the current paint each time.
+    // watch() repaints whenever the screen device/scale/mode/dark/theme classes change.
     TRMNLPaint.watch(el, function () {
       var box = document.getElementById(el);
       if (!box) return;
@@ -352,16 +350,16 @@ TRMNLCharts.watch(el, function () {
         cap.className = "label label--small";
         cap.style.cssText = "width:88px;flex:none;";
         cap.textContent = d[0];
-        var rail = document.createElement("div");
-        rail.style.cssText = "flex:1;height:16px;";
+        var track = document.createElement("div");
+        track.style.cssText = "flex:1;height:16px;";
         var bar = document.createElement("div");
         bar.style.cssText = "height:100%;border-radius:4px;width:" + (d[1] / DATA[0][1] * 100) + "%;";
         // series(i, n) reads the paint for series i; apply() layers color and
         // pattern like the framework does.
         TRMNLPaint.apply(bar, TRMNLPaint.series(i, DATA.length, { el: el }));
-        rail.appendChild(bar);
+        track.appendChild(bar);
         row.appendChild(cap);
-        row.appendChild(rail);
+        row.appendChild(track);
         box.appendChild(row);
       });
     });

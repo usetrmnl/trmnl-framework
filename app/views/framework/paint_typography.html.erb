@@ -18,21 +18,11 @@
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">type(classOrRole, { el, stroke })</code>: the
-              resolved typography of a role or class as a
-              <code class="<%= framework_section_code_classes %>">TypeSpec</code>. The role
-              <code class="<%= framework_section_code_classes %>">'chart-label'</code> maps to
-              <code class="<%= framework_section_code_classes %>">text--small</code>;
-              <code class="<%= framework_section_code_classes %>">'value'</code>,
-              <code class="<%= framework_section_code_classes %>">'label'</code>,
-              <code class="<%= framework_section_code_classes %>">'title'</code> and
-              <code class="<%= framework_section_code_classes %>">'description'</code> map to their own classes; any
-              other string passes through as a literal class list (e.g.
-              <code class="<%= framework_section_code_classes %>">'value value--xxlarge'</code>). Font family, size,
-              weight, and line-height follow the active font bundle and density, so they are always measured live,
-              never read from variables. Pass <code class="<%= framework_section_code_classes %>">stroke</code> (a
-              size token, or
+              typography of a role or class as a
+              <code class="<%= framework_section_code_classes %>">TypeSpec</code>. Pass
+              <code class="<%= framework_section_code_classes %>">stroke</code> (a size token, or
               <code class="<%= framework_section_code_classes %>">true</code> for the base size) to include a
-              text stroke in the spec.
+              text stroke.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">strokeSpec(sizeToken, { el })</code>: one
@@ -46,11 +36,23 @@
               <code class="<%= framework_section_code_classes %>">text-stroke</code>.
             </li>
           </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The roles map to framework classes: <code class="<%= framework_section_code_classes %>">'chart-label'</code>
+            to <code class="<%= framework_section_code_classes %>">text--small</code>;
+            <code class="<%= framework_section_code_classes %>">'value'</code>,
+            <code class="<%= framework_section_code_classes %>">'label'</code>,
+            <code class="<%= framework_section_code_classes %>">'title'</code>, and
+            <code class="<%= framework_section_code_classes %>">'description'</code> to their own classes. Any other
+            string passes through as a literal class list (e.g.
+            <code class="<%= framework_section_code_classes %>">'value value--xxlarge'</code>). Font family, size,
+            weight, and line-height follow the active font bundle and density, so they are measured live, never
+            read from variables.
+          </p>
         </div>
 
         <div class="mt-4">
           <%= render CodeExampleComponent.new(demo_code: 'TypeSpec = {
-  fontFamily:      string | null,  // resolved family for the active bundle x density
+  fontFamily:      string | null,  // resolved family for the active bundle and density
   fontSize:        string | null,  // e.g. "38px" for .value
   fontWeight:      string | null,
   fontStyle:       string | null,
@@ -92,8 +94,7 @@ var axis = TRMNLPaint.type("chart-label", { el: "my-chart" });', language: 'java
             <li>
               <code class="<%= framework_section_code_classes %>">applyType(node, typeSpec)</code>: writes a
               <code class="<%= framework_section_code_classes %>">TypeSpec</code>'s font, text paint,
-              clipping, and optional stroke onto a node, exactly as computed. Dither patterns and the full
-              stacked-shadow stroke arrive intact instead of being reduced to a solid color.
+              clipping, and optional stroke onto a node, exactly as computed.
             </li>
           </ul>
         </div>
@@ -134,11 +135,9 @@ var label = TRMNLPaint.toHighchartsText(
             The two stat tiles below are built from plain spans that carry no framework classes.
             <code class="<%= framework_section_code_classes %>">TRMNLPaint.type()</code> resolves the
             <code class="<%= framework_section_code_classes %>">value</code> role (the big-number face used by stat
-            tiles) and the <code class="<%= framework_section_code_classes %>">chart-label</code> role (mapped to
-            <code class="<%= framework_section_code_classes %>">text--small</code>), and
+            tiles) and the <code class="<%= framework_section_code_classes %>">chart-label</code> role, and
             <code class="<%= framework_section_code_classes %>">TRMNLPaint.applyType()</code> writes the
-            font and text paint onto them. Toggle the font bundle or density in the picker and the tiles
-            follow, because family and size are read live rather than hardcoded.
+            font and text paint onto them. Toggle the font bundle or density in the picker and the tiles follow.
           </p>
         </div>
 

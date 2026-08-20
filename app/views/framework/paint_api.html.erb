@@ -12,12 +12,12 @@
           <%= framework_heading(3, 'How it works') %>
           <p class="<%= framework_section_description_classes %>">
             All framework colors live in CSS, as custom properties on the
-            <code class="<%= framework_section_code_classes %>">.screen</code> element; a theme is just CSS that
+            <code class="<%= framework_section_code_classes %>">.screen</code> element; a theme is only CSS that
             changes them. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads those
             values, it never defines its own.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            To answer a query, TRMNLPaint drops a hidden probe element into the target, gives it the real
+            To answer a query, TRMNLPaint adds a hidden element to the target, gives it the real
             utility class (<code class="<%= framework_section_code_classes %>">bg--&lt;token&gt;</code>,
             <code class="<%= framework_section_code_classes %>">text--&lt;token&gt;</code>, ...), and reads back
             what the browser computed. That is why everything is honored automatically: bit depth, dark mode,
@@ -107,7 +107,7 @@
 var height = TRMNLPaint.px(260, { el: "my-chart" });
 var spacing = TRMNLPaint.px([10, 10, 5, 10], { el: "my-chart" });
 
-// Framework-owned component geometry also includes device density.
+// Framework component sizes also include device density.
 var componentInset = TRMNLPaint.px(6, { el: "my-chart", kind: "ui" });
 
 // Framework typography includes device density, Scale, and Text Scale.
@@ -120,7 +120,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
           <%= framework_heading(3, 'The Fill type') %>
           <p class="<%= framework_section_description_classes %>">
             Every function returns a <code class="<%= framework_section_code_classes %>">Fill</code>, a
-            plain object that says what to paint with, tied to no charting library. A Fill with a
+            plain object that says what to paint with. A Fill with a
             <code class="<%= framework_section_code_classes %>">url</code> and
             <code class="<%= framework_section_code_classes %>">size</code> is a dither pattern; a Fill with only
             a <code class="<%= framework_section_code_classes %>">color</code> is a solid. Anything
@@ -130,7 +130,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
 
         <div class="mt-4">
           <%= render CodeExampleComponent.new(demo_code: 'Fill = {
-  color: string | null,  // resolved "rgb(...)" flat / field color
+  color: string | null,  // resolved rgb(...); the solid color, or the color under a pattern
   image: string | null,  // full resolved background-image; null when "none"
   url:   string | null,  // first url(...) from image; null for gradients / solids
   size:  number | null,  // tile size in px (falls back to --dither-bg-size)
@@ -162,7 +162,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
               <code class="<%= framework_section_code_classes %>">watch(el, onChange, { immediate })</code>: runs
               <code class="<%= framework_section_code_classes %>">onChange</code> now (unless
               <code class="<%= framework_section_code_classes %>">immediate: false</code>) and again whenever the
-              mode, dark or theme classes change on the screen or on a wrapper above it. Returns a
+              device, scale, mode, dark or theme classes change on the screen or on a wrapper above it. Returns a
               <code class="<%= framework_section_code_classes %>">stop()</code> function.
             </li>
             <li>
@@ -173,8 +173,8 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
           </ul>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">applyBorder()</code> and
-            <code class="<%= framework_section_code_classes %>">applyType()</code> write border and typography
-            longhands the same way; they are documented with their resolvers on
+            <code class="<%= framework_section_code_classes %>">applyType()</code> do the same for lines and
+            text; both are documented on
             <%= render DocsRef.new(page: :paint_borders) %> and <%= render DocsRef.new(page: :paint_typography) %>.
           </p>
         </div>
@@ -187,13 +187,13 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
             A theme that wants to hand extra values to plugin code (a brand accent,
             say) sets its own
             <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen, and JavaScript
-            reads them back with <code class="<%= framework_section_code_classes %>">cssVar()</code>. No framework
-            release, no JS bundle per theme: just CSS both sides read.
+            reads them back with <code class="<%= framework_section_code_classes %>">cssVar()</code>. Both sides read
+            the same CSS, with no framework release and no per-theme JS bundle.
           </p>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">cssVar(name, { el })</code> returns the computed
             value of any public <code class="<%= framework_section_code_classes %>">--*</code> variable on the
-            screen. It exists exactly for these theme-set values.
+            screen.
           </p>
           <div class="<%= message_sage_classes %>">
             <div class="flex items-center w-full">
@@ -210,10 +210,9 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
                   <code class="<%= framework_section_code_classes %>">--border-*</code> and
                   <code class="<%= framework_section_code_classes %>">--tn-*</code>) in the released
                   <code class="<%= framework_section_code_classes %>">plugins.min.css</code>; the readable
-                  <code class="<%= framework_section_code_classes %>">plugins.css</code> keeps the source names. Never
-                  read those families from JS.
+                  <code class="<%= framework_section_code_classes %>">plugins.css</code> keeps the source names.
                   <code class="<%= framework_section_code_classes %>">cssVar("--border-step-40-h-color")</code>
-                  answers in the dev build and returns an empty string against every release. See
+                  answers in the dev build and returns an empty string in every release. See
                   <%= render DocsRef.new(page: :variables_api) %> for the families that survive.
                 </p>
               </div>

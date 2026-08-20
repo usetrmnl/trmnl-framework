@@ -50,7 +50,7 @@
           <%= render CodeExampleComponent.new(demo_code: 'BorderFill = {
   color:    string | null,  // resolved background-color (solid/black-white modes)
   image:    string | null,  // resolved background-image gradient(s); null when "none"
-  url:      string | null,  // first url(...) ink tile (black/white rails); null otherwise
+  url:      string | null,  // first url(...) ink tile (black/white lines); null otherwise
   size:     string | null,  // VERBATIM background-size string (dither lines are list-valued)
   position: string | null,  // VERBATIM background-position string
   repeat:   string | null,  // VERBATIM background-repeat string
@@ -64,7 +64,7 @@
     path2:   string | null,
     color2:  string | null,
   } | null,
-  dir:      "h" | "v",      // which pseudo/orientation was probed
+  dir:      "h" | "v",      // which pseudo/orientation was read
 }', language: 'javascript') %>
         </div>
 
@@ -75,17 +75,15 @@
             which stay visible in every mode and follow themes for free.
             <code class="<%= framework_section_code_classes %>">semantic('border-strong')</code> and
             <code class="<%= framework_section_code_classes %>">semantic('border-muted')</code> return the role's
-            color as a plain Fill, not the line artwork. Draw lines with
-            <code class="<%= framework_section_code_classes %>">border()</code>; reach for
-            <code class="<%= framework_section_code_classes %>">semantic('border-*')</code> only when you need the
+            color as a plain Fill, not the line artwork; reach for them only when you need the
             color itself.
           </p>
         </div>
 
         <div class="mt-4">
           <%= render CodeExampleComponent.new(demo_code: '// Framework border lines, read for the current mode/theme.
-var gridRail = TRMNLPaint.border(65, { el: "my-chart" });     // -> BorderFill
-var axisRail = TRMNLPaint.border("black", { dir: "v", el: "my-chart" });
+var gridLine = TRMNLPaint.border(65, { el: "my-chart" });     // -> BorderFill
+var axisLine = TRMNLPaint.border("black", { dir: "v", el: "my-chart" });
 var step40 = TRMNLPaint.border(40, { el: "my-chart" });', language: 'javascript') %>
         </div>
       </section>
@@ -103,7 +101,7 @@ var step40 = TRMNLPaint.border(40, { el: "my-chart" });', language: 'javascript'
             <li>
               <code class="<%= framework_section_code_classes %>">applyBorder(node, borderFill)</code>: writes a
               <code class="<%= framework_section_code_classes %>">BorderFill</code> onto a node as its five background
-              properties, verbatim, so solids, gradients, and dithered lines all arrive unchanged.
+              properties; solids, gradients, and dithered lines all arrive unchanged.
             </li>
           </ul>
         </div>
@@ -135,8 +133,7 @@ var step40 = TRMNLPaint.border(40, { el: "my-chart" });', language: 'javascript'
         <div class="mt-4">
           <%= render CodeExampleComponent.new(demo_code: '// Border lines into Highcharts axis/grid options.
 var grid = TRMNLPaint.toHighchartsAxis(
-  TRMNLPaint.border(65, { el: "my-chart" }));
-// TRMNLCharts.options() applies the BorderFill pattern to rendered SVG paths.', language: 'javascript') %>
+  TRMNLPaint.border(65, { el: "my-chart" }));', language: 'javascript') %>
         </div>
       </section>
 
@@ -210,13 +207,12 @@ var grid = TRMNLPaint.toHighchartsAxis(
                         row.appendChild(time);
                         row.appendChild(what);
                         row.appendChild(cap);
-                        var rail = document.createElement("div");
-                        rail.style.cssText = "height:2px;width:100%;";
-                        // applyBorder writes the five background properties verbatim, so the
-                        // line paints exactly as the CSS .border--* utilities do.
-                        TRMNLPaint.applyBorder(rail, TRMNLPaint.border(r.spec, { el: el }));
+                        var line = document.createElement("div");
+                        line.style.cssText = "height:2px;width:100%;";
+                        // applyBorder paints the line exactly as the CSS .border--* utilities do.
+                        TRMNLPaint.applyBorder(line, TRMNLPaint.border(r.spec, { el: el }));
                         box.appendChild(row);
-                        box.appendChild(rail);
+                        box.appendChild(line);
                       });
                     });
                   });
@@ -252,13 +248,12 @@ var grid = TRMNLPaint.toHighchartsAxis(
         var row = document.createElement("div");
         row.style.cssText = "padding:12px 0;";
         row.textContent = "border(" + JSON.stringify(spec) + ")";
-        var rail = document.createElement("div");
-        rail.style.cssText = "height:2px;width:100%;";
-        // applyBorder writes the five background properties verbatim, so the
-        // line paints exactly as the CSS .border--* utilities do.
-        TRMNLPaint.applyBorder(rail, TRMNLPaint.border(spec, { el: el }));
+        var line = document.createElement("div");
+        line.style.cssText = "height:2px;width:100%;";
+        // applyBorder paints the line exactly as the CSS .border--* utilities do.
+        TRMNLPaint.applyBorder(line, TRMNLPaint.border(spec, { el: el }));
         box.appendChild(row);
-        box.appendChild(rail);
+        box.appendChild(line);
       });
     });
   });

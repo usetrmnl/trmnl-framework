@@ -23,7 +23,8 @@
               (<code class="<%= framework_section_code_classes %>">bg--&lt;token&gt;</code>), e.g.
               <code class="<%= framework_section_code_classes %>">'black'</code>,
               <code class="<%= framework_section_code_classes %>">'gray-40'</code>,
-              <code class="<%= framework_section_code_classes %>">'red-55'</code>. On solid modes you get a color-only
+              <code class="<%= framework_section_code_classes %>">'red-55'</code>,
+              <code class="<%= framework_section_code_classes %>">'error'</code>. On solid modes you get a color-only
               Fill; on dither modes, a pattern Fill.
             </li>
             <li>
@@ -37,22 +38,20 @@
               concrete <code class="<%= framework_section_code_classes %>">rgb</code> in a color-only Fill.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">semantic(slot, { el })</code>: a framework semantic
-              slot. Slots with a public utility (<code class="<%= framework_section_code_classes %>">canvas</code>,
+              <code class="<%= framework_section_code_classes %>">semantic(slot, { el })</code>: one of the
+              framework's named color roles: <code class="<%= framework_section_code_classes %>">canvas</code>,
               <code class="<%= framework_section_code_classes %>">surface</code>,
               <code class="<%= framework_section_code_classes %>">text-primary</code>,
               <code class="<%= framework_section_code_classes %>">text-secondary</code>,
               <code class="<%= framework_section_code_classes %>">text-inverse</code>,
-              <code class="<%= framework_section_code_classes %>">backdrop</code>) are read through that utility.
-              The rest (<code class="<%= framework_section_code_classes %>">border-strong</code>,
+              <code class="<%= framework_section_code_classes %>">backdrop</code>,
+              <code class="<%= framework_section_code_classes %>">border-strong</code>,
               <code class="<%= framework_section_code_classes %>">border-muted</code>,
               <code class="<%= framework_section_code_classes %>">fill-strong</code>,
               <code class="<%= framework_section_code_classes %>">fill-muted</code>,
               <code class="<%= framework_section_code_classes %>">fill-soft</code>,
-              <code class="<%= framework_section_code_classes %>">stroke-contrast</code>,
-              <code class="<%= framework_section_code_classes %>">icon</code>) are read from their
-              <code class="<%= framework_section_code_classes %>">--framework-semantic-*</code> variables,
-              patterns included.
+              <code class="<%= framework_section_code_classes %>">stroke-contrast</code>, or
+              <code class="<%= framework_section_code_classes %>">icon</code>. Patterns come through intact.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">textColor(token, { el })</code>: the single
@@ -71,7 +70,7 @@ var fill = TRMNLPaint.bg("red-55", { el: "my-chart" });
 // => solid mode:  { color: "rgb(204, 0, 0)", image: null, url: null, size: null }
 // => dither mode: { color: "rgb(255,255,255)", image: "url(...)", url: "data:...", size: 16 }
 
-// One-color form of the semantic default text utility for SVG/canvas text.
+// The default text color as one plain color, for SVG or canvas text.
 var textColor = TRMNLPaint.textColor("default", { el: "my-chart" });', language: 'javascript') %>
         </div>
       </section>
@@ -80,8 +79,8 @@ var textColor = TRMNLPaint.textColor("default", { el: "my-chart" });', language:
         <div class="space-y-4">
           <%= framework_heading(3, 'Painting fills') %>
           <p class="<%= framework_section_description_classes %>">
-            A resolved Fill is painted back with one call. Wrap paints in
-            <code class="<%= framework_section_code_classes %>">watch()</code> so they re-run when the screen's mode,
+            A resolved Fill is painted back with one call. Wrap the painting in
+            <code class="<%= framework_section_code_classes %>">watch()</code> so it re-runs when the screen's mode,
             dark or theme classes change; see <%= render DocsRef.new(page: :paint_api) %>.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
