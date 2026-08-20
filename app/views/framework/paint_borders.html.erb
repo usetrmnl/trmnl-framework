@@ -41,8 +41,8 @@
             <code class="<%= framework_section_code_classes %>">size</code>,
             <code class="<%= framework_section_code_classes %>">position</code>, and
             <code class="<%= framework_section_code_classes %>">repeat</code> as verbatim strings. It also
-            carries the ready-made SVG drawing instructions the CSS declares, so JavaScript never parses gradients
-            or works out geometry itself.
+            carries the ready-made SVG drawing instructions the CSS declares, so a renderer copies paths and
+            colors verbatim instead of parsing gradients.
           </p>
         </div>
 
@@ -122,10 +122,12 @@ var step40 = TRMNLPaint.border(40, { el: "my-chart" });', language: 'javascript'
               block.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">applyHighchartsAxisPaint()</code>: hooks into
-              Highcharts' rendering and copies the BorderFill's SVG drawing instructions onto the
-              rendered grid, axis, and tick paths. Flat modes carry a stroke; dither modes carry their complete
-              pattern, paths and colors.
+              <code class="<%= framework_section_code_classes %>">applyHighchartsAxisPaint(chart, fills)</code>:
+              paints the rendered grid, axis, and tick paths from
+              <code class="<%= framework_section_code_classes %>">{ xGrid, yGrid, axis }</code> BorderFills,
+              re-running on the chart's render event.
+              <code class="<%= framework_section_code_classes %>">TRMNLCharts.options()</code> wires it up for
+              you. Flat modes carry a stroke; dither modes carry their complete pattern, paths and colors.
             </li>
           </ul>
         </div>

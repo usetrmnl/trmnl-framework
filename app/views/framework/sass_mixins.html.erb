@@ -13,6 +13,7 @@
           <p class="<%= framework_section_description_classes %>">
             Load the mixins module and wrap declarations. Each wrapped block applies only on screens that match,
             using the same grammar as the responsive utility classes (<%= render DocsRef.new(page: :responsive) %>).
+            Your build needs the framework source on the load path; see <%= render DocsRef.new(page: :sass_build) %>.
           </p>
         </div>
 
@@ -92,7 +93,7 @@
             <li>
               <code class="<%= framework_section_code_classes %>">ui-scaled($value)</code>: multiplies by
               <code class="<%= framework_section_code_classes %>">--ui-scale</code>, which includes device density.
-              Use for framework-owned component geometry.
+              Use for geometry that should scale like the framework's own components.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">text-ui-scaled($value)</code>: multiplies by
@@ -142,8 +143,8 @@
             (<code class="<%= framework_section_code_classes %>">scope-selector</code>,
             <code class="<%= framework_section_code_classes %>">generate-screen-utilities</code>) and the variant
             emitters (<code class="<%= framework_section_code_classes %>">with-all-variants</code>,
-            <code class="<%= framework_section_code_classes %>">generate-triple-variants</code>). It also covers
-            the shared utility emitters, the pattern, border-level, and text-paint helpers, and the
+            <code class="<%= framework_section_code_classes %>">generate-triple-variants</code>). The internal set
+            also includes the shared utility emitters, the pattern, border-level, and text-paint helpers, and the
             <code class="<%= framework_section_code_classes %>">trmnl-namespace</code> wrapper. They exist to compile
             the framework's own classes and can change or disappear in any release, with no deprecation notice and no
             entry in the release notes.

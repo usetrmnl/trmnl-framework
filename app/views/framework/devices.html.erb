@@ -16,6 +16,10 @@
             sets the profile as CSS variables on the
             <%= render DocsRef.new(page: :screen) %> element, and everything inside reads them.
           </p>
+          <p class="<%= framework_section_description_classes %>">
+            On the TRMNL platform you never write this class: the platform renders your layout against each
+            device's own profile. Add it yourself only when you render the screen in your own stack.
+          </p>
         </div>
 
         <div class="<%= framework_docs_table_wrapper_classes %>">

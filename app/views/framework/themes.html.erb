@@ -31,6 +31,7 @@
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
             Include the theme stylesheet and add <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> to your screen element.
+            Theme stylesheets ship with every framework release, next to <code class="<%= framework_section_code_classes %>">plugins.css</code>.
           </p>
           <p class="<%= framework_section_description_classes %>">
             A theme already decides every color, so
@@ -156,14 +157,14 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Build Your Own Theme') %>
           <p class="<%= framework_section_description_classes %>">
-            A theme picks colors for a fixed set of surfaces and changes nothing else. The two pages
-            below cover the workflow and the full list of surfaces.
+            A theme changes colors and nothing else: layout, spacing, and markup stay as they are. The two
+            pages below cover the workflow and every part a theme can recolor.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <%= render FrameworkDocCardComponent.new(icon: :edit, title: 'Authoring Themes', docs_page: :theme_authoring) do %>
-            <p class="<%= framework_subsection_description_classes %>">The contract and workflow: start from the boilerplate, map slots, register the id, and lint.</p>
+            <p class="<%= framework_subsection_description_classes %>">The workflow: start from the boilerplate, point each part of the screen at new colors, register the id, and lint.</p>
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :bounding_box, title: 'Theme Slots', docs_page: :theme_slots) do %>

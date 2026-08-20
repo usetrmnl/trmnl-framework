@@ -11,7 +11,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'From Framework 3.0 or 3.1') %>
           <p class="<%= framework_section_description_classes %>">
-            Upgrade and rerender: your plugin looks the same until you opt into 3.2 features. Two things are worth reviewing.
+            On the TRMNL platform there is nothing to install: plugins render against the platform's current framework build, and a custom stack upgrades by pointing at the 3.2 stylesheet. Your plugin looks the same until you opt into 3.2 features. Two things are worth reviewing.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li><strong>Numbered border levels are deprecated:</strong> <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> (and vertical counterparts) still render, but will be removed in Framework 4.0. Prefer the shade steps (<code class="<%= framework_section_code_classes %>">border--h-10</code> to <code class="<%= framework_section_code_classes %>">border--h-75</code>) in new markup. See <%= render DocsRef.new(page: :border) %>.</li>
@@ -38,7 +38,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Verifying the Upgrade') %>
           <p class="<%= framework_section_description_classes %>">
-            Use the Raw / Preview toggle in Device Preview to compare the raw colors against what the panel will actually show. To check themes, pick a Style in the screen picker and confirm your plugin stays legible under each one.
+            Use the Raw / Preview toggle in the screen picker (top right) to compare the raw colors against what the panel will actually show. To check themes, pick a Style in the same picker and confirm your plugin stays legible under each one.
           </p>
         </div>
       </section>

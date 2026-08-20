@@ -11,7 +11,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The v3 Color Foundation') %>
           <p class="<%= framework_section_description_classes %>">
-            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup. 3.1 made the TRMNL fonts the default typeface on low-density screens.
+            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup.
           </p>
         </div>
       </section>
@@ -32,7 +32,6 @@
             Recolor a whole screen by loading one extra stylesheet and adding <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code>. The theme picks the colors; each device renders them with the inks it has. 3.2 ships three themes: Black and Yellow, White and Red, and Dark.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li>A theme already decides every color, so <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen.</li>
             <li>Author your own theme with the <code class="<%= framework_section_code_classes %>">theme-slots</code> mixins and validate it with <code class="<%= framework_section_code_classes %>">rake framework:themes:lint</code>.</li>
             <li>Preview any docs example with a theme via the Style selector in the screen picker.</li>
           </ul>
@@ -46,7 +45,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'TRMNLPaint: the JavaScript Paint API') %>
           <p class="<%= framework_section_description_classes %>">
-            Read any framework color, border, text style, or size from JavaScript. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> returns what CSS would paint right now, with the device, scale, dark mode, and theme already applied, so your JavaScript never hardcodes a color.
+            Read any framework color, border, text style, or size from JavaScript. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> returns what CSS would paint right now, with the device, scale, and theme already applied, so your JavaScript never hardcodes a color.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li>Resolvers read one value each: <code class="<%= framework_section_code_classes %>">bg()</code>, <code class="<%= framework_section_code_classes %>">text()</code>, <code class="<%= framework_section_code_classes %>">semantic()</code>, <code class="<%= framework_section_code_classes %>">series()</code>, <code class="<%= framework_section_code_classes %>">border()</code>, <code class="<%= framework_section_code_classes %>">type()</code>, and more.</li>
@@ -66,13 +65,11 @@
           <%= framework_heading(3, 'Generated Paint Assets') %>
           <p class="<%= framework_section_description_classes %>">
             Every dither pattern is now generated at build time as an inline SVG instead of shipping as a
-            PNG image: the dark pixels live in the asset, the light tone comes from the background color,
-            and a screen paints with zero image fetches.
+            PNG image, so a screen paints with zero image fetches.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li>CSS and JavaScript share the same generated patterns: <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads back exactly what CSS paints.</li>
-            <li>Dark mode and Raw/Preview swap in other patterns from the same generated set, so every mode shares the same pattern shapes.</li>
-            <li>Regenerate from the color manifest with <code class="<%= framework_section_code_classes %>">rake framework:color_tokens</code>; hand-edited pattern assets are gone.</li>
+            <li>Every screen mode, Raw/Preview included, paints from the same generated set, so pattern shapes never change between modes.</li>
           </ul>
         </div>
       </section>
@@ -81,7 +78,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Adaptive Charts') %>
           <p class="<%= framework_section_description_classes %>">
-            Charts used to carry their own fixed colors and ignore bit depth and dark mode. The runtime now bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter built on TRMNLPaint. Series colors, grid lines, and chart text all come from the framework, so a chart adapts with the rest of the screen.
+            The runtime now bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter built on TRMNLPaint. Series colors, grid lines, and chart text all come from the framework, so a chart adapts with the rest of the screen instead of carrying its own fixed colors.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li><code class="<%= framework_section_code_classes %>">options()</code> and <code class="<%= framework_section_code_classes %>">merge()</code> give you adaptive Highcharts defaults under your own settings.</li>
@@ -111,10 +108,10 @@
             The Border, Outline, Text Stroke, and Image Stroke utilities were rebuilt the same way as the color system and now follow the device and themes on their own.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li><strong>Borders:</strong> <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and <code class="<%= framework_section_code_classes %>">border--v-{step}</code> now use the same 10 to 75 shade scale as backgrounds, plus <code class="<%= framework_section_code_classes %>">border--h-black</code> and <code class="<%= framework_section_code_classes %>">border--h-white</code>. Lines render as generated gradients instead of PNG tiles, so a bordered screen fetches no images and themes recolor it freely. The numbered levels <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> still work but are deprecated. See <%= render DocsRef.new(page: :border) %>.</li>
-            <li><strong>Outline:</strong> draws a pixel-perfect dotted rounded border on 1-bit, and a solid rounded border on 2-bit and 4-bit. Dark mode and themes recolor it. See <%= render DocsRef.new(page: :outline) %>.</li>
-            <li><strong>Text Stroke:</strong> renders as stacked drop shadows instead of native <code class="<%= framework_section_code_classes %>">-webkit-text-stroke</code>, so the stroke sits behind the letters in every browser, even when the text is filled with a pattern. Sizes run <code class="<%= framework_section_code_classes %>">text-stroke--small</code> to <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>; dark mode and themes recolor them. See <%= render DocsRef.new(page: :text_stroke) %>.</li>
-            <li><strong>Image Stroke:</strong> outlines transparent images with the same size and color variants; themed and dark-mode screens recolor them too. See <%= render DocsRef.new(page: :image_stroke) %>.</li>
+            <li><strong>Borders:</strong> <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and <code class="<%= framework_section_code_classes %>">border--v-{step}</code> now use the same 10 to 75 shade scale as backgrounds, plus <code class="<%= framework_section_code_classes %>">border--h-black</code> and <code class="<%= framework_section_code_classes %>">border--h-white</code>. Lines render as generated gradients instead of PNG tiles, so a bordered screen fetches no images. The numbered levels <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> still work but are deprecated. See <%= render DocsRef.new(page: :border) %>.</li>
+            <li><strong>Outline:</strong> draws a pixel-perfect dotted rounded border on 1-bit, and a solid rounded border on 2-bit and 4-bit. See <%= render DocsRef.new(page: :outline) %>.</li>
+            <li><strong>Text Stroke:</strong> renders as stacked drop shadows instead of native <code class="<%= framework_section_code_classes %>">-webkit-text-stroke</code>, so the stroke sits behind the letters in every browser, even when the text is filled with a pattern. Sizes run <code class="<%= framework_section_code_classes %>">text-stroke--small</code> to <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>. See <%= render DocsRef.new(page: :text_stroke) %>.</li>
+            <li><strong>Image Stroke:</strong> outlines transparent images with the same size and color variants. See <%= render DocsRef.new(page: :image_stroke) %>.</li>
           </ul>
         </div>
       </section>
@@ -123,7 +120,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Mashup Backdrop') %>
           <p class="<%= framework_section_description_classes %>">
-            The <code class="<%= framework_section_code_classes %>">screen--backdrop</code> modifier now follows themes and dark mode like every other surface. See <%= render DocsRef.new(page: :mashup) %>.
+            The <code class="<%= framework_section_code_classes %>">screen--backdrop</code> modifier now follows themes like every other surface. See <%= render DocsRef.new(page: :mashup) %>.
           </p>
         </div>
       </section>
@@ -132,7 +129,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Fluid Mashups') %>
           <p class="<%= framework_section_description_classes %>">
-            Fluid Mashups sit alongside the fixed layouts: place views on a three by three grid with <code class="<%= framework_section_code_classes %>">mashup--3x3</code> and the <code class="<%= framework_section_code_classes %>">mashup-cell</code> modifiers, no inline styles needed. Every cell keeps its frame and a compact title bar at any size, on every device, in dark mode, and under themes. See <%= render DocsRef.new(page: :mashup) %>.
+            Fluid Mashups sit alongside the fixed layouts: place views on a three by three grid with <code class="<%= framework_section_code_classes %>">mashup--3x3</code> and the <code class="<%= framework_section_code_classes %>">mashup-cell</code> modifiers, no inline styles needed. Every cell keeps its frame and a compact title bar at any size, on every device and under themes. See <%= render DocsRef.new(page: :mashup) %>.
           </p>
         </div>
       </section>

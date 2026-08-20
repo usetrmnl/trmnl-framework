@@ -17,7 +17,7 @@
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><code class="<%= framework_section_code_classes %>">screen--1bit</code>: every gray token paints as a dither pattern of black and white pixels, borders and text included. This is the baseline the other tiers adjust from.</li>
             <li><code class="<%= framework_section_code_classes %>">screen--2bit</code>: tokens still dither, now between four gray tones instead of two. Table and progress sizing follows the interface scale.</li>
-            <li><code class="<%= framework_section_code_classes %>">screen--4bit</code>: every gray token paints as a solid, and each border step gets its own shade instead of two steps sharing one. The title bar loses its pixel-font padding tweak and its text stroke thins.</li>
+            <li><code class="<%= framework_section_code_classes %>">screen--4bit</code>: every gray token paints as a solid, and each border step gets its own shade instead of two steps sharing one. The title bar drops the padding adjustment it carries for pixel fonts, and its text stroke thins.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             On all three tiers, color tokens fall back to their gray equivalents, so a hue never reaches a panel
@@ -260,8 +260,8 @@
           </p>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">screen--color-full</code> uses a set of distinct
-            colors instead: the ink first, then seven hues in a fixed order, tuned separately for light and dark
-            backgrounds. A theme's own chart colors still win over both.
+            colors instead: the ink first, then seven hues in a fixed order. A theme's own chart colors
+            still win over both.
           </p>
           <p class="<%= framework_section_description_classes %>">
             <%= render DocsRef.new(page: :paint_charts) %> reads these colors from JavaScript, and

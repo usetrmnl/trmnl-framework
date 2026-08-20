@@ -24,7 +24,8 @@
           <p class="<%= framework_section_description_classes %>">
             Create an entrypoint that loads the framework module, then compile it with the framework source on the
             load path. <code class="<%= framework_section_code_classes %>">bin/build</code> in the repository runs
-            exactly this for the released artifacts.
+            exactly this for the released artifacts. Clone the source from
+            <%= link_to 'github.com/usetrmnl/trmnl-framework', 'https://github.com/usetrmnl/trmnl-framework', target: :_blank, class: 'font-medium underline' %>.
           </p>
         </div>
 
@@ -48,8 +49,7 @@
           <p class="<%= framework_section_description_classes %>">
             The compiled stylesheet embeds every dither pattern as a data URI, so it is large on disk. Serve it
             compressed; the release pipeline ships a <code class="<%= framework_section_code_classes %>">.gz</code>
-            next to every artifact for the same reason. Fonts are the only asset it loads by URL, so a custom
-            stack has no pattern images to serve.
+            next to every artifact for the same reason. Fonts are the only asset it loads by URL.
           </p>
         </div>
       </section>

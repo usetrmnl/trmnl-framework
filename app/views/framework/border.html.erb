@@ -13,9 +13,10 @@
           <p class="<%= framework_section_description_classes %>">
             Use <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and
             <code class="<%= framework_section_code_classes %>">border--v-{step}</code>
-            with steps 10 to 75, the same shade scale as backgrounds, plus
-            <code class="<%= framework_section_code_classes %>">border--h-black</code> and
-            <code class="<%= framework_section_code_classes %>">border--h-white</code>.
+            with steps 10 to 75, the same shade scale as backgrounds, plus black and white lines in both
+            directions (<code class="<%= framework_section_code_classes %>">border--h-black</code>,
+            <code class="<%= framework_section_code_classes %>">border--h-white</code>, and their
+            <code class="<%= framework_section_code_classes %>">v-</code> counterparts).
             Borders render grayscale by default; a theme recolors all of them.
           </p>
           <p class="<%= framework_section_description_classes %>">
@@ -147,10 +148,10 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Themed Borders') %>
           <p class="<%= framework_section_description_classes %>">
-            Hue comes from the theme, not from a class: borders draw their classic patterns by default, and
+            Recolor borders from a theme, not with a class:
             <code class="<%= framework_section_code_classes %>">theme-slots.utility-remap-border-grayscale($hue, $side)</code>
-            recolors them (and
-            <code class="<%= framework_section_code_classes %>">.divider</code>) without changing their shape.
+            repaints every rule (and
+            <code class="<%= framework_section_code_classes %>">.divider</code>) in the hue without changing its shape.
             The <code class="<%= framework_section_code_classes %>">dark</code> side paints black on the hue,
             <code class="<%= framework_section_code_classes %>">bright</code> paints the hue on white.
             Pick a Style in the screen picker to watch the lines above repaint.
@@ -239,8 +240,8 @@
             JavaScript can read the border lines too:
             <code class="<%= framework_section_code_classes %>">TRMNLPaint.border(spec, { dir })</code> returns the
             line for a step, or for <code class="<%= framework_section_code_classes %>">'black'</code> /
-            <code class="<%= framework_section_code_classes %>">'white'</code>, with the theme, bit depth, and dark
-            mode already applied.
+            <code class="<%= framework_section_code_classes %>">'white'</code>, with the device and the active theme
+            already applied.
             <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints it onto a node. These
             lines stay visible in every mode, which makes them the reliable source for JS-drawn hairlines
             like chart grids; see <%= render DocsRef.new(page: :paint_borders) %>.

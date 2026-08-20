@@ -17,10 +17,10 @@
           </p>
 
           <p class="<%= framework_section_description_classes %>">
-            Charts used to carry their own fixed colors, ignoring bit depth, dark mode, and themes
-            while the rest of the screen adapted. The plugin runtime now bundles a small
-            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> helper that reads the right
-            paint from the screen as the chart builds. The methods below are the ones these examples use;
+            Use the <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> helper for your chart
+            colors. It is bundled in the plugin runtime and reads the right paint from the screen as the chart
+            builds, so a chart follows the device and the active theme like the rest of the screen. The methods
+            below are the ones these examples use;
             <%= render DocsRef.new(page: :paint_charts) %> carries the full list.
           </p>
 
@@ -32,7 +32,8 @@
             <li>
               <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints legend
               markers tagged <code class="<%= framework_section_code_classes %>">data-chart-series="i"</code>
-              with matching series colors.
+              with matching series colors. Add <code class="<%= framework_section_code_classes %>">data-chart-series-count="n"</code>
+              when the series total differs from the number of marks on screen.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">textStyle(role, { el })</code>: resolves a
@@ -70,6 +71,11 @@
             public JS paint API. Grid lines and plotted text use the same border and typography systems as the
             rest of the screen. For anything beyond Highcharts, use TRMNLPaint directly: see
             <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            On screens that dither, series paints are patterns that Highcharts draws through its pattern-fill
+            module; load <code class="<%= framework_section_code_classes %>">pattern-fill.js</code> next to
+            <code class="<%= framework_section_code_classes %>">highcharts.js</code> as the examples do.
           </p>
 
           <p class="<%= framework_section_description_classes %>">
@@ -777,7 +783,7 @@
                             var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
                             // series(i, 4) picks the paint for each bar, and applySwatches()
                             // paints the matching legend markers, so bars and swatches stay
-                            // in step across bit depths, dark mode and themes.
+                            // in step on every device and theme.
                             var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
                               chart: { type: 'column', height: px(284), spacing: px([10, 10, 5, 10]) },
                               plotOptions: { series: { pointPadding: 0.05, groupPadding: 0.1, borderWidth: 0 } },
@@ -940,8 +946,8 @@
       whenReady(function () {
         var el = "example-bar-chart";
         // series(i, 4) picks the paint for each bar, and applySwatches() paints
-        // the matching legend markers, so bars and swatches stay in step in
-        // every bit depth, dark mode and theme.
+        // the matching legend markers, so bars and swatches stay in step on
+        // every device and theme.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {

@@ -21,7 +21,7 @@
         </ul>
 
         <p class="<%= framework_section_description_classes %>">
-          To theme a screen you control, include the theme stylesheet and add the theme class. <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen; a theme already decides every color. See <%= render DocsRef.new(page: :themes) %>.
+          To theme a screen you control, include the theme stylesheet and add the theme class. See <%= render DocsRef.new(page: :themes) %>.
         </p>
 
         <div class="mt-4">
@@ -74,7 +74,7 @@ TRMNLCharts.watch(el, function () {
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '3. Mark Monochrome Icons Adaptive') %>
-          <p class="<%= framework_section_description_classes %>">Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to monochrome silhouette icons. The framework takes the icon's shape and repaints it in the screen's icon color, following bit depth, dark mode, Raw/Preview, and the active theme.</p>
+          <p class="<%= framework_section_description_classes %>">Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to monochrome silhouette icons. The framework takes the icon's shape and repaints it in the screen's icon color, following the device, Raw/Preview, and the active theme.</p>
         </div>
 
         <div class="mt-4">
@@ -93,11 +93,11 @@ TRMNLCharts.watch(el, function () {
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '4. Resolve Paint from JavaScript') %>
-          <p class="<%= framework_section_description_classes %>">Drawing something yourself, on canvas, in SVG, or with another library? Ask <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> for the colors. It returns what CSS would paint right now, with bit depth, dark mode, and the active theme already applied.</p>
+          <p class="<%= framework_section_description_classes %>">Drawing something yourself, on canvas, in SVG, or with another library? Ask <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> for the colors. It returns what CSS would paint right now, with the device and the active theme already applied.</p>
         </div>
 
         <div class="mt-4">
-          <%= render CodeExampleComponent.new(demo_code: '// A background token: solid color on 4-bit+, dither tile on 1-bit.
+          <%= render CodeExampleComponent.new(demo_code: '// A background token: solid where the panel can print it, dithered down to its inks where it cannot.
 var fill = TRMNLPaint.bg("gray-40", { el: "my-visual" });
 
 // The effective one-color value of a text utility for SVG or canvas text.
@@ -137,13 +137,13 @@ TRMNLPaint.watch("my-visual", function () { draw(); });', language: 'javascript'
       <section class="space-y-6">
         <div class="space-y-1">
           <%= framework_heading(3, '6. Keep Overlaid Text and Images Legible') %>
-          <p class="<%= framework_section_description_classes %>">Text and images placed over a shaded or patterned surface can lose contrast. The Text Stroke and Image Stroke utilities outline them, and both were rebuilt to follow themes, dark mode, and bit depth like the rest of the screen.</p>
+          <p class="<%= framework_section_description_classes %>">Text and images placed over a shaded or patterned surface can lose contrast. The Text Stroke and Image Stroke utilities outline them, and both were rebuilt to follow the device and themes like the rest of the screen.</p>
         </div>
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-          <li>Add <code class="<%= framework_section_code_classes %>">text-stroke</code> to framework text over a busy background, and size it with <code class="<%= framework_section_code_classes %>">text-stroke--small</code> through <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>. The stroke renders as stacked drop shadows, so it stays behind the letters in every browser, even when the text is filled with a pattern.</li>
+          <li>Add <code class="<%= framework_section_code_classes %>">text-stroke</code> to framework text over a busy background, and size it with <code class="<%= framework_section_code_classes %>">text-stroke--small</code> through <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>. The stroke stays behind the letters in every browser, even when the text is filled with a pattern.</li>
           <li>Add <code class="<%= framework_section_code_classes %>">image-stroke</code> to a transparent or vector image for the same effect, with the matching <code class="<%= framework_section_code_classes %>">--small</code> through <code class="<%= framework_section_code_classes %>">--xlarge</code> sizes.</li>
-          <li>Leave the color off to stroke with the default contrast ink, or set one with a color variant (<code class="<%= framework_section_code_classes %>">text-stroke--black</code>, <code class="<%= framework_section_code_classes %>">image-stroke--white</code>, or any palette token). Color variants follow the theme, so themed and dark-mode screens recolor the outline to match.</li>
+          <li>Leave the color off to stroke with the default contrast ink, or set one with a color variant (<code class="<%= framework_section_code_classes %>">text-stroke--black</code>, <code class="<%= framework_section_code_classes %>">image-stroke--white</code>, or any palette token). Color variants follow the active theme.</li>
         </ul>
 
         <div class="mt-4">

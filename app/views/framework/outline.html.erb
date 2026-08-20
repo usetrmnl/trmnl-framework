@@ -88,8 +88,8 @@
               then <code class="<%= framework_section_code_classes %>">--framework-outline-strong</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-border-strong</code>.
               A theme sets the first through
-              <code class="<%= framework_section_code_classes %>">theme-slots.semantic-border</code>, so dark mode
-              and themes recolor the outline with no extra assets.
+              <code class="<%= framework_section_code_classes %>">theme-slots.semantic-border</code>, so a theme
+              recolors the outline with no extra assets.
             </p>
           </div>
 
@@ -130,10 +130,10 @@
           </div>
 
           <div class="space-y-2 mt-6">
-            <%= framework_heading(4, '2-bit and 4-bit Displays') %>
+            <%= framework_heading(4, '2-bit, 4-bit, and Full-Color Displays') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Draws a standard 1px solid border instead: with real grays available, a smooth line beats dots.
-              The corner radius is 7px, scaled by the content scale.
+              Draws a standard 1px solid border instead: with real grays or full color available, a smooth
+              line beats dots. The corner radius is 7px, scaled by the content scale.
             </p>
           </div>
 
@@ -144,9 +144,10 @@
     @include outline-dots;
 }
 
-/* 2-bit and 4-bit: Falls back to CSS border */
+/* 2-bit, 4-bit, and full color: falls back to a CSS border */
 .screen--2bit .outline::after,
-.screen--4bit .outline::after {
+.screen--4bit .outline::after,
+.screen--color-full .outline::after {
     background: none;
     border: 1px solid var(--framework-semantic-border-strong-border-color,
         var(--framework-outline-strong, var(--framework-border-strong)));

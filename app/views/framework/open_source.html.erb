@@ -96,7 +96,7 @@
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
           <li><strong>terminalize:</strong> the layout engine that fills each device's fixed space, handling overflow columns, text clamping, value fitting, and more. See <%= render DocsRef.new(page: :framework_runtime) %>.</li>
           <li><strong>TRMNLPaint:</strong> returns what CSS would paint right now as Fill, BorderFill, and TypeSpec objects, so any plugin can read framework colors from JavaScript. See <%= render DocsRef.new(page: :paint_api) %>.</li>
-          <li><strong>TRMNLCharts:</strong> a Highcharts adapter built on TRMNLPaint, so charts adapt to bit depth, dark mode, and themes with the rest of the screen. See <%= render DocsRef.new(page: :chart) %>.</li>
+          <li><strong>TRMNLCharts:</strong> a Highcharts adapter built on TRMNLPaint, so charts adapt to bit depth and themes with the rest of the screen. See <%= render DocsRef.new(page: :chart) %>.</li>
         </ul>
       </section>
 
@@ -137,7 +137,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'What This Site Loads from Elsewhere') %>
           <p class="<%= framework_section_description_classes %>">
-            The framework bundles fetch nothing from outside their own origin. Pattern images and fonts come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from.
+            The framework bundles fetch nothing from outside their own origin. Fonts, the only asset they load by URL, come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The docs site around them loads from four third-party origins, all in the page chrome or in a demo. Each one degrades only the feature that uses it, so a host that blocks all four still serves every page here.

@@ -20,23 +20,23 @@
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">series(i, count, { el })</code>: the paint for series
-              <em>i</em> of <em>count</em>. Series colors start at the screen's ink and spread only as far as
-              stays readable; the public
-              <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> variable
-              sets how far, so a theme can narrow it from CSS.
+              <em>i</em> of <em>count</em>.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">ramp({ el })</code>: every chart series color at
               once, as an array of Fills. CSS says how many there are in
               <code class="<%= framework_section_code_classes %>">--framework-chart-series-count</code>, so a theme
-              with more colors reaches JavaScript without a framework release. Entries past a shorter theme's last
+              that adds more chart colors shows up in JavaScript automatically. Entries past a shorter theme's last
               color come back empty.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            Full-color screens use a set of distinct colors: the ink first, then seven hues in a fixed order,
-            tuned separately for light and dark backgrounds. Grayscale and limited-palette screens step through
-            shades instead, and a theme's own chart colors win over both.
+            Series colors start at the screen's ink and spread only as far as stays readable; the public
+            <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> variable
+            sets how far, so a theme can narrow it from CSS. Full-color screens use a set of distinct colors:
+            the ink first, then seven hues in a fixed order, tuned separately for light and dark backgrounds.
+            Grayscale and limited-palette screens step through shades instead, and a theme's own chart colors
+            win over both.
           </p>
         </div>
 
@@ -65,7 +65,9 @@ var fills = TRMNLPaint.ramp({ el: "my-chart" });', language: 'javascript') %>
               <code class="<%= framework_section_code_classes %>">{ pattern: { image, width, height, backgroundColor } }</code>
               object for the Highcharts pattern-fill module. The background color is baked into the pattern image,
               under the dark pixels, so the pattern is self-contained. An empty Fill returns
-              <code class="<%= framework_section_code_classes %>">null</code>.
+              <code class="<%= framework_section_code_classes %>">null</code>. Patterns render through the
+              Highcharts pattern-fill module; load it next to Highcharts, as the
+              <%= render DocsRef.new(page: :chart) %> examples do.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -106,10 +108,10 @@ var css = fill.image
         <div class="space-y-4">
           <%= framework_heading(3, 'The TRMNLCharts API') %>
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> ships in the same
+            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> builds Highcharts options
+            that follow the device and the active theme. It ships in the same
             <code class="<%= framework_section_code_classes %>">plugins.js</code> runtime as
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and builds Highcharts options
-            from it; every color it returns comes from
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint</code>, and every color it returns comes from
             TRMNLPaint. <%= render DocsRef.new(page: :chart) %> puts it to work in line, bar, and gauge charts.
           </p>
           <p class="<%= framework_section_description_classes %>">
@@ -146,7 +148,7 @@ var css = fill.image
               <li>
                 <code class="<%= framework_section_code_classes %>">options({ el })</code>: the recommended Highcharts
                 options for the TRMNL aesthetic, with a transparent background, no animation, no chrome, and
-                framework-resolved axes and type.
+                framework-resolved axes and text styles.
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">merge(base, overrides)</code>: a deep merge of two

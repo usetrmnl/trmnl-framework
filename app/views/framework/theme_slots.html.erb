@@ -45,8 +45,8 @@
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Every semantic mixin takes <code class="<%= framework_section_code_classes %>">$raw: true</code>, which
-            writes a plain color and skips device rendering. It exists for the framework's own dark defaults
-            on unthemed screens; a theme never needs it. See <%= render DocsRef.new(page: :theme_authoring) %>.
+            writes a plain color and skips device rendering; a theme never needs it.
+            See <%= render DocsRef.new(page: :theme_authoring) %>.
           </p>
         </div>
 
@@ -141,14 +141,8 @@
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">utility-remap-grayscale($to-hue, $side)</code>: the
-              bulk remap, moving the whole grayscale ladder to a hue. <code class="<%= framework_section_code_classes %>">$side</code>
-              controls how. <code class="<%= framework_section_code_classes %>">'dark'</code> (default) presses the
-              grays into the hue's dark steps 10 to 40, keeps black as ink, and sends white to the hue.
-              <code class="<%= framework_section_code_classes %>">'bright'</code> presses them into steps 45 to 75,
-              sends black to the hue, and keeps white. <code class="<%= framework_section_code_classes %>">'linear'</code>
-              maps gray steps to hue steps 1:1. Strokes are the one exception: whichever token maps to the hue
-              itself keeps a visible stroke, taken from the nearest hue step (45 under bright, 40 under dark,
-              75 under linear), so outlines never dissolve into the canvas.
+              bulk remap, moving the whole grayscale ladder to a hue;
+              <code class="<%= framework_section_code_classes %>">$side</code> controls how.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">utility-remap-border-grayscale($to-hue, $side)</code>:
@@ -173,9 +167,23 @@
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The three shipped themes cover every side. Black and Yellow remaps to the dark side, and White and Red
+            The <code class="<%= framework_section_code_classes %>">$side</code> values:
+            <code class="<%= framework_section_code_classes %>">'dark'</code> (default) presses the grays into the
+            hue's dark steps 10 to 40, keeps black as ink, and sends white to the hue.
+            <code class="<%= framework_section_code_classes %>">'bright'</code> presses them into steps 45 to 75,
+            sends black to the hue, and keeps white. <code class="<%= framework_section_code_classes %>">'linear'</code>
+            maps gray steps to hue steps 1:1.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Strokes are the one exception: whichever token maps to the hue itself keeps a visible stroke, taken
+            from the nearest hue step (45 under bright, 40 under dark, 75 under linear), so outlines never
+            dissolve into the canvas.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Black and Yellow remaps to the dark side, and White and Red
             remaps to the bright side with one exception, <code class="<%= framework_section_code_classes %>">utility-bg("white", "red")</code>,
-            so white surfaces turn red while white text stays ink. Dark flips the grayscale and uses
+            so white surfaces turn red while white text stays ink. Dark flips the grayscale token by token with
+            the single-token remaps, and uses
             <code class="<%= framework_section_code_classes %>">utility-border-level</code> for the 2-bit
             borders and for the one level that maps to itself.
           </p>

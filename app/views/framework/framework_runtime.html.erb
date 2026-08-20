@@ -9,20 +9,11 @@
     <div class="space-y-16">
       <section class="space-y-6">
         <%= framework_heading(3, 'What It Does') %>
-        <p class="<%= framework_section_description_classes %>">It measures the space a layout has and fits the content into it, so nothing needs manual tweaking. Each pass:</p>
-        <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
-          <li>Normalizes screen context (size, orientation, bit depth, scale)</li>
-          <li>Maps legacy responsive classes to data attributes for consistency</li>
-          <li>Formats values and fits numbers into their containers</li>
-          <li>Adjusts gaps so columns/grids land on integer pixel widths</li>
-          <li>Plans multi-column layouts, re-clamps text per column, and can add a trailing "and N more" label when enabled</li>
-          <li>Applies standalone clamping where needed outside columns</li>
-          <li>Limits overly tall content and schedules pixel-perfect text processing</li>
-        </ul>
+        <p class="<%= framework_section_description_classes %>">It measures the space a layout has and fits the content into it, so nothing needs manual tweaking. Each pass starts by reading the screen's size, orientation, bit depth, and scale, then runs the steps below.</p>
       </section>
 
       <section class="space-y-6">
-        <%= framework_heading(3, 'Runtime Steps and Stats') %>
+        <%= framework_heading(3, 'Runtime Steps') %>
         <p class="<%= framework_section_description_classes %>">When the runtime runs, it takes these steps in order.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -30,7 +21,7 @@
             <p class="<%= framework_subsection_description_classes %>">Waits for every image to settle, then recolors the adaptive ones for the current mode.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
               <li>Holds the pass until images have loaded, so later steps measure real heights</li>
-              <li>Repaints <code class="<%= framework_section_code_classes %>">image--adaptive</code> sources for the screen's bit depth, dark mode, and theme</li>
+              <li>Repaints <code class="<%= framework_section_code_classes %>">image--adaptive</code> sources for the current device and theme</li>
             </ul>
           <% end %>
 

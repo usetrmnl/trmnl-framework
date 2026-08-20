@@ -13,7 +13,7 @@
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
             Use the <code class="<%= framework_section_code_classes %>">text--{shade}</code> utility classes to apply
-            text color patterns to any element. The shade comes from one of three schemes
+            text color patterns to any element. The shade comes from one of these schemes
             (see <%= link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline' %>):
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -32,7 +32,9 @@
               <strong>Semantic:</strong> <code class="<%= framework_section_code_classes %>">text--primary</code>,
               <code class="<%= framework_section_code_classes %>">text--success</code>,
               <code class="<%= framework_section_code_classes %>">text--error</code>, and
-              <code class="<%= framework_section_code_classes %>">text--warning</code>.
+              <code class="<%= framework_section_code_classes %>">text--warning</code>. See
+              <%= link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline' %> for how
+              each role resolves per device.
             </li>
             <li>
               <strong>Ink roles:</strong> <code class="<%= framework_section_code_classes %>">text--default</code>,

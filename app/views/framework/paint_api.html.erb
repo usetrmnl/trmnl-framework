@@ -9,30 +9,6 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'How It Works') %>
-          <p class="<%= framework_section_description_classes %>">
-            All framework colors live in CSS, as custom properties on the
-            <code class="<%= framework_section_code_classes %>">.screen</code> element; a theme is only CSS that
-            changes them. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads those
-            values, it never defines its own.
-          </p>
-          <p class="<%= framework_section_description_classes %>">
-            To answer a query, TRMNLPaint adds a hidden element to the target, gives it the real
-            utility class (<code class="<%= framework_section_code_classes %>">bg--&lt;token&gt;</code>,
-            <code class="<%= framework_section_code_classes %>">text--&lt;token&gt;</code>, ...), and reads back
-            what the browser computed. That is why everything is honored automatically: bit depth, dark mode,
-            inverse, themes, and limited palettes shape the answer the same way they shape the screen.
-          </p>
-          <p class="<%= framework_section_description_classes %>">
-            No call ever throws: a missing <code class="<%= framework_section_code_classes %>">.screen</code> or
-            an unknown token returns a Fill with null fields instead. Plugins render on a screenshot
-            service, where a thrown error would mean a blank device screen.
-          </p>
-        </div>
-      </section>
-
-      <section class="space-y-8">
-        <div class="space-y-4">
           <%= framework_heading(3, 'The Paint Domains') %>
           <p class="<%= framework_section_description_classes %>">
             The functions are documented by what they paint. Every one takes an optional
@@ -83,6 +59,30 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
+          <%= framework_heading(3, 'How It Works') %>
+          <p class="<%= framework_section_description_classes %>">
+            All framework colors live in CSS, as custom properties on the
+            <code class="<%= framework_section_code_classes %>">.screen</code> element; a theme is only CSS that
+            changes them. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads those
+            values, it never defines its own.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            To answer a query, TRMNLPaint adds a hidden element to the target, gives it the real
+            utility class (<code class="<%= framework_section_code_classes %>">bg--&lt;token&gt;</code>,
+            <code class="<%= framework_section_code_classes %>">text--&lt;token&gt;</code>, ...), and reads back
+            what the browser computed. That is why everything is honored automatically: bit depth,
+            inverse, themes, and limited palettes shape the answer the same way they shape the screen.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            No call ever throws: a missing <code class="<%= framework_section_code_classes %>">.screen</code> or
+            an unknown token returns a Fill with null fields instead. Plugins render on a screenshot
+            service, where a thrown error would mean a blank device screen.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
           <%= framework_heading(3, 'Scale Values') %>
           <p class="<%= framework_section_description_classes %>">
             Scale pixel numbers in JavaScript the way the framework scales its own. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads the same variables CSS uses, so device density, Scale, and Text Scale never drift apart.
@@ -90,7 +90,7 @@
 
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
-              <code class="<%= framework_section_code_classes %>">scale({ el })</code>: returns <code class="<%= framework_section_code_classes %>">{ name, device, modifier, ui, content, textName, textModifier, textUi }</code> for the target screen.
+              <code class="<%= framework_section_code_classes %>">scale({ el })</code>: returns <code class="<%= framework_section_code_classes %>">{ name, device, modifier, ui, content, textName, textModifier, textUi }</code> for the target screen. The names identify the active Scale and Text Scale, device is the density factor, and the rest are the numeric multipliers they produce.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">px(value, { el, kind })</code>: scales one number or an array of numbers. It uses content scale by default; pass <code class="<%= framework_section_code_classes %>">kind: "ui"</code> for framework geometry or <code class="<%= framework_section_code_classes %>">kind: "text"</code> for framework typography.
@@ -188,7 +188,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
             say) sets its own
             <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen, and JavaScript
             reads them back with <code class="<%= framework_section_code_classes %>">cssVar()</code>. Both sides read
-            the same CSS, with no framework release and no per-theme JS bundle.
+            the same CSS.
           </p>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">cssVar(name, { el })</code> returns the computed
@@ -202,13 +202,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
               </div>
               <div class="w-full flex items-center justify-between ml-3">
                 <p class="text-sm font-medium">
-                  Read public var families only. The CSS minifier renames private variables
-                  (<code class="<%= framework_section_code_classes %>">--_*</code>,
-                  <code class="<%= framework_section_code_classes %>">--framework-internal-*</code>,
-                  <code class="<%= framework_section_code_classes %>">--tile-*</code>,
-                  <code class="<%= framework_section_code_classes %>">--bline-*</code>, most of
-                  <code class="<%= framework_section_code_classes %>">--border-*</code> and
-                  <code class="<%= framework_section_code_classes %>">--tn-*</code>) in the released
+                  Read public var families only. The CSS minifier renames private variables in the released
                   <code class="<%= framework_section_code_classes %>">plugins.min.css</code>; the readable
                   <code class="<%= framework_section_code_classes %>">plugins.css</code> keeps the source names.
                   <code class="<%= framework_section_code_classes %>">cssVar("--border-step-40-h-color")</code>
