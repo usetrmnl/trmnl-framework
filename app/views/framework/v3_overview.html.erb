@@ -108,7 +108,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Rebuilt Borders, Outlines, and Strokes') %>
           <p class="<%= framework_section_description_classes %>">
-            The Border, Outline, Text Stroke, and Image Stroke utilities were rebuilt the same way as the color system. Each one now follows bit depth, dark mode, and themes on its own, instead of carrying fixed colors.
+            The Border, Outline, Text Stroke, and Image Stroke utilities were rebuilt the same way as the color system and now follow bit depth, dark mode, and themes on their own.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li><strong>Borders:</strong> <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and <code class="<%= framework_section_code_classes %>">border--v-{step}</code> now use the same 10 to 75 shade scale as backgrounds, plus <code class="<%= framework_section_code_classes %>">border--h-black</code> and <code class="<%= framework_section_code_classes %>">border--h-white</code>. Lines render as generated gradients instead of PNG tiles, so a bordered screen fetches no images and themes recolor it freely. The numbered levels <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> still work but are deprecated. See <%= render DocsRef.new(page: :border) %>.</li>

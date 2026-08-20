@@ -184,7 +184,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
         <div class="space-y-4">
           <%= framework_heading(3, 'Extending a theme from JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes never ship JavaScript. A theme that wants to hand extra values to plugin code (a brand accent,
+            A theme that wants to hand extra values to plugin code (a brand accent,
             say) sets its own
             <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen, and JavaScript
             reads them back with <code class="<%= framework_section_code_classes %>">cssVar()</code>. No framework

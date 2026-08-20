@@ -53,6 +53,16 @@ Still too complex: "The chart resolvers pick evenly spaced series colors from th
 
 Plain: "These functions pick the colors for a chart. Ask for series 2 of 5 and you get its paint, correct for the current device, mode, and theme."
 
+## Earn the paragraph
+
+Before polishing a sentence, ask whether it should exist. Delete on sight:
+
+- A fact the page already states. One page says one thing once: if the intro or an earlier section covered it, a later section must not restate it in new clothes. The screen-picker tip appears at most once per page.
+- A tautology ("Dark is how you render a plugin dark").
+- A demo explained as behaving the way the feature behaves ("the example follows the Style you pick, exactly as your plugin would"). Every demo does; say nothing.
+- A fact restated as its own negation ("Themes never ship JavaScript. A theme is only CSS, and JavaScript can read..."). State what happens, once, in the positive: "JavaScript can read everything it needs from a theme's CSS."
+- A distinction that dissolves on inspection ("rendering stays the framework's job", said about a feature that is itself part of the framework).
+
 ## Punctuation
 
 - **Never use em-dashes**: no `—`, no `&mdash;`, no ` -- `. Rewrite with a period, comma, colon, or parentheses. This applies to all copy: docs, commit messages, code comments, notices.

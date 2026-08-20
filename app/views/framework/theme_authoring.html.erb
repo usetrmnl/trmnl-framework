@@ -132,8 +132,7 @@
           </p>
           <p class="<%= framework_section_description_classes %>">
             A theme that wants a dark variant styles the combination itself, with the same mixins as the rest
-            of the theme. There is no dark remap to fight, and every color still prints the device's way:
-            dither patterns on 1-bit, palette tiles on limited color, solids on full color.
+            of the theme. There is no dark remap to fight.
           </p>
         </div>
 
@@ -169,7 +168,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Expose values to JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes never ship JavaScript. A theme that wants to hand extra values to plugin code sets its own
+            A theme hands extra values to plugin code through CSS alone: set your own
             <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen,
             and JavaScript reads them back with <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>.
             See <%= render DocsRef.new(page: :paint_api) %>.

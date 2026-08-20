@@ -30,10 +30,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
-            Each theme ships as a standalone stylesheet alongside <code class="<%= framework_section_code_classes %>">plugins.css</code>.
-            Include the theme file and add <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> to your screen element.
-            The theme picks the colors; the device still decides how they print: dither patterns
-            on 1-bit, solids on full color.
+            Include the theme stylesheet and add <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> to your screen element.
           </p>
           <p class="<%= framework_section_description_classes %>">
             A theme already decides every color, so
@@ -56,10 +53,6 @@
           ) %>
         </div>
 
-        <p class="<%= framework_section_description_classes %>">
-          To preview any docs example with a theme, pick a Style in the screen picker. It applies to
-          every example on the page and persists across pages.
-        </p>
       </section>
 
       <section class="space-y-8">
@@ -75,15 +68,8 @@
             <% end %>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            Dark is how you render a plugin dark. Add
-            <code class="<%= framework_section_code_classes %>">screen--theme-dark</code> to the screen element
-            and every surface recolors; it is a theme like any other.
-            The plugin's own markup stays as written.
-          </p>
-          <p class="<%= framework_section_description_classes %>">
-            To see them in action, open the screen picker (top right) and choose a Style. The
-            example below has no theme of its own, so it follows the device and the Style you
-            pick, exactly as your plugin would on a themed screen.
+            To see them in action, pick a Style in the screen picker (top right). It applies to
+            every example on the page and persists across pages.
           </p>
         </div>
 
@@ -147,8 +133,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Themes in JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes never ship JavaScript. A theme is only CSS, and JavaScript can read everything
-            it needs from that CSS:
+            JavaScript can read everything it needs from a theme's CSS:
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
@@ -172,9 +157,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'The Themes API') %>
           <p class="<%= framework_section_description_classes %>">
-            A theme is written against a fixed set of surfaces: it picks their colors, and rendering
-            stays the framework's job. The two pages below cover the workflow and the full list of
-            surfaces.
+            A theme picks colors for a fixed set of surfaces and changes nothing else. The two pages
+            below cover the workflow and the full list of surfaces.
           </p>
         </div>
 

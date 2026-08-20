@@ -14,9 +14,6 @@
 <% if consumers.present? %>
   <section class="space-y-4">
     <%= framework_heading(3, 'Where This Applies') %>
-    <p class="<%= framework_section_description_classes %>">
-      These pages document the surfaces this API programs.
-    </p>
     <%# The consumer cards carry h2 titles; keep them out of the page TOC. %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-toc-exclude>
       <% consumers.each do |consumer_page| %>
