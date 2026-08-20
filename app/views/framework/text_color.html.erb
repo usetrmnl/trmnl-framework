@@ -37,8 +37,8 @@
             <li>
               <strong>Ink roles:</strong> <code class="<%= framework_section_code_classes %>">text--default</code>,
               <code class="<%= framework_section_code_classes %>">text--muted</code>, and
-              <code class="<%= framework_section_code_classes %>">text--inverse</code> paint the screen's own text
-              roles. A theme recolors them, and they mirror
+              <code class="<%= framework_section_code_classes %>">text--inverse</code> paint the text colors the
+              screen itself uses. A theme recolors them, and they mirror
               <code class="<%= framework_section_code_classes %>">bg--canvas</code> and its siblings on
               <%= render DocsRef.new(page: :background) %>.
             </li>
@@ -107,7 +107,7 @@
             </div>
             <div class="w-full flex items-center justify-between ml-3">
               <p class="text-sm font-medium">
-                <strong>Dark Mode Notice:</strong> The color palette appears inverted because dark mode remaps the framework tokens: black and white swap, grays and chromatic steps mirror. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens are exempt from dark mode entirely.
+                <strong>Dark Mode Notice:</strong> The palette appears inverted because dark mode swaps black and white and mirrors the gray and color ladders. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens ignore dark mode entirely.
               </p>
             </div>
           </div>
@@ -135,6 +135,13 @@
         </div>
       </section>
 
+      <section class="space-y-4">
+        <p class="<%= framework_section_description_classes %>">
+          Switch the screen picker (top right) to a color device (e.g. Inky Impression 7.3, Tidbyt) to see the
+          hue sections below in color.
+        </p>
+      </section>
+
       <% %w[red orange yellow lime green cyan blue violet purple pink].each do |hue| %>
         <% steps_before = %w[10 15 20 25 30 35 40].map { |s| "#{hue}-#{s}" } %>
         <% steps_after = %w[45 50 55 60 65 70 75].map { |s| "#{hue}-#{s}" } %>
@@ -155,9 +162,6 @@
                 <%= hue %> ladder (e.g. text--<%= hue %>-50), on the same 10 to 75 scale as grayscale.
               </li>
             </ul>
-            <p class="<%= framework_section_description_classes %>">
-              Use the Device Preview (top right) to switch to a color device (e.g. Inky Impression 7.3, Tidbyt) to see these colors.
-            </p>
           </div>
 
           <div class="<%= framework_example_classes %>">
@@ -216,7 +220,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Backward Compatibility') %>
           <p class="<%= framework_section_description_classes %>">
-            For backward compatibility, the original shade names (<code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code>) are still supported but deprecated. These map to equivalent extended shades:
+            For backward compatibility, the original shade names (<code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code>) are still supported but deprecated. Each maps to one of the new shade names:
           </p>
         </div>
 
@@ -310,18 +314,6 @@
             </div>
           </div>
 
-          <div class="<%= message_classes %>">
-            <div class="flex items-center w-full">
-              <div class="flex-shrink-0 items-center">
-                <%= render 'shared/icons/info' %>
-              </div>
-              <div class="w-full flex items-center justify-between ml-3">
-                <p class="text-sm font-medium">
-                  Text color classes accept size, orientation, and bit-depth prefixes. Bit-depth prefixes (1bit:, 2bit:, 4bit:) override the shade for a specific device color depth.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

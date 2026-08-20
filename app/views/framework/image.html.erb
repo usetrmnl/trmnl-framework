@@ -14,8 +14,7 @@
           <p class="<%= framework_section_description_classes %>">
             Add <code class="<%= framework_section_code_classes %>">image-dither</code> to a raster image to have it
             dithered to the screen's palette. The dithering itself is a platform behavior: TRMNL applies it when it
-            renders the screen, and no rule in <code class="<%= framework_section_code_classes %>">plugins.css</code>
-            or <code class="<%= framework_section_code_classes %>">plugins.js</code> reads the class.
+            renders the screen.
           </p>
         </div>
 
@@ -132,7 +131,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Object Fit') %>
           <p class="<%= framework_section_description_classes %>">
-            Control how images are displayed when not shown in their original aspect ratio.
+            Control how an image fills a box whose aspect ratio differs from its own.
           </p>
         </div>
 
@@ -199,7 +198,7 @@
             background, such as a white-on-black glyph placed on a light screen.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            It composes with <%= render DocsRef.new(page: :image_stroke) %>. The pixels flip first, so the ring
+            It composes with <%= render DocsRef.new(page: :image_stroke) %>. The pixels flip first, so the stroke
             keeps the color its shade modifier names.
           </p>
         </div>
@@ -310,7 +309,7 @@
           <%= framework_heading(4, 'How it works') %>
           <ul class="<%= framework_section_description_classes %> space-y-1 list-disc list-inside">
             <li>The framework runtime (<code class="<%= framework_section_code_classes %>">plugins.js</code>) reads the icon and hands it to the stylesheet as a mask; CSS supplies the paint.</li>
-            <li>The public icon paint channel is <code class="<%= framework_section_code_classes %>">--framework-semantic-icon-{color,image,under}</code>. It mirrors semantic text-primary by default; themes override it with <code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>.</li>
+            <li>The icon color comes from <code class="<%= framework_section_code_classes %>">--framework-semantic-icon-{color,image,under}</code>. By default it matches the primary text color; a theme overrides it with <code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>.</li>
             <li>Silhouettes only. The image is flattened to its alpha shape, so never use it on photos or multi-color logos; use <%= render DocsRef.new(page: :image_stroke) %> to keep those legible instead.</li>
             <li>Composes with <code class="<%= framework_section_code_classes %>">image-stroke</code> (the stroke outlines the recolored shape). Not meaningful with <code class="<%= framework_section_code_classes %>">image-dither</code> or <code class="<%= framework_section_code_classes %>">invert</code>.</li>
           </ul>
@@ -323,13 +322,13 @@
             </div>
             <div class="w-full ml-3">
               <p class="text-sm font-medium">
-                <strong>Icon must be readable.</strong> Recoloring uses a CSS mask, which the browser only permits
-                for same-origin icons or hosts that send
-                <code class="<%= framework_section_code_classes %>">Access-Control-Allow-Origin</code>. An icon on an
-                arbitrary third-party host stays a plain image in its own colors, so serve recolorable icons from
+                <strong>The icon must be readable by CSS.</strong> Recoloring uses a CSS mask, which the browser
+                only permits for same-origin icons or hosts that send
+                <code class="<%= framework_section_code_classes %>">Access-Control-Allow-Origin</code>. An icon on
+                an arbitrary third-party host stays a plain image in its own colors. Serve recolorable icons from
                 your own origin, or inline the SVG with
-                <code class="<%= framework_section_code_classes %>">fill="currentColor"</code> to recolor with no
-                classes and no hosting constraint.
+                <code class="<%= framework_section_code_classes %>">fill="currentColor"</code>, which recolors with
+                no classes and no hosting constraint.
               </p>
             </div>
           </div>

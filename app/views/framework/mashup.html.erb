@@ -48,7 +48,6 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Mashup Layouts') %>
           <p class="<%= framework_section_description_classes %>">
-            Mashup modifiers control how <%= render DocsRef.new(page: :view) %> instances are arranged within the screen, while each view's own modifier determines how much space it occupies.
             The following layouts are available.
           </p>
         </div>
@@ -412,7 +411,7 @@
           <div class="space-y-2">
             <%= framework_heading(4, '2 x 2 Grid') %>
             <p class="<%= framework_subsection_description_classes %>">
-              The 2x2 grid arranges four plugins in a grid pattern.
+              The 2x2 layout places four plugins in two rows of two.
             </p>
           </div>
           <div class="<%= framework_example_classes %>">
@@ -917,20 +916,15 @@
       <section class="space-y-8">
         <div class="space-y-4">
           <%= framework_heading(3, 'Screen Backdrop Modifier') %>
-          <p class="<%= framework_section_description_classes %>">
-            The <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
-            modifier provides an alternative appearance where views sit on a patterned background instead of
-            having outlined borders.
-          </p>
         </div>
 
         <div class="space-y-6">
           <div class="space-y-2">
             <%= framework_heading(4, 'Default vs Backdrop Mashups') %>
             <p class="<%= framework_subsection_description_classes %>">
-              By default, mashups use a white background with bordered views for a clean, separated look.
-              The <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
-              modifier changes this to a patterned background (1-bit) or solid gray background (2-bit/4-bit)
+              By default, a mashup is a white screen with a border around each view.
+              <code class="<%= framework_section_code_classes %>">screen--backdrop</code>
+              swaps that for a patterned background (1-bit) or solid gray (2-bit/4-bit)
               with plain white views on top.
             </p>
           </div>

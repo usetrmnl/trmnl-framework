@@ -79,11 +79,11 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'CSS Gradient Dots') %>
             <p class="<%= framework_subsection_description_classes %>">
-              No images are used. Each dot is computed mathematically by the CSS engine,
-              guaranteeing pixel-grid alignment at any element size.
+              The dots are generated gradients, not image files, so they stay on the pixel grid
+              at any element size.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
-              The dot color is looked up in three steps, first one set wins:
+              The dot color is looked up in three steps, and the first one set wins:
               <code class="<%= framework_section_code_classes %>">--framework-semantic-border-strong-border-color</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-outline-strong</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-border-strong</code>.
@@ -122,7 +122,7 @@
           <div class="space-y-2">
             <%= framework_heading(4, '1-bit Displays') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Uses pure CSS gradients to place sparse single-pixel dots at exact integer coordinates.
+              1-bit displays get the gradient dots.
               Dark mode works automatically because
               <code class="<%= framework_section_code_classes %>">--framework-semantic-border-strong-border-color</code>
               flips to white.

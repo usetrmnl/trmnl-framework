@@ -9,7 +9,7 @@
     <div class="space-y-16">
       <section class="space-y-6">
         <%= framework_heading(3, 'What it does') %>
-        <p class="<%= framework_section_description_classes %>">At a high level, it measures the space you have and then plans columns, clamps text, formats and fits values, and adjusts gaps and index widths, so everything fits neatly without manual tweaking.</p>
+        <p class="<%= framework_section_description_classes %>">It measures the space a layout has and fits the content into it, so nothing needs manual tweaking. Each pass:</p>
         <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
           <li>Normalizes screen context (size, orientation, bit depth, scale)</li>
           <li>Maps legacy responsive classes to data attributes for consistency</li>
@@ -23,7 +23,7 @@
 
       <section class="space-y-6">
         <%= framework_heading(3, 'Runtime steps and stats') %>
-        <p class="<%= framework_section_description_classes %>">When the runtime executes, it performs these steps in the order below. Column Gaps runs twice: once before Overflow for the columns Overflow does not own, and once at the end.</p>
+        <p class="<%= framework_section_description_classes %>">When the runtime runs, it takes these steps in order.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <%= render FrameworkDocCardComponent.new(icon: :image, title: 'Images', docs_page: :image) do %>
@@ -37,7 +37,7 @@
           <%= render FrameworkDocCardComponent.new(icon: :label, title: 'Index Widths', docs_page: :item) do %>
             <p class="<%= framework_subsection_description_classes %>">Ensures item index badges render at even widths to avoid artifacts.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
-              <li>Runs as one pass per terminalize, for indices outside <code class="<%= framework_section_code_classes %>">.columns</code></li>
+              <li>Runs once per runtime pass, for indices outside <code class="<%= framework_section_code_classes %>">.columns</code></li>
               <li>Runs again inside each <code class="<%= framework_section_code_classes %>">.columns</code> container after its layout commits</li>
               <li>Skipped on 2-bit and higher, where any width it pinned is cleared</li>
             </ul>
@@ -143,7 +143,7 @@
         <%= framework_heading(4, 'Ready signals') %>
         <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
           <li>
-            <code class="<%= framework_section_code_classes %>">window.TRMNL_PLUGINS_READY</code>: <code class="<%= framework_section_code_classes %>">false</code> while a pass runs and <code class="<%= framework_section_code_classes %>">true</code> once it settles. A screenshot pipeline waits for <code class="<%= framework_section_code_classes %>">true</code> before it captures.
+            <code class="<%= framework_section_code_classes %>">window.TRMNL_PLUGINS_READY</code>: <code class="<%= framework_section_code_classes %>">false</code> while a pass runs and <code class="<%= framework_section_code_classes %>">true</code> once it settles. A screenshot service waits for <code class="<%= framework_section_code_classes %>">true</code> before it captures.
           </li>
           <li>
             <code class="<%= framework_section_code_classes %>">window.frameworkReady</code>: <code class="<%= framework_section_code_classes %>">false</code> until <code class="<%= framework_section_code_classes %>">markFrameworkReady()</code> runs.
