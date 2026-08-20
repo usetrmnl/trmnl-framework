@@ -11,8 +11,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
-            Add <code class="<%= framework_section_code_classes %>">inverse</code> to a container to flip it and everything inside to the opposite color scheme.
-            Use it to mark the active item, the selected row, or the current state.
+            Add <code class="<%= framework_section_code_classes %>">inverse</code> to a container to flip it and everything inside.
           </p>
         </div>
 
@@ -118,7 +117,7 @@
           <%= framework_heading(3, 'Active Collection Cards') %>
           <p class="<%= framework_section_description_classes %>">
             Use inverse cards when several resources share the same grid and only some need attention.
-            The stronger surface separates occupied rooms from available ones without touching the grid.
+            The stronger surface separates the occupied rooms from the available ones.
           </p>
         </div>
 
@@ -243,10 +242,10 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Paint and Cascade Behavior') %>
+          <%= framework_heading(3, 'What Inverse Flips') %>
           <p class="<%= framework_section_description_classes %>">
             Inverse flips everything the framework paints inside the element: backgrounds, text, borders, strokes, icons, and chart colors.
-            On a light screen the subtree turns dark, on a dark-mode screen it turns light, and siblings stay as they were.
+            On a light screen the element and everything inside turn dark; on a dark-mode screen they turn light.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Anything you set directly on the element wins over the inverse defaults, and a theme can style its own inverse with <code class="<%= framework_section_code_classes %>">.screen--theme-&lt;id&gt; .inverse</code>.

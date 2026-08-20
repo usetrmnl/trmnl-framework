@@ -45,9 +45,8 @@
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Every semantic mixin takes <code class="<%= framework_section_code_classes %>">$raw: true</code>, which
-            writes a plain color and skips device rendering. The framework needs it for its
-            own unthemed dark defaults, where the dark remap would invert the value a second time. A theme never
-            needs it; see <%= render DocsRef.new(page: :theme_authoring) %>.
+            writes a plain color and skips device rendering. It exists for the framework's own dark defaults
+            on unthemed screens; a theme never needs it. See <%= render DocsRef.new(page: :theme_authoring) %>.
           </p>
         </div>
 
@@ -110,7 +109,7 @@
           <p class="<%= framework_section_description_classes %>">
             Slot values cascade down from the screen, so you can set them again on a component or a state wrapper.
             On an unthemed screen, <code class="<%= framework_section_code_classes %>">inverse</code> flips its subtree to the opposite scheme.
-            On a themed screen the subtree keeps the theme's slots; the theme's own inverse rule restates the ones that should flip.
+            On a themed screen the subtree keeps the theme's slots; the theme itself restates the slots that should flip, as in the example below.
           </p>
         </div>
 
@@ -147,9 +146,9 @@
               grays into the hue's dark steps 10 to 40, keeps black as ink, and sends white to the hue.
               <code class="<%= framework_section_code_classes %>">'bright'</code> presses them into steps 45 to 75,
               sends black to the hue, and keeps white. <code class="<%= framework_section_code_classes %>">'linear'</code>
-              maps gray steps to hue steps 1:1. Strokes are the one exception: the token sent to the hue keeps a
-              visible stroke from the nearest hue step (45 under bright, 40 under dark, 75 under linear), so
-              outlines never dissolve into the canvas.
+              maps gray steps to hue steps 1:1. Strokes are the one exception: whichever token maps to the hue
+              itself keeps a visible stroke, taken from the nearest hue step (45 under bright, 40 under dark,
+              75 under linear), so outlines never dissolve into the canvas.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">utility-remap-border-grayscale($to-hue, $side)</code>:
@@ -167,10 +166,10 @@
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">utility-border-level($level, $dir, $from-level)</code>:
-              swap one border level for another level's line art, colors and render program included. The 2-bit
-              borders need this handle: their four tones are drawn into the line itself, where no token remap can
-              reach them. Restating a level onto itself is not a no-op: it also pins that level to its family's own
-              line polarity.
+              swap one border level for another level's line art, colors and rendering included. The 2-bit
+              borders need this mixin: their four tones are drawn into the line itself, where no token remap can
+              reach them. Restating a level onto itself is not a no-op: it also pins the two ink colors the
+              level's line draws with.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -225,13 +224,12 @@
             <code class="<%= framework_section_code_classes %>">chart-series-ramp($tokens, $span: 6)</code> sets
             the colors charts pick their series from: list the tokens in order, strongest contrast against the
             background first, and series 0 gets the first one. Each entry keeps the token's own rendering, so series
-            dither or paint solid per device for free.
-            <code class="<%= framework_section_code_classes %>">$span</code> is how many entries from the front
-            JavaScript spreads series across.
+            dither or paint solid per device. JavaScript spreads series across the first
+            <code class="<%= framework_section_code_classes %>">$span</code> entries of the list.
           </p>
           <p class="<%= framework_section_description_classes %>">
             A short list is safe. The ramp always has 16 entries; the ones past your last token are cleared
-            rather than left holding the framework grayscale, and
+            instead of keeping the framework's default grays, and
             <code class="<%= framework_section_code_classes %>">$span</code> never reaches past your last token.
           </p>
           <p class="<%= framework_section_description_classes %>">

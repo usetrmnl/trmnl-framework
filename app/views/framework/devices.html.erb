@@ -11,12 +11,9 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'What a device profile is') %>
           <p class="<%= framework_section_description_classes %>">
-            A device profile is a named set of dimensions and capabilities. The framework turns each one into a
-            <code class="<%= framework_section_code_classes %>">screen--&lt;keyname&gt;</code> class, so one class
-            tells a screen everything about its device.
-          </p>
-          <p class="<%= framework_section_description_classes %>">
-            The class sets the profile as CSS variables on the
+            The framework turns each profile into a
+            <code class="<%= framework_section_code_classes %>">screen--&lt;keyname&gt;</code> class. The class
+            sets the profile as CSS variables on the
             <%= render DocsRef.new(page: :screen) %> element, and everything inside reads them.
           </p>
         </div>
@@ -41,11 +38,11 @@
                 </tr>
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">--dither-pixel-ratio</code></td>
-                  <td class="px-6 py-4 text-sm">Ratio dither tiles render at, so patterns stay crisp on high-DPI panels.</td>
+                  <td class="px-6 py-4 text-sm">The ratio dither patterns render at, so they stay crisp on high-DPI panels.</td>
                 </tr>
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">--device-ui-scale</code></td>
-                  <td class="px-6 py-4 text-sm">The device's own interface density factor. It multiplies with the Scale modifier into <code class="<%= framework_section_code_classes %>">--ui-scale</code>.</td>
+                  <td class="px-6 py-4 text-sm">The device's own interface scale. It multiplies with the Scale modifier to produce <code class="<%= framework_section_code_classes %>">--ui-scale</code>.</td>
                 </tr>
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm"><code class="<%= framework_section_code_classes %>">--gap-scale</code></td>
@@ -105,7 +102,7 @@
             Keep the size and density classes on the screen anyway: the responsive prefixes and the runtime match
             those classes.
             <code class="<%= framework_section_code_classes %>">md:value--large</code> matches
-            <code class="<%= framework_section_code_classes %>">screen--md</code>, never the device class that extends
+            <code class="<%= framework_section_code_classes %>">screen--md</code>, never the device class that includes
             it. <%= render DocsRef.new(page: :responsive) %> covers the size grammar.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -129,7 +126,6 @@
             the dimensions stay the device's either way.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The two samples below are the same panel at the same dimensions, density, and scale. Only the paint changes.
             <%= render DocsRef.new(page: :color_palettes) %> lists the palettes and their classes.
           </p>
         </div>
@@ -194,8 +190,8 @@
 
         <div class="space-y-4">
           <p class="<%= framework_section_description_classes %>">
-            There is no 8-bit or 16-bit grayscale rating. Past 16 grays the next step is color, so a panel rates 12
-            or 24 instead of a deeper gray.
+            Grayscale ratings stop at 4: past 16 grays the next step is color, so a panel rates 12 or 24
+            instead of a deeper gray.
           </p>
           <p class="<%= framework_section_description_classes %>">
             A smooth 8-bit image on the wire is a delivery format, not a rating. The panel behind it still
@@ -251,9 +247,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Where profiles come from') %>
           <p class="<%= framework_section_description_classes %>">
-            The profiles come from the TRMNL Platform's own device list, which the framework ships as generated
-            SCSS. A released build carries a class for every device the platform knows; the framework never
-            invents one.
+            The framework ships the platform's device list as generated SCSS. A released build carries a
+            class for every device the platform knows; the framework never invents one.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Bring your own panel in one of two ways. Apply

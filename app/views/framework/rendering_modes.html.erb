@@ -24,7 +24,7 @@
             that cannot print it.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The demo below labels the tier it is rendering on. Switch device in the Device Preview to see the same
+            The demo below labels the tier it is rendering on. Switch devices in the Device Preview to see the same
             screen on each one.
           </p>
         </div>
@@ -118,9 +118,7 @@
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The palette chosen for a device decides which class the screen carries, and the class decides how
-            everything paints. <%= render DocsRef.new(page: :color_palettes) %> lists every palette and the class
-            it maps to.
+            <%= render DocsRef.new(page: :color_palettes) %> lists every palette and the class it maps to.
           </p>
         </div>
 
@@ -200,8 +198,8 @@
             paints palette inks and reports 4.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The runtime reads the number too: pixel-perfect fonts switch off at 4 and up, and the even-width rule
-            for item indexes stops at 2 and up. See <%= render DocsRef.new(page: :framework_runtime) %>, or
+            The runtime acts on the number: pixel-perfect fonts switch off at 4 and up, and item indexes stop
+            forcing an even pixel width at 2 and up. See <%= render DocsRef.new(page: :framework_runtime) %>, or
             <%= render DocsRef.new(page: :paint_api) %> to read the variable from your own JavaScript.
           </p>
         </div>

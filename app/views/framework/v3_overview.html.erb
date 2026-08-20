@@ -11,7 +11,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The v3 Color Foundation') %>
           <p class="<%= framework_section_description_classes %>">
-            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup. 3.1 added the TRMNL font bundle as the low-density default.
+            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup. 3.1 made the TRMNL fonts the default typeface on low-density screens.
           </p>
         </div>
       </section>
@@ -49,7 +49,7 @@
             Read any framework color, border, text style, or size from JavaScript. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> returns what CSS would paint right now, with the device, scale, dark mode, and theme already applied, so your JavaScript never hardcodes a color.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li>Resolvers: <code class="<%= framework_section_code_classes %>">bg()</code>, <code class="<%= framework_section_code_classes %>">text()</code>, <code class="<%= framework_section_code_classes %>">semantic()</code>, <code class="<%= framework_section_code_classes %>">series()</code>, <code class="<%= framework_section_code_classes %>">border()</code>, <code class="<%= framework_section_code_classes %>">type()</code>, and more.</li>
+            <li>Resolvers read one value each: <code class="<%= framework_section_code_classes %>">bg()</code>, <code class="<%= framework_section_code_classes %>">text()</code>, <code class="<%= framework_section_code_classes %>">semantic()</code>, <code class="<%= framework_section_code_classes %>">series()</code>, <code class="<%= framework_section_code_classes %>">border()</code>, <code class="<%= framework_section_code_classes %>">type()</code>, and more.</li>
             <li>Painters: <code class="<%= framework_section_code_classes %>">apply()</code>, <code class="<%= framework_section_code_classes %>">applyBorder()</code>, <code class="<%= framework_section_code_classes %>">applyType()</code> write resolved paint onto nodes.</li>
             <li><code class="<%= framework_section_code_classes %>">watch()</code> re-runs your build function whenever the screen's device, scale, mode, dark mode, or theme changes.</li>
             <li><code class="<%= framework_section_code_classes %>">cssVar()</code> reads any public <code class="<%= framework_section_code_classes %>">--*</code> variable, which is how a theme hands values to plugin code.</li>
@@ -65,13 +65,13 @@
         <div class="space-y-2">
           <%= framework_heading(3, 'Generated Paint Assets') %>
           <p class="<%= framework_section_description_classes %>">
-            Dither patterns no longer ship as PNG images. Every pattern is generated at build time as an
-            inline SVG: the dark pixels live in the asset, the light tone comes from the background color,
+            Every dither pattern is now generated at build time as an inline SVG instead of shipping as a
+            PNG image: the dark pixels live in the asset, the light tone comes from the background color,
             and a screen paints with zero image fetches.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li>CSS and JavaScript share the same generated patterns: <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads back exactly what CSS paints.</li>
-            <li>Dark mode and Raw/Preview swap in other patterns from the same generated set; the pattern shapes never fork.</li>
+            <li>Dark mode and Raw/Preview swap in other patterns from the same generated set, so every mode shares the same pattern shapes.</li>
             <li>Regenerate from the color manifest with <code class="<%= framework_section_code_classes %>">rake framework:color_tokens</code>; hand-edited pattern assets are gone.</li>
           </ul>
         </div>
@@ -81,7 +81,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Adaptive Charts') %>
           <p class="<%= framework_section_description_classes %>">
-            Charts used to carry their own fixed colors and ignore bit depth, dark mode, and themes. The runtime now bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter built on TRMNLPaint. Series colors, grid lines, and chart text all come from the framework, so a chart adapts with the rest of the screen.
+            Charts used to carry their own fixed colors and ignore bit depth and dark mode. The runtime now bundles <code class="<%= framework_section_code_classes %>">TRMNLCharts</code>, a Highcharts adapter built on TRMNLPaint. Series colors, grid lines, and chart text all come from the framework, so a chart adapts with the rest of the screen.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li><code class="<%= framework_section_code_classes %>">options()</code> and <code class="<%= framework_section_code_classes %>">merge()</code> give you adaptive Highcharts defaults under your own settings.</li>
@@ -150,7 +150,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Under the Hood') %>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li><strong>Smaller stylesheets:</strong> the responsive and device rules were refactored onto <code class="<%= framework_section_code_classes %>">:is()</code> selectors, shrinking the CSS.</li>
+            <li><strong>Smaller stylesheets:</strong> the responsive and device rules were refactored onto <code class="<%= framework_section_code_classes %>">:is()</code> selectors.</li>
           </ul>
         </div>
       </section>

@@ -16,9 +16,9 @@
           <div class="w-full flex items-center justify-between ml-3">
             <p class="text-sm font-medium">
               <strong>Pinned release notice:</strong> this docs version renders against framework
-              <%= pinned_semver %>, which predates themes. The demos below and the picker's Style
-              selector have no visible effect on it. A local docs server serves the live build on the
-              current docs version, where the demos render.
+              <%= pinned_semver %>, which predates themes, so the demos below render unthemed and
+              the Style selector has no visible effect. A local docs server on the current docs
+              version serves the live build, where the demos render.
             </p>
           </div>
         </div>
@@ -59,8 +59,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Available Themes') %>
           <p class="<%= framework_section_description_classes %>">
-            The framework ships these themes. Apply one in your own markup with its
-            <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> class:
+            The framework ships these themes:
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
             <% Framework::Themes::NAMES_BY_ID.each do |theme_id, theme_name| %>
@@ -143,7 +142,7 @@
             <li>
               <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>: reads any
               <code class="<%= framework_section_code_classes %>">--*</code> variable a theme sets on the
-              screen. A theme that wants to hand its own values to plugin code just declares them;
+              screen. A theme that wants to hand its own values to plugin code declares them;
               no framework changes needed.
             </li>
           </ul>
@@ -155,7 +154,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'The Themes API') %>
+          <%= framework_heading(3, 'Build Your Own Theme') %>
           <p class="<%= framework_section_description_classes %>">
             A theme picks colors for a fixed set of surfaces and changes nothing else. The two pages
             below cover the workflow and the full list of surfaces.

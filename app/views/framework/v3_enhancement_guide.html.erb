@@ -21,7 +21,7 @@
         </ul>
 
         <p class="<%= framework_section_description_classes %>">
-          To theme a screen you control, include the theme stylesheet and add the theme class. Note that <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen; a theme already decides every color. See <%= render DocsRef.new(page: :themes) %>.
+          To theme a screen you control, include the theme stylesheet and add the theme class. <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed screen; a theme already decides every color. See <%= render DocsRef.new(page: :themes) %>.
         </p>
 
         <div class="mt-4">
@@ -114,7 +114,7 @@ TRMNLPaint.watch("my-visual", function () { draw(); });', language: 'javascript'
 
       <section class="space-y-6">
         <div class="space-y-1">
-          <%= framework_heading(3, '5. Move Borders to the Step Rail') %>
+          <%= framework_heading(3, '5. Move Borders to Shade Steps') %>
           <p class="<%= framework_section_description_classes %>">Replace the numbered border levels with shade steps; the numbered classes still render, but they are deprecated. Steps use the same 10 to 75 scale as backgrounds, and themes recolor them. Borders now render as generated gradients instead of PNG tiles, so a bordered screen fetches no images.</p>
         </div>
 
@@ -123,7 +123,7 @@ TRMNLPaint.watch("my-visual", function () { draw(); });', language: 'javascript'
             demo_code: '<!-- Before: numbered levels (deprecated) -->
 <div class="item border--h-5">...</div>
 
-<!-- After: shade steps, plus semantic black/white rails -->
+<!-- After: shade steps, plus black and white -->
 <div class="item border--h-45">...</div>
 <div class="item border--h-black">...</div>'
           ) %>

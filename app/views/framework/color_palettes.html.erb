@@ -11,7 +11,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Grayscale palettes') %>
           <p class="<%= framework_section_description_classes %>">
-            Four palettes cover the panels that print no color. Each one maps onto a bit-depth class on the
+            Each of the four grayscale palettes maps onto a bit-depth class on the
             <%= render DocsRef.new(page: :screen) %> element, so a grayscale screen carries
             <code class="<%= framework_section_code_classes %>">screen--1bit</code>,
             <code class="<%= framework_section_code_classes %>">screen--2bit</code>, or
@@ -37,8 +37,8 @@
             <li><code class="<%= framework_section_code_classes %>">gray-256</code>: the platform sends a smooth 8-bit PNG and the device quantizes it to its own 16 levels.</li>
           </ul>
           <p class="<%= framework_subsection_description_classes %>">
-            Its registry name, Smooth Grayscale (device-quantized), describes that delivery. It is not a claim of 256
-            displayable grays, and it renders at the 4-bit tier, so build against
+            The registry name for <code class="<%= framework_section_code_classes %>">gray-256</code>, Smooth
+            Grayscale (device-quantized), describes that delivery, not 256 displayable grays. Build against
             <code class="<%= framework_section_code_classes %>">screen--4bit</code>.
           </p>
         </div>
@@ -110,8 +110,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Full color') %>
           <p class="<%= framework_section_description_classes %>">
-            <code class="<%= framework_section_code_classes %>">screen--color-full</code> is a first-class mode, not a
-            fallback. Every framework color paints exactly as defined, with no dithering.
+            Two palettes share <code class="<%= framework_section_code_classes %>">screen--color-full</code>.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><code class="<%= framework_section_code_classes %>">color-24bit</code> (16.7 million colors) covers LCD, OLED, browser, and virtual screens. The render ships as lossless sRGB: no remap, no dithering, no posterize.</li>
@@ -144,8 +143,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Every palette and its class') %>
           <p class="<%= framework_section_description_classes %>">
-            The device registry assigns each device the palettes it can render, and a selected palette maps to one
-            framework class. That class also reports its paint depth as
+            Every palette maps to one framework class. That class also reports its paint depth as
             <code class="<%= framework_section_code_classes %>">--framework-bit-depth</code>, which
             <%= render DocsRef.new(page: :paint_api) %> reads.
           </p>
@@ -198,12 +196,12 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'How tokens resolve') %>
+          <%= framework_heading(3, 'How Colors Print per Palette') %>
           <p class="<%= framework_section_description_classes %>">
             A limited palette prints solid inks and nothing in between, so the framework dithers every color in the
             <%= render DocsRef.new(page: :colors) %> palette down to the panel's inks. Your markup does not
             change: the same <code class="<%= framework_section_code_classes %>">bg--</code> and
-            <code class="<%= framework_section_code_classes %>">text--</code> utilities just print differently per palette.
+            <code class="<%= framework_section_code_classes %>">text--</code> utilities print differently per palette.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><strong>Grays dither in black and white.</strong> On every limited palette, <code class="<%= framework_section_code_classes %>">bg--gray-50</code> is a 1-bit pattern rather than a solid gray.</li>

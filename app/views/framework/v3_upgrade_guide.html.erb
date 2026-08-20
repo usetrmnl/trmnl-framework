@@ -14,7 +14,7 @@
             Upgrade and rerender: your plugin looks the same until you opt into 3.2 features. Two things are worth reviewing.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li><strong>Numbered border levels are deprecated:</strong> <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> (and vertical counterparts) still render, but will be removed in Framework 4.0. Prefer the shade-step rail (<code class="<%= framework_section_code_classes %>">border--h-10</code> to <code class="<%= framework_section_code_classes %>">border--h-75</code>) in new markup. See <%= render DocsRef.new(page: :border) %>.</li>
+            <li><strong>Numbered border levels are deprecated:</strong> <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> (and vertical counterparts) still render, but will be removed in Framework 4.0. Prefer the shade steps (<code class="<%= framework_section_code_classes %>">border--h-10</code> to <code class="<%= framework_section_code_classes %>">border--h-75</code>) in new markup. See <%= render DocsRef.new(page: :border) %>.</li>
             <li><strong>Themed screens ignore dark mode:</strong> if you add a <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> class, <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> no longer applies. A theme already decides every color. See <%= render DocsRef.new(page: :themes) %>.</li>
           </ul>
         </div>
