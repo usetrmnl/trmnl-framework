@@ -60,8 +60,8 @@
           <p class="<%= framework_section_description_classes %>">
             Every <code class="<%= framework_section_code_classes %>">@font-face</code> block in the framework points
             at a root-relative <code class="<%= framework_section_code_classes %>">/fonts/</code> URL, so a host has to
-            serve those files. Without them the pixel families fall back to the browser default. Nothing errors, the
-            type is simply wrong at every size.
+            serve those files. Without them the pixel families fall back to the browser default. Nothing errors, but the
+            type is wrong at every size.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Font URLs resolve against the host that serves the stylesheet, not the page. Link
@@ -72,7 +72,7 @@
         </div>
 
         <div class="space-y-4">
-          <%= framework_heading(4, 'What the host serves') %>
+          <%= framework_heading(4, 'What the Host Serves') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">TRMNL12</code>,
@@ -121,9 +121,10 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Themes') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes are not bundled into <code class="<%= framework_section_code_classes %>">plugins.css</code>. Each
+            Each
             theme under <code class="<%= framework_section_code_classes %>">framework/themes/</code> compiles to its
-            own stylesheet and loads as a second <code class="<%= framework_section_code_classes %>">&lt;link&gt;</code>
+            own stylesheet, separate from <code class="<%= framework_section_code_classes %>">plugins.css</code>,
+            and loads as a second <code class="<%= framework_section_code_classes %>">&lt;link&gt;</code>
             next to the framework. Usage is on <%= render DocsRef.new(page: :themes) %>; the authoring contract is
             on <%= render DocsRef.new(page: :theme_authoring) %>.
           </p>
@@ -139,7 +140,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'The JavaScript runtime') %>
+          <%= framework_heading(3, 'The JavaScript Runtime') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">plugins.js</code> is hand-authored and ships verbatim:
             no bundler, no build step. Copy
@@ -153,11 +154,10 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Releases and minification') %>
+          <%= framework_heading(3, 'Releases and Minification') %>
           <p class="<%= framework_section_description_classes %>">
             The repository's release task compiles, minifies, and precompresses (gzip and brotli) every published version reproducibly; those
-            artifacts are what the releases CDN serves. If you don't need a modified build, serve a released version
-            directly and skip the toolchain entirely.
+            artifacts are what the releases CDN serves.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Minifying your own build is optional. If you do, keep custom properties intact: the framework's JavaScript

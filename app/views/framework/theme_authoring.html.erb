@@ -9,7 +9,7 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'The contract') %>
+          <%= framework_heading(3, 'The Contract') %>
           <p class="<%= framework_section_description_classes %>">
             A theme picks colors by name, through the theme-slot mixins; it never writes raw color values.
             Because of that, the device still decides how every color prints: dither patterns on 1-bit,
@@ -31,7 +31,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Start from the boilerplate') %>
+          <%= framework_heading(3, 'Start from the Boilerplate') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">framework/themes/_theme-boilerplate.scss</code> is the
             starting point. A theme is one file: load the theme-slot mixins, declare the framework layer order, open the
@@ -87,7 +87,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Register and lint') %>
+          <%= framework_heading(3, 'Register and Lint') %>
           <p class="<%= framework_section_description_classes %>">
             The file name, the registry id, and the screen class stay in sync:
             <code class="<%= framework_section_code_classes %>">themes/&lt;id&gt;-theme.scss</code> registers as
@@ -110,7 +110,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Compile and ship') %>
+          <%= framework_heading(3, 'Compile and Ship') %>
           <p class="<%= framework_section_description_classes %>">
             Each theme compiles to its own stylesheet, never into
             <code class="<%= framework_section_code_classes %>">plugins.css</code>. It ships as a second
@@ -123,7 +123,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Dark mode') %>
+          <%= framework_heading(3, 'Dark Mode') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> has no effect on a themed
             screen: a theme already decides every color, so the framework's own dark rules step aside. They step
@@ -165,7 +165,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Expose values to JavaScript') %>
+          <%= framework_heading(3, 'Expose Values to JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
             A theme hands extra values to plugin code through CSS alone: set your own
             <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen,

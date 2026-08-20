@@ -9,7 +9,7 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Grayscale palettes') %>
+          <%= framework_heading(3, 'Grayscale Palettes') %>
           <p class="<%= framework_section_description_classes %>">
             Each of the four grayscale palettes maps onto a bit-depth class on the
             <%= render DocsRef.new(page: :screen) %> element, so a grayscale screen carries
@@ -26,7 +26,7 @@
         </div>
 
         <div class="space-y-4">
-          <%= framework_heading(4, 'Two ways to deliver 16 levels') %>
+          <%= framework_heading(4, 'Two Ways to Deliver 16 Levels') %>
           <p class="<%= framework_subsection_description_classes %>">
             <code class="<%= framework_section_code_classes %>">gray-16</code> and
             <code class="<%= framework_section_code_classes %>">gray-256</code> share a class because they share the
@@ -46,7 +46,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Color palette classes') %>
+          <%= framework_heading(3, 'Color Palette Classes') %>
           <p class="<%= framework_section_description_classes %>">
             Every color panel the framework supports has a palette class on the
             <%= render DocsRef.new(page: :screen) %> element. Five classes cover the limited-ink e-paper panels;
@@ -108,7 +108,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Full color') %>
+          <%= framework_heading(3, 'Full Color') %>
           <p class="<%= framework_section_description_classes %>">
             Two palettes share <code class="<%= framework_section_code_classes %>">screen--color-full</code>.
           </p>
@@ -141,7 +141,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Every palette and its class') %>
+          <%= framework_heading(3, 'Every Palette and Its Class') %>
           <p class="<%= framework_section_description_classes %>">
             Every palette maps to one framework class. That class also reports its paint depth as
             <code class="<%= framework_section_code_classes %>">--framework-bit-depth</code>, which
@@ -218,7 +218,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Applying a palette') %>
+          <%= framework_heading(3, 'Applying a Palette') %>
           <p class="<%= framework_section_description_classes %>">
             The palette class sits on the screen, next to the device class; grayscale palettes put their bit-depth
             class in the same place. Who writes it depends on where the screen renders.
@@ -264,7 +264,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Preview modes') %>
+          <%= framework_heading(3, 'Preview Modes') %>
           <p class="<%= framework_section_description_classes %>">
             Panel inks are darker and flatter than the same hex on a monitor. Two modifiers repaint a limited palette
             with device-accurate values so a preview on a screen matches the print.
@@ -293,7 +293,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Targeting a palette in SCSS') %>
+          <%= framework_heading(3, 'Targeting a Palette in SCSS') %>
           <p class="<%= framework_section_description_classes %>">
             Scope your own SCSS to a palette with the same mixins the framework uses. The mixin ids drop the
             <code class="<%= framework_section_code_classes %>">color-</code> prefix the class carries:

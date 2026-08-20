@@ -83,7 +83,7 @@ bin/dev     # server on :3001 with live Sass and Tailwind rebuilds'
             </div>
             <div class="w-full flex items-center justify-between ml-3">
               <p class="leading-none text-sm font-medium">
-                The runtime and visual suites run entirely on your machine. Both also have CI jobs once the repository is public: Linux Chromium against committed Linux baselines for visuals, and the same runtime checks as a local run.
+                The runtime and visual suites run entirely on your machine. Both also run in CI: Linux Chromium against committed Linux baselines for visuals, and the same runtime checks as a local run.
               </p>
             </div>
           </div>
@@ -121,7 +121,6 @@ bin/dev     # server on :3001 with live Sass and Tailwind rebuilds'
           <li>Keep it small and focused. One concern per pull request.</li>
           <li>Change a utility? Update its docs page and its live example in the same change. A utility without a rendered example is incomplete.</li>
           <li>Run the test suites and confirm <code class="<%= framework_section_code_classes %>">bin/build</code> succeeds before you push.</li>
-          <li>No em-dashes in any copy you touch.</li>
         </ul>
 
         <p class="<%= framework_section_description_classes %>">
@@ -134,10 +133,10 @@ bin/dev     # server on :3001 with live Sass and Tailwind rebuilds'
         <div class="space-y-1">
           <%= framework_heading(3, 'Report Issues and Security') %>
           <p class="<%= framework_section_description_classes %>">
-            Found a bug or have an idea? Open a GitHub issue with a minimal reproduction.
+            Found a bug? Open a GitHub issue with a minimal reproduction. Ideas and feature requests are welcome as issues too.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Security issues are different. Report them privately through GitHub's private vulnerability reporting, not a public issue. See <code class="<%= framework_section_code_classes %>">SECURITY.md</code>.
+            Security issues are different. Report them through GitHub's private vulnerability reporting, not a public issue. See <code class="<%= framework_section_code_classes %>">SECURITY.md</code>.
           </p>
           <p class="<%= framework_section_description_classes %>">
             All participation follows the <code class="<%= framework_section_code_classes %>">CODE_OF_CONDUCT.md</code>.

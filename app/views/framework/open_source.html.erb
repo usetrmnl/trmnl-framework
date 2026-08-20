@@ -13,10 +13,10 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'What This Repository Is') %>
           <p class="<%= framework_section_description_classes %>">
-            The framework and the site that documents it live together in one Rails app. It has no database. It compiles the CSS and JavaScript, then renders these pages against them.
+            The framework and the site that documents it live together in one Rails app. It has no database. It compiles the CSS, then renders these pages against it and the JavaScript runtime.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Framework development happens against the docs: edit the Sass or JS, watch it rebuild, and check the result on the page it documents. The screen below is a plugin layout built from framework classes, the same building blocks every example here uses.
+            Framework development happens against the docs: edit the Sass or JS, watch it rebuild, and check the result on the page it documents.
           </p>
         </div>
 
@@ -85,7 +85,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The Runtime') %>
           <p class="<%= framework_section_description_classes %>">
-            The JavaScript runtime lives in <code class="<%= framework_section_code_classes %>">app/javascript/</code> and ships as a stamped pair: the readable <code class="<%= framework_section_code_classes %>">plugins.js</code> and the minified <code class="<%= framework_section_code_classes %>">plugins.min.js</code> production serves, both carrying the build marker of the released version. It does the render-time work a static stylesheet cannot.
+            The JavaScript runtime lives in <code class="<%= framework_section_code_classes %>">app/javascript/</code> and ships as two files: the readable <code class="<%= framework_section_code_classes %>">plugins.js</code> and the minified <code class="<%= framework_section_code_classes %>">plugins.min.js</code> production serves, both stamped with the version they were released from. It does the render-time work a static stylesheet cannot.
           </p>
         </div>
 
@@ -120,7 +120,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The Release Pipeline') %>
           <p class="<%= framework_section_description_classes %>">
-            Releases are reproducible and need only this repository. A release regenerates the tokens, compiles the Sass, and minifies the CSS and the version-stamped JS runtime. Every artifact is then precompressed as gzip and brotli, deterministically, and zipped.
+            Releases are reproducible and need only this repository. A release regenerates the tokens, compiles the Sass, and minifies the CSS and the version-stamped JS runtime. Every artifact is then precompressed as gzip and brotli, and zipped.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The published archive under <code class="<%= framework_section_code_classes %>">public/css</code> and <code class="<%= framework_section_code_classes %>">public/js</code> keeps every version, so the docs render each version against the exact bundle it shipped. Releases are maintainer-only.
@@ -136,7 +136,7 @@
             The framework bundles fetch nothing from outside their own origin. Pattern images and fonts come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The docs site around them loads from four third-party origins, all in the page chrome or in a demo. Each one fails on its own page, so a host that blocks all four still serves every page here.
+            The docs site around them loads from four third-party origins, all in the page chrome or in a demo. Each one degrades only the feature that uses it, so a host that blocks all four still serves every page here.
           </p>
         </div>
 
@@ -148,7 +148,7 @@
         </ul>
 
         <p class="<%= framework_section_description_classes %>">
-          Mounting the engine in another Rails app brings all four with it. <code class="<%= framework_section_code_classes %>">docs/ENGINE_INTEGRATION.md</code> repeats this list with the CSP directives each origin needs.
+          The docs site can mount as an engine in another Rails app; doing so brings all four origins with it. <code class="<%= framework_section_code_classes %>">docs/ENGINE_INTEGRATION.md</code> repeats this list with the CSP directives each origin needs.
         </p>
       </section>
 
@@ -160,7 +160,7 @@
             The framework code is released under the MIT license. See the <code class="<%= framework_section_code_classes %>">LICENSE</code> file in the repository.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The MIT grant covers the code. The bundled fonts are licensed separately: the TRMNL pixel fonts by Heavyweight Digital Type Foundry, Inter, and the Nico fonts ship under the SIL Open Font License 1.1, and BlockKie under CC BY 3.0. Each font bundle download carries the full terms in its README and OFL.txt.
+            The MIT grant covers the code; the bundled fonts are licensed separately. The TRMNL pixel fonts (by Heavyweight Digital Type Foundry), Inter, and the Nico fonts ship under the SIL Open Font License 1.1; BlockKie ships under CC BY 3.0. Each font bundle download carries the full terms in its README and OFL.txt.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Highcharts is a commercial library the framework does not include. The chart examples load it from trmnl.com, where TRMNL serves it under its own license, and <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> is only the adapter. A custom stack brings its own charting library and license: see <%= render DocsRef.new(page: :chart) %>.

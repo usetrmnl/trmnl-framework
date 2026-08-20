@@ -9,11 +9,10 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Who reads, who writes') %>
+          <%= framework_heading(3, 'Who Reads, Who Writes') %>
           <p class="<%= framework_section_description_classes %>">
             The public <code class="<%= framework_section_code_classes %>">--*</code> variables are shared ground:
-            Sass writes them, themes change them, and the Paint API reads them. Each side plays one role and never
-            crosses into another.
+            Sass writes them, themes change them, and the Paint API reads them.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><strong>Sass generates them.</strong> The SCSS source emits every variable with its per-device values, and a custom build can extend the set. See <%= render DocsRef.new(page: :sass_api) %>.</li>
@@ -29,7 +28,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Public variables') %>
+          <%= framework_heading(3, 'Public Variables') %>
           <p class="<%= framework_section_description_classes %>">
             A variable is public unless its name marks it as internal, and a release keeps every public name in
             every published bundle. Read public variables with
@@ -39,12 +38,12 @@
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><strong>Palette:</strong> <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--white</code>, the <code class="<%= framework_section_code_classes %>">--gray-*</code> ladder, and one ladder per hue: <code class="<%= framework_section_code_classes %>">--red-*</code>, <code class="<%= framework_section_code_classes %>">--orange-*</code>, <code class="<%= framework_section_code_classes %>">--yellow-*</code>, <code class="<%= framework_section_code_classes %>">--lime-*</code>, <code class="<%= framework_section_code_classes %>">--green-*</code>, <code class="<%= framework_section_code_classes %>">--cyan-*</code>, <code class="<%= framework_section_code_classes %>">--blue-*</code>, <code class="<%= framework_section_code_classes %>">--violet-*</code>, <code class="<%= framework_section_code_classes %>">--purple-*</code>, <code class="<%= framework_section_code_classes %>">--pink-*</code>.</li>
-            <li><strong>Semantic roles:</strong> the <code class="<%= framework_section_code_classes %>">--color-*</code> family, which holds the roles (<code class="<%= framework_section_code_classes %>">--color-primary</code>, <code class="<%= framework_section_code_classes %>">--color-success</code>, <code class="<%= framework_section_code_classes %>">--color-error</code>, <code class="<%= framework_section_code_classes %>">--color-warning</code>) and the palette-mode ids, not hues.</li>
+            <li><strong>Semantic roles:</strong> the <code class="<%= framework_section_code_classes %>">--color-*</code> family, which holds the roles (<code class="<%= framework_section_code_classes %>">--color-primary</code>, <code class="<%= framework_section_code_classes %>">--color-success</code>, <code class="<%= framework_section_code_classes %>">--color-error</code>, <code class="<%= framework_section_code_classes %>">--color-warning</code>) and the palette-mode ids. Hues live in the palette ladders above.</li>
             <li><strong>Geometry and scale:</strong> <code class="<%= framework_section_code_classes %>">--screen-*</code>, <code class="<%= framework_section_code_classes %>">--gap-*</code>, <code class="<%= framework_section_code_classes %>">--rounded-*</code>, and the resolved <code class="<%= framework_section_code_classes %>">--ui-scale</code>, <code class="<%= framework_section_code_classes %>">--content-scale</code>, and <code class="<%= framework_section_code_classes %>">--text-ui-scale</code> factors.</li>
             <li><strong>Component tokens:</strong> the families components read, from <code class="<%= framework_section_code_classes %>">--title-bar-*</code> to <code class="<%= framework_section_code_classes %>">--progress-*</code>, all listed on <%= render DocsRef.new(page: :tokens) %>.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The <code class="<%= framework_section_code_classes %>">--framework-*</code> channels are public too. They
+            The <code class="<%= framework_section_code_classes %>">--framework-*</code> channels
             get their own section below because the theme layer and the runtime write them.
           </p>
         </div>
@@ -65,7 +64,7 @@ var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascrip
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Framework channels and slots') %>
+          <%= framework_heading(3, 'Framework Channels and Slots') %>
           <p class="<%= framework_section_description_classes %>">
             The <code class="<%= framework_section_code_classes %>">--framework-*</code> families carry the current
             paint between themes, components, and the runtime. They are public names: the minifier renames only
@@ -76,7 +75,7 @@ var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascrip
             <li><strong>Semantic channels:</strong> <code class="<%= framework_section_code_classes %>">--framework-semantic-{channel}-*</code> for canvas, surface, backdrop, fill-strong, fill-muted, fill-soft, text-primary, text-secondary, text-inverse, stroke-contrast, border-strong, border-muted, and icon. A channel carries its whole paint: backgrounds have <code class="<%= framework_section_code_classes %>">-bg-color</code> and <code class="<%= framework_section_code_classes %>">-bg-image</code>, text adds <code class="<%= framework_section_code_classes %>">-text-under</code> and <code class="<%= framework_section_code_classes %>">-text-clip</code> to its color and image, and borders carry <code class="<%= framework_section_code_classes %>">-border-color</code>, <code class="<%= framework_section_code_classes %>">-border-image</code>, and <code class="<%= framework_section_code_classes %>">-border-size</code>.</li>
             <li><strong>Role aliases:</strong> one flat color per role, resolved from the matching channel: <code class="<%= framework_section_code_classes %>">--framework-canvas-bg</code>, <code class="<%= framework_section_code_classes %>">--framework-surface-bg</code>, <code class="<%= framework_section_code_classes %>">--framework-backdrop-bg</code>, <code class="<%= framework_section_code_classes %>">--framework-text-primary</code>, <code class="<%= framework_section_code_classes %>">--framework-text-secondary</code>, <code class="<%= framework_section_code_classes %>">--framework-text-inverse</code>, <code class="<%= framework_section_code_classes %>">--framework-border-strong</code>, <code class="<%= framework_section_code_classes %>">--framework-border-muted</code>, <code class="<%= framework_section_code_classes %>">--framework-outline-strong</code>, <code class="<%= framework_section_code_classes %>">--framework-stroke-contrast</code>, <code class="<%= framework_section_code_classes %>">--framework-fill-strong</code>, <code class="<%= framework_section_code_classes %>">--framework-fill-muted</code>, <code class="<%= framework_section_code_classes %>">--framework-fill-soft</code>. They drop the dither image, so use them only where a single color is what you want.</li>
             <li><strong>Component slots:</strong> <code class="<%= framework_section_code_classes %>">--framework-slot-{slot}-*</code>, one group per component surface (title bar, screen backdrop, item meta, progress, table, label). A slot repaints one surface without moving a whole channel. See <%= render DocsRef.new(page: :theme_slots) %>.</li>
-            <li><strong>Chart ramp:</strong> <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-color</code> and <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-image</code> for series indexes 0 to 15, plus <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> for how many entries JavaScript spreads series across. See <%= render DocsRef.new(page: :paint_charts) %>.</li>
+            <li><strong>Chart ramp:</strong> <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-color</code> and <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-image</code> for series indexes 0 to 15, plus <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> for the number of entries JavaScript spreads series across. See <%= render DocsRef.new(page: :paint_charts) %>.</li>
             <li><strong>Border render contract:</strong> <code class="<%= framework_section_code_classes %>">--framework-border-render-*</code> (<code class="<%= framework_section_code_classes %>">width</code>, <code class="<%= framework_section_code_classes %>">height</code>, <code class="<%= framework_section_code_classes %>">view-box</code>, <code class="<%= framework_section_code_classes %>">stroke</code>, <code class="<%= framework_section_code_classes %>">path-1</code>, <code class="<%= framework_section_code_classes %>">path-2</code>, <code class="<%= framework_section_code_classes %>">color-1</code>, <code class="<%= framework_section_code_classes %>">color-2</code>): the SVG drawing instructions the framework declares for each border, which the Paint API copies into charts. See <%= render DocsRef.new(page: :paint_borders) %>.</li>
             <li><strong>Icon source:</strong> <code class="<%= framework_section_code_classes %>">--framework-icon-src</code> holds the URL an <code class="<%= framework_section_code_classes %>">image--adaptive</code> element is masked with. The runtime writes it as an inline style, and markup can set it directly. See <%= render DocsRef.new(page: :image) %>.</li>
           </ul>
@@ -90,7 +89,7 @@ var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascrip
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Internal variables') %>
+          <%= framework_heading(3, 'Internal Variables') %>
           <p class="<%= framework_section_description_classes %>">
             Six name families are implementation details. The minified bundle
             (<code class="<%= framework_section_code_classes %>">plugins.min.css</code>, the file production serves)

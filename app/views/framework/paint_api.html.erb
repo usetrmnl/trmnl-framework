@@ -9,7 +9,7 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'How it works') %>
+          <%= framework_heading(3, 'How It Works') %>
           <p class="<%= framework_section_description_classes %>">
             All framework colors live in CSS, as custom properties on the
             <code class="<%= framework_section_code_classes %>">.screen</code> element; a theme is only CSS that
@@ -33,7 +33,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'The paint domains') %>
+          <%= framework_heading(3, 'The Paint Domains') %>
           <p class="<%= framework_section_description_classes %>">
             The functions are documented by what they paint. Every one takes an optional
             <code class="<%= framework_section_code_classes %>">{ el }</code>: the id or element to read the
@@ -83,7 +83,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Scale values') %>
+          <%= framework_heading(3, 'Scale Values') %>
           <p class="<%= framework_section_description_classes %>">
             Scale pixel numbers in JavaScript the way the framework scales its own. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> reads the same variables CSS uses, so device density, Scale, and Text Scale never drift apart.
           </p>
@@ -152,7 +152,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Painting and reactivity') %>
+          <%= framework_heading(3, 'Painting and Reactivity') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">apply(node, fill)</code>: paints a node's background
@@ -182,7 +182,7 @@ var fontSize = TRMNLPaint.px(16, { el: "my-chart", kind: "text" });', language: 
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Extending a theme from JavaScript') %>
+          <%= framework_heading(3, 'Extending a Theme from JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
             A theme that wants to hand extra values to plugin code (a brand accent,
             say) sets its own

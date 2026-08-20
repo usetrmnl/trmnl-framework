@@ -8,7 +8,7 @@
 
     <div class="space-y-16">
       <section class="space-y-6">
-        <%= framework_heading(3, 'What it does') %>
+        <%= framework_heading(3, 'What It Does') %>
         <p class="<%= framework_section_description_classes %>">It measures the space a layout has and fits the content into it, so nothing needs manual tweaking. Each pass:</p>
         <ul class="list-disc list-inside space-y-2 <%= framework_list_classes %>">
           <li>Normalizes screen context (size, orientation, bit depth, scale)</li>
@@ -22,7 +22,7 @@
       </section>
 
       <section class="space-y-6">
-        <%= framework_heading(3, 'Runtime steps and stats') %>
+        <%= framework_heading(3, 'Runtime Steps and Stats') %>
         <p class="<%= framework_section_description_classes %>">When the runtime runs, it takes these steps in order.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,7 +124,7 @@
       </section>
 
       <section class="space-y-6">
-        <%= framework_heading(3, 'Driving the runtime from JavaScript') %>
+        <%= framework_heading(3, 'Driving the Runtime from JavaScript') %>
         <p class="<%= framework_section_description_classes %>">The runtime starts itself. It runs one pass after the page load event, then runs again whenever a <code class="<%= framework_section_code_classes %>">screen--*</code> class changes on a <code class="<%= framework_section_code_classes %>">.screen</code> element. Content injected after that needs an explicit re-run.</p>
 
         <%= framework_heading(4, 'Functions') %>
@@ -140,7 +140,7 @@
           </li>
         </ul>
 
-        <%= framework_heading(4, 'Ready signals') %>
+        <%= framework_heading(4, 'Ready Signals') %>
         <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
           <li>
             <code class="<%= framework_section_code_classes %>">window.TRMNL_PLUGINS_READY</code>: <code class="<%= framework_section_code_classes %>">false</code> while a pass runs and <code class="<%= framework_section_code_classes %>">true</code> once it settles. A screenshot service waits for <code class="<%= framework_section_code_classes %>">true</code> before it captures.
@@ -153,7 +153,7 @@
           </li>
         </ul>
 
-        <%= framework_heading(4, 'The stats event') %>
+        <%= framework_heading(4, 'The Stats Event') %>
         <p class="<%= framework_section_description_classes %>">Every pass dispatches <code class="<%= framework_section_code_classes %>">trmnl:terminalize:stats</code> on <code class="<%= framework_section_code_classes %>">window</code>. Its <code class="<%= framework_section_code_classes %>">detail</code> carries three fields.</p>
         <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
           <li>
@@ -179,14 +179,14 @@ window.addEventListener("trmnl:terminalize:stats", function (event) {
 });', language: 'javascript') %>
         </div>
 
-        <%= framework_heading(4, 'Debug logging') %>
+        <%= framework_heading(4, 'Debug Logging') %>
         <p class="<%= framework_section_description_classes %>">Set <code class="<%= framework_section_code_classes %>">window.__TRMNL_DEBUG__ = true</code> before a pass to log what each engine decided. Renders are quiet by default. Engine failures always reach the console, debug flag or not.</p>
 
         <p class="<%= framework_section_description_classes %>"><code class="<%= framework_section_code_classes %>">plugins.js</code> also puts <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> on <code class="<%= framework_section_code_classes %>">window</code>. Those are documented on <%= render DocsRef.new(page: :paint_api) %>.</p>
       </section>
 
       <section class="space-y-6">
-        <%= framework_heading(3, 'Why this exists') %>
+        <%= framework_heading(3, 'Why This Exists') %>
         <p class="<%= framework_section_description_classes %>">A plugin has to fit its data into a fixed space that changes with the device, orientation, and density. That sounds like responsive web design, but the runtime's tools (column planning, per-column clamping, pixel alignment, value fitting) are built for TRMNL screens specifically.</p>
       </section>
 
