@@ -117,8 +117,8 @@ var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascrip
           <p class="<%= framework_section_description_classes %>">
             The <code class="<%= framework_section_code_classes %>">--bg-*</code> and
             <code class="<%= framework_section_code_classes %>">--text-*</code> families keep their names in every
-            build, but the framework's rendering owns them. They encode how each device prints: dither patterns on
-            1-bit, palette images on limited color, solid colors on full color.
+            build, but the framework's rendering owns them. They encode how each device prints: dithered down
+            to the panel's inks where needed, exact colors on full color.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Three border families survive the rename because the theme contract preserves them: the numbered slots

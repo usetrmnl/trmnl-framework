@@ -12,16 +12,15 @@
           <%= framework_heading(3, 'The Contract') %>
           <p class="<%= framework_section_description_classes %>">
             A theme picks colors by name, through the theme-slot mixins; it never writes raw color values.
-            Because of that, the device still decides how every color prints: dither patterns on 1-bit,
-            palette images on limited color, solids on full color.
+            Because of that, every color still renders correctly on every device: dithered down to the
+            panel's inks where needed, exact on full color.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
-            <li>Allowed: the semantic channels, the whole-screen colors (<code class="<%= framework_section_code_classes %>">theme-slots.semantic-bg/text/stroke/border</code>)</li>
-            <li>Allowed: component slots, single surfaces like the title bar (<code class="<%= framework_section_code_classes %>">theme-slots.bg-slot/text-slot/border-level-slot/border-token-slot</code>)</li>
-            <li>Allowed: utility remaps, recoloring the raw color utilities (<code class="<%= framework_section_code_classes %>">theme-slots.utility-*</code> and the bulk <code class="<%= framework_section_code_classes %>">utility-remap-*</code> helpers)</li>
-            <li>Optional: icon color for adaptive images (<code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>). When omitted, <code class="<%= framework_section_code_classes %>">image--adaptive</code> icons follow the theme's primary text color.</li>
-            <li>Disallowed: overriding the root palette (<code class="<%= framework_section_code_classes %>">--white</code>, <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--gray-*</code>, <code class="<%= framework_section_code_classes %>">--color-*</code>)</li>
-            <li>Disallowed: framework-owned paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>)</li>
+            <li>Set the whole screen's colors at once with the semantic channels: <code class="<%= framework_section_code_classes %>">theme-slots.semantic-bg/text/stroke/border</code>.</li>
+            <li>Recolor a single part, like the title bar, with a component slot: <code class="<%= framework_section_code_classes %>">theme-slots.bg-slot/text-slot/border-level-slot/border-token-slot</code>.</li>
+            <li>Recolor what plugins set with <code class="<%= framework_section_code_classes %>">bg--</code> and <code class="<%= framework_section_code_classes %>">text--</code> classes through the utility remaps: <code class="<%= framework_section_code_classes %>">theme-slots.utility-*</code> and the bulk <code class="<%= framework_section_code_classes %>">utility-remap-*</code> helpers.</li>
+            <li>Optionally give icons their own color with <code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>; without it, <code class="<%= framework_section_code_classes %>">image--adaptive</code> icons follow the theme's primary text color.</li>
+            <li>Do not override the base palette (<code class="<%= framework_section_code_classes %>">--white</code>, <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--gray-*</code>, <code class="<%= framework_section_code_classes %>">--color-*</code>) or the framework's own paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>); the linter rejects both.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             The full list of channels, slots, and remaps lives on <%= render DocsRef.new(page: :theme_slots) %>.

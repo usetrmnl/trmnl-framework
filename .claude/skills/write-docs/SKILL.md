@@ -63,6 +63,17 @@ Before polishing a sentence, ask whether it should exist. Delete on sight:
 - A fact restated as its own negation ("Themes never ship JavaScript. A theme is only CSS, and JavaScript can read..."). State what happens, once, in the positive: "JavaScript can read everything it needs from a theme's CSS."
 - A distinction that dissolves on inspection ("rendering stays the framework's job", said about a feature that is itself part of the framework).
 
+## Write for the reader, not the framework
+
+A fourth calibration round: pages still explained things from the framework's point of view. The register, especially in intros, guide pages, and card blurbs:
+
+- An intro answers "what is this for?" in the reader's terms before anything else. "Themes are a simple way to visually customize any TRMNL plugin" beats any technically precise definition. Mechanism comes later on the page, where the reader acts on it.
+- Guide sections tell the reader what to do and what they get: "Use TRMNLCharts for your charts. They become device-responsive and follow the active theme." Not a contrast-framed description of the problem.
+- Concept lists must carry their meaning in the bullet itself. "Allowed: semantic channel refs (mixin names)" is gibberish to a newcomer; "Set the whole screen's colors at once with the semantic channels (mixin names)" is the same fact, usable.
+- Do not present dark mode as a headline feature. Keep it out of intros, benefit lists, and feature enumerations; mention it only where an API contract requires it or a section documents it directly.
+- Device rendering, canonical phrasing: colors dither down to the panel's inks where needed and paint exactly on full color. Never mention palette images or palette tiles; that mechanism is gone.
+- An overview intro names the release's features evenly or stays above them; it never deep-dives one feature while skipping the rest.
+
 ## Punctuation
 
 - **Never use em-dashes**: no `—`, no `&mdash;`, no ` -- `. Rewrite with a period, comma, colon, or parentheses. This applies to all copy: docs, commit messages, code comments, notices.

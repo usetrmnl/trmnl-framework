@@ -13,6 +13,10 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'What This Repository Is') %>
           <p class="<%= framework_section_description_classes %>">
+            The source lives at <%= link_to 'github.com/usetrmnl/trmnl-framework', 'https://github.com/usetrmnl/trmnl-framework', target: :_blank, class: 'font-medium underline' %>.
+            Star it, fork it, or clone it from there.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
             The framework and the site that documents it live together in one Rails app. It has no database. It compiles the CSS, then renders these pages against it and the JavaScript runtime.
           </p>
           <p class="<%= framework_section_description_classes %>">
@@ -73,7 +77,7 @@
         </div>
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-          <li><strong>Bit-depth-aware tokens:</strong> a color resolves to dither patterns on 1-bit, palette images on limited color, and solids on full color. See <%= render DocsRef.new(page: :colors) %> and <%= render DocsRef.new(page: :tokens) %>.</li>
+          <li><strong>Bit-depth-aware tokens:</strong> a color dithers down to the panel's inks where needed and paints exactly on full color. See <%= render DocsRef.new(page: :colors) %> and <%= render DocsRef.new(page: :tokens) %>.</li>
           <li><strong>Dither and tile backgrounds:</strong> grayscale and limited-palette fills are generated tiles, applied with <code class="<%= framework_section_code_classes %>">bg--{shade}</code>. See <%= render DocsRef.new(page: :background) %>.</li>
           <li><strong>Device screen classes:</strong> <code class="<%= framework_section_code_classes %>">.screen--&lt;device&gt;</code> bakes each device's dimensions and palette into the build. See <%= render DocsRef.new(page: :screen) %>.</li>
           <li><strong>Themes:</strong> opt-in stylesheets recolor a whole screen; the device still decides how colors print. See <%= render DocsRef.new(page: :themes) %>.</li>
