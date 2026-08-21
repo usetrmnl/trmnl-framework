@@ -31,9 +31,9 @@
               again when device, scale, mode, dark mode or theme changes, removing the previous one first.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">path(i, n, { el, width })</code> and
-              <code class="<%= framework_section_code_classes %>">marker(i, n, { el, radius })</code>: line and circle
-              layer paint for route <em>i</em> of <em>n</em>, from the screen's chart-series ramp.
+              <code class="<%= framework_section_code_classes %>">route(map, coords, { el, width })</code> and
+              <code class="<%= framework_section_code_classes %>">dot(map, lngLat, { el, radius, hollow })</code>: plot a
+              route and its markers as crisp fills painted from the screen's chart-series ramp.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">fit(map, coords, { padding, maxZoom })</code>: frames
@@ -353,8 +353,8 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'Markers and routes') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Plot your own data as GeoJSON sources. path() and marker() hand you the layer paint from the screen's
-              chart-series ramp, and fit() frames the route on an integer zoom.
+              Plot your own data. route() and dot() draw it as crisp fills painted from the screen's chart-series
+              ramp, and fit() frames the route on an integer zoom.
             </p>
           </div>
 
@@ -416,21 +416,15 @@
                       })();
                     }
 
-                    function point(coords, tag) {
-                      return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
-                    }
-
                     whenReady(function () {
                       var el = "map-commute";
                       TRMNLMaps.watch(el, function () {
                         var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
                         map.on("load", function () {
-                          map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: route } } });
-                          map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(route[0], "start"), point(route[route.length - 1], "end")] } });
-                          // path()/marker() carry the paint; merge() adds your id, source and filter.
-                          map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
-                          map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
-                          map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+                          // route() and dot() draw crisp fills from the chart-series ramp.
+                          TRMNLMaps.route(map, route, { el: el, width: 3 });
+                          TRMNLMaps.dot(map, route[0], { el: el, id: "start", radius: 5 });
+                          TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", radius: 5, hollow: true });
                         });
                         // fit() frames the route on an integer zoom, no animation.
                         TRMNLMaps.fit(map, route, { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
@@ -449,21 +443,15 @@
   [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
 ];
 
-function point(coords, tag) {
-  return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
-}
-
 whenReady(function () {
   var el = "map-commute";
   TRMNLMaps.watch(el, function () {
     var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
     map.on("load", function () {
-      map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: route } } });
-      map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(route[0], "start"), point(route[route.length - 1], "end")] } });
-      // path()/marker() carry the paint; merge() adds your id, source and filter.
-      map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
-      map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
-      map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+      // route() and dot() draw crisp fills from the chart-series ramp.
+      TRMNLMaps.route(map, route, { el: el, width: 3 });
+      TRMNLMaps.dot(map, route[0], { el: el, id: "start", radius: 5 });
+      TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", radius: 5, hollow: true });
     });
     // fit() frames the route on an integer zoom, no animation.
     TRMNLMaps.fit(map, route, { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
@@ -645,10 +633,6 @@ TRMNLMaps.watch(el, function () {
                     return m + ":" + (s < 10 ? "0" : "") + s;
                   }
 
-                  function point(coords, tag) {
-                    return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
-                  }
-
                   whenReady(function () {
                     var el = "map-strava";
                     var km = activity.distance / 1000;
@@ -663,11 +647,9 @@ TRMNLMaps.watch(el, function () {
                     TRMNLMaps.watch(el, function () {
                       var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
                       map.on("load", function () {
-                        map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: coords } } });
-                        map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(coords[0], "start"), point(coords[coords.length - 1], "end")] } });
-                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 4 }), { id: "route", source: "route" }));
-                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
-                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+                        TRMNLMaps.route(map, coords, { el: el, width: 4 });
+                        TRMNLMaps.dot(map, coords[0], { el: el, id: "start", radius: 5 });
+                        TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", radius: 5, hollow: true });
                       });
                       TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
                       return map;
@@ -757,10 +739,6 @@ TRMNLMaps.watch(el, function () {
     return m + ":" + (s < 10 ? "0" : "") + s;
   }
 
-  function point(coords, tag) {
-    return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
-  }
-
   whenReady(function () {
     var el = "map-strava";
     var km = activity.distance / 1000;
@@ -775,11 +753,9 @@ TRMNLMaps.watch(el, function () {
     TRMNLMaps.watch(el, function () {
       var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
       map.on("load", function () {
-        map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: coords } } });
-        map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(coords[0], "start"), point(coords[coords.length - 1], "end")] } });
-        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 4 }), { id: "route", source: "route" }));
-        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
-        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+        TRMNLMaps.route(map, coords, { el: el, width: 4 });
+        TRMNLMaps.dot(map, coords[0], { el: el, id: "start", radius: 5 });
+        TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", radius: 5, hollow: true });
       });
       // fit() frames the run on an integer zoom, no animation.
       TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });

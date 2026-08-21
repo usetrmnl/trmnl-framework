@@ -155,16 +155,17 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
                 for route <em>i</em> of <em>count</em> from the screen's chart-series ramp.
               </li>
               <li>
-                <code class="<%= framework_section_code_classes %>">path(i, count, { el, width })</code>: a line layer's
-                layout and paint for that route, rounded caps and joins,
-                <code class="<%= framework_section_code_classes %>">width</code> scaled through
-                <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> (default 2).
+                <code class="<%= framework_section_code_classes %>">route(map, coords, { el, i, n, width, id, casing })</code>:
+                plots a route as the polygon of its stroke (default width 3, through
+                <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code>) filled with series
+                <em>i</em> of <em>n</em> over a contrast casing, crisp and re-widened for every camera. Call it once
+                the map has loaded.
               </li>
               <li>
-                <code class="<%= framework_section_code_classes %>">marker(i, count, { el, radius, hollow })</code>: a
-                circle layer's paint for that route, the series ink with a contrast ring (default radius 4).
-                <code class="<%= framework_section_code_classes %>">hollow: true</code> swaps ring and fill, so a start
-                dot and an end ring read apart on one ink.
+                <code class="<%= framework_section_code_classes %>">dot(map, lngLat, { el, i, n, radius, hollow, id })</code>:
+                plots a disc (default radius 4) in that series paint with a contrast ring;
+                <code class="<%= framework_section_code_classes %>">hollow: true</code> makes it a ring around a
+                contrast core, so a start dot and an end ring read apart on one ink.
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints every element
@@ -266,6 +267,16 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
           </div>
 
           <div class="space-y-2">
+            <%= framework_heading(4, 'Every mark is a fill') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Nothing TRMNLMaps draws is a MapLibre line or circle, which would be anti-aliased and, for a tile,
+              filtered along the line. Every road, dash, stop, route and dot is the polygon of its stroke, filled
+              with the slot's tile or solid without anti-aliasing, so it lands on the pixel grid like every other
+              tile on the screen. The runtime widens them after the tiles load and again for every camera.
+            </p>
+          </div>
+
+          <div class="space-y-2">
             <%= framework_heading(4, 'Labels') %>
             <p class="<%= framework_subsection_description_classes %>">
               Place and water labels are framework elements, not MapLibre text. After every idle the runtime reads
@@ -291,8 +302,8 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
 TRMNLMaps.watch(el, function () {
   var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
   map.on("load", function () {
-    map.addSource("route", { type: "geojson", data: routeFeature });
-    map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+    TRMNLMaps.route(map, coords, { el: el, width: 3 });
+    TRMNLMaps.dot(map, coords[0], { el: el, id: "start" });
   });
   TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
   return map;

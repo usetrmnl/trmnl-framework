@@ -67,9 +67,16 @@ async function installFakeMap(page) {
           if (!fake.sources[id]) fake.sources[id] = { setData(data) { fake.calls.setData.push({ id, features: data.features.length }); } };
           return fake.sources[id];
         },
+        addSource(id) { fake.calls.addSource.push(id); return fake.getSource(id); },
+        addLayer(layer) { fake.layers.push(layer); },
+        getLayer(id) { return fake.layers.find((layer) => layer.id === id) || null; },
+        isStyleLoaded() { return true; },
+        triggerRepaint() {},
       };
       fake.sources = {};
+      fake.layers = [];
       fake.calls.setData = [];
+      fake.calls.addSource = [];
       return Object.assign(fake, overrides || {});
     };
   });
@@ -78,6 +85,7 @@ async function installFakeMap(page) {
 test('builds still-map options and a slot-painted style without MapLibre loaded', async ({ page }) => {
   const browserSignals = await openRuntimePage(page);
   await mountFixture(page, { html: '<div id="map-target" class="map" style="width:300px;height:200px"></div>' });
+  await installFakeMap(page);
 
   const result = await page.evaluate(() => {
     const maps = window.TRMNLMaps;
@@ -121,12 +129,15 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         roadPatternFromSlot: Boolean(roadFill.pattern) && layer('roads-major').paint['fill-pattern'] === roadFill.pattern.id,
         roadSource: style.sources[layer('roads-major').source] && style.sources[layer('roads-major').source].type,
         roadCasing: layer('roads-major-casing') && layer('roads-major-casing').type,
-        lineSpecs: style.metadata['trmnl:lines'].map((spec) => spec.id),
-        railDashedInk: layer('rail').paint['line-color'],
-        railDash: layer('rail').paint['line-dasharray'],
+        lineSpecs: style.metadata['trmnl:shapes'].map((spec) => spec.id),
+        railType: layer('rail').type,
+        railInk: layer('rail').paint['fill-color'],
+        railSpec: style.metadata['trmnl:shapes'].find((spec) => spec.id === 'rail'),
+        transitSpec: style.metadata['trmnl:shapes'].find((spec) => spec.id === 'transit'),
+        primitives: style.layers.filter((entry) => entry.type === 'line' || entry.type === 'circle' || entry.type === 'symbol').length,
         symbols: style.layers.filter((entry) => entry.type === 'symbol').length,
         labels: style.metadata['trmnl:labels'],
-        transitInk: layer('transit').paint['circle-color'],
+        transitInk: layer('transit').paint['fill-color'],
       },
       presets: {
         outline: maps.style('outline', { el: target }).layers.map((entry) => entry.id),
@@ -140,11 +151,21 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         paint: JSON.stringify(maps.paint('black', { el: target })) === JSON.stringify(paint.toMapLibre(paint.bg('black', { el: target }))),
         series: JSON.stringify(maps.series(1, 3, { el: target })) === JSON.stringify(paint.toMapLibre(paint.series(1, 3, { el: target }))),
       },
-      overlays: {
-        path: maps.path(0, 1, { el: target, width: 3 }),
-        marker: maps.marker(0, 2, { el: target }),
-        hollow: maps.marker(0, 1, { el: target, hollow: true }),
-      },
+      overlays: (() => {
+        const fake = window.__TRMNL_FAKE_MAP__(target);
+        fake.style = style;
+        maps.route(fake, [[9.5, 49.5], [10.5, 50.5]], { el: target, width: 3 });
+        maps.dot(fake, [10, 50], { el: target, id: 'start', radius: 5 });
+        maps.dot(fake, [10.2, 50.2], { el: target, id: 'end', radius: 5, hollow: true });
+        fake.fire('idle');
+        return {
+          layers: fake.layers.map((layer) => layer.id),
+          routePaint: fake.layers.find((layer) => layer.id === 'trmnl-route-route').paint,
+          casingPaint: fake.layers.find((layer) => layer.id === 'trmnl-route-route-casing').paint,
+          corePaint: fake.layers.find((layer) => layer.id === 'trmnl-dot-end-core').paint,
+          setData: fake.calls.setData.filter((call) => /trmnl-(route|dot)/.test(call.id)).map((call) => call.id + ':' + call.features),
+        };
+      })(),
       tiles: maps.tiles({ url: 'x' }),
       merged: maps.merge({ a: { b: 1, c: [1] }, d: 1 }, { a: { c: [2] }, e: 2 }),
       decoded: decoded.map((pair) => pair.map((n) => Number(n.toFixed(3)))),
@@ -182,10 +203,15 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.style.roadPatternFromSlot).toBe(true);
   expect(result.style.roadSource).toBe('geojson');
   expect(result.style.roadCasing).toBe('fill');
-  expect(result.style.lineSpecs).toEqual(expect.arrayContaining(['roads-major', 'roads-minor', 'water-lines']));
+  expect(result.style.lineSpecs).toEqual(expect.arrayContaining(['roads-major', 'roads-minor', 'water-lines', 'rail', 'paths', 'boundaries', 'transit']));
   // A dashed line cannot carry a pattern, so rail takes the tile's ink.
-  expect(result.style.railDashedInk).toMatch(/^(rgb|#)/);
-  expect(result.style.railDash).toEqual([3, 2]);
+  // Dashed lines and stops are shapes too: a dashed shape in the ink, a point shape with a casing.
+  expect(result.style.railType).toBe('fill');
+  expect(result.style.railInk).toMatch(/^(rgb|#)/);
+  expect(result.style.railSpec).toMatchObject({ kind: 'line', dash: [3, 2] });
+  expect(result.style.transitSpec).toMatchObject({ kind: 'point', casing: 'trmnl-shape-transit-casing' });
+  // Nothing MapLibre draws itself: no line, circle or symbol layer anywhere.
+  expect(result.style.primitives).toBe(0);
   expect(result.presets.outline).toEqual(['background', 'ocean', 'water', 'roads-major-casing', 'roads-major', 'boundaries']);
   expect(result.presets.blank).toEqual(['background']);
   expect(result.presets.noLabels).toEqual({ major: false, minor: false, water: false });
@@ -193,17 +219,13 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.presets.noBuildings).toBe(false);
   expect(result.presets.customTiles).toBe('https://tiles.example.com/{z}/{x}/{y}.mvt');
   expect(result.delegation).toEqual({ paint: true, series: true });
-  expect(result.overlays.path.type).toBe('line');
-  expect(result.overlays.path.paint['line-width']).toBe(3);
-  // Tile inks come from the SVG fill (hex); solids from computed style (rgb).
-  // Series 0 of 1 is the ink, a solid on every rail.
-  expect(result.overlays.path.paint['line-color']).toMatch(/^(rgb|#)/);
-  expect(result.overlays.path.paint['line-pattern']).toBeUndefined();
-  expect(result.overlays.marker.type).toBe('circle');
-  expect(result.overlays.marker.paint['circle-radius']).toBe(4);
-  expect(result.overlays.marker.paint['circle-stroke-color']).toMatch(/^rgb/);
-  expect(result.overlays.hollow.paint['circle-stroke-width']).toBe(2);
-  expect(result.overlays.hollow.paint['circle-color']).toBe(result.overlays.marker.paint['circle-stroke-color']);
+  // route() and dot() add casing + shape fill layers and widen them on idle.
+  expect(result.overlays.layers).toEqual(['trmnl-route-route-casing', 'trmnl-route-route', 'trmnl-dot-start-casing', 'trmnl-dot-start', 'trmnl-dot-end-casing', 'trmnl-dot-end', 'trmnl-dot-end-core']);
+  expect(result.overlays.routePaint['fill-color']).toMatch(/^(rgb|#)/);
+  expect(result.overlays.routePaint['fill-antialias']).toBe(false);
+  expect(result.overlays.casingPaint['fill-color']).toMatch(/^rgb/);
+  expect(result.overlays.corePaint['fill-color']).toBe(result.overlays.casingPaint['fill-color']);
+  expect(result.overlays.setData).toEqual(expect.arrayContaining(['trmnl-route-route:3', 'trmnl-route-route-casing:3', 'trmnl-dot-start:1', 'trmnl-dot-end-core:1']));
   expect(result.tiles.url).toBe('x');
   expect(result.tiles.glyphs).toBeUndefined();
   expect(result.merged).toEqual({ a: { b: 1, c: [2] }, d: 1, e: 2 });
@@ -308,8 +330,8 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     // Idle: the runtime places the labels as framework elements, and ready()
     // waits for that first idle before it trusts loaded().
     fake.fire('idle');
-    const roadData = fake.calls.setData.find((call) => call.id === 'trmnl-lines-roads-major');
-    const roadCasingData = fake.calls.setData.find((call) => call.id === 'trmnl-lines-roads-major-casing');
+    const roadData = fake.calls.setData.find((call) => call.id === 'trmnl-shape-roads-major');
+    const roadCasingData = fake.calls.setData.find((call) => call.id === 'trmnl-shape-roads-major-casing');
     await maps.ready(fake);
     const water = paint.toMapLibre(paint.slot('map-water', { el: container })).pattern;
     const labels = Array.from(container.querySelectorAll('.map__labels .map__label')).map((node) => ({
