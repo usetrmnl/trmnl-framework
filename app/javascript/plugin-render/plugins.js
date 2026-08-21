@@ -5558,15 +5558,49 @@ window.markFrameworkReady = markFrameworkReady;
     return ['in', ['get', 'kind'], ['literal', kinds]];
   }
 
-  function mapLineLayer(id, sourceLayer, filter, ink, width, extra) {
-    if (!ink) return null;
+  // A line painted from a tile Fill takes the tile as a line pattern, cropped to
+  // the line's width in texels so one texel lands on one device pixel across and
+  // along the line: the 1-bit gray of a road is the same dither its area would
+  // be, not a hex the panel cannot print. The derived image is registered beside
+  // its tile so styleimagemissing and the style.load preload find it by id.
+  function mapLinePattern(pattern, widthPx) {
+    if (!pattern || !(pattern.width > 0) || !(pattern.height > 0)) return null;
+    const rows = Math.max(1, Math.min(pattern.height, Math.round((widthPx || 1) * (pattern.pixelRatio || 1))));
+    const id = pattern.id + '-h' + rows;
+    if (!tileImagesById.has(id)) {
+      tileImagesById.set(id, { id: id, image: pattern.image, width: pattern.width, height: rows, pixelRatio: pattern.pixelRatio });
+    }
+    return id;
+  }
+
+  // Line paint from a MapLibre paint object ({ color, ink, pattern }, or a bare
+  // color string): a tile takes line-pattern at the line's width, a solid takes
+  // line-color. A dashed line takes the tile's ink, because the renderer cannot
+  // dash a pattern; on the 1-bit rail that is the one ink anyway.
+  function mapLinePaint(paint, widthPx, dashed) {
+    if (!paint) return null;
+    if (typeof paint === 'string') return { 'line-color': paint };
+    if (dashed) return paint.ink ? { 'line-color': paint.ink } : null;
+    if (paint.pattern) {
+      const id = mapLinePattern(paint.pattern, widthPx);
+      if (id) return { 'line-pattern': id };
+    }
+    const color = paint.color || paint.ink;
+    return color ? { 'line-color': color } : null;
+  }
+
+  function mapLineLayer(id, sourceLayer, filter, paint, width, extra) {
+    const dashed = !!(extra && extra.dash);
+    const patternWidth = extra && extra.patternWidth != null ? extra.patternWidth : width;
+    const linePaint = mapLinePaint(paint, patternWidth, dashed);
+    if (!linePaint) return null;
     const layer = {
       id: id,
       type: 'line',
       source: 'osm',
       'source-layer': sourceLayer,
       layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: { 'line-color': ink, 'line-width': width, 'line-blur': 0 },
+      paint: Object.assign({ 'line-width': width, 'line-blur': 0 }, linePaint),
     };
     if (filter) layer.filter = filter;
     if (extra) {
@@ -5786,7 +5820,9 @@ window.markFrameworkReady = markFrameworkReady;
             canvas.height = tile.height;
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(img, 0, 0, tile.width, tile.height);
+            // Natural size: a line-pattern record is the same tile with fewer
+            // rows, so the canvas clips it instead of scaling it.
+            ctx.drawImage(img, 0, 0);
             map.addImage(tile.id, ctx.getImageData(0, 0, tile.width, tile.height), { pixelRatio: tile.pixelRatio });
           }
         } catch (_) {}
@@ -5911,8 +5947,9 @@ window.markFrameworkReady = markFrameworkReady;
     },
 
     /**
-     * A line layer's layout and paint for route `i` of `n`: the series ink, a
-     * rounded stroke `width` (default 2) scaled through px().
+     * A line layer's layout and paint for route `i` of `n`: the series paint, a
+     * line pattern where the ramp hands a tile and a flat color where it hands
+     * a solid, a rounded stroke `width` (default 2) scaled through px().
      *
      * @param {number} i
      * @param {number} n
@@ -5922,9 +5959,8 @@ window.markFrameworkReady = markFrameworkReady;
     path(i, n, opts) {
       const el = opts && opts.el;
       const width = opts && Number.isFinite(opts.width) ? opts.width : 2;
-      const ink = TRMNLMaps.series(i, n, { el: el }).ink;
-      const paint = { 'line-width': mapPx(width, el), 'line-blur': 0 };
-      if (ink) paint['line-color'] = ink;
+      const px = mapPx(width, el);
+      const paint = Object.assign({ 'line-width': px, 'line-blur': 0 }, mapLinePaint(TRMNLMaps.series(i, n, { el: el }), px, false) || {});
       return { type: 'line', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: paint };
     },
 
@@ -5997,8 +6033,11 @@ window.markFrameworkReady = markFrameworkReady;
       const showLabels = labels !== false;
       const showMinorLabels = showLabels && labels !== 'major';
       const showBuildings = !(opts && opts.buildings === false);
+      // Every map slot is a bg slot: a line's paint is the paint of a surface,
+      // a tile on the dither rails and a solid on the solid ones, and the line
+      // layer turns a tile into a line pattern at its width (mapLinePaint).
       const slot = (n) => TRMNLPaint.toMapLibre(TRMNLPaint.slot(n, { el: el }));
-      const line = (n) => mapInk(TRMNLPaint.slot(n, { el: el, kind: 'border' }));
+      const line = slot;
       const ui = (n) => mapPx(n, el, 'ui');
 
       // Resolve every framework spec ONCE per call.
@@ -6036,7 +6075,7 @@ window.markFrameworkReady = markFrameworkReady;
       if (groups.water) push(mapFillLayer('water', 'water_polygons', ['!=', ['get', 'kind'], 'glacier'], water));
       if (groups.waterLines) {
         push(mapLineLayer('water-lines', 'water_lines', null, waterLine,
-          ['match', ['get', 'kind'], 'river', ui(2), 'canal', ui(1.5), ui(1)], { minzoom: 10 }));
+          ['match', ['get', 'kind'], 'river', ui(2), 'canal', ui(1.5), ui(1)], { minzoom: 10, patternWidth: ui(1.5) }));
       }
       if (groups.ferries) push(mapLineLayer('ferries', 'ferries', null, waterLine, ui(1), { dash: [3, 3], cap: 'butt' }));
       if (groups.structures) {
@@ -6047,8 +6086,8 @@ window.markFrameworkReady = markFrameworkReady;
         push(mapLineLayer('dam-lines', 'dam_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' }));
       }
       if (groups.streetAreas) push(mapFillLayer('street-areas', 'street_polygons', mapKindFilter(['pedestrian', 'service']), area, 12));
-      if (groups.runways && roadMinor) {
-        push(mapFillLayer('runways', 'street_polygons', mapKindFilter(['runway', 'taxiway']), { color: roadMinor }, 11));
+      if (groups.runways) {
+        push(mapFillLayer('runways', 'street_polygons', mapKindFilter(['runway', 'taxiway']), roadMinor, 11));
         push(mapLineLayer('runway-lines', 'streets', mapKindFilter(['runway', 'taxiway']), roadMinor, ui(2), { minzoom: 11, cap: 'butt' }));
       }
       if (groups.buildings && showBuildings) push(mapFillLayer('buildings', 'buildings', null, building, 14));
@@ -6069,7 +6108,7 @@ window.markFrameworkReady = markFrameworkReady;
           const casing = ['match', ['get', 'kind'], 'motorway', ui(3) + 2, 'trunk', ui(3) + 2, 'primary', ui(2.5) + 2, 'secondary', ui(2) + 2, ui(1.5) + 2];
           push(mapLineLayer('roads-major-casing', 'streets', majorFilter, halo, casing));
         }
-        push(mapLineLayer('roads-major', 'streets', majorFilter, road, widths));
+        push(mapLineLayer('roads-major', 'streets', majorFilter, road, widths, { patternWidth: ui(2.5) }));
       }
       if (groups.rail) {
         const railFilter = ['all', mapKindFilter(MAP_RAILS), ['!=', ['get', 'tunnel'], true]];

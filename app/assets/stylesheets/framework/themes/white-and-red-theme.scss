@@ -77,7 +77,7 @@
         // and text channels above; the areas are bright tints like the
         // component slots, and every line a tint short of the white ink.
         @include theme-slots.bg-slot('map-water', 'red-60');
-        @include theme-slots.border-token-slot('map-water-line', 'red-65');
+        @include theme-slots.bg-slot('map-water-line', 'red-65');
         @include theme-slots.bg-slot('map-green', 'red-65');
         @include theme-slots.bg-slot('map-farmland', 'red-55');
         @include theme-slots.bg-slot('map-sand', 'red-55');
@@ -85,11 +85,11 @@
         @include theme-slots.bg-slot('map-site', 'red-60');
         @include theme-slots.bg-slot('map-building', 'red-45');
         @include theme-slots.bg-slot('map-transit', 'red-65');
-        @include theme-slots.border-token-slot('map-road', 'red-65');
-        @include theme-slots.border-token-slot('map-road-minor', 'red-70');
-        @include theme-slots.border-token-slot('map-path', 'red-70');
-        @include theme-slots.border-token-slot('map-rail', 'red-65');
-        @include theme-slots.border-token-slot('map-boundary', 'red-70');
+        @include theme-slots.bg-slot('map-road', 'red-65');
+        @include theme-slots.bg-slot('map-road-minor', 'red-70');
+        @include theme-slots.bg-slot('map-path', 'red-70');
+        @include theme-slots.bg-slot('map-rail', 'red-65');
+        @include theme-slots.bg-slot('map-boundary', 'red-70');
 
         // Utility palette remaps (all grays → bright reds, black → red)
         @include theme-slots.utility-remap-grayscale('red', $side: 'bright');
@@ -157,7 +157,7 @@
         // Map areas on the white ground: light red tints, lines a mid red
         // short of the red ink.
         @include theme-slots.bg-slot('map-water', 'red-65');
-        @include theme-slots.border-token-slot('map-water-line', 'red-60');
+        @include theme-slots.bg-slot('map-water-line', 'red-60');
         @include theme-slots.bg-slot('map-green', 'red-70');
         @include theme-slots.bg-slot('map-farmland', 'red-75');
         @include theme-slots.bg-slot('map-sand', 'red-75');
@@ -165,11 +165,11 @@
         @include theme-slots.bg-slot('map-site', 'red-70');
         @include theme-slots.bg-slot('map-building', 'red-55');
         @include theme-slots.bg-slot('map-transit', 'red-45');
-        @include theme-slots.border-token-slot('map-road', 'red-45');
-        @include theme-slots.border-token-slot('map-road-minor', 'red-55');
-        @include theme-slots.border-token-slot('map-path', 'red-55');
-        @include theme-slots.border-token-slot('map-rail', 'red-45');
-        @include theme-slots.border-token-slot('map-boundary', 'red-50');
+        @include theme-slots.bg-slot('map-road', 'red-45');
+        @include theme-slots.bg-slot('map-road-minor', 'red-55');
+        @include theme-slots.bg-slot('map-path', 'red-55');
+        @include theme-slots.bg-slot('map-rail', 'red-45');
+        @include theme-slots.bg-slot('map-boundary', 'red-50');
 
         @include theme-slots.utility-remap-grayscale('red', $side: 'bright');
         // The screen block folds explicit white surfaces into its red canvas.

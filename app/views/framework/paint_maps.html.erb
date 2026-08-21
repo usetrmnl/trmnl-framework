@@ -55,11 +55,16 @@
             water label; tiers differ by size, not tone, because a small dithered label would not survive a busy map.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Each one resolves through the device mode: a dither tile on 1- and 2-bit screens, a solid on 4-bit and
-            up, a hue on the color panels. Every line defaults to a gray short of the ink, so a plotted route in the
-            ink reads on top of the roads. Land follows the canvas and the labels follow the text channels, so a
-            theme restates the token-bound areas and lines with the same slot mixins it uses for every other
-            component: see <%= render DocsRef.new(page: :theme_slots) %>.
+            Every map slot is a bg slot, lines included, so each resolves through the device mode: a dither tile
+            on 1- and 2-bit screens, a solid on 4-bit and up, a hue on the color panels. A line painted from a tile
+            becomes a line pattern at its width, so a 1-bit road is the same dither its area would be, never a
+            gray the panel cannot print; every line defaults to a gray short of the ink, so a plotted route in the
+            ink reads on top of the roads.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Land follows the canvas and the labels follow the text channel, so a theme restates the token-bound
+            areas and lines with <code class="<%= framework_section_code_classes %>">bg-slot</code>, the mixin it
+            uses for every other component: see <%= render DocsRef.new(page: :theme_slots) %>.
           </p>
         </div>
 
@@ -67,9 +72,8 @@
           <%= render CodeExampleComponent.new(demo_code: '// An area: a tile on 1-bit, a solid on 4-bit, blue on a color panel.
 var water = TRMNLPaint.slot("map-water", { el: "my-map" });
 
-// A line: the BorderFill carries the CSS-declared stroke.
-var road = TRMNLPaint.slot("map-road", { el: "my-map", kind: "border" });
-var ink = road.render.stroke;
+// A line is a bg slot too: a tile on 1-bit (drawn as a line pattern), a gray on 4-bit.
+var road = TRMNLPaint.slot("map-road", { el: "my-map" });
 
 // A label: the ink of the map-label text role.
 var label = TRMNLPaint.slot("map-label", { el: "my-map", kind: "text" });', language: 'javascript') %>
@@ -112,9 +116,10 @@ var paint = water.pattern
   ? { "fill-pattern": water.pattern.id }   // dither tile
   : { "fill-color": water.color };         // solid
 
-// A line layer takes the ink.
-var road = TRMNLPaint.toMapLibre(TRMNLPaint.slot("map-road", { el: "my-map", kind: "border" }));
-var linePaint = { "line-color": road.ink, "line-width": TRMNLPaint.px(2, { el: "my-map" }) };', language: 'javascript') %>
+// A line layer: TRMNLMaps.style() turns a tile into a line pattern at the line width;
+// by hand, a solid rail gives you the color and a dashed line takes the ink.
+var road = TRMNLPaint.toMapLibre(TRMNLPaint.slot("map-road", { el: "my-map" }));
+var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint.px(2, { el: "my-map" }) };', language: 'javascript') %>
         </div>
       </section>
 
@@ -345,14 +350,14 @@ TRMNLMaps.watch(el, function () {
                       <div class="item">
                         <div class="meta"></div>
                         <div class="content">
-                          <div class="w--14 h--1.5 mb--2" data-map-slot="map-road" data-map-slot-kind="border"></div>
+                          <div class="w--14 h--1.5 mb--2" data-map-slot="map-road"></div>
                           <span class="label">Road</span>
                         </div>
                       </div>
                       <div class="item">
                         <div class="meta"></div>
                         <div class="content">
-                          <div class="w--14 h--1.5 mb--2" data-map-slot="map-road-minor" data-map-slot-kind="border"></div>
+                          <div class="w--14 h--1.5 mb--2" data-map-slot="map-road-minor"></div>
                           <span class="label">Minor road</span>
                         </div>
                       </div>
@@ -390,7 +395,7 @@ TRMNLMaps.watch(el, function () {
 
         <div class="mt-4">
           <%= render CodeExampleComponent.new(demo_code: '<div class="w--14 h--4 mb--2 rounded--small" data-map-slot="map-water"></div>
-<div class="w--14 h--1.5 mb--2" data-map-slot="map-road" data-map-slot-kind="border"></div>
+<div class="w--14 h--1.5 mb--2" data-map-slot="map-road"></div>
 
 <script type="text/javascript">
   var el = "map-slot-swatches";

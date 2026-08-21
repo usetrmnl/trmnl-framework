@@ -48,8 +48,8 @@ RSpec.describe 'Framework map slot contract' do
           expect(declarations).to include("--framework-slot-#{slot}-bg-image:")
         end
         MapSlotContract::LINE_SLOTS.each do |slot|
-          expect(declarations).to include("--framework-slot-#{slot}-border-color:")
-          expect(declarations).to include("--framework-slot-#{slot}-border-render-stroke:")
+          expect(declarations).to include("--framework-slot-#{slot}-bg-color:")
+          expect(declarations).to include("--framework-slot-#{slot}-bg-image:")
         end
         MapSlotContract::TEXT_SLOTS.each do |slot|
           expect(declarations).to include("--framework-slot-#{slot}-text-color:")
@@ -64,22 +64,23 @@ RSpec.describe 'Framework map slot contract' do
       expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-60-color, transparent)')
       expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-65-color, transparent)')
       expect_declared(screen, '--framework-slot-map-building-bg-color', 'var(--bg-gray-40-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-road-border-render-stroke', 'var(--stroke-gray-35-color, var(--gray-35))')
-      expect_declared(screen, '--framework-slot-map-road-minor-border-render-stroke', 'var(--stroke-gray-50-color, var(--gray-50))')
-      expect_declared(screen, '--framework-slot-map-path-border-render-stroke', 'var(--stroke-gray-45-color, var(--gray-45))')
+      expect_declared(screen, '--framework-slot-map-road-bg-color', 'var(--bg-gray-35-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-road-minor-bg-color', 'var(--bg-gray-50-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-path-bg-color', 'var(--bg-gray-45-color, transparent)')
       expect_declared(screen, '--framework-slot-map-label-text-color', 'var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))')
     end
   end
 
   # A plotted route takes the ink (chart-series slot 0), so no default map line
-  # may: the 1-bit rail draws the lines in their gray and lets the device dither
-  # them lighter than the route.
-  it 'keeps every default line off the ink on every rail' do
+  # may: a line is a bg slot like an area, so on the 1-bit rail its gray is the
+  # token's dither tile, which the renderer draws as a line pattern, and never a
+  # hex the panel cannot print.
+  it 'keeps every default line off the ink on every rail and on the bg chain' do
     aggregate_failures do
       [screen, inverse, one_bit, color_full].each do |declarations|
         MapSlotContract::LINE_SLOTS.each do |slot|
-          expect(declarations).not_to include("--framework-slot-#{slot}-border-render-stroke: var(--stroke-black-color")
-          expect(declarations).not_to include("--framework-slot-#{slot}-border-render-stroke: var(--framework-semantic-border-strong")
+          expect(declarations).not_to include("--framework-slot-#{slot}-bg-color: var(--bg-black-color")
+          expect(declarations).not_to include("--framework-slot-#{slot}-border-")
         end
       end
     end
@@ -90,7 +91,7 @@ RSpec.describe 'Framework map slot contract' do
     aggregate_failures do
       expect_declared(color_full, '--framework-slot-map-water-bg-color', 'var(--bg-blue-70-color, transparent)')
       expect_declared(color_full, '--framework-slot-map-green-bg-color', 'var(--bg-green-70-color, transparent)')
-      expect(color_full).to include('--framework-slot-map-boundary-border-render-stroke: var(--stroke-purple-40-color')
+      expect_declared(color_full, '--framework-slot-map-boundary-bg-color', 'var(--bg-purple-40-color, transparent)')
       palette_ids = css.scan(/\.screen\.screen--color-([a-z0-9]+):where/).flatten.uniq - %w[full]
       expect(palette_ids).not_to be_empty
       palette_ids.each do |palette_id|

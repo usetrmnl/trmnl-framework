@@ -53,13 +53,13 @@
         @include theme-slots.text-slot('label-gray', 'gray-30');
         @include theme-slots.border-level-slot('table-head-row', 4);
         @include theme-slots.border-token-slot('label-underline', 'gray-30');
-        // Map slots (safe): areas are bg slots, lines are border-token slots.
+        // Map slots (safe): every one is a bg slot, lines included.
         // Land follows the canvas channel and labels the text channels; the
         // full token-bound list is _map-slot-defaults in base/_screen.scss.
         @include theme-slots.bg-slot('map-water', 'blue-65');
         @include theme-slots.bg-slot('map-green', 'green-70');
-        @include theme-slots.border-token-slot('map-road', 'gray-35');
-        @include theme-slots.border-token-slot('map-road-minor', 'gray-50');
+        @include theme-slots.bg-slot('map-road', 'gray-35');
+        @include theme-slots.bg-slot('map-road-minor', 'gray-50');
 
         // Utility token remaps (safe): remap raw palette utility classes.
         // Makes bg--<from> render as bg--<to>, text--<from> as text--<to>, etc.

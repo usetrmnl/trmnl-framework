@@ -185,7 +185,7 @@
     // mirror. Land and the labels follow the canvas and text channels, so the
     // semantic set below carries them.
     @include theme-slots.bg-slot('map-water', 'gray-25');
-    @include theme-slots.border-token-slot('map-water-line', 'gray-30');
+    @include theme-slots.bg-slot('map-water-line', 'gray-30');
     @include theme-slots.bg-slot('map-green', 'gray-20');
     @include theme-slots.bg-slot('map-farmland', 'gray-15');
     @include theme-slots.bg-slot('map-sand', 'gray-10');
@@ -193,11 +193,11 @@
     @include theme-slots.bg-slot('map-site', 'gray-15');
     @include theme-slots.bg-slot('map-building', 'gray-45');
     @include theme-slots.bg-slot('map-transit', 'gray-55');
-    @include theme-slots.border-token-slot('map-road', 'gray-50');
-    @include theme-slots.border-token-slot('map-road-minor', 'gray-35');
-    @include theme-slots.border-token-slot('map-path', 'gray-40');
-    @include theme-slots.border-token-slot('map-rail', 'gray-55');
-    @include theme-slots.border-token-slot('map-boundary', 'gray-45');
+    @include theme-slots.bg-slot('map-road', 'gray-50');
+    @include theme-slots.bg-slot('map-road-minor', 'gray-35');
+    @include theme-slots.bg-slot('map-path', 'gray-40');
+    @include theme-slots.bg-slot('map-rail', 'gray-55');
+    @include theme-slots.bg-slot('map-boundary', 'gray-45');
 
     // The table row rails and the label underline keep their default levels.
     // Each one points at a level, and the level statements below move the line

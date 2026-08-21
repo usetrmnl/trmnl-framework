@@ -77,7 +77,7 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
     const style = options.style;
     const layer = (id) => style.layers.find((entry) => entry.id === id);
     const waterFill = paint.toMapLibre(paint.slot('map-water', { el: target }));
-    const roadInk = paint.toMapLibre(paint.slot('map-road', { el: target, kind: 'border' })).ink;
+    const roadFill = paint.toMapLibre(paint.slot('map-road', { el: target }));
     const decoded = maps.decodePolyline('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
     return {
       maplibre: typeof window.maplibregl,
@@ -104,8 +104,12 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         waterMatches: waterFill.pattern
           ? layer('water').paint['fill-pattern'] === waterFill.pattern.id
           : layer('water').paint['fill-color'] === waterFill.color,
-        roadMatches: layer('roads-major').paint['line-color'] === roadInk,
-        roadInkIsColor: /^(rgb|#)/.test(roadInk || ''),
+        // 1-bit: the road slot is a tile, so the road is a line pattern cropped to its width.
+        roadPattern: layer('roads-major').paint['line-pattern'],
+        roadPatternFromSlot: Boolean(roadFill.pattern) && layer('roads-major').paint['line-pattern'].indexOf(roadFill.pattern.id + '-h') === 0,
+        roadHasNoColor: layer('roads-major').paint['line-color'] === undefined,
+        railDashedInk: layer('rail').paint['line-color'],
+        railDash: layer('rail').paint['line-dasharray'],
         symbols: style.layers.filter((entry) => entry.type === 'symbol').length,
         labels: style.metadata['trmnl:labels'],
         transitInk: layer('transit').paint['circle-color'],
@@ -159,8 +163,12 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   // 1-bit: gray-60 water is a dither tile, so the layer paints with a pattern.
   expect(result.style.waterPaint['fill-pattern']).toMatch(/^trmnl-tile-\d+$/);
   expect(result.style.waterMatches).toBe(true);
-  expect(result.style.roadMatches).toBe(true);
-  expect(result.style.roadInkIsColor).toBe(true);
+  expect(result.style.roadPattern).toMatch(/^trmnl-tile-\d+-h\d+$/);
+  expect(result.style.roadPatternFromSlot).toBe(true);
+  expect(result.style.roadHasNoColor).toBe(true);
+  // A dashed line cannot carry a pattern, so rail takes the tile's ink.
+  expect(result.style.railDashedInk).toMatch(/^(rgb|#)/);
+  expect(result.style.railDash).toEqual([3, 2]);
   expect(result.presets.outline).toEqual(['background', 'ocean', 'water', 'roads-major-casing', 'roads-major', 'boundaries']);
   expect(result.presets.blank).toEqual(['background']);
   expect(result.presets.noLabels).toEqual({ major: false, minor: false, water: false });
@@ -171,7 +179,9 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.overlays.path.type).toBe('line');
   expect(result.overlays.path.paint['line-width']).toBe(3);
   // Tile inks come from the SVG fill (hex); solids from computed style (rgb).
+  // Series 0 of 1 is the ink, a solid on every rail.
   expect(result.overlays.path.paint['line-color']).toMatch(/^(rgb|#)/);
+  expect(result.overlays.path.paint['line-pattern']).toBeUndefined();
   expect(result.overlays.marker.type).toBe('circle');
   expect(result.overlays.marker.paint['circle-radius']).toBe(4);
   expect(result.overlays.marker.paint['circle-stroke-color']).toMatch(/^rgb/);
@@ -189,22 +199,24 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   const html = `
     <div id="slot-target" class="map"></div>
     <span id="swatch-water" data-map-slot="map-water"></span>
-    <span id="swatch-road" data-map-slot="map-road" data-map-slot-kind="border"></span>
+    <span id="swatch-road" data-map-slot="map-road"></span>
   `;
   const read = () => page.evaluate(() => {
     const paint = window.TRMNLPaint;
     const target = document.querySelector('#slot-target');
     const water = paint.slot('map-water', { el: target });
     const label = paint.slot('map-label', { el: target, kind: 'text' });
-    const road = paint.slot('map-road', { el: target, kind: 'border' });
-    const minor = paint.slot('map-road-minor', { el: target, kind: 'border' });
+    const road = paint.slot('map-road', { el: target });
+    const minor = paint.slot('map-road-minor', { el: target });
+    const roadLine = paint.slot('map-road', { el: target, kind: 'border' });
     window.TRMNLMaps.applySwatches({ el: target });
     return {
       water: { tile: Boolean(water.url), size: water.size, color: water.color, sameAsGray60: water.url === paint.bg('gray-60', { el: target }).url && water.color === paint.bg('gray-60', { el: target }).color },
       waterBlue: water.color === paint.bg('blue-70', { el: target }).color && water.url === paint.bg('blue-70', { el: target }).url,
       label: { color: label.color, tile: Boolean(label.url) },
-      road: { stroke: road.render && road.render.stroke, color: road.color },
-      minor: { stroke: minor.render && minor.render.stroke },
+      road: { tile: Boolean(road.url), color: road.color },
+      minor: { tile: Boolean(minor.url), color: minor.color },
+      roadLine: { stroke: roadLine.render && roadLine.render.stroke },
       adapter: {
         water: paint.toMapLibre(water),
         road: paint.toMapLibre(road),
@@ -223,17 +235,17 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   expect(oneBit.water.size).toBe(16);
   expect(oneBit.water.sameAsGray60).toBe(true);
   expect(oneBit.label.color).toMatch(/^rgb/);
-  // render.stroke is the CSS-declared stroke chain read as a custom property, so
-  // it stays the palette hex rather than a computed rgb().
-  // Lines are grays short of the ink on every rail, so a route in the ink reads on top.
-  expect(oneBit.road.stroke).toBe('#666666');
-  expect(oneBit.minor.stroke).toBe('#999999');
+  // Lines are bg slots: on 1-bit a gray road is the token's tile, never a hex,
+  // and the border kind finds no rail on a map slot.
+  expect(oneBit.road.tile).toBe(true);
+  expect(oneBit.minor.tile).toBe(true);
+  expect(oneBit.roadLine.stroke).toBeNull();
   expect(oneBit.adapter.water.color).toBeNull();
   expect(oneBit.adapter.water.pattern).toMatchObject({ width: 16, height: 16, pixelRatio: 1 });
   expect(oneBit.adapter.water.pattern.id).toMatch(/^trmnl-tile-\d+$/);
   expect(oneBit.adapter.water.pattern.image).toMatch(/^data:image\/svg\+xml/);
-  expect(oneBit.adapter.road.ink).toBe('#666666');
-  expect(oneBit.adapter.road.pattern).toBeNull();
+  expect(oneBit.adapter.road.ink).toBe('#000000');
+  expect(oneBit.adapter.road.pattern).toMatchObject({ width: 16, height: 16 });
   expect(oneBit.adapter.black).toEqual({ color: 'rgb(0, 0, 0)', ink: 'rgb(0, 0, 0)', pattern: null });
   expect(oneBit.swatches.water).toContain('url(');
   // A gray line slot paints its dash art; the swatch carries that tile.
@@ -246,7 +258,9 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   const fourBit = await read();
   expect(fourBit.water.tile).toBe(false);
   expect(fourBit.water.color).toBe('rgb(187, 187, 187)');
-  expect(fourBit.minor.stroke).toBe('#999999');
+  expect(fourBit.road.tile).toBe(false);
+  expect(fourBit.road.color).toBe('rgb(102, 102, 102)');
+  expect(fourBit.minor.color).toBe('rgb(153, 153, 153)');
   expect(fourBit.adapter.water).toEqual({ color: 'rgb(187, 187, 187)', ink: 'rgb(187, 187, 187)', pattern: null });
 
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => {

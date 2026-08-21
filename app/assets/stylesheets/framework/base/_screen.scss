@@ -63,16 +63,17 @@
     --framework-slot-chip-text-under: var(--framework-semantic-text-inverse-text-under, transparent);
 }
 
-// The map slots: the roles TRMNLMaps paints a MapLibre style with. Areas are
-// bg slots and lines are border-token slots, so each one resolves through the
-// paint rail of the screen it renders on (dither tiles on 1-bit and 2-bit,
-// solids on 4-bit and up, palette inks on color panels), and a theme re-points
-// them with the same mixins it uses for every other component. The defaults
-// are chosen for 1-bit: areas are light tiles, and every line is a gray rather
-// than the ink, so a plotted route drawn in the ink (the chart-series ramp)
-// reads on top of the roads; the device dithers a gray line lighter than the
-// route. base/_screen-mode-vars.scss re-points the area and line slots at
-// chromatic tokens on the color rails.
+// The map slots: the roles TRMNLMaps paints a MapLibre style with. Every one
+// is a bg slot, lines included, so each resolves through the paint rail of the
+// screen it renders on (dither tiles on 1-bit and 2-bit, solids on 4-bit and
+// up, palette inks on color panels), and a theme re-points them with the same
+// mixin it uses for every other component. A line painted from a tile becomes
+// a line pattern in the renderer: the 1-bit gray of a road is the same dither
+// its area would be, never a hex the panel cannot print. The defaults are
+// chosen for 1-bit: areas are light tiles, and every line is a gray rather than
+// the ink, so a plotted route drawn in the ink (the chart-series ramp) reads on
+// top of the roads. base/_screen-mode-vars.scss re-points the area and line
+// slots at chromatic tokens on the color rails.
 //
 // Land and the labels name semantic channels instead of tokens, the way the
 // chip does: land is the canvas and labels are the primary text, so a theme,
@@ -88,12 +89,12 @@
     @include theme-slots.bg-slot('map-site', 'gray-70');
     @include theme-slots.bg-slot('map-building', 'gray-40');
     @include theme-slots.bg-slot('map-transit', 'gray-30');
-    @include theme-slots.border-token-slot('map-road', 'gray-35');
-    @include theme-slots.border-token-slot('map-road-minor', 'gray-50');
-    @include theme-slots.border-token-slot('map-path', 'gray-45');
-    @include theme-slots.border-token-slot('map-rail', 'gray-30');
-    @include theme-slots.border-token-slot('map-boundary', 'gray-40');
-    @include theme-slots.border-token-slot('map-water-line', 'gray-55');
+    @include theme-slots.bg-slot('map-road', 'gray-35');
+    @include theme-slots.bg-slot('map-road-minor', 'gray-50');
+    @include theme-slots.bg-slot('map-path', 'gray-45');
+    @include theme-slots.bg-slot('map-rail', 'gray-30');
+    @include theme-slots.bg-slot('map-boundary', 'gray-40');
+    @include theme-slots.bg-slot('map-water-line', 'gray-55');
     // Labels ride the primary text channel, so a theme's ink reaches the map
     // without a slot of their own. One ink for every tier: a map is busy, and
     // a small label in a dithered secondary tone would not survive it.
