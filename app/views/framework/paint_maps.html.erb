@@ -34,23 +34,31 @@
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            The map slots are the areas <code class="<%= framework_section_code_classes %>">map-land</code>,
+            The area slots are <code class="<%= framework_section_code_classes %>">map-land</code> (the canvas),
             <code class="<%= framework_section_code_classes %>">map-water</code>,
-            <code class="<%= framework_section_code_classes %>">map-green</code>,
-            <code class="<%= framework_section_code_classes %>">map-area</code> and
-            <code class="<%= framework_section_code_classes %>">map-building</code>, the lines
-            <code class="<%= framework_section_code_classes %>">map-road</code>,
-            <code class="<%= framework_section_code_classes %>">map-road-minor</code>,
-            <code class="<%= framework_section_code_classes %>">map-rail</code>,
-            <code class="<%= framework_section_code_classes %>">map-boundary</code> and
-            <code class="<%= framework_section_code_classes %>">map-water-line</code>, and the text roles
-            <code class="<%= framework_section_code_classes %>">map-label</code> and
-            <code class="<%= framework_section_code_classes %>">map-label-muted</code>.
+            <code class="<%= framework_section_code_classes %>">map-green</code> (parks, forest, grass, wetland),
+            <code class="<%= framework_section_code_classes %>">map-farmland</code>,
+            <code class="<%= framework_section_code_classes %>">map-sand</code> (beach, sand, bare rock),
+            <code class="<%= framework_section_code_classes %>">map-area</code> (residential, commercial, industrial),
+            <code class="<%= framework_section_code_classes %>">map-site</code> (schools, hospitals, parking),
+            <code class="<%= framework_section_code_classes %>">map-building</code> (also piers, dams, bridges) and
+            <code class="<%= framework_section_code_classes %>">map-transit</code> (station dots).
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The line slots are <code class="<%= framework_section_code_classes %>">map-road</code> (motorway to
+            tertiary), <code class="<%= framework_section_code_classes %>">map-road-minor</code> (residential,
+            service, pedestrian, runways), <code class="<%= framework_section_code_classes %>">map-path</code>
+            (footway, cycleway, track, steps), <code class="<%= framework_section_code_classes %>">map-rail</code>
+            (rail, tram, subway, aerialways), <code class="<%= framework_section_code_classes %>">map-boundary</code>
+            and <code class="<%= framework_section_code_classes %>">map-water-line</code> (rivers, canals, ferries).
+            The text role <code class="<%= framework_section_code_classes %>">map-label</code> inks every place and
+            water label; tiers differ by size, not tone, because a small dithered label would not survive a busy map.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Each one resolves through the device mode: a dither tile on 1- and 2-bit screens, a solid on 4-bit and
-            up, a hue on the color panels. Land follows the canvas and the major lines follow the strong border, so a
-            theme restates only the tinted areas and minor lines, with the same slot mixins it uses for every other
+            up, a hue on the color panels. Every line defaults to a gray short of the ink, so a plotted route in the
+            ink reads on top of the roads. Land follows the canvas and the labels follow the text channels, so a
+            theme restates the token-bound areas and lines with the same slot mixins it uses for every other
             component: see <%= render DocsRef.new(page: :theme_slots) %>.
           </p>
         </div>
@@ -154,11 +162,6 @@ var linePaint = { "line-color": road.ink, "line-width": TRMNLPaint.px(2, { el: "
                 dot and an end ring read apart on one ink.
               </li>
               <li>
-                <code class="<%= framework_section_code_classes %>">label(role, { el, bold, muted })</code>: a symbol
-                layer's text layout and paint for a typography role: the preset's font stack, the role's size, the
-                map-label ink and a one-pixel contrast halo.
-              </li>
-              <li>
                 <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints every element
                 under the screen carrying <code class="<%= framework_section_code_classes %>">data-map-slot="map-water"</code>
                 (and <code class="<%= framework_section_code_classes %>">data-map-slot-kind="text"</code> or
@@ -172,7 +175,7 @@ var linePaint = { "line-color": road.ink, "line-width": TRMNLPaint.px(2, { el: "
             <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
               <li>
                 <code class="<%= framework_section_code_classes %>">tiles(preset)</code>: a tile source preset, the
-                vector tile URL, zoom range, attribution, glyph endpoint and font stacks.
+                vector tile URL, zoom range and attribution.
                 <code class="<%= framework_section_code_classes %>">'osm'</code> is the default; an object merges over it
                 for a custom host.
               </li>
@@ -229,7 +232,7 @@ var linePaint = { "line-color": road.ink, "line-width": TRMNLPaint.px(2, { el: "
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">attach(map, { el })</code>: registers a map you
-                built yourself: pattern images, the pixel-grid snap, the attribution label and readiness.
+                built yourself: pattern images, the pixel-grid snap, the labels, the attribution and readiness.
                 <code class="<%= framework_section_code_classes %>">watch()</code> calls it for you.
               </li>
               <li>
@@ -254,6 +257,24 @@ var linePaint = { "line-color": road.ink, "line-width": TRMNLPaint.px(2, { el: "
               MapLibre numbers do not read CSS, so resolve widths, radii and padding with
               <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> inside the build function. See
               <%= render DocsRef.new(page: :paint_api) %>.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Labels') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Place and water labels are framework elements, not MapLibre text. After every idle the runtime reads
+              the label features out of the loaded tiles, writes each one into the container as a
+              <code class="<%= framework_section_code_classes %>">label</code> (big places) or
+              <code class="<%= framework_section_code_classes %>">label label--small</code> (towns, suburbs, water)
+              with <code class="<%= framework_section_code_classes %>">text-stroke text-stroke--large</code>, snaps it
+              to whole pixels, and keeps the biggest that fit without overlap. Every tier takes the map-label ink.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              So labels take the screen's own typography (TRMNL pixel fonts on 1-bit and 2-bit low-density panels,
+              Inter on 4-bit and high density), the text-stroke halo, and the map-label slot for ink, with no glyph
+              endpoint involved. <code class="<%= framework_section_code_classes %>">style()</code> decides which
+              tiers a preset shows.
             </p>
           </div>
         </div>

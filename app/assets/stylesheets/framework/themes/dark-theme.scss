@@ -181,16 +181,23 @@
     // framework's own light chip read through the mirror.
     @include theme-slots.bg-slot('chip', 'white');
     @include theme-slots.text-slot('chip', 'black');
-    // The map areas and minor lines, each the framework default read through
-    // the mirror. Land and the major lines follow the canvas and border-strong
-    // channels, so the semantic set below carries them.
+    // The map areas and lines, each the framework default read through the
+    // mirror. Land and the labels follow the canvas and text channels, so the
+    // semantic set below carries them.
     @include theme-slots.bg-slot('map-water', 'gray-25');
-    @include theme-slots.bg-slot('map-green', 'gray-15');
+    @include theme-slots.border-token-slot('map-water-line', 'gray-30');
+    @include theme-slots.bg-slot('map-green', 'gray-20');
+    @include theme-slots.bg-slot('map-farmland', 'gray-15');
+    @include theme-slots.bg-slot('map-sand', 'gray-10');
     @include theme-slots.bg-slot('map-area', 'gray-10');
+    @include theme-slots.bg-slot('map-site', 'gray-15');
     @include theme-slots.bg-slot('map-building', 'gray-45');
-    @include theme-slots.border-token-slot('map-road-minor', 'gray-55');
-    @include theme-slots.border-token-slot('map-boundary', 'gray-55');
-    @include theme-slots.border-token-slot('map-water-line', 'gray-25');
+    @include theme-slots.bg-slot('map-transit', 'gray-55');
+    @include theme-slots.border-token-slot('map-road', 'gray-50');
+    @include theme-slots.border-token-slot('map-road-minor', 'gray-35');
+    @include theme-slots.border-token-slot('map-path', 'gray-40');
+    @include theme-slots.border-token-slot('map-rail', 'gray-55');
+    @include theme-slots.border-token-slot('map-boundary', 'gray-45');
 
     // The table row rails and the label underline keep their default levels.
     // Each one points at a level, and the level statements below move the line

@@ -2,25 +2,26 @@
 
 `TRMNLMaps` renders OpenStreetMap vector tiles through MapLibre GL JS. While the
 feature is in development, the `osm` tile preset in
-`app/javascript/plugin-render/plugins.js` points at two community servers:
+`app/javascript/plugin-render/plugins.js` points at a community server:
 
 - Tiles: `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt`
   (OSMF, Shortbread 1.0 schema, zoom 0 to 14)
-- Glyphs: `https://tiles.versatiles.org/assets/glyphs/{fontstack}/{range}.pbf`
-  (VersaTiles, Noto Sans; OSMF serves no glyphs)
+
+Labels need no glyph host: they are framework elements the runtime places over
+the canvas, typeset by the screen itself.
 
 The [OSMF vector tile usage policy](https://operations.osmfoundation.org/policies/vector/)
 allows light use with a valid, application-specific User-Agent or Referer and
 HTTP caching, forbids heavy and bulk use, and gives no SLA. The docs site is
 light use. A fleet of devices refreshing map plugins is heavy use. So nothing
-ships a map plugin to devices until TRMNL hosts tiles and glyphs itself, and
-the preset points there. This file is the list of what that takes.
+ships a map plugin to devices until TRMNL hosts tiles itself, and the preset
+points there. This file is the list of what that takes.
 
 ## Current wiring
 
-- `TRMNLMaps.tiles()` carries the preset: URL, zoom range, attribution, glyph
-  endpoint, font stacks, and a `workerUrl` slot for a CSP-hosted worker. The
-  go-live switch is one edit to that preset, plus the disclosure set below.
+- `TRMNLMaps.tiles()` carries the preset: URL, zoom range, attribution, and a
+  `workerUrl` slot for a CSP-hosted worker. The go-live switch is one edit to
+  that preset, plus the disclosure set below.
 - MapLibre GL JS 5.24.0 is vendored under `vendor/javascript/` and served by
   `Framework::Static` at `/framework-docs/maplibre-gl-5.24.0.js` and
   `/framework-docs/maplibre-gl-5.24.0.css`, the way Prism and jQuery are. The
@@ -55,12 +56,9 @@ the preset points there. This file is the list of what that takes.
       a storage estimate for the planet. A caching proxy in front of OSMF is not
       a go-live option: the policy forbids the fleet's request volume whatever
       sits in front of it.
-- [ ] **Host glyphs.** Build PBF glyph ranges for Inter (the framework font,
-      OFL) and a Noto Sans fallback with maplibre `font-maker` or `fontnik`, host
-      them beside the library, and switch the preset's `glyphs` URL and `fonts`
-      stacks. Until then labels are Noto Sans from VersaTiles.
-- [ ] **Sprites.** Confirm the presets use no icon sprite (they do not today; a
-      1-bit map draws no icons). Host one only if a preset gains icons.
+- [ ] **Sprites and glyphs.** Confirm the presets use no icon sprite and no
+      glyph endpoint (they do not today: a 1-bit map draws no icons, and labels
+      are framework elements). Host either only if a preset gains them.
 - [ ] **Cache and limits.** Immutable `Cache-Control` per tile build, CDN in
       front, per-IP rate limits, a 404 for out-of-range tiles.
 - [ ] **Renderer.** The screenshot service's headless Chromium must expose WebGL
@@ -71,8 +69,8 @@ the preset points there. This file is the list of what that takes.
       User-Agent, and time out unreachable tiles so a plugin still renders with
       an empty canvas.
 - [ ] **CSP and allowlists.** On the renderer and on trmnl.com plugin previews:
-      `script-src` and `style-src` for the MapLibre mirror, `connect-src` for
-      the tile and glyph hosts, `worker-src blob:` (or the mirrored worker),
+      `script-src` and `style-src` for wherever MapLibre is served from,
+      `connect-src` for the tile host, `worker-src blob:` (or a served worker),
       `img-src data: blob:` for pattern images.
 - [ ] **Switch the preset.** Edit the `osm` preset in `plugins.js`, then update
       the disclosure set in the same commit: `docs/ENGINE_INTEGRATION.md`, the
@@ -100,4 +98,3 @@ the preset points there. This file is the list of what that takes.
 - OSMF vector tile usage policy: https://operations.osmfoundation.org/policies/vector/
 - Shortbread schema: https://shortbread-tiles.org/schema/1.0/
 - MapLibre GL JS: https://maplibre.org/maplibre-gl-js/docs/
-- Glyph builder: https://github.com/maplibre/font-maker

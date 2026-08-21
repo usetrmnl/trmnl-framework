@@ -480,17 +480,15 @@ RSpec.describe 'Engine host contract' do
 
     # Named rather than derived: the chart, map and font glyphs pages carry these script
     # tags both as live loads and inside code examples, sass_api.html.erb shows a
-    # trmnl.com snippet it never fetches, and the map tile and glyph hosts are reached
-    # by MapLibre from inside plugins.js, so scanning the view tree reads copy as loads.
+    # trmnl.com snippet it never fetches, and the map tile host is reached by MapLibre
+    # from inside plugins.js, so scanning the view tree reads copy as loads.
     it 'discloses the demo origins as well' do
       aggregate_failures do
-        %w[trmnl.com cdn.jsdelivr.net vector.openstreetmap.org tiles.versatiles.org].each do |origin|
+        %w[trmnl.com cdn.jsdelivr.net vector.openstreetmap.org].each do |origin|
           expect(integration_doc).to include(origin)
           expect(open_source_page).to include(origin)
         end
-        %w[vector.openstreetmap.org tiles.versatiles.org].each do |origin|
-          expect(readme).to include(origin)
-        end
+        expect(readme).to include('vector.openstreetmap.org')
       end
     end
 

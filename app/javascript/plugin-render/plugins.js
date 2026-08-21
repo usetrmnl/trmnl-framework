@@ -5472,10 +5472,10 @@ window.markFrameworkReady = markFrameworkReady;
   // to the pixel grid, a polyline decoder, and the readiness wait terminalize
   // calls.
 
-  // Tile sources. `osm` is the OSMF Shortbread vector tile service plus the
-  // VersaTiles glyph host (OSMF serves no glyphs). Both are community servers
-  // for development and docs; docs/MAPS_GO_LIVE.md is the switch to a TRMNL
-  // host, one preset edit here.
+  // Tile sources. `osm` is the OSMF Shortbread vector tile service, a community
+  // server for development and docs; docs/MAPS_GO_LIVE.md is the switch to a
+  // TRMNL host, one preset edit here. No glyph endpoint: labels are framework
+  // elements the screen typesets itself (see placeMapLabels).
   const MAP_TILE_PRESETS = {
     osm: {
       id: 'osm',
@@ -5483,8 +5483,6 @@ window.markFrameworkReady = markFrameworkReady;
       minzoom: 0,
       maxzoom: 14,
       attribution: '© OpenStreetMap contributors',
-      glyphs: 'https://tiles.versatiles.org/assets/glyphs/{fontstack}/{range}.pbf',
-      fonts: { regular: 'noto_sans_regular', bold: 'noto_sans_bold' },
       workerUrl: null,
     },
   };
@@ -5496,16 +5494,19 @@ window.markFrameworkReady = markFrameworkReady;
 
   // Shortbread 1.0 `kind` groups per source-layer, the only schema knowledge
   // the style needs. Paint still comes from the slots.
-  const MAP_AREA_KINDS = ['residential', 'commercial', 'industrial', 'retail', 'garages', 'railway'];
+  const MAP_AREA_KINDS = ['residential', 'commercial', 'industrial', 'retail', 'garages', 'railway', 'brownfield', 'greenfield', 'landfill', 'quarry'];
   const MAP_GREEN_KINDS = [
-    'forest', 'wood', 'grass', 'grassland', 'meadow', 'park', 'garden', 'cemetery', 'grave_yard',
-    'orchard', 'vineyard', 'allotments', 'village_green', 'recreation_ground', 'golf_course',
-    'heath', 'scrub', 'wetland', 'swamp', 'bog', 'marsh',
+    'forest', 'wood', 'grass', 'grassland', 'meadow', 'wet_meadow', 'park', 'garden', 'cemetery', 'grave_yard',
+    'orchard', 'vineyard', 'allotments', 'village_green', 'recreation_ground', 'golf_course', 'playground',
+    'heath', 'scrub', 'wetland', 'swamp', 'bog', 'string_bog', 'marsh',
   ];
+  const MAP_FARMLAND_KINDS = ['farmland', 'farmyard', 'greenhouse_horticulture', 'plant_nursery'];
+  const MAP_SAND_KINDS = ['sand', 'beach', 'bare_rock', 'scree', 'shingle'];
   const MAP_MAJOR_ROADS = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary'];
   const MAP_MINOR_ROADS = ['residential', 'living_street', 'unclassified', 'service', 'pedestrian', 'busway', 'bus_guideway'];
   const MAP_PATHS = ['track', 'path', 'footway', 'cycleway', 'steps'];
   const MAP_RAILS = ['rail', 'light_rail', 'subway', 'tram', 'narrow_gauge', 'monorail', 'funicular'];
+  const MAP_TRANSIT_KINDS = ['station', 'halt', 'tram_stop', 'ferry_terminal'];
   const MAP_PLACES_MAJOR = ['capital', 'state_capital', 'city'];
   const MAP_PLACES_MINOR = ['town', 'village', 'suburb', 'quarter', 'neighbourhood', 'hamlet'];
 
@@ -5514,8 +5515,15 @@ window.markFrameworkReady = markFrameworkReady;
   // the big names for the smallest views, `blank` is the land alone for
   // overlays. Boundaries list the admin levels a preset shows.
   const MAP_PRESETS = {
-    streets: { area: true, green: true, water: true, waterLines: true, buildings: true, minor: true, paths: true, major: true, rail: true, boundaries: [2, 4], placesMajor: true, placesMinor: true, streetLabels: true, waterLabels: true },
-    minimal: { area: true, green: true, water: true, waterLines: true, major: true, rail: true, boundaries: [2], placesMajor: true, placesMinor: true },
+    streets: {
+      area: true, green: true, farmland: true, sand: true, sites: true, water: true, waterLines: true, ferries: true,
+      buildings: true, structures: true, streetAreas: true, runways: true, minor: true, paths: true, major: true,
+      rail: true, aerialways: true, transit: true, boundaries: [2, 4], placesMajor: true, placesMinor: true, waterLabels: true,
+    },
+    minimal: {
+      area: true, green: true, farmland: true, sand: true, water: true, waterLines: true, ferries: true, runways: true,
+      major: true, rail: true, boundaries: [2], placesMajor: true, placesMinor: true,
+    },
     outline: { water: true, major: true, boundaries: [2], placesMajor: true },
     blank: {},
   };
@@ -5578,19 +5586,118 @@ window.markFrameworkReady = markFrameworkReady;
     return layer;
   }
 
-  function mapSymbolLayer(id, sourceLayer, filter, text, layout, extra) {
-    if (!text || !text.paint || !text.paint['text-color'] || !text.layout || !(text.layout['text-size'] > 0)) return null;
-    const layer = {
-      id: id,
-      type: 'symbol',
-      source: 'osm',
-      'source-layer': sourceLayer,
-      layout: Object.assign({ 'text-field': ['get', 'name'] }, text.layout, layout || {}),
-      paint: Object.assign({}, text.paint),
-    };
+  function mapCircleLayer(id, sourceLayer, filter, ink, halo, radius, minzoom) {
+    if (!ink) return null;
+    const paint = { 'circle-radius': radius, 'circle-color': ink, 'circle-blur': 0 };
+    if (halo) { paint['circle-stroke-color'] = halo; paint['circle-stroke-width'] = 1; }
+    const layer = { id: id, type: 'circle', source: 'osm', 'source-layer': sourceLayer, paint: paint };
     if (filter) layer.filter = filter;
-    if (extra && extra.minzoom != null) layer.minzoom = extra.minzoom;
+    if (minzoom != null) layer.minzoom = minzoom;
     return layer;
+  }
+
+  // Labels are framework elements, not MapLibre glyph text. The screen already
+  // typesets a label the way the device needs it (TRMNL pixel fonts on 1-bit and
+  // 2-bit low-density panels, Inter on 4-bit and high density) and strokes it
+  // with the text-stroke utility, none of which an SDF glyph endpoint could match
+  // on a pixel grid. So the style carries no symbol layers; after each idle the
+  // runtime reads the label features out of the loaded tiles, projects every
+  // anchor to whole pixels, and keeps the ones that fit without overlap, biggest
+  // first. Ink comes from the map-label slot through components/_map.scss.
+  const MAP_LABEL_CLASSES = {
+    major: 'map__label label text-stroke text-stroke--large',
+    minor: 'map__label label label--small text-stroke text-stroke--large',
+    water: 'map__label label label--small text-stroke text-stroke--large',
+  };
+
+  function mapLabelConfig(map) {
+    try {
+      const style = map.getStyle();
+      const meta = style && style.metadata && style.metadata['trmnl:labels'];
+      return meta && typeof meta === 'object' ? meta : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function mapLabelCandidates(map, cfg) {
+    const out = [];
+    const seen = new Set();
+    const query = (sourceLayer) => {
+      try { return map.querySourceFeatures('osm', { sourceLayer: sourceLayer }) || []; } catch (_) { return []; }
+    };
+    const add = (tier, name, coords, priority) => {
+      if (!name || !Array.isArray(coords) || !Number.isFinite(coords[0]) || !Number.isFinite(coords[1])) return;
+      const key = tier + '|' + name + '|' + Math.round(coords[0] * 1e4) + ',' + Math.round(coords[1] * 1e4);
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push({ tier: tier, name: String(name), lng: coords[0], lat: coords[1], priority: priority });
+    };
+    if (cfg.major || cfg.minor) {
+      for (const feature of query('place_labels')) {
+        const props = feature.properties || {};
+        const tier = MAP_PLACES_MAJOR.indexOf(props.kind) >= 0 ? 'major' : (MAP_PLACES_MINOR.indexOf(props.kind) >= 0 ? 'minor' : null);
+        if (!tier || !cfg[tier]) continue;
+        const population = Number(props.population) || 0;
+        // Places before water, big places before small: tier first, then size.
+        add(tier, props.name, feature.geometry && feature.geometry.coordinates, (tier === 'major' ? 2e12 : 1e12) + population);
+      }
+    }
+    if (cfg.water) {
+      for (const feature of query('water_polygons_labels')) {
+        const props = feature.properties || {};
+        const area = Number(props.way_area) || 0;
+        // Named fountains and ponds are water polygons too; only water with some
+        // area to it earns a label on a still screen.
+        if (area < 50000) continue;
+        add('water', props.name, feature.geometry && feature.geometry.coordinates, area);
+      }
+    }
+    out.sort((a, b) => b.priority - a.priority);
+    return out;
+  }
+
+  function placeMapLabels(rec) {
+    const map = rec.map;
+    const el = rec.el;
+    if (!el || rec.removed) return;
+    const doc = el.ownerDocument || document;
+    let overlay = el.querySelector('.map__labels');
+    if (!overlay) {
+      overlay = doc.createElement('div');
+      overlay.className = 'map__labels';
+      el.appendChild(overlay);
+    }
+    overlay.textContent = '';
+    const cfg = mapLabelConfig(map);
+    if (!cfg) return;
+    const width = el.clientWidth;
+    const height = el.clientHeight;
+    if (!(width > 0) || !(height > 0)) return;
+    const pad = mapPx(4, el, 'ui');
+    const placed = [];
+    for (const candidate of mapLabelCandidates(map, cfg)) {
+      let point;
+      try { point = map.project([candidate.lng, candidate.lat]); } catch (_) { continue; }
+      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
+      if (point.x < 0 || point.y < 0 || point.x > width || point.y > height) continue;
+      const span = doc.createElement('span');
+      span.className = MAP_LABEL_CLASSES[candidate.tier] || MAP_LABEL_CLASSES.minor;
+      span.textContent = candidate.name;
+      overlay.appendChild(span);
+      const labelWidth = span.offsetWidth;
+      const labelHeight = span.offsetHeight;
+      // Whole pixels: the screen's fonts are pixel fonts on the panels that need it.
+      const left = Math.round(point.x - labelWidth / 2);
+      const top = Math.round(point.y - labelHeight / 2);
+      const box = { l: left - pad, t: top - pad, r: left + labelWidth + pad, b: top + labelHeight + pad };
+      const fits = left >= 0 && top >= 0 && left + labelWidth <= width && top + labelHeight <= height &&
+        !placed.some((other) => box.l < other.r && box.r > other.l && box.t < other.b && box.b > other.t);
+      if (!fits) { span.remove(); continue; }
+      span.style.left = left + 'px';
+      span.style.top = top + 'px';
+      placed.push(box);
+    }
   }
 
   // Integer widths that step with zoom: a step expression keeps every value a
@@ -5765,13 +5872,12 @@ window.markFrameworkReady = markFrameworkReady;
 
   const TRMNLMaps = {
     /**
-     * A tile source preset: the vector tile URL, its zoom range and attribution,
-     * the glyph endpoint and the font stacks a style may name. 'osm' is the
-     * default; an object merges over it, so a custom host is
-     * tiles({ url: '...', glyphs: '...' }).
+     * A tile source preset: the vector tile URL, its zoom range and attribution.
+     * 'osm' is the default; an object merges over it, so a custom host is
+     * tiles({ url: '...' }). No glyph endpoint: labels are framework elements.
      *
      * @param {(string|object)} [preset]
-     * @returns {{id, url, minzoom, maxzoom, attribution, glyphs, fonts: {regular, bold}, workerUrl}}
+     * @returns {{id, url, minzoom, maxzoom, attribution, workerUrl}}
      */
     tiles(preset) {
       const base = MAP_TILE_PRESETS.osm;
@@ -5848,34 +5954,6 @@ window.markFrameworkReady = markFrameworkReady;
     },
 
     /**
-     * A symbol layer's text layout and paint for a typography role: the
-     * preset's font stack (bold with {bold:true}), the role's resolved size,
-     * the map-label slot ink and a one-pixel halo in the stroke-contrast color.
-     *
-     * @param {string} [role='label']
-     * @param {{el?: (string|Element), bold?: boolean, muted?: boolean, tiles?: (string|object)}} [opts]
-     * @returns {{layout: object, paint: object}}
-     */
-    label(role, opts) {
-      const el = opts && opts.el;
-      const tiles = TRMNLMaps.tiles(opts && opts.tiles);
-      const spec = TRMNLPaint.type(role || 'label', { el: el });
-      const size = parseFloat(spec.fontSize);
-      const slotName = opts && opts.muted ? 'map-label-muted' : 'map-label';
-      const ink = mapInk(TRMNLPaint.slot(slotName, { el: el, kind: 'text' }));
-      const halo = mapHalo(el);
-      const fonts = tiles.fonts || {};
-      const layout = {};
-      const font = opts && opts.bold ? fonts.bold : fonts.regular;
-      if (font) layout['text-font'] = [font];
-      if (size > 0) layout['text-size'] = size;
-      const paint = { 'text-halo-width': mapPx(1, el, 'ui'), 'text-halo-blur': 0 };
-      if (ink) paint['text-color'] = ink;
-      if (halo) paint['text-halo-color'] = halo;
-      return { layout: layout, paint: paint };
-    },
-
-    /**
      * Paint every element under the screen carrying data-map-slot="<name>" from
      * that slot (data-map-slot-kind="text"|"border" for the other kinds), so a
      * legend or a docs swatch shows the paint the map draws with.
@@ -5901,8 +5979,9 @@ window.markFrameworkReady = markFrameworkReady;
     /**
      * A complete MapLibre style for a preset ('streets' | 'minimal' |
      * 'outline' | 'blank'), every layer painted from the map slots of the
-     * target screen and sized through px(). {labels:false} drops the labels,
-     * {labels:'major'} keeps only the big place names, {buildings:false}
+     * target screen and sized through px(). Place and water labels are
+     * framework elements attach() places over the canvas: {labels:false} drops
+     * them, {labels:'major'} keeps only the big place names. {buildings:false}
      * drops the building footprints, {tiles} names the source preset.
      *
      * @param {string} preset
@@ -5926,16 +6005,19 @@ window.markFrameworkReady = markFrameworkReady;
       const land = slot('map-land');
       const water = slot('map-water');
       const green = slot('map-green');
+      const farmland = slot('map-farmland');
+      const sand = slot('map-sand');
       const area = slot('map-area');
+      const site = slot('map-site');
       const building = slot('map-building');
+      const transit = slot('map-transit');
       const road = line('map-road');
       const roadMinor = line('map-road-minor');
+      const path = line('map-path');
       const rail = line('map-rail');
       const boundary = line('map-boundary');
       const waterLine = line('map-water-line');
       const halo = mapHalo(el);
-      const labelMajor = TRMNLMaps.label('label', { el: el, bold: true, tiles: tiles });
-      const labelMinor = TRMNLMaps.label('chart-label', { el: el, muted: true, tiles: tiles });
 
       const layers = [];
       const push = (layer) => { if (layer) layers.push(layer); };
@@ -5947,11 +6029,27 @@ window.markFrameworkReady = markFrameworkReady;
 
       if (groups.water) push(mapFillLayer('ocean', 'ocean', null, water));
       if (groups.area) push(mapFillLayer('land-area', 'land', mapKindFilter(MAP_AREA_KINDS), area));
+      if (groups.farmland) push(mapFillLayer('land-farmland', 'land', mapKindFilter(MAP_FARMLAND_KINDS), farmland));
       if (groups.green) push(mapFillLayer('land-green', 'land', mapKindFilter(MAP_GREEN_KINDS), green));
-      if (groups.water) push(mapFillLayer('water', 'water_polygons', null, water));
+      if (groups.sand) push(mapFillLayer('land-sand', 'land', mapKindFilter(MAP_SAND_KINDS), sand));
+      if (groups.sites) push(mapFillLayer('sites', 'sites', null, site, 14));
+      if (groups.water) push(mapFillLayer('water', 'water_polygons', ['!=', ['get', 'kind'], 'glacier'], water));
       if (groups.waterLines) {
         push(mapLineLayer('water-lines', 'water_lines', null, waterLine,
           ['match', ['get', 'kind'], 'river', ui(2), 'canal', ui(1.5), ui(1)], { minzoom: 10 }));
+      }
+      if (groups.ferries) push(mapLineLayer('ferries', 'ferries', null, waterLine, ui(1), { dash: [3, 3], cap: 'butt' }));
+      if (groups.structures) {
+        push(mapFillLayer('pier-polygons', 'pier_polygons', null, building, 12));
+        push(mapFillLayer('dam-polygons', 'dam_polygons', null, building, 12));
+        push(mapFillLayer('bridges', 'bridges', null, building, 12));
+        push(mapLineLayer('pier-lines', 'pier_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' }));
+        push(mapLineLayer('dam-lines', 'dam_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' }));
+      }
+      if (groups.streetAreas) push(mapFillLayer('street-areas', 'street_polygons', mapKindFilter(['pedestrian', 'service']), area, 12));
+      if (groups.runways && roadMinor) {
+        push(mapFillLayer('runways', 'street_polygons', mapKindFilter(['runway', 'taxiway']), { color: roadMinor }, 11));
+        push(mapLineLayer('runway-lines', 'streets', mapKindFilter(['runway', 'taxiway']), roadMinor, ui(2), { minzoom: 11, cap: 'butt' }));
       }
       if (groups.buildings && showBuildings) push(mapFillLayer('buildings', 'buildings', null, building, 14));
       if (groups.minor) {
@@ -5962,7 +6060,7 @@ window.markFrameworkReady = markFrameworkReady;
       }
       if (groups.paths) {
         const pathFilter = ['all', mapKindFilter(MAP_PATHS), ['!=', ['get', 'tunnel'], true]];
-        push(mapLineLayer('paths', 'streets', pathFilter, roadMinor, ui(1), { minzoom: 13, dash: [2, 2], cap: 'butt' }));
+        push(mapLineLayer('paths', 'streets', pathFilter, path, ui(1), { minzoom: 13, dash: [2, 2], cap: 'butt' }));
       }
       if (groups.major) {
         const majorFilter = ['all', mapKindFilter(MAP_MAJOR_ROADS), ['!=', ['get', 'tunnel'], true]];
@@ -5977,39 +6075,28 @@ window.markFrameworkReady = markFrameworkReady;
         const railFilter = ['all', mapKindFilter(MAP_RAILS), ['!=', ['get', 'tunnel'], true]];
         push(mapLineLayer('rail', 'streets', railFilter, rail, ui(1.5), { dash: [3, 2], cap: 'butt' }));
       }
+      if (groups.aerialways) push(mapLineLayer('aerialways', 'aerialways', null, rail, ui(1), { minzoom: 12, dash: [1, 2], cap: 'butt' }));
       if (groups.boundaries && groups.boundaries.length) {
         const boundaryFilter = ['all', ['in', ['get', 'admin_level'], ['literal', groups.boundaries]], ['!=', ['get', 'maritime'], true]];
         push(mapLineLayer('boundaries', 'boundaries', boundaryFilter, boundary, ui(1), { dash: [4, 2], cap: 'butt' }));
       }
-      if (groups.placesMajor && showLabels) {
-        push(mapSymbolLayer('place-labels-major', 'place_labels', mapKindFilter(MAP_PLACES_MAJOR), labelMajor, {
-          'text-padding': ui(4),
-          'symbol-sort-key': ['*', -1, ['coalesce', ['to-number', ['get', 'population']], 0]],
-        }));
-      }
-      if (groups.placesMinor && showMinorLabels) {
-        push(mapSymbolLayer('place-labels-minor', 'place_labels', mapKindFilter(MAP_PLACES_MINOR), labelMinor, {
-          'text-padding': ui(4),
-        }));
-      }
-      if (groups.streetLabels && showMinorLabels) {
-        push(mapSymbolLayer('street-labels', 'street_labels', null, labelMinor, {
-          'symbol-placement': 'line',
-          'text-padding': ui(2),
-        }, { minzoom: 14 }));
-      }
-      if (groups.waterLabels && showMinorLabels) {
-        // Named fountains and ponds are water polygons too; only water with some
-        // area to it earns a label on a still screen.
-        const waterLabelFilter = ['>=', ['coalesce', ['to-number', ['get', 'way_area']], 0], 50000];
-        push(mapSymbolLayer('water-labels', 'water_polygons_labels', waterLabelFilter, labelMinor, {
-          'text-padding': ui(4),
-        }));
+      if (groups.transit) {
+        push(mapCircleLayer('transit', 'public_transport', mapKindFilter(MAP_TRANSIT_KINDS), transit.color || transit.ink, halo, ui(2), 12));
       }
 
-      const style = {
+      // Labels are placed by the runtime (placeMapLabels), not drawn by MapLibre:
+      // the style just says which tiers this preset wants.
+      return {
         version: 8,
         name: 'trmnl-' + name,
+        metadata: {
+          'trmnl:preset': name,
+          'trmnl:labels': {
+            major: !!(groups.placesMajor && showLabels),
+            minor: !!(groups.placesMinor && showMinorLabels),
+            water: !!(groups.waterLabels && showMinorLabels),
+          },
+        },
         sources: {
           osm: {
             type: 'vector',
@@ -6021,8 +6108,6 @@ window.markFrameworkReady = markFrameworkReady;
         },
         layers: layers,
       };
-      if (tiles.glyphs) style.glyphs = tiles.glyphs;
-      return style;
     },
 
     /**
@@ -6115,8 +6200,9 @@ window.markFrameworkReady = markFrameworkReady;
     /**
      * Register a map with the runtime: pattern images are decoded and added
      * as the style asks for them, the camera snaps to the pixel grid once the
-     * map loads, the attribution is written into the container, and ready()
-     * and settle() track it until it is removed. watch() calls this for you.
+     * map loads, the labels are placed as framework elements after every idle,
+     * the attribution is written into the container, and ready() and settle()
+     * track it until it is removed. watch() calls this for you.
      *
      * @param {object} map
      * @param {{el?: (string|Element), attribution?: string}} [opts]
@@ -6127,7 +6213,7 @@ window.markFrameworkReady = markFrameworkReady;
       attachedMaps.add(map);
       let el = resolveEl(opts && opts.el);
       if (!el) { try { el = map.getContainer(); } catch (_) { el = null; } }
-      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false };
+      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0 };
       liveMaps.set(map, rec);
       try {
         map.on('styleimagemissing', (event) => {
@@ -6136,9 +6222,19 @@ window.markFrameworkReady = markFrameworkReady;
         });
         map.once('style.load', () => { preloadTileImages(rec); ensureAttribution(rec, opts && opts.attribution); });
         map.once('load', () => snapMapInPlace(map));
-        map.once('remove', () => { rec.removed = true; liveMaps.delete(map); });
+        map.on('idle', () => { rec.idleCount += 1; placeMapLabels(rec); });
+        map.once('remove', () => {
+          rec.removed = true;
+          liveMaps.delete(map);
+          // The labels belong to this map's camera; a rebuild places its own.
+          const overlay = rec.el && rec.el.querySelector && rec.el.querySelector('.map__labels');
+          if (overlay) overlay.textContent = '';
+        });
       } catch (_) {}
       ensureAttribution(rec, opts && opts.attribution);
+      // A map that was already idle when it was attached would never fire the
+      // idle ready() and the labels wait for; one repaint brings it round.
+      try { if (typeof map.triggerRepaint === 'function') map.triggerRepaint(); } catch (_) {}
       // A map attached after a pass has already flipped READY re-arms it, so a
       // capture does not catch the frame before the tiles.
       if (window.TRMNL_PLUGINS_READY === true) { try { scheduleTerminalize(); } catch (_) {} }
@@ -6146,8 +6242,10 @@ window.markFrameworkReady = markFrameworkReady;
     },
 
     /**
-     * Resolves once the map has drawn everything it knows about: pending
-     * pattern images added, tiles loaded, and MapLibre idle.
+     * Resolves once the map has drawn everything it knows about: at least one
+     * idle since it was attached (a fresh map reports loaded() before its first
+     * tile request goes out), pending pattern images added, tiles loaded, and
+     * MapLibre idle again.
      *
      * @param {object} map
      * @returns {Promise<object>}
@@ -6158,13 +6256,14 @@ window.markFrameworkReady = markFrameworkReady;
       const settled = () => {
         try { return !!(map.loaded && map.loaded() && (!map.areTilesLoaded || map.areTilesLoaded())); } catch (_) { return true; }
       };
+      const idleSeen = () => !rec || rec.idleCount > 0;
       const waitIdle = () => new Promise((resolve) => {
         try { map.once('idle', () => resolve()); } catch (_) { resolve(); }
       });
       const step = () => Promise.all(rec ? Array.from(rec.pending) : []).then(() => {
         if (rec && rec.removed) return map;
-        if (settled() && !(rec && rec.pending.size)) return map;
-        return waitIdle().then(() => ((rec && rec.pending.size) || !settled() ? step() : map));
+        if (idleSeen() && settled() && !(rec && rec.pending.size)) return map;
+        return waitIdle().then(step);
       });
       return step();
     },

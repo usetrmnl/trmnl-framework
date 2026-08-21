@@ -68,44 +68,39 @@
 // paint rail of the screen it renders on (dither tiles on 1-bit and 2-bit,
 // solids on 4-bit and up, palette inks on color panels), and a theme re-points
 // them with the same mixins it uses for every other component. The defaults
-// are chosen for 1-bit: water and greens are light tiles, buildings a mid
-// tile, minor lines a gray the 1-bit block below re-points to the ink.
-// base/_screen-mode-vars.scss re-points the area and line slots at chromatic
-// tokens on the color rails.
+// are chosen for 1-bit: areas are light tiles, and every line is a gray rather
+// than the ink, so a plotted route drawn in the ink (the chart-series ramp)
+// reads on top of the roads; the device dithers a gray line lighter than the
+// route. base/_screen-mode-vars.scss re-points the area and line slots at
+// chromatic tokens on the color rails.
 //
-// Land and the major lines name semantic channels instead of tokens, the way
-// the chip does: land is the canvas and roads and rails are the strong border,
-// so a theme, dark mode and an inverse subtree carry them without restating.
-@mixin _map-line-semantic-slot($slot, $semantic, $fallback) {
-    --framework-slot-#{$slot}-border-color: var(--framework-semantic-#{$semantic}-border-color, #{$fallback});
-    --framework-slot-#{$slot}-border-image: var(--framework-semantic-#{$semantic}-border-image, none);
-    --framework-slot-#{$slot}-border-size: var(--framework-semantic-#{$semantic}-border-size, auto);
-    --framework-slot-#{$slot}-border-position: 0 0;
-    @include mixins.border-render-solid('framework-slot-#{$slot}-border', var(--framework-semantic-#{$semantic}-border-color, #{$fallback}));
-}
-
+// Land and the labels name semantic channels instead of tokens, the way the
+// chip does: land is the canvas and labels are the primary text, so a theme,
+// dark mode and an inverse subtree carry them without restating.
 @mixin _map-slot-defaults {
     --framework-slot-map-land-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
     --framework-slot-map-land-bg-image: var(--framework-semantic-canvas-bg-image, none);
     @include theme-slots.bg-slot('map-water', 'gray-60');
-    @include theme-slots.bg-slot('map-green', 'gray-70');
+    @include theme-slots.bg-slot('map-green', 'gray-65');
+    @include theme-slots.bg-slot('map-farmland', 'gray-70');
+    @include theme-slots.bg-slot('map-sand', 'gray-75');
     @include theme-slots.bg-slot('map-area', 'gray-75');
+    @include theme-slots.bg-slot('map-site', 'gray-70');
     @include theme-slots.bg-slot('map-building', 'gray-40');
-    @include _map-line-semantic-slot('map-road', 'border-strong', var(--framework-border-strong));
-    @include _map-line-semantic-slot('map-rail', 'border-strong', var(--framework-border-strong));
-    @include theme-slots.border-token-slot('map-road-minor', 'gray-30');
-    @include theme-slots.border-token-slot('map-boundary', 'gray-30');
-    @include theme-slots.border-token-slot('map-water-line', 'gray-60');
-    // Labels ride the semantic text channels, so a theme's ink and its
-    // secondary text reach the map without a slot of their own.
+    @include theme-slots.bg-slot('map-transit', 'gray-30');
+    @include theme-slots.border-token-slot('map-road', 'gray-35');
+    @include theme-slots.border-token-slot('map-road-minor', 'gray-50');
+    @include theme-slots.border-token-slot('map-path', 'gray-45');
+    @include theme-slots.border-token-slot('map-rail', 'gray-30');
+    @include theme-slots.border-token-slot('map-boundary', 'gray-40');
+    @include theme-slots.border-token-slot('map-water-line', 'gray-55');
+    // Labels ride the primary text channel, so a theme's ink reaches the map
+    // without a slot of their own. One ink for every tier: a map is busy, and
+    // a small label in a dithered secondary tone would not survive it.
     --framework-slot-map-label-text-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
     --framework-slot-map-label-text-image: var(--framework-semantic-text-primary-text-image, none);
     --framework-slot-map-label-text-clip: var(--framework-semantic-text-primary-text-clip, border-box);
     --framework-slot-map-label-text-under: var(--framework-semantic-text-primary-text-under, transparent);
-    --framework-slot-map-label-muted-text-color: var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary));
-    --framework-slot-map-label-muted-text-image: var(--framework-semantic-text-secondary-text-image, none);
-    --framework-slot-map-label-muted-text-clip: var(--framework-semantic-text-secondary-text-clip, border-box);
-    --framework-slot-map-label-muted-text-under: var(--framework-semantic-text-secondary-text-under, transparent);
 }
 
 @mixin _component-slot-defaults {

@@ -477,9 +477,15 @@ whenReady(function () {
           <div class="space-y-2">
             <%= framework_heading(4, 'Grayscale and color') %>
             <p class="<%= framework_subsection_description_classes %>">
-              The map slots default to tokens tuned for 1-bit: land is the canvas, water and parks are dithered tiles,
-              roads and labels are the ink. A full-color screen re-points the same slots at chromatic tokens and a
-              limited palette dithers them to its ink set, so the plugin changes nothing.
+              The map slots default to tokens tuned for 1-bit: land is the canvas, water, parks and fields are
+              dithered tiles, roads are grays short of the ink, labels are the ink. A full-color screen re-points
+              the same slots at chromatic tokens and a limited palette dithers them to its ink set, so the plugin
+              changes nothing.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              Labels are framework elements placed over the canvas, so they take the screen's own fonts (TRMNL
+              pixel fonts on 1-bit and 2-bit low-density panels, Inter on 4-bit and high density) with a large
+              text stroke, on whole pixels.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
               Switch the device picker to a color device or dark mode and the map repaints. A theme restyles the map
@@ -555,7 +561,8 @@ TRMNLMaps.watch(el, function () {
           </p>
           <p class="<%= framework_section_description_classes %>">
             In a plugin the <code class="<%= framework_section_code_classes %>">activity</code> object comes from your
-            polling URL; the example inlines one run. The minimal preset keeps the streets under the route quiet.
+            polling URL; the example inlines one run. The roads are grays and the route takes the ink, so it reads
+            on top; the minimal preset keeps the streets under it quiet.
           </p>
         </div>
 
@@ -658,7 +665,7 @@ TRMNLMaps.watch(el, function () {
                       map.on("load", function () {
                         map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: coords } } });
                         map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(coords[0], "start"), point(coords[coords.length - 1], "end")] } });
-                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 4 }), { id: "route", source: "route" }));
                         map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
                         map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
                       });
@@ -770,7 +777,7 @@ TRMNLMaps.watch(el, function () {
       map.on("load", function () {
         map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: coords } } });
         map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(coords[0], "start"), point(coords[coords.length - 1], "end")] } });
-        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 4 }), { id: "route", source: "route" }));
         map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
         map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
       });

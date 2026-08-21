@@ -9,12 +9,12 @@ require 'rails_helper'
 # the color rails re-point the areas at hues, and every shipped theme states
 # the slots it is expected to restate.
 module MapSlotContract
-  AREA_SLOTS = %w[map-land map-water map-green map-area map-building].freeze
-  LINE_SLOTS = %w[map-road map-road-minor map-rail map-boundary map-water-line].freeze
-  TEXT_SLOTS = %w[map-label map-label-muted].freeze
-  # The token-bound slots a theme has to restate; land, the major lines and the
-  # labels follow semantic channels the theme already states.
-  THEMED_SLOTS = %w[map-water map-green map-area map-building map-road-minor map-boundary map-water-line].freeze
+  AREA_SLOTS = %w[map-land map-water map-green map-farmland map-sand map-area map-site map-building map-transit].freeze
+  LINE_SLOTS = %w[map-road map-road-minor map-path map-rail map-boundary map-water-line].freeze
+  TEXT_SLOTS = %w[map-label].freeze
+  # The token-bound slots a theme has to restate; land and the labels follow
+  # semantic channels the theme already states.
+  THEMED_SLOTS = (AREA_SLOTS + LINE_SLOTS - %w[map-land]).freeze
 end
 
 RSpec.describe 'Framework map slot contract' do
@@ -58,25 +58,30 @@ RSpec.describe 'Framework map slot contract' do
     end
   end
 
-  it 'binds the 1-bit defaults: land to the canvas, areas to gray tiles, roads to the strong border' do
+  it 'binds the 1-bit defaults: land to the canvas, areas to gray tiles, every line to a gray short of the ink' do
     aggregate_failures do
       expect_declared(screen, '--framework-slot-map-land-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
       expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-60-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-70-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-65-color, transparent)')
       expect_declared(screen, '--framework-slot-map-building-bg-color', 'var(--bg-gray-40-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-road-border-render-stroke', 'var(--framework-semantic-border-strong-border-color, var(--framework-border-strong))')
-      expect_declared(screen, '--framework-slot-map-road-minor-border-render-stroke', 'var(--stroke-gray-30-color, var(--gray-30))')
+      expect_declared(screen, '--framework-slot-map-road-border-render-stroke', 'var(--stroke-gray-35-color, var(--gray-35))')
+      expect_declared(screen, '--framework-slot-map-road-minor-border-render-stroke', 'var(--stroke-gray-50-color, var(--gray-50))')
+      expect_declared(screen, '--framework-slot-map-path-border-render-stroke', 'var(--stroke-gray-45-color, var(--gray-45))')
       expect_declared(screen, '--framework-slot-map-label-text-color', 'var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))')
     end
   end
 
-  it 'takes the minor lines to the ink on the 1-bit rail, on the screen and on its inverse subtree' do
-    expect(one_bit).not_to be_empty
+  # A plotted route takes the ink (chart-series slot 0), so no default map line
+  # may: the 1-bit rail draws the lines in their gray and lets the device dither
+  # them lighter than the route.
+  it 'keeps every default line off the ink on every rail' do
     aggregate_failures do
-      %w[map-road-minor map-boundary map-water-line].each do |slot|
-        expect(one_bit).to include("--framework-slot-#{slot}-border-render-stroke: var(--stroke-black-color")
+      [screen, inverse, one_bit, color_full].each do |declarations|
+        MapSlotContract::LINE_SLOTS.each do |slot|
+          expect(declarations).not_to include("--framework-slot-#{slot}-border-render-stroke: var(--stroke-black-color")
+          expect(declarations).not_to include("--framework-slot-#{slot}-border-render-stroke: var(--framework-semantic-border-strong")
+        end
       end
-      expect(rules.map(&:first)).to include(a_string_matching(/\.screen\.screen--1bit:where\(:not\(\[class\*=screen--theme-\]\)\) \.inverse/))
     end
   end
 

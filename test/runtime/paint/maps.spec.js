@@ -35,6 +35,30 @@ async function installFakeMap(page) {
         jumpTo(cam) { fake.calls.jumpTo.push(cam); },
         cameraForBounds() { return { center: { lng: 1.23, lat: 4.56 }, zoom: 12.7 }; },
         resize() { fake.calls.resize += 1; },
+        // Two cities, a town and a pond, as a loaded tile would answer them.
+        querySourceFeatures(source, opts) {
+          if (opts.sourceLayer === 'place_labels') {
+            return [
+              { properties: { kind: 'city', name: 'Alpha', population: 900000 }, geometry: { type: 'Point', coordinates: [10, 50] } },
+              { properties: { kind: 'city', name: 'Alpha', population: 900000 }, geometry: { type: 'Point', coordinates: [10, 50] } },
+              { properties: { kind: 'city', name: 'Beta', population: 400000 }, geometry: { type: 'Point', coordinates: [10.001, 50.001] } },
+              { properties: { kind: 'town', name: 'Gamma', population: 20000 }, geometry: { type: 'Point', coordinates: [12, 52] } },
+            ];
+          }
+          if (opts.sourceLayer === 'water_polygons_labels') {
+            return [
+              { properties: { kind: 'water', name: 'Big Lake', way_area: 900000 }, geometry: { type: 'Point', coordinates: [14, 54] } },
+              { properties: { kind: 'water', name: 'Pond', way_area: 120 }, geometry: { type: 'Point', coordinates: [15, 55] } },
+            ];
+          }
+          return [];
+        },
+        // Alpha and Beta project onto the same pixel; Gamma and the lake elsewhere.
+        project(lngLat) {
+          const table = { '10,50': [150, 100], '10.001,50.001': [152, 101], '12,52': [60, 160], '14,54': [240, 40] };
+          const hit = table[lngLat[0] + ',' + lngLat[1]];
+          return hit ? { x: hit[0], y: hit[1] } : { x: -100, y: -100 };
+        },
       };
       return Object.assign(fake, overrides || {});
     };
@@ -81,16 +105,16 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
           ? layer('water').paint['fill-pattern'] === waterFill.pattern.id
           : layer('water').paint['fill-color'] === waterFill.color,
         roadMatches: layer('roads-major').paint['line-color'] === roadInk,
-        roadInkIsColor: /^rgb/.test(roadInk || ''),
-        labelFont: layer('place-labels-major').layout['text-font'],
-        labelSize: layer('place-labels-major').layout['text-size'],
-        labelInk: layer('place-labels-major').paint['text-color'],
-        halo: layer('place-labels-major').paint['text-halo-color'],
+        roadInkIsColor: /^(rgb|#)/.test(roadInk || ''),
+        symbols: style.layers.filter((entry) => entry.type === 'symbol').length,
+        labels: style.metadata['trmnl:labels'],
+        transitInk: layer('transit').paint['circle-color'],
       },
       presets: {
         outline: maps.style('outline', { el: target }).layers.map((entry) => entry.id),
         blank: maps.style('blank', { el: target }).layers.map((entry) => entry.id),
-        noLabels: maps.style('streets', { el: target, labels: false }).layers.some((entry) => entry.type === 'symbol'),
+        noLabels: maps.style('streets', { el: target, labels: false }).metadata['trmnl:labels'],
+        majorOnly: maps.style('streets', { el: target, labels: 'major' }).metadata['trmnl:labels'],
         noBuildings: maps.style('streets', { el: target, buildings: false }).layers.some((entry) => entry.id === 'buildings'),
         customTiles: maps.style('minimal', { el: target, tiles: { url: 'https://tiles.example.com/{z}/{x}/{y}.mvt' } }).sources.osm.tiles[0],
       },
@@ -101,7 +125,7 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
       overlays: {
         path: maps.path(0, 1, { el: target, width: 3 }),
         marker: maps.marker(0, 2, { el: target }),
-        label: maps.label('label', { el: target, bold: true }),
+        hollow: maps.marker(0, 1, { el: target, hollow: true }),
       },
       tiles: maps.tiles({ url: 'x' }),
       merged: maps.merge({ a: { b: 1, c: [1] }, d: 1 }, { a: { c: [2] }, e: 2 }),
@@ -126,20 +150,21 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   });
   expect(result.style.version).toBe(8);
   expect(result.style.source).toContain('vector.openstreetmap.org/shortbread_v1');
-  expect(result.style.glyphs).toContain('{fontstack}/{range}.pbf');
-  expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-green', 'water', 'buildings', 'roads-minor', 'roads-major', 'rail', 'boundaries', 'place-labels-major', 'street-labels']));
+  expect(result.style.glyphs).toBeUndefined();
+  expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-farmland', 'land-green', 'land-sand', 'sites', 'water', 'ferries', 'buildings', 'roads-minor', 'paths', 'roads-major', 'rail', 'transit', 'boundaries']));
+  // Labels are framework elements the runtime places, never MapLibre glyph text.
+  expect(result.style.symbols).toBe(0);
+  expect(result.style.labels).toEqual({ major: true, minor: true, water: true });
+  expect(result.style.transitInk).toMatch(/^(rgb|#)/);
   // 1-bit: gray-60 water is a dither tile, so the layer paints with a pattern.
   expect(result.style.waterPaint['fill-pattern']).toMatch(/^trmnl-tile-\d+$/);
   expect(result.style.waterMatches).toBe(true);
   expect(result.style.roadMatches).toBe(true);
   expect(result.style.roadInkIsColor).toBe(true);
-  expect(result.style.labelFont).toEqual(['noto_sans_bold']);
-  expect(result.style.labelSize).toBeGreaterThan(0);
-  expect(result.style.labelInk).toMatch(/^rgb/);
-  expect(result.style.halo).toMatch(/^rgb/);
-  expect(result.presets.outline).toEqual(['background', 'ocean', 'water', 'roads-major-casing', 'roads-major', 'boundaries', 'place-labels-major']);
+  expect(result.presets.outline).toEqual(['background', 'ocean', 'water', 'roads-major-casing', 'roads-major', 'boundaries']);
   expect(result.presets.blank).toEqual(['background']);
-  expect(result.presets.noLabels).toBe(false);
+  expect(result.presets.noLabels).toEqual({ major: false, minor: false, water: false });
+  expect(result.presets.majorOnly).toEqual({ major: true, minor: false, water: false });
   expect(result.presets.noBuildings).toBe(false);
   expect(result.presets.customTiles).toBe('https://tiles.example.com/{z}/{x}/{y}.mvt');
   expect(result.delegation).toEqual({ paint: true, series: true });
@@ -150,9 +175,10 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.overlays.marker.type).toBe('circle');
   expect(result.overlays.marker.paint['circle-radius']).toBe(4);
   expect(result.overlays.marker.paint['circle-stroke-color']).toMatch(/^rgb/);
-  expect(result.overlays.label.layout['text-font']).toEqual(['noto_sans_bold']);
+  expect(result.overlays.hollow.paint['circle-stroke-width']).toBe(2);
+  expect(result.overlays.hollow.paint['circle-color']).toBe(result.overlays.marker.paint['circle-stroke-color']);
   expect(result.tiles.url).toBe('x');
-  expect(result.tiles.glyphs).toContain('tiles.versatiles.org');
+  expect(result.tiles.glyphs).toBeUndefined();
   expect(result.merged).toEqual({ a: { b: 1, c: [2] }, d: 1, e: 2 });
   expect(result.decoded).toEqual([[-120.2, 38.5], [-120.95, 40.7], [-126.453, 43.252]]);
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
@@ -186,7 +212,7 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
       },
       swatches: {
         water: document.querySelector('#swatch-water').style.backgroundImage || document.querySelector('#swatch-water').style.backgroundColor,
-        road: document.querySelector('#swatch-road').style.backgroundColor,
+        road: document.querySelector('#swatch-road').style.backgroundImage || document.querySelector('#swatch-road').style.backgroundColor,
       },
     };
   });
@@ -199,17 +225,19 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   expect(oneBit.label.color).toMatch(/^rgb/);
   // render.stroke is the CSS-declared stroke chain read as a custom property, so
   // it stays the palette hex rather than a computed rgb().
-  expect(oneBit.road.stroke).toBe('#000000');
-  // The 1-bit block re-points the gray line slots to the ink.
-  expect(oneBit.minor.stroke).toBe('#000000');
+  // Lines are grays short of the ink on every rail, so a route in the ink reads on top.
+  expect(oneBit.road.stroke).toBe('#666666');
+  expect(oneBit.minor.stroke).toBe('#999999');
   expect(oneBit.adapter.water.color).toBeNull();
   expect(oneBit.adapter.water.pattern).toMatchObject({ width: 16, height: 16, pixelRatio: 1 });
   expect(oneBit.adapter.water.pattern.id).toMatch(/^trmnl-tile-\d+$/);
   expect(oneBit.adapter.water.pattern.image).toMatch(/^data:image\/svg\+xml/);
-  expect(oneBit.adapter.road).toEqual({ color: 'rgb(0, 0, 0)', ink: 'rgb(0, 0, 0)', pattern: null });
+  expect(oneBit.adapter.road.ink).toBe('#666666');
+  expect(oneBit.adapter.road.pattern).toBeNull();
   expect(oneBit.adapter.black).toEqual({ color: 'rgb(0, 0, 0)', ink: 'rgb(0, 0, 0)', pattern: null });
   expect(oneBit.swatches.water).toContain('url(');
-  expect(oneBit.swatches.road).toBe('rgb(0, 0, 0)');
+  // A gray line slot paints its dash art; the swatch carries that tile.
+  expect(oneBit.swatches.road).toMatch(/url\(|rgb/);
 
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => {
     screen.classList.remove('screen--1bit');
@@ -218,7 +246,7 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   const fourBit = await read();
   expect(fourBit.water.tile).toBe(false);
   expect(fourBit.water.color).toBe('rgb(187, 187, 187)');
-  expect(fourBit.minor.stroke).toBe('#555555');
+  expect(fourBit.minor.stroke).toBe('#999999');
   expect(fourBit.adapter.water).toEqual({ color: 'rgb(187, 187, 187)', ink: 'rgb(187, 187, 187)', pattern: null });
 
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => {
@@ -246,9 +274,16 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     const fit = maps.fit(fake, [[1, 4], [1.5, 5]], { padding: 10, maxZoom: 15 });
     // The style has loaded: every pattern the style names is decoded and added.
     fake.fire('style.load');
+    // Idle: the runtime places the labels as framework elements, and ready()
+    // waits for that first idle before it trusts loaded().
+    fake.fire('idle');
     await maps.ready(fake);
     const water = paint.toMapLibre(paint.slot('map-water', { el: container })).pattern;
+    const labels = Array.from(container.querySelectorAll('.map__labels .map__label')).map((node) => ({
+      text: node.textContent, className: node.className, left: node.style.left, top: node.style.top,
+    }));
     return {
+      labels,
       attribution: container.querySelector('.map__attribution') && container.querySelector('.map__attribution').textContent,
       fit,
       jumpTo: fake.calls.jumpTo,
@@ -258,6 +293,12 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     };
   });
   expect(attached.attribution).toBe('© OpenStreetMap contributors');
+  // Alpha wins its pixel over Beta (bigger city first), the duplicate Alpha is
+  // folded, Gamma and Big Lake fit, the pond is too small to name.
+  expect(attached.labels.map((label) => label.text)).toEqual(['Alpha', 'Gamma', 'Big Lake']);
+  expect(attached.labels[0].className).toBe('map__label label text-stroke text-stroke--large');
+  expect(attached.labels[1].className).toBe('map__label label label--small text-stroke text-stroke--large');
+  expect(attached.labels.every((label) => /^-?\d+px$/.test(label.left) && /^-?\d+px$/.test(label.top))).toBe(true);
   expect(attached.fit.zoom).toBe(12);
   expect(attached.fit.center[0]).toBeCloseTo(1.23, 2);
   expect(attached.fit.center[1]).toBeCloseTo(4.56, 2);

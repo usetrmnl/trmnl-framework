@@ -66,6 +66,31 @@
         color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
     }
 
+    // Labels: framework elements TRMNLMaps places over the canvas after every
+    // idle, so the screen typesets them (TRMNL pixel fonts on 1-bit and 2-bit
+    // low-density panels, Inter on 4-bit and high density) and the text-stroke
+    // utility draws the halo, at whole-pixel positions. Ink follows the
+    // map-label slot the way the chip follows its text slot; every tier takes
+    // the one ink, because a small dithered label would not survive a busy map.
+    .map__labels {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .map__labels .map__label {
+        position: absolute;
+        max-width: none;
+        white-space: nowrap;
+        color: var(--framework-slot-map-label-text-color, var(--framework-text-primary));
+        background-color: var(--framework-slot-map-label-text-under, transparent);
+        background-image: var(--framework-slot-map-label-text-image, none);
+        -webkit-background-clip: var(--framework-slot-map-label-text-clip, border-box);
+        background-clip: var(--framework-slot-map-label-text-clip, border-box);
+    }
+
     // A fallback an author places inside the container for a renderer with
     // no WebGL. TRMNLMaps.watch() flags the container and the fallback shows.
     .map__fallback {
