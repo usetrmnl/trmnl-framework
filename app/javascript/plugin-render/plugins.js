@@ -4969,7 +4969,7 @@ window.markFrameworkReady = markFrameworkReady;
      * { color, ink, pattern }: `color` is the flat field for a solid Fill (null
      * for a tile), `ink` is the one color a line or glyph can take (the solid,
      * a line slot's CSS-declared stroke, or the tile's painted ink), and
-     * `pattern` is the registered tile image for fill-pattern/line-pattern
+     * `pattern` is the registered tile image for fill-pattern
      * (null for solids). The field is composited INTO the tile image as for
      * Highcharts, and `pixelRatio` = tile width / resolved CSS size, so the
      * image displays at exactly --dither-bg-size and one texel lands on one
@@ -5558,41 +5558,24 @@ window.markFrameworkReady = markFrameworkReady;
     return ['in', ['get', 'kind'], ['literal', kinds]];
   }
 
-  // A line painted from a tile Fill takes the tile as a line pattern, cropped to
-  // the line's width in texels so one texel lands on one device pixel across and
-  // along the line: the 1-bit gray of a road is the same dither its area would
-  // be, not a hex the panel cannot print. The derived image is registered beside
-  // its tile so styleimagemissing and the style.load preload find it by id.
-  function mapLinePattern(pattern, widthPx) {
-    if (!pattern || !(pattern.width > 0) || !(pattern.height > 0)) return null;
-    const rows = Math.max(1, Math.min(pattern.height, Math.round((widthPx || 1) * (pattern.pixelRatio || 1))));
-    const id = pattern.id + '-h' + rows;
-    if (!tileImagesById.has(id)) {
-      tileImagesById.set(id, { id: id, image: pattern.image, width: pattern.width, height: rows, pixelRatio: pattern.pixelRatio });
-    }
-    return id;
-  }
-
   // Line paint from a MapLibre paint object ({ color, ink, pattern }, or a bare
-  // color string): a tile takes line-pattern at the line's width, a solid takes
-  // line-color. A dashed line takes the tile's ink, because the renderer cannot
-  // dash a pattern; on the 1-bit rail that is the one ink anyway.
-  function mapLinePaint(paint, widthPx, dashed) {
+  // color string): a solid takes line-color, a dashed line takes the ink because
+  // the renderer cannot dash a pattern (on the 1-bit rail that is the one ink
+  // anyway). A tile is not drawn as a MapLibre line at all: line-pattern runs
+  // the tile along the line and filters it, which can never meet the pixel
+  // grid the framework's dithers live on. Tile lines go through mapTileLineSpec().
+  function mapLinePaint(paint, dashed) {
     if (!paint) return null;
     if (typeof paint === 'string') return { 'line-color': paint };
-    if (dashed) return paint.ink ? { 'line-color': paint.ink } : null;
-    if (paint.pattern) {
-      const id = mapLinePattern(paint.pattern, widthPx);
-      if (id) return { 'line-pattern': id };
+    if (dashed || !paint.pattern) {
+      const color = dashed ? paint.ink : (paint.color || paint.ink);
+      return color ? { 'line-color': color } : null;
     }
-    const color = paint.color || paint.ink;
-    return color ? { 'line-color': color } : null;
+    return null;
   }
 
   function mapLineLayer(id, sourceLayer, filter, paint, width, extra) {
-    const dashed = !!(extra && extra.dash);
-    const patternWidth = extra && extra.patternWidth != null ? extra.patternWidth : width;
-    const linePaint = mapLinePaint(paint, patternWidth, dashed);
+    const linePaint = mapLinePaint(paint, !!(extra && extra.dash));
     if (!linePaint) return null;
     const layer = {
       id: id,
@@ -5609,6 +5592,188 @@ window.markFrameworkReady = markFrameworkReady;
       if (extra.cap) layer.layout['line-cap'] = extra.cap;
     }
     return layer;
+  }
+
+  // ── Tile lines ──
+  // A line painted from a tile is drawn as the polygon of its stroke, filled
+  // with the tile the way every other tile on the screen is: fill-pattern at an
+  // integer zoom anchors to the pixel grid, and fill-antialias:false keeps the
+  // edge crisp. The style carries an empty GeoJSON source and a fill layer (plus
+  // a solid casing source and layer) in the line's place, and a spec under
+  // metadata['trmnl:lines']; once the vector tiles have loaded, paintTileLines()
+  // reads the line features back, widens each to its stroke in pixel space for
+  // the current camera, and sets the polygons as the source data. Geometry,
+  // not paint: the tile and the casing color come from the slots.
+  const MAP_TILE_LINE_SOURCE = 'trmnl-lines-';
+  const MAP_TILE_LINE_CAP = 6000;
+  const MAP_TILE_LINE_MARGIN = 8;
+
+  function mapTileLineSpec(id, sourceLayer, filter, paint, widths, extra, halo, sources, layers, specs) {
+    const source = MAP_TILE_LINE_SOURCE + id;
+    const empty = () => ({ type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+    const spec = {
+      id: id,
+      source: source,
+      sourceLayer: sourceLayer,
+      filter: filter || null,
+      widths: widths,
+      zoomStep: !!(extra && extra.zoomStep),
+      minzoom: extra && extra.minzoom != null ? extra.minzoom : 0,
+      casing: null,
+    };
+    if (extra && extra.casing && halo) {
+      spec.casing = source + '-casing';
+      sources[spec.casing] = empty();
+      layers.push({ id: id + '-casing', type: 'fill', source: spec.casing, paint: { 'fill-color': halo, 'fill-antialias': false } });
+    }
+    sources[source] = empty();
+    layers.push({ id: id, type: 'fill', source: source, paint: { 'fill-pattern': paint.pattern.id, 'fill-antialias': false } });
+    specs.push(spec);
+  }
+
+  function mapTileLineWidth(spec, kind, zoom) {
+    const widths = spec.widths;
+    let base = typeof widths === 'number' ? widths : (widths && (widths[kind] != null ? widths[kind] : widths.fallback));
+    if (!(base > 0)) base = 1;
+    if (spec.zoomStep) base = zoom < 12 ? base / 2 : (zoom >= 16 ? base * 2 : base);
+    return Math.max(1, Math.round(base));
+  }
+
+  // The stroke of one polyline (pixel space) as quads per segment plus an
+  // octagon per vertex for joins and caps. Pieces overlap freely: the fill
+  // pattern is screen-anchored, so overlaps paint the same pixels.
+  function mapStrokePolygons(points, width, out) {
+    const half = width / 2;
+    const ring = (cx, cy) => {
+      const pts = [];
+      for (let k = 0; k < 8; k++) {
+        const a = (Math.PI / 4) * k;
+        pts.push([cx + Math.cos(a) * half, cy + Math.sin(a) * half]);
+      }
+      pts.push(pts[0]);
+      return pts;
+    };
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      if (half > 0.75) out.push(ring(p[0], p[1]));
+      if (i === points.length - 1) continue;
+      const q = points[i + 1];
+      const dx = q[0] - p[0];
+      const dy = q[1] - p[1];
+      const len = Math.sqrt(dx * dx + dy * dy);
+      if (!(len > 0)) continue;
+      const nx = (-dy / len) * half;
+      const ny = (dx / len) * half;
+      out.push([[p[0] + nx, p[1] + ny], [q[0] + nx, q[1] + ny], [q[0] - nx, q[1] - ny], [p[0] - nx, p[1] - ny], [p[0] + nx, p[1] + ny]]);
+    }
+  }
+
+  function mapLineCoordinates(geometry) {
+    if (!geometry) return [];
+    if (geometry.type === 'LineString') return [geometry.coordinates];
+    if (geometry.type === 'MultiLineString') return geometry.coordinates;
+    return [];
+  }
+
+  function mapCameraSignature(map, el) {
+    try {
+      const c = map.getCenter();
+      return [map.getZoom(), c.lng, c.lat, el ? el.clientWidth : 0, el ? el.clientHeight : 0].join('|');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function mapTileLineFeatures(map, spec, el, zoom) {
+    const width = el.clientWidth;
+    const height = el.clientHeight;
+    let features = [];
+    try {
+      features = map.querySourceFeatures('osm', { sourceLayer: spec.sourceLayer, filter: spec.filter || undefined, validate: false }) || [];
+    } catch (_) {
+      features = [];
+    }
+    const polygons = [];
+    const casings = [];
+    let budget = MAP_TILE_LINE_CAP;
+    for (const feature of features) {
+      if (budget <= 0) break;
+      const kind = feature.properties && feature.properties.kind;
+      const w = mapTileLineWidth(spec, kind, zoom);
+      for (const line of mapLineCoordinates(feature.geometry)) {
+        const pts = [];
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (const lngLat of line) {
+          let p;
+          try { p = map.project(lngLat); } catch (_) { continue; }
+          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+          pts.push([p.x, p.y]);
+          if (p.x < minX) minX = p.x;
+          if (p.x > maxX) maxX = p.x;
+          if (p.y < minY) minY = p.y;
+          if (p.y > maxY) maxY = p.y;
+        }
+        if (pts.length < 2) continue;
+        const m = MAP_TILE_LINE_MARGIN + w;
+        if (maxX < -m || maxY < -m || minX > width + m || minY > height + m) continue;
+        budget -= pts.length;
+        const pieces = [];
+        mapStrokePolygons(pts, w, pieces);
+        for (const ring of pieces) polygons.push(ring);
+        if (spec.casing) {
+          const wide = [];
+          mapStrokePolygons(pts, w + 2, wide);
+          for (const ring of wide) casings.push(ring);
+        }
+      }
+    }
+    const toFeatures = (rings) => rings.map((ring) => ({
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'Polygon', coordinates: [ring.map((pt) => { const ll = map.unproject(pt); return [ll.lng, ll.lat]; })] },
+    }));
+    return { line: toFeatures(polygons), casing: toFeatures(casings) };
+  }
+
+  function paintTileLines(rec) {
+    const map = rec.map;
+    const el = rec.el;
+    if (!el || rec.removed) return;
+    let style = null;
+    try { style = map.getStyle(); } catch (_) {}
+    const specs = style && style.metadata && style.metadata['trmnl:lines'];
+    if (!Array.isArray(specs) || !specs.length) return;
+    const signature = mapCameraSignature(map, el);
+    if (!signature || signature === rec.lineSignature) return;
+    if (!(el.clientWidth > 0) || !(el.clientHeight > 0)) return;
+    rec.lineSignature = signature;
+    let zoom = 0;
+    try { zoom = map.getZoom(); } catch (_) {}
+    let changed = false;
+    for (const spec of specs) {
+      const data = zoom < spec.minzoom ? { line: [], casing: [] } : mapTileLineFeatures(map, spec, el, zoom);
+      const set = (id, features) => {
+        try {
+          const source = map.getSource(id);
+          if (source && typeof source.setData === 'function') {
+            source.setData({ type: 'FeatureCollection', features: features });
+            changed = true;
+          }
+        } catch (_) {}
+      };
+      set(spec.source, data.line);
+      if (spec.casing) set(spec.casing, data.casing);
+    }
+    // New source data renders on the next frame; ready() waits for that idle.
+    if (changed) {
+      const job = new Promise((resolve) => {
+        let done = false;
+        const finish = () => { if (done) return; done = true; rec.pending.delete(job); resolve(); };
+        try { map.once('idle', finish); } catch (_) { finish(); }
+        setTimeout(finish, 4000);
+      });
+      rec.pending.add(job);
+    }
   }
 
   function mapFillLayer(id, sourceLayer, filter, paint, minzoom) {
@@ -5820,9 +5985,7 @@ window.markFrameworkReady = markFrameworkReady;
             canvas.height = tile.height;
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
-            // Natural size: a line-pattern record is the same tile with fewer
-            // rows, so the canvas clips it instead of scaling it.
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0, tile.width, tile.height);
             map.addImage(tile.id, ctx.getImageData(0, 0, tile.width, tile.height), { pixelRatio: tile.pixelRatio });
           }
         } catch (_) {}
@@ -5845,7 +6008,7 @@ window.markFrameworkReady = markFrameworkReady;
     for (const layer of layers) {
       const paint = layer && layer.paint;
       if (!paint) continue;
-      for (const key of ['fill-pattern', 'line-pattern', 'background-pattern']) {
+      for (const key of ['fill-pattern', 'background-pattern']) {
         const id = paint[key];
         if (typeof id === 'string' && tileImagesById.has(id)) rasterizeTile(rec, tileImagesById.get(id));
       }
@@ -5947,9 +6110,8 @@ window.markFrameworkReady = markFrameworkReady;
     },
 
     /**
-     * A line layer's layout and paint for route `i` of `n`: the series paint, a
-     * line pattern where the ramp hands a tile and a flat color where it hands
-     * a solid, a rounded stroke `width` (default 2) scaled through px().
+     * A line layer's layout and paint for route `i` of `n`: the series ink, a
+     * rounded stroke `width` (default 2) scaled through px().
      *
      * @param {number} i
      * @param {number} n
@@ -5959,8 +6121,11 @@ window.markFrameworkReady = markFrameworkReady;
     path(i, n, opts) {
       const el = opts && opts.el;
       const width = opts && Number.isFinite(opts.width) ? opts.width : 2;
-      const px = mapPx(width, el);
-      const paint = Object.assign({ 'line-width': px, 'line-blur': 0 }, mapLinePaint(TRMNLMaps.series(i, n, { el: el }), px, false) || {});
+      const series = TRMNLMaps.series(i, n, { el: el });
+      const paint = { 'line-width': mapPx(width, el), 'line-blur': 0 };
+      // A route is an author line, not a tile line the runtime widens, so a
+      // tile slot of the ramp takes its painted ink here.
+      if (series.color || series.ink) paint['line-color'] = series.color || series.ink;
       return { type: 'line', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: paint };
     },
 
@@ -6059,7 +6224,22 @@ window.markFrameworkReady = markFrameworkReady;
       const halo = mapHalo(el);
 
       const layers = [];
+      const sources = {};
+      const lineSpecs = [];
       const push = (layer) => { if (layer) layers.push(layer); };
+      // A line from a tile goes through the tile-line machinery (crisp,
+      // screen-anchored fill); a solid or dashed line stays a MapLibre line.
+      const addLine = (id, sourceLayer, filter, paint, width, extra) => {
+        const dashed = !!(extra && extra.dash);
+        if (paint && typeof paint === 'object' && paint.pattern && !dashed) {
+          mapTileLineSpec(id, sourceLayer, filter, paint, extra && extra.widths != null ? extra.widths : width, extra, halo, sources, layers, lineSpecs);
+          return;
+        }
+        if (extra && extra.casing && halo) {
+          push(mapLineLayer(id + '-casing', sourceLayer, filter, halo, extra.casingWidth != null ? extra.casingWidth : width, { minzoom: extra.minzoom }));
+        }
+        push(mapLineLayer(id, sourceLayer, filter, paint, width, extra));
+      };
 
       const landPaint = land.pattern
         ? { 'background-pattern': land.pattern.id }
@@ -6074,57 +6254,63 @@ window.markFrameworkReady = markFrameworkReady;
       if (groups.sites) push(mapFillLayer('sites', 'sites', null, site, 14));
       if (groups.water) push(mapFillLayer('water', 'water_polygons', ['!=', ['get', 'kind'], 'glacier'], water));
       if (groups.waterLines) {
-        push(mapLineLayer('water-lines', 'water_lines', null, waterLine,
-          ['match', ['get', 'kind'], 'river', ui(2), 'canal', ui(1.5), ui(1)], { minzoom: 10, patternWidth: ui(1.5) }));
+        addLine('water-lines', 'water_lines', null, waterLine,
+          ['match', ['get', 'kind'], 'river', ui(2), 'canal', ui(1.5), ui(1)],
+          { minzoom: 10, widths: { river: ui(2), canal: ui(1.5), fallback: ui(1) } });
       }
-      if (groups.ferries) push(mapLineLayer('ferries', 'ferries', null, waterLine, ui(1), { dash: [3, 3], cap: 'butt' }));
+      if (groups.ferries) addLine('ferries', 'ferries', null, waterLine, ui(1), { dash: [3, 3], cap: 'butt' });
       if (groups.structures) {
         push(mapFillLayer('pier-polygons', 'pier_polygons', null, building, 12));
         push(mapFillLayer('dam-polygons', 'dam_polygons', null, building, 12));
         push(mapFillLayer('bridges', 'bridges', null, building, 12));
-        push(mapLineLayer('pier-lines', 'pier_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' }));
-        push(mapLineLayer('dam-lines', 'dam_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' }));
+        addLine('pier-lines', 'pier_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' });
+        addLine('dam-lines', 'dam_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' });
       }
       if (groups.streetAreas) push(mapFillLayer('street-areas', 'street_polygons', mapKindFilter(['pedestrian', 'service']), area, 12));
       if (groups.runways) {
         push(mapFillLayer('runways', 'street_polygons', mapKindFilter(['runway', 'taxiway']), roadMinor, 11));
-        push(mapLineLayer('runway-lines', 'streets', mapKindFilter(['runway', 'taxiway']), roadMinor, ui(2), { minzoom: 11, cap: 'butt' }));
+        addLine('runway-lines', 'streets', mapKindFilter(['runway', 'taxiway']), roadMinor, ui(2), { minzoom: 11, cap: 'butt' });
       }
       if (groups.buildings && showBuildings) push(mapFillLayer('buildings', 'buildings', null, building, 14));
       if (groups.minor) {
         const w = ui(1);
         const minorFilter = ['all', mapKindFilter(MAP_MINOR_ROADS), ['!=', ['get', 'tunnel'], true]];
-        if (halo) push(mapLineLayer('roads-minor-casing', 'streets', minorFilter, halo, w + 2 * ui(1), { minzoom: 12 }));
-        push(mapLineLayer('roads-minor', 'streets', minorFilter, roadMinor, w, { minzoom: 12 }));
+        addLine('roads-minor', 'streets', minorFilter, roadMinor, w, { minzoom: 12, casing: true, casingWidth: w + 2 * ui(1) });
       }
       if (groups.paths) {
         const pathFilter = ['all', mapKindFilter(MAP_PATHS), ['!=', ['get', 'tunnel'], true]];
-        push(mapLineLayer('paths', 'streets', pathFilter, path, ui(1), { minzoom: 13, dash: [2, 2], cap: 'butt' }));
+        addLine('paths', 'streets', pathFilter, path, ui(1), { minzoom: 13, dash: [2, 2], cap: 'butt' });
       }
       if (groups.major) {
         const majorFilter = ['all', mapKindFilter(MAP_MAJOR_ROADS), ['!=', ['get', 'tunnel'], true]];
-        const widths = ['match', ['get', 'kind'], 'motorway', ui(3), 'trunk', ui(3), 'primary', ui(2.5), 'secondary', ui(2), ui(1.5)];
-        if (halo) {
-          const casing = ['match', ['get', 'kind'], 'motorway', ui(3) + 2, 'trunk', ui(3) + 2, 'primary', ui(2.5) + 2, 'secondary', ui(2) + 2, ui(1.5) + 2];
-          push(mapLineLayer('roads-major-casing', 'streets', majorFilter, halo, casing));
-        }
-        push(mapLineLayer('roads-major', 'streets', majorFilter, road, widths, { patternWidth: ui(2.5) }));
+        const byKind = { motorway: ui(3), trunk: ui(3), primary: ui(2.5), secondary: ui(2), fallback: ui(1.5) };
+        const widths = ['match', ['get', 'kind'], 'motorway', byKind.motorway, 'trunk', byKind.trunk, 'primary', byKind.primary, 'secondary', byKind.secondary, byKind.fallback];
+        const casing = ['match', ['get', 'kind'], 'motorway', byKind.motorway + 2, 'trunk', byKind.trunk + 2, 'primary', byKind.primary + 2, 'secondary', byKind.secondary + 2, byKind.fallback + 2];
+        addLine('roads-major', 'streets', majorFilter, road, widths, { casing: true, casingWidth: casing, widths: byKind, zoomStep: true });
       }
       if (groups.rail) {
         const railFilter = ['all', mapKindFilter(MAP_RAILS), ['!=', ['get', 'tunnel'], true]];
-        push(mapLineLayer('rail', 'streets', railFilter, rail, ui(1.5), { dash: [3, 2], cap: 'butt' }));
+        addLine('rail', 'streets', railFilter, rail, ui(1.5), { dash: [3, 2], cap: 'butt' });
       }
-      if (groups.aerialways) push(mapLineLayer('aerialways', 'aerialways', null, rail, ui(1), { minzoom: 12, dash: [1, 2], cap: 'butt' }));
+      if (groups.aerialways) addLine('aerialways', 'aerialways', null, rail, ui(1), { minzoom: 12, dash: [1, 2], cap: 'butt' });
       if (groups.boundaries && groups.boundaries.length) {
         const boundaryFilter = ['all', ['in', ['get', 'admin_level'], ['literal', groups.boundaries]], ['!=', ['get', 'maritime'], true]];
-        push(mapLineLayer('boundaries', 'boundaries', boundaryFilter, boundary, ui(1), { dash: [4, 2], cap: 'butt' }));
+        addLine('boundaries', 'boundaries', boundaryFilter, boundary, ui(1), { dash: [4, 2], cap: 'butt' });
       }
       if (groups.transit) {
         push(mapCircleLayer('transit', 'public_transport', mapKindFilter(MAP_TRANSIT_KINDS), transit.color || transit.ink, halo, ui(2), 12));
       }
 
-      // Labels are placed by the runtime (placeMapLabels), not drawn by MapLibre:
-      // the style just says which tiers this preset wants.
+      // Labels are placed by the runtime (placeMapLabels) and tile lines are
+      // filled by it (paintTileLines), not drawn by MapLibre: the style says
+      // which tiers this preset wants and which lines to widen into fills.
+      sources.osm = {
+        type: 'vector',
+        tiles: [tiles.url],
+        minzoom: tiles.minzoom,
+        maxzoom: tiles.maxzoom,
+        attribution: tiles.attribution,
+      };
       return {
         version: 8,
         name: 'trmnl-' + name,
@@ -6135,16 +6321,9 @@ window.markFrameworkReady = markFrameworkReady;
             minor: !!(groups.placesMinor && showMinorLabels),
             water: !!(groups.waterLabels && showMinorLabels),
           },
+          'trmnl:lines': lineSpecs,
         },
-        sources: {
-          osm: {
-            type: 'vector',
-            tiles: [tiles.url],
-            minzoom: tiles.minzoom,
-            maxzoom: tiles.maxzoom,
-            attribution: tiles.attribution,
-          },
-        },
+        sources: sources,
         layers: layers,
       };
     },
@@ -6252,7 +6431,7 @@ window.markFrameworkReady = markFrameworkReady;
       attachedMaps.add(map);
       let el = resolveEl(opts && opts.el);
       if (!el) { try { el = map.getContainer(); } catch (_) { el = null; } }
-      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0 };
+      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0, lineSignature: null };
       liveMaps.set(map, rec);
       try {
         map.on('styleimagemissing', (event) => {
@@ -6261,7 +6440,7 @@ window.markFrameworkReady = markFrameworkReady;
         });
         map.once('style.load', () => { preloadTileImages(rec); ensureAttribution(rec, opts && opts.attribution); });
         map.once('load', () => snapMapInPlace(map));
-        map.on('idle', () => { rec.idleCount += 1; placeMapLabels(rec); });
+        map.on('idle', () => { rec.idleCount += 1; paintTileLines(rec); placeMapLabels(rec); });
         map.once('remove', () => {
           rec.removed = true;
           liveMaps.delete(map);
@@ -6329,6 +6508,7 @@ window.markFrameworkReady = markFrameworkReady;
               (canvas.clientWidth !== el.clientWidth || canvas.clientHeight !== el.clientHeight)) {
             rec.map.resize();
             snapMapInPlace(rec.map);
+            rec.lineSignature = null;
           }
         } catch (_) {}
       }

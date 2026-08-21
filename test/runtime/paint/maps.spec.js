@@ -42,24 +42,34 @@ async function installFakeMap(page) {
               { properties: { kind: 'city', name: 'Alpha', population: 900000 }, geometry: { type: 'Point', coordinates: [10, 50] } },
               { properties: { kind: 'city', name: 'Alpha', population: 900000 }, geometry: { type: 'Point', coordinates: [10, 50] } },
               { properties: { kind: 'city', name: 'Beta', population: 400000 }, geometry: { type: 'Point', coordinates: [10.001, 50.001] } },
-              { properties: { kind: 'town', name: 'Gamma', population: 20000 }, geometry: { type: 'Point', coordinates: [12, 52] } },
+              { properties: { kind: 'town', name: 'Gamma', population: 20000 }, geometry: { type: 'Point', coordinates: [9.1, 49.4] } },
             ];
           }
           if (opts.sourceLayer === 'water_polygons_labels') {
             return [
-              { properties: { kind: 'water', name: 'Big Lake', way_area: 900000 }, geometry: { type: 'Point', coordinates: [14, 54] } },
-              { properties: { kind: 'water', name: 'Pond', way_area: 120 }, geometry: { type: 'Point', coordinates: [15, 55] } },
+              { properties: { kind: 'water', name: 'Big Lake', way_area: 900000 }, geometry: { type: 'Point', coordinates: [10.9, 50.6] } },
+              { properties: { kind: 'water', name: 'Pond', way_area: 120 }, geometry: { type: 'Point', coordinates: [8, 48] } },
+            ];
+          }
+          if (opts.sourceLayer === 'streets') {
+            // One primary road across the view and one far outside it.
+            return [
+              { properties: { kind: 'primary' }, geometry: { type: 'LineString', coordinates: [[9.5, 49.5], [10, 50], [10.5, 50.5]] } },
+              { properties: { kind: 'primary' }, geometry: { type: 'LineString', coordinates: [[40, 60], [41, 61]] } },
             ];
           }
           return [];
         },
-        // Alpha and Beta project onto the same pixel; Gamma and the lake elsewhere.
-        project(lngLat) {
-          const table = { '10,50': [150, 100], '10.001,50.001': [152, 101], '12,52': [60, 160], '14,54': [240, 40] };
-          const hit = table[lngLat[0] + ',' + lngLat[1]];
-          return hit ? { x: hit[0], y: hit[1] } : { x: -100, y: -100 };
+        // A linear camera: 100 px per degree around (10, 50) at pixel (150, 100).
+        project(lngLat) { return { x: 150 + (lngLat[0] - 10) * 100, y: 100 - (lngLat[1] - 50) * 100 }; },
+        unproject(pt) { return { lng: 10 + (pt[0] - 150) / 100, lat: 50 - (pt[1] - 100) / 100 }; },
+        getSource(id) {
+          if (!fake.sources[id]) fake.sources[id] = { setData(data) { fake.calls.setData.push({ id, features: data.features.length }); } };
+          return fake.sources[id];
         },
       };
+      fake.sources = {};
+      fake.calls.setData = [];
       return Object.assign(fake, overrides || {});
     };
   });
@@ -104,10 +114,14 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         waterMatches: waterFill.pattern
           ? layer('water').paint['fill-pattern'] === waterFill.pattern.id
           : layer('water').paint['fill-color'] === waterFill.color,
-        // 1-bit: the road slot is a tile, so the road is a line pattern cropped to its width.
-        roadPattern: layer('roads-major').paint['line-pattern'],
-        roadPatternFromSlot: Boolean(roadFill.pattern) && layer('roads-major').paint['line-pattern'].indexOf(roadFill.pattern.id + '-h') === 0,
-        roadHasNoColor: layer('roads-major').paint['line-color'] === undefined,
+        // 1-bit: the road slot is a tile, so the road is a fill over a tile-line source
+        // that the runtime widens after the tiles load, not a MapLibre line.
+        roadType: layer('roads-major').type,
+        roadPattern: layer('roads-major').paint['fill-pattern'],
+        roadPatternFromSlot: Boolean(roadFill.pattern) && layer('roads-major').paint['fill-pattern'] === roadFill.pattern.id,
+        roadSource: style.sources[layer('roads-major').source] && style.sources[layer('roads-major').source].type,
+        roadCasing: layer('roads-major-casing') && layer('roads-major-casing').type,
+        lineSpecs: style.metadata['trmnl:lines'].map((spec) => spec.id),
         railDashedInk: layer('rail').paint['line-color'],
         railDash: layer('rail').paint['line-dasharray'],
         symbols: style.layers.filter((entry) => entry.type === 'symbol').length,
@@ -163,9 +177,12 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   // 1-bit: gray-60 water is a dither tile, so the layer paints with a pattern.
   expect(result.style.waterPaint['fill-pattern']).toMatch(/^trmnl-tile-\d+$/);
   expect(result.style.waterMatches).toBe(true);
-  expect(result.style.roadPattern).toMatch(/^trmnl-tile-\d+-h\d+$/);
+  expect(result.style.roadType).toBe('fill');
+  expect(result.style.roadPattern).toMatch(/^trmnl-tile-\d+$/);
   expect(result.style.roadPatternFromSlot).toBe(true);
-  expect(result.style.roadHasNoColor).toBe(true);
+  expect(result.style.roadSource).toBe('geojson');
+  expect(result.style.roadCasing).toBe('fill');
+  expect(result.style.lineSpecs).toEqual(expect.arrayContaining(['roads-major', 'roads-minor', 'water-lines']));
   // A dashed line cannot carry a pattern, so rail takes the tile's ink.
   expect(result.style.railDashedInk).toMatch(/^(rgb|#)/);
   expect(result.style.railDash).toEqual([3, 2]);
@@ -291,6 +308,8 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     // Idle: the runtime places the labels as framework elements, and ready()
     // waits for that first idle before it trusts loaded().
     fake.fire('idle');
+    const roadData = fake.calls.setData.find((call) => call.id === 'trmnl-lines-roads-major');
+    const roadCasingData = fake.calls.setData.find((call) => call.id === 'trmnl-lines-roads-major-casing');
     await maps.ready(fake);
     const water = paint.toMapLibre(paint.slot('map-water', { el: container })).pattern;
     const labels = Array.from(container.querySelectorAll('.map__labels .map__label')).map((node) => ({
@@ -298,6 +317,8 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     }));
     return {
       labels,
+      roadData,
+      roadCasingData,
       attribution: container.querySelector('.map__attribution') && container.querySelector('.map__attribution').textContent,
       fit,
       jumpTo: fake.calls.jumpTo,
@@ -307,6 +328,9 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     };
   });
   expect(attached.attribution).toBe('© OpenStreetMap contributors');
+  // The in-view road became stroke polygons (quads plus joins); the far one was skipped.
+  expect(attached.roadData.features).toBeGreaterThan(0);
+  expect(attached.roadCasingData.features).toBe(attached.roadData.features);
   // Alpha wins its pixel over Beta (bigger city first), the duplicate Alpha is
   // folded, Gamma and Big Lake fit, the pond is too small to name.
   expect(attached.labels.map((label) => label.text)).toEqual(['Alpha', 'Gamma', 'Big Lake']);

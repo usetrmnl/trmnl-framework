@@ -67,9 +67,10 @@
 // is a bg slot, lines included, so each resolves through the paint rail of the
 // screen it renders on (dither tiles on 1-bit and 2-bit, solids on 4-bit and
 // up, palette inks on color panels), and a theme re-points them with the same
-// mixin it uses for every other component. A line painted from a tile becomes
-// a line pattern in the renderer: the 1-bit gray of a road is the same dither
-// its area would be, never a hex the panel cannot print. The defaults are
+// mixin it uses for every other component. A line painted from a tile is drawn
+// as the polygon of its stroke filled with that tile: the 1-bit gray of a road
+// is the same screen-aligned dither its area would be, never a hex the panel
+// cannot print. The defaults are
 // chosen for 1-bit: areas are light tiles, and every line is a gray rather than
 // the ink, so a plotted route drawn in the ink (the chart-series ramp) reads on
 // top of the roads. base/_screen-mode-vars.scss re-points the area and line

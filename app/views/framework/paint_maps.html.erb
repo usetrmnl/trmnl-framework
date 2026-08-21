@@ -57,9 +57,9 @@
           <p class="<%= framework_section_description_classes %>">
             Every map slot is a bg slot, lines included, so each resolves through the device mode: a dither tile
             on 1- and 2-bit screens, a solid on 4-bit and up, a hue on the color panels. A line painted from a tile
-            becomes a line pattern at its width, so a 1-bit road is the same dither its area would be, never a
-            gray the panel cannot print; every line defaults to a gray short of the ink, so a plotted route in the
-            ink reads on top of the roads.
+            is drawn as the polygon of its stroke filled with that tile, so a 1-bit road is the same screen-aligned
+            dither its area would be, never a gray the panel cannot print; every line defaults to a gray short of
+            the ink, so a plotted route in the ink reads on top of the roads.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Land follows the canvas and the labels follow the text channel, so a theme restates the token-bound
@@ -116,8 +116,8 @@ var paint = water.pattern
   ? { "fill-pattern": water.pattern.id }   // dither tile
   : { "fill-color": water.color };         // solid
 
-// A line layer: TRMNLMaps.style() turns a tile into a line pattern at the line width;
-// by hand, a solid rail gives you the color and a dashed line takes the ink.
+// A line layer: TRMNLMaps.style() widens a tile line into a fill with the tile after the
+// tiles load; by hand, a solid rail gives you the color and a dashed line takes the ink.
 var road = TRMNLPaint.toMapLibre(TRMNLPaint.slot("map-road", { el: "my-map" }));
 var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint.px(2, { el: "my-map" }) };', language: 'javascript') %>
         </div>
