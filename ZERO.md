@@ -26,3 +26,7 @@
 - rbenv — heard as "R-B-env" or "arbenv"
 - jsDelivr — heard as "JS deliver"; missing "e"
 - OpenAI — misheard as: open AIs (suggested)
+- OpenStreetMap — misheard as: open street maps, open switch maps (suggested)
+- Strava — misheard as: travel; "Strava plugin" heard as "Strava plugger" (suggested)
+- TRMNLMaps — misheard as: determining maps (suggested)
+- Inter — misheard as: intern, enter (suggested)
