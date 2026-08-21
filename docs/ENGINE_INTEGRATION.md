@@ -147,7 +147,7 @@ docs chrome and the demos around it.
 | --- | --- | --- | --- |
 | `fonts.googleapis.com`, `fonts.gstatic.com` | Inter and EB Garamond for the docs UI, Space Mono for code, Inter again inside every demo iframe | `app/views/layouts/framework.html.erb`, the `@import` at the top of `app/assets/tailwind/application.css` (so it is baked into the `tailwind.css` the gem ships), and `buildSrcdoc` in `app/javascript/framework_docs/controllers/framework_examples_controller.js` | Docs chrome and demo iframes fall back to system fonts. Framework screens keep the self-hosted `/fonts` families either way. |
 | `unpkg.com` | `@trmnl/picker`, the screen-picker web component | `config/importmap.rb` | The device picker stays blank. Every page still renders. |
-| `trmnl.com` | Highcharts and Chartkick; MapLibre GL JS and its stylesheet | The chart docs page and the Shopify example fixture; the map docs page | Those charts render empty and those maps stay blank. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here; MapLibre is BSD licensed and mirrored there beside it. |
+| `trmnl.com` | Highcharts and Chartkick | The chart docs page and the Shopify example fixture | Those charts render empty. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here. MapLibre GL JS, by contrast, is BSD licensed and vendored: the engine serves it at `/framework-docs/maplibre-gl-5.24.0.js` and `.css` from `vendor/javascript/`, so the map page adds no library origin. |
 | `cdn.jsdelivr.net` | opentype.js | The font glyphs docs page | The glyph tables stay empty. |
 | `vector.openstreetmap.org` | OpenStreetMap vector tiles (Shortbread schema), fetched by MapLibre over XHR | The map docs page, through the `osm` preset in `TRMNLMaps.tiles()` | The maps draw nothing but their attribution label. |
 | `tiles.versatiles.org` | Glyph ranges for map labels | The map docs page, same preset | Roads and areas still draw; labels do not. |
@@ -155,9 +155,9 @@ docs chrome and the demos around it.
 Each failure is local to its own page, so a host that blocks all six still
 serves every docs page. Under a strict CSP, allow `style-src` and `font-src` for
 the two Google Fonts hosts, `script-src` for trmnl.com, unpkg.com and
-cdn.jsdelivr.net, `style-src` for trmnl.com (the MapLibre stylesheet),
-`connect-src` for vector.openstreetmap.org and tiles.versatiles.org, and
-`worker-src blob:` for the MapLibre worker, or accept the degradation above.
+cdn.jsdelivr.net, `connect-src` for vector.openstreetmap.org and
+tiles.versatiles.org, and `worker-src blob:` for the MapLibre worker, or accept
+the degradation above.
 The engine has no setting that turns them off. The two map hosts are
 development endpoints: [MAPS_GO_LIVE.md](MAPS_GO_LIVE.md) is the checklist that
 moves them to a TRMNL host before a map plugin ships.

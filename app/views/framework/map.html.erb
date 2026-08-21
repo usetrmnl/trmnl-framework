@@ -106,9 +106,9 @@
               </div>
               <div class="w-full flex items-center justify-between ml-3">
                 <p class="text-sm font-medium">
-                  These examples load MapLibre GL JS from trmnl.com and vector tiles from OpenStreetMap's community
-                  servers, so they render an empty canvas without network. MapLibre is BSD licensed; the map data is
-                  &copy; OpenStreetMap contributors.
+                  The framework serves MapLibre GL JS itself, under /framework-docs/ next to the runtime, and the
+                  examples fetch vector tiles from OpenStreetMap's community servers, so they render an empty canvas
+                  without network. MapLibre is BSD licensed; the map data is &copy; OpenStreetMap contributors.
                 </p>
               </div>
             </div>
@@ -119,8 +119,8 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'Streets') %>
             <p class="<%= framework_subsection_description_classes %>">
-              The streets preset on its own: one place, one zoom, nothing plotted. Load MapLibre from trmnl.com, give
-              the map a container with the map class, and build it inside watch().
+              The streets preset on its own: one place, one zoom, nothing plotted. Load MapLibre from the framework,
+              give the map a container with the map class, and build it inside watch().
             </p>
           </div>
 
@@ -128,8 +128,8 @@
             <div class="<%= framework_example_inner_classes %>">
               <div class="<%= framework_example_wrapper_classes %>">
                 <div class="screen">
-                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+                  <script data-trmnl-src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+                  <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                   <div class="view view--full">
                     <div class="layout layout--col gap--small">
@@ -196,9 +196,9 @@
           </div>
 
           <div class="mt-4">
-            <%= render CodeExampleComponent.new(demo_code: '<!-- import MapLibre GL JS and its stylesheet -->
-<script src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-<link href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- import MapLibre GL JS and its stylesheet, served by the framework -->
+<script src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+<link href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
 <!-- markup with an empty, ID\'d .map container for the canvas -->
 <div class="view view--full">
@@ -276,8 +276,8 @@
             <div class="<%= framework_example_inner_classes %>">
               <div class="<%= framework_example_wrapper_classes %>">
                 <div class="screen">
-                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+                  <script data-trmnl-src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+                  <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                   <div class="view view--full">
                     <div class="layout layout--col gap--small">
@@ -362,8 +362,8 @@
             <div class="<%= framework_example_inner_classes %>">
               <div class="<%= framework_example_wrapper_classes %>">
                 <div class="screen">
-                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+                  <script data-trmnl-src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+                  <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                   <div class="view view--full">
                     <div class="layout layout--col gap--small">
@@ -491,8 +491,8 @@ whenReady(function () {
             <div class="<%= framework_example_inner_classes %>">
               <div class="<%= framework_example_wrapper_classes %>">
                 <div class="screen">
-                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+                  <script data-trmnl-src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+                  <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                   <div class="view view--full">
                     <div class="layout layout--col gap--small">
@@ -563,8 +563,8 @@ TRMNLMaps.watch(el, function () {
           <div class="<%= framework_example_inner_classes %>">
             <div class="<%= framework_example_wrapper_classes %>">
               <div class="screen">
-                <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-                <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+                <script data-trmnl-src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+                <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                 <div class="view view--full">
                   <div class="layout layout--col gap--small">
@@ -673,9 +673,9 @@ TRMNLMaps.watch(el, function () {
         </div>
 
         <div class="mt-4">
-          <%= render CodeExampleComponent.new(demo_code: '<!-- import MapLibre GL JS and its stylesheet -->
-<script src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
-<link href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+          <%= render CodeExampleComponent.new(demo_code: '<!-- import MapLibre GL JS and its stylesheet, served by the framework -->
+<script src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+<link href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
 <div class="view view--full">
   <div class="layout layout--col gap--small">

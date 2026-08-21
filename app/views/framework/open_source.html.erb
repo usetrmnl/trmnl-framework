@@ -144,7 +144,7 @@
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
           <li><strong>Google Fonts</strong> (<code class="<%= framework_section_code_classes %>">fonts.googleapis.com</code>, <code class="<%= framework_section_code_classes %>">fonts.gstatic.com</code>): Inter and EB Garamond for this site, Space Mono for code, and Inter again inside every demo iframe. Blocked, the site falls back to system fonts and the screens keep their self-hosted families. See <%= render DocsRef.new(page: :font_family) %>.</li>
           <li><strong>unpkg</strong> (<code class="<%= framework_section_code_classes %>">unpkg.com</code>): the <code class="<%= framework_section_code_classes %>">@trmnl/picker</code> component behind the device selector. Blocked, the picker stays blank.</li>
-          <li><strong>trmnl.com</strong>: Highcharts and Chartkick on the chart page and in the Shopify example, and MapLibre GL JS with its stylesheet on the map page. Blocked, those charts render empty and those maps stay blank. See <%= render DocsRef.new(page: :chart) %> and <%= render DocsRef.new(page: :map) %>.</li>
+          <li><strong>trmnl.com</strong>: Highcharts and Chartkick, on the chart page and in the Shopify example. Blocked, those charts render empty. See <%= render DocsRef.new(page: :chart) %>.</li>
           <li><strong>jsDelivr</strong> (<code class="<%= framework_section_code_classes %>">cdn.jsdelivr.net</code>): opentype.js, which reads the glyph tables. Blocked, those tables stay empty. See <%= render DocsRef.new(page: :font_glyphs) %>.</li>
           <li><strong>OpenStreetMap</strong> (<code class="<%= framework_section_code_classes %>">vector.openstreetmap.org</code>): the vector tiles behind the map demos. Blocked, the maps draw nothing but their attribution label. See <%= render DocsRef.new(page: :map) %>.</li>
           <li><strong>VersaTiles</strong> (<code class="<%= framework_section_code_classes %>">tiles.versatiles.org</code>): the glyph ranges map labels are set from. Blocked, maps draw without labels.</li>
@@ -169,7 +169,7 @@
             Highcharts is a commercial library the framework does not include. The chart examples load it from trmnl.com, where TRMNL serves it under its own license, and <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> is only the adapter. A custom stack brings its own charting library and license: see <%= render DocsRef.new(page: :chart) %>.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            MapLibre GL JS is BSD licensed and the map examples load it from trmnl.com, where TRMNL mirrors it. The map data is &copy; OpenStreetMap contributors under the ODbL, which is why every map keeps its credit visible, and <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> is only the adapter: see <%= render DocsRef.new(page: :map) %>.
+            MapLibre GL JS is BSD licensed and vendored under <code class="<%= framework_section_code_classes %>">vendor/javascript/</code>, served by the engine next to the runtime; <code class="<%= framework_section_code_classes %>">THIRD_PARTY_NOTICES.md</code> carries its notice. The map data is &copy; OpenStreetMap contributors under the ODbL, which is why every map keeps its credit visible, and <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> is only the adapter: see <%= render DocsRef.new(page: :map) %>.
           </p>
         </div>
       </section>

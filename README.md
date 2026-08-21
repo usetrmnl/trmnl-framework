@@ -314,8 +314,7 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   - The screen-picker web component (`@trmnl/picker`), pinned to `unpkg.com` in
     `config/importmap.rb`: the device picker stays blank.
   - Highcharts and Chartkick from `trmnl.com`, on the chart page and in the Shopify
-    example fixture, and MapLibre GL JS with its stylesheet from the same host on the map
-    page: those charts render empty and those maps stay blank. See the License section.
+    example fixture: those charts render empty. See the License section.
   - opentype.js from jsDelivr on the font glyphs page: the glyph tables stay empty.
   - OpenStreetMap vector tiles from `vector.openstreetmap.org` and map glyphs from
     `tiles.versatiles.org`, on the map page: the maps draw nothing but their attribution.
@@ -370,7 +369,8 @@ serves it under its own license. That license does not come with this repo:
 `TRMNLCharts` is an adapter, so a fork or a custom stack brings its own charting library
 and its own license.
 
-MapLibre GL JS is BSD licensed and not contained here either; the map docs page loads it
-from `trmnl.com`, where TRMNL mirrors it. The map data is © OpenStreetMap contributors
-under the ODbL, which is why every map keeps its attribution visible. `TRMNLMaps` is an
-adapter, so a fork brings its own tile source and keeps the credit.
+MapLibre GL JS is BSD licensed and vendored under `vendor/javascript/`, served by the
+engine next to the runtime; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) carries its
+notice. The map data is © OpenStreetMap contributors under the ODbL, which is why every
+map keeps its attribution visible. `TRMNLMaps` is an adapter, so a fork brings its own
+tile source and keeps the credit.

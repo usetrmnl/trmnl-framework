@@ -499,7 +499,7 @@ RSpec.describe 'Engine host contract' do
         expect(chrome_origins).to contain_exactly('fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com')
         expect(root.join('app/views/framework/font_glyphs.html.erb').read).to include('cdn.jsdelivr.net')
         expect(root.join('app/views/framework/chart.html.erb').read).to include('https://trmnl.com/js/highcharts')
-        expect(root.join('app/views/framework/map.html.erb').read).to include('https://trmnl.com/js/maplibre-gl')
+        expect(root.join('app/views/framework/map.html.erb').read).to include('/framework-docs/maplibre-gl-5.24.0.js')
         expect(root.join('app/javascript/plugin-render/plugins.js').read).to include('https://vector.openstreetmap.org/')
       end
     end

@@ -21,25 +21,30 @@ the preset points there. This file is the list of what that takes.
 - `TRMNLMaps.tiles()` carries the preset: URL, zoom range, attribution, glyph
   endpoint, font stacks, and a `workerUrl` slot for a CSP-hosted worker. The
   go-live switch is one edit to that preset, plus the disclosure set below.
-- MapLibre GL JS 5.24.0 is referenced as
-  `https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js` and
-  `maplibre-gl.css`, a mirror beside `trmnl.com/js/highcharts/12.3.0/`. The
-  docs page and every snippet name that path today. 5.24.0 is the last release
-  with a UMD build: MapLibre 6.x ships `dist/maplibre-gl.mjs` only, and a
-  plugin loads the library with a classic `<script>` tag and reads
-  `window.maplibregl`, the same contract as Highcharts. Moving to 6.x means a
-  module script in every plugin and in the docs demo rewrite, so it is a
-  separate decision.
+- MapLibre GL JS 5.24.0 is vendored under `vendor/javascript/` and served by
+  `Framework::Static` at `/framework-docs/maplibre-gl-5.24.0.js` and
+  `/framework-docs/maplibre-gl-5.24.0.css`, the way Prism and jQuery are. The
+  docs page and every snippet name that root-relative path today, so it
+  resolves on `bin/dev` and on any host that mounts the engine (trmnl.com
+  included) without a separate upload. 5.24.0 is the last release with a UMD
+  build: MapLibre 6.x ships `dist/maplibre-gl.mjs` only, and a plugin loads the
+  library with a classic `<script>` tag and reads `window.maplibregl`, the same
+  contract as Highcharts. Moving to 6.x means a module script in every plugin
+  and in the docs demo rewrite, so it is a separate decision.
 - Attribution is written into every map container by `TRMNLMaps.attach()` and
   typed by `components/_map.scss`. It stays after the switch: the data is
   OpenStreetMap either way.
 
 ## Checklist (owner: core and ops)
 
-- [ ] **Mirror MapLibre.** Upload `maplibre-gl.js`, `maplibre-gl.css` and the
-      BSD LICENSE file to `trmnl.com/js/maplibre-gl/5.24.0/`, with long-lived
-      immutable cache headers and the same CORS setup as Highcharts. If the
-      renderer or the previews send a CSP without `worker-src blob:`, mirror the
+- [ ] **Decide where plugins load MapLibre from.** Today the engine serves the
+      vendored copy at `/framework-docs/maplibre-gl-5.24.0.js`, which a plugin
+      rendered by a host that mounts the engine can reach root-relative. If the
+      library should instead sit beside Highcharts on the CDN, upload
+      `maplibre-gl.js`, `maplibre-gl.css` and the BSD LICENSE to
+      `trmnl.com/js/maplibre-gl/5.24.0/` with long-lived immutable cache headers
+      and the same CORS setup, then repoint the docs snippets. If the renderer or
+      the previews send a CSP without `worker-src blob:`, serve the
       `maplibre-gl-csp.js` build and `maplibre-gl-csp-worker.js` too and set the
       preset's `workerUrl` (MapLibre reads it as `maplibregl.workerUrl`).
 - [ ] **Stand up a tile host.** Self-hosted Shortbread 1.0 tiles, built with
