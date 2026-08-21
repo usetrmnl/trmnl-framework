@@ -4,7 +4,7 @@
 // setup/draw/formatValue or p5.js. The public API is only the window.* assignments
 // made inside (terminalize, executeTerminalize, markFrameworkReady, frameworkReady,
 // TRMNL_PLUGINS_READY, __TRMNL_LAST_STATS__, __terminalizeScheduler, TRMNLPaint,
-// TRMNLCharts, __TRMNL_BUILD__). Encloses the existing TRMNLPaint/autoRunTerminalize
+// TRMNLCharts, TRMNLMaps, __TRMNL_BUILD__). Encloses the existing TRMNLPaint/autoRunTerminalize
 // IIFEs so autoRunTerminalize can still reach the private scheduleTerminalize.
 (function () {
 /**
@@ -3127,6 +3127,16 @@ async function waitForImagesToSettle(root = document, opts = {}) {
   return { waitedCount, timedOut };
 }
 
+// Maps render asynchronously (vector tiles, glyphs, a WebGL frame), so the pass
+// waits for every map TRMNLMaps has attached to go idle before READY flips, the
+// way it waits for <img> decode above. Bounded, so a slow tile host cannot hold
+// a screenshot forever; TRMNLMaps.settle owns the default and the override.
+async function waitForMapsToSettle(root = document, opts = {}) {
+  const maps = window.TRMNLMaps;
+  if (!maps || typeof maps.settle !== 'function') return { targets: 0, timedOut: false };
+  return maps.settle({ maxWaitMs: opts.maxWaitMs });
+}
+
 // Arm adaptive images so the stylesheet can mask-recolor them (CSS cannot read
 // an img's own src). A CSS mask source is CORS-restricted, so we can only
 // recolor an icon we are actually allowed to read: we fetch it and, on success,
@@ -3931,6 +3941,19 @@ async function runTerminalizePass() {
     addEngine('Adjust column gaps', { containers, adjusted, gapsApplied });
   }
 
+  // Maps settle last: the layout passes above may have resized a map's
+  // container, and READY must not flip while tiles are still arriving.
+  {
+    const t0 = performance.now();
+    let meta = { targets: 0, timedOut: false };
+    const res = await runSafelyAsync('Wait for maps', waitForMapsToSettle, null);
+    if (res) meta = { targets: res.targets, timedOut: !!res.timedOut };
+    if (meta.targets > 0 || meta.timedOut) {
+      pushStep('Wait for maps', meta, t0);
+      addEngine('Wait for maps', meta);
+    }
+  }
+
   } catch (error) {
     recordError('pipeline', error);
   } finally {
@@ -4077,13 +4100,15 @@ window.markFrameworkReady = markFrameworkReady;
  *   Fill = { color: string|null, image: string|null, url: string|null, size: number|null }
  *
  * where `url && size` ⇒ a dither tile pattern and `color` alone ⇒ a solid. All
- * library-specific shaping lives in adapters (toHighcharts, …). Total functions:
- * a missing .screen or unknown token yields a null-field Fill rather than throwing
- * (charts render on a screenshot service; a throw = a blank device screen).
+ * library-specific shaping lives in adapters (toHighcharts, toMapLibre, …). Total
+ * functions: a missing .screen or unknown token yields a null-field Fill rather
+ * than throwing (charts and maps render on a screenshot service; a throw = a
+ * blank device screen).
  *
  * TRMNLCharts is the Highcharts-specific composition layer built on top of
- * TRMNLPaint. Both globals are exported from this one shared closure. Neither
- * depends on the terminalize() pipeline.
+ * TRMNLPaint, and TRMNLMaps is the MapLibre GL JS one. All three globals are
+ * exported from this one shared closure. Charts depend on nothing in the
+ * terminalize() pipeline; maps only hand it a readiness wait (settle()).
  */
 (function () {
   const TRANSPARENT = 'rgba(0, 0, 0, 0)';
@@ -4449,6 +4474,20 @@ window.markFrameworkReady = markFrameworkReady;
     return v != null && typeof v === 'object' && !Array.isArray(v);
   }
 
+  // Deep-merge plain objects (arrays and scalars replace). Shared by
+  // TRMNLCharts.merge and TRMNLMaps.merge: layer a chart's or a map's own
+  // config over the recommended defaults.
+  function deepMerge(base, overrides) {
+    if (!isPlainObject(base) || !isPlainObject(overrides)) {
+      return overrides === undefined ? base : overrides;
+    }
+    const out = Object.assign({}, base);
+    for (const key of Object.keys(overrides)) {
+      out[key] = deepMerge(base[key], overrides[key]);
+    }
+    return out;
+  }
+
   // How many chart-series slots the resolved cascade declares. chart-series-ramp
   // in mixins/_theme-slots.scss emits the count and the slots from the same
   // $chart-series-slots constant, so this read is what bounds ramp() and
@@ -4505,6 +4544,30 @@ window.markFrameworkReady = markFrameworkReady;
   // utilities/_image.scss paints img.image--adaptive, so it projects onto the
   // same properties the .text--* roles use and reads back the same three.
   const SEMANTIC_ICON = new Set(['icon']);
+
+  // The eight fields of a CSS border renderer program, in the order
+  // mixins/_border-levels.scss:border-render-solid and the pattern emitters in
+  // base/_screen-mode-vars.scss declare them. slot() projects a slot's own
+  // program onto the generic --framework-border-render-* names so readBorder()
+  // reads a slotted line exactly like a utility rail.
+  const BORDER_RENDER_FIELDS = ['stroke', 'width', 'height', 'view-box', 'path-1', 'color-1', 'path-2', 'color-2'];
+
+  // Tile images handed to MapLibre. A Fill's tile is an SVG data URI; the
+  // adapter composites the field into it once and registers the result under a
+  // stable id, so every layer that paints with the same Fill shares one image
+  // and TRMNLMaps.attach() can answer MapLibre's styleimagemissing by id.
+  const tileImages = new Map();
+  const tileImagesById = new Map();
+  function registerTileImage(image, width, height, pixelRatio) {
+    const key = image + '@' + pixelRatio;
+    let record = tileImages.get(key);
+    if (!record) {
+      record = { id: 'trmnl-tile-' + (tileImages.size + 1), image: image, width: width, height: height, pixelRatio: pixelRatio };
+      tileImages.set(key, record);
+      tileImagesById.set(record.id, record);
+    }
+    return record;
+  }
 
   const TRMNLPaint = {
     /**
@@ -4620,6 +4683,56 @@ window.markFrameworkReady = markFrameworkReady;
         return makeFill(t.image, t.color, t.size, screen);
       }
       return emptyFill();
+    },
+
+    /**
+     * Resolve a framework component slot (`--framework-slot-<name>-*`) to a
+     * Fill, or to a BorderFill for a line slot. Slots are the paint a theme
+     * re-points per component (mixins/_theme-slots.scss: bg-slot, text-slot,
+     * border-token-slot); the map slots in base/_screen.scss are the first ones
+     * a non-CSS renderer draws with, so they are projected onto standard
+     * properties the same way semantic() projects the semantic channels, and
+     * read back through computed style.
+     *
+     * kind 'bg' (default): the -bg-color/-bg-image pair as a background.
+     * kind 'text': the -text-color/-text-image/-text-under trio, ink first.
+     * kind 'border': the four background longhands plus the slot's own renderer
+     * program, so `render.stroke` is the CSS-declared mode-correct solid.
+     *
+     * @param {string} name - e.g. 'map-water', 'progress-fill'
+     * @param {{el?: (string|Element), kind?: ('bg'|'text'|'border')}} [opts]
+     * @returns {{color, image, url, size}|{color, image, url, size, position, repeat, render, dir}}
+     */
+    slot(name, opts) {
+      const kind = opts && (opts.kind === 'text' || opts.kind === 'border') ? opts.kind : 'bg';
+      const screen = resolveScreen(opts && opts.el);
+      if (!screen) return kind === 'border' ? emptyBorderFill('h') : emptyFill();
+      const context = resolvePaintContext(opts && opts.el, screen);
+      const base = '--framework-slot-' + String(name == null ? '' : name).trim();
+      if (kind === 'text') {
+        const t = probe('', context, (cs) => ({ color: cs.color, image: cs.backgroundImage, size: cs.backgroundSize }),
+          'color:var(' + base + '-text-color);' +
+          'background-color:var(' + base + '-text-under, transparent);' +
+          'background-image:var(' + base + '-text-image, none);' +
+          'background-size:var(--dither-bg-size, auto);');
+        return makeFill(t.image, t.color, t.size, screen);
+      }
+      if (kind === 'border') {
+        let style = 'background-color:var(' + base + '-border-color, transparent);' +
+          'background-image:var(' + base + '-border-image, none);' +
+          'background-size:var(' + base + '-border-size, auto);' +
+          'background-position:var(' + base + '-border-position, 0 0);';
+        for (const field of BORDER_RENDER_FIELDS) {
+          style += '--framework-border-render-' + field + ':var(' + base + '-border-render-' + field + ');';
+        }
+        const raw = probe('', context, readBorder, style);
+        return makeBorderFill(raw, 'h');
+      }
+      const b = probe('', context, readBg,
+        'background-color:var(' + base + '-bg-color);' +
+        'background-image:var(' + base + '-bg-image);' +
+        'background-size:var(--dither-bg-size, auto);');
+      return makeFill(b.image, b.color, b.size, screen);
     },
 
     /**
@@ -4758,8 +4871,13 @@ window.markFrameworkReady = markFrameworkReady;
      * source of truth: probe widths force the browser to evaluate custom-property
      * expressions before JavaScript sees the numeric factors.
      *
+     * `pixel` and `dither` are the screen's --pixel-ratio and --dither-ratio:
+     * device capability rather than paint, read the same way so a renderer that
+     * owns its own backing store (a MapLibre canvas) lands one device pixel per
+     * texel, the way --dither-bg-size does for a CSS tile.
+     *
      * @param {{el?: (string|Element)}} [opts]
-     * @returns {{name: string|null, device: number, modifier: number, ui: number, content: number, textName: string|null, textModifier: number, textUi: number}}
+     * @returns {{name: string|null, device: number, modifier: number, ui: number, content: number, textName: string|null, textModifier: number, textUi: number, pixel: number, dither: number}}
      */
     scale(opts) {
       const screen = resolveScreen(opts && opts.el);
@@ -4772,6 +4890,8 @@ window.markFrameworkReady = markFrameworkReady;
         textName: screenTextScaleName(screen),
         textModifier: resolvedScaleFactor(screen, '--modifier-text-scale'),
         textUi: resolvedScaleFactor(screen, '--text-ui-scale'),
+        pixel: resolvedScaleFactor(screen, '--pixel-ratio'),
+        dither: resolvedScaleFactor(screen, '--dither-ratio'),
       };
     },
 
@@ -4842,6 +4962,50 @@ window.markFrameworkReady = markFrameworkReady;
       const px = fill.size || svgExtent(fill.url, 'width');
       if (!(px > 0)) return fill.color;
       return { pattern: { image: image, width: px, height: px, backgroundColor: fill.color || undefined } };
+    },
+
+    /**
+     * Adapter: shape a Fill or BorderFill for MapLibre GL JS paint. Returns
+     * { color, ink, pattern }: `color` is the flat field for a solid Fill (null
+     * for a tile), `ink` is the one color a line or glyph can take (the solid,
+     * a line slot's CSS-declared stroke, or the tile's painted ink), and
+     * `pattern` is the registered tile image for fill-pattern/line-pattern
+     * (null for solids). The field is composited INTO the tile image as for
+     * Highcharts, and `pixelRatio` = tile width / resolved CSS size, so the
+     * image displays at exactly --dither-bg-size and one texel lands on one
+     * device pixel. A line fill never becomes a pattern: its dash art is a
+     * one-pixel rail, and the renderer program carries the solid it reduces to.
+     *
+     * @param {{color, image, url, size, render?, dir?}} fill
+     * @returns {{color: string|null, ink: string|null, pattern: ({id, image, width, height, pixelRatio}|null)}}
+     */
+    toMapLibre(fill) {
+      const out = { color: null, ink: null, pattern: null };
+      if (!fill) return out;
+      const solid = isOpaqueColor(fill.color) ? fill.color : null;
+      const isLine = !!(fill.render || fill.dir);
+      if (isLine) {
+        out.color = solid || (fill.render && fill.render.stroke) || null;
+        out.ink = out.color;
+        return out;
+      }
+      if (!fill.url) {
+        out.color = solid;
+        out.ink = solid;
+        return out;
+      }
+      out.ink = imageInk(fill.url) || solid;
+      const fieldHex = normalizeHex(fill.color);
+      const image = fieldHex ? compositeFieldIntoTile(fill.url, fieldHex) : fill.url;
+      const width = svgExtent(fill.url, 'width');
+      const height = svgExtent(fill.url, 'height') || width;
+      const size = fill.size || width;
+      if (!(width > 0) || !(size > 0)) {
+        out.color = solid;
+        return out;
+      }
+      out.pattern = registerTileImage(image, width, height, width / size);
+      return out;
     },
 
     /**
@@ -5209,14 +5373,7 @@ window.markFrameworkReady = markFrameworkReady;
      * config over the recommended defaults.
      */
     merge(base, overrides) {
-      if (!isPlainObject(base) || !isPlainObject(overrides)) {
-        return overrides === undefined ? base : overrides;
-      }
-      const out = Object.assign({}, base);
-      for (const key of Object.keys(overrides)) {
-        out[key] = TRMNLCharts.merge(base[key], overrides[key]);
-      }
-      return out;
+      return deepMerge(base, overrides);
     },
 
     /**
@@ -5306,8 +5463,806 @@ window.markFrameworkReady = markFrameworkReady;
     },
   };
 
+  // ── Maps (MapLibre GL JS composition over TRMNLPaint) ──
+  // TRMNLMaps composes MapLibre options, a style and overlay paint out of
+  // TRMNLPaint.slot()/semantic()/series()/type() read through toMapLibre(). It
+  // owns no paint: every color, pattern and width below is a resolver result or
+  // px() of a base width. The rest is runtime mechanics: a tile-source preset,
+  // the Shortbread layer catalog, pattern image registration, camera snapping
+  // to the pixel grid, a polyline decoder, and the readiness wait terminalize
+  // calls.
+
+  // Tile sources. `osm` is the OSMF Shortbread vector tile service plus the
+  // VersaTiles glyph host (OSMF serves no glyphs). Both are community servers
+  // for development and docs; docs/MAPS_GO_LIVE.md is the switch to a TRMNL
+  // host, one preset edit here.
+  const MAP_TILE_PRESETS = {
+    osm: {
+      id: 'osm',
+      url: 'https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt',
+      minzoom: 0,
+      maxzoom: 14,
+      attribution: '© OpenStreetMap contributors',
+      glyphs: 'https://tiles.versatiles.org/assets/glyphs/{fontstack}/{range}.pbf',
+      fonts: { regular: 'noto_sans_regular', bold: 'noto_sans_bold' },
+      workerUrl: null,
+    },
+  };
+
+  // Bounded readiness wait, overridable per call and by window.__TRMNL_MAPS_SETTLE_MS__.
+  const MAP_SETTLE_MS = 6000;
+  // Web Mercator world size at zoom 0 in MapLibre's tile units.
+  const MAP_TILE_SIZE = 512;
+
+  // Shortbread 1.0 `kind` groups per source-layer, the only schema knowledge
+  // the style needs. Paint still comes from the slots.
+  const MAP_AREA_KINDS = ['residential', 'commercial', 'industrial', 'retail', 'garages', 'railway'];
+  const MAP_GREEN_KINDS = [
+    'forest', 'wood', 'grass', 'grassland', 'meadow', 'park', 'garden', 'cemetery', 'grave_yard',
+    'orchard', 'vineyard', 'allotments', 'village_green', 'recreation_ground', 'golf_course',
+    'heath', 'scrub', 'wetland', 'swamp', 'bog', 'marsh',
+  ];
+  const MAP_MAJOR_ROADS = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary'];
+  const MAP_MINOR_ROADS = ['residential', 'living_street', 'unclassified', 'service', 'pedestrian', 'busway', 'bus_guideway'];
+  const MAP_PATHS = ['track', 'path', 'footway', 'cycleway', 'steps'];
+  const MAP_RAILS = ['rail', 'light_rail', 'subway', 'tram', 'narrow_gauge', 'monorail', 'funicular'];
+  const MAP_PLACES_MAJOR = ['capital', 'state_capital', 'city'];
+  const MAP_PLACES_MINOR = ['town', 'village', 'suburb', 'quarter', 'neighbourhood', 'hamlet'];
+
+  // Which layer groups each preset draws. `streets` is the full map, `minimal`
+  // keeps the shapes a route sits on, `outline` is coast, water, main roads and
+  // the big names for the smallest views, `blank` is the land alone for
+  // overlays. Boundaries list the admin levels a preset shows.
+  const MAP_PRESETS = {
+    streets: { area: true, green: true, water: true, waterLines: true, buildings: true, minor: true, paths: true, major: true, rail: true, boundaries: [2, 4], placesMajor: true, placesMinor: true, streetLabels: true, waterLabels: true },
+    minimal: { area: true, green: true, water: true, waterLines: true, major: true, rail: true, boundaries: [2], placesMajor: true, placesMinor: true },
+    outline: { water: true, major: true, boundaries: [2], placesMajor: true },
+    blank: {},
+  };
+
+  const liveMaps = new Map();
+  const attachedMaps = new WeakSet();
+  let mapWebglSupport = null;
+
+  function mapInk(fill) {
+    return TRMNLPaint.toMapLibre(fill).ink;
+  }
+
+  function mapHalo(el) {
+    return mapInk(TRMNLPaint.semantic('stroke-contrast', { el: el }));
+  }
+
+  // Whole device pixels for MapLibre widths: px() of a base width, rounded, and
+  // never below one so a hairline survives the renderer.
+  function mapPx(value, el, kind) {
+    const scaled = TRMNLPaint.px(value, { el: el, kind: kind || 'content' });
+    return Number.isFinite(scaled) ? Math.max(1, Math.round(scaled)) : 1;
+  }
+
+  function mapFillPaint(paint) {
+    if (!paint) return null;
+    if (paint.pattern) return { 'fill-pattern': paint.pattern.id, 'fill-antialias': false };
+    if (paint.color) return { 'fill-color': paint.color, 'fill-antialias': false };
+    return null;
+  }
+
+  function mapKindFilter(kinds) {
+    return ['in', ['get', 'kind'], ['literal', kinds]];
+  }
+
+  function mapLineLayer(id, sourceLayer, filter, ink, width, extra) {
+    if (!ink) return null;
+    const layer = {
+      id: id,
+      type: 'line',
+      source: 'osm',
+      'source-layer': sourceLayer,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': ink, 'line-width': width, 'line-blur': 0 },
+    };
+    if (filter) layer.filter = filter;
+    if (extra) {
+      if (extra.minzoom != null) layer.minzoom = extra.minzoom;
+      if (extra.dash) layer.paint['line-dasharray'] = extra.dash;
+      if (extra.cap) layer.layout['line-cap'] = extra.cap;
+    }
+    return layer;
+  }
+
+  function mapFillLayer(id, sourceLayer, filter, paint, minzoom) {
+    const p = mapFillPaint(paint);
+    if (!p) return null;
+    const layer = { id: id, type: 'fill', source: 'osm', 'source-layer': sourceLayer, paint: p };
+    if (filter) layer.filter = filter;
+    if (minzoom != null) layer.minzoom = minzoom;
+    return layer;
+  }
+
+  function mapSymbolLayer(id, sourceLayer, filter, text, layout, extra) {
+    if (!text || !text.paint || !text.paint['text-color'] || !text.layout || !(text.layout['text-size'] > 0)) return null;
+    const layer = {
+      id: id,
+      type: 'symbol',
+      source: 'osm',
+      'source-layer': sourceLayer,
+      layout: Object.assign({ 'text-field': ['get', 'name'] }, text.layout, layout || {}),
+      paint: Object.assign({}, text.paint),
+    };
+    if (filter) layer.filter = filter;
+    if (extra && extra.minzoom != null) layer.minzoom = extra.minzoom;
+    return layer;
+  }
+
+  // Integer widths that step with zoom: a step expression keeps every value a
+  // whole pixel, where an interpolation would hand the renderer fractions.
+  function mapStepWidth(base) {
+    return ['step', ['zoom'], Math.max(1, Math.round(base / 2)), 12, base, 16, base * 2];
+  }
+
+  function mapBounds(coords) {
+    if (!Array.isArray(coords) || !coords.length) return null;
+    let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+    for (const c of coords) {
+      const lng = Array.isArray(c) ? c[0] : (c && c.lng);
+      const lat = Array.isArray(c) ? c[1] : (c && c.lat);
+      if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
+      if (lng < minLng) minLng = lng;
+      if (lng > maxLng) maxLng = lng;
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+    }
+    if (!Number.isFinite(minLng) || !Number.isFinite(minLat)) return null;
+    return [[minLng, minLat], [maxLng, maxLat]];
+  }
+
+  // Web Mercator projection at an integer zoom, in MapLibre's 512px tile units.
+  function mapProject(lng, lat, zoom) {
+    const scale = MAP_TILE_SIZE * Math.pow(2, zoom);
+    const rad = (lat * Math.PI) / 180;
+    return {
+      x: ((lng + 180) / 360) * scale,
+      y: ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * scale,
+      scale: scale,
+    };
+  }
+
+  function mapUnproject(x, y, scale) {
+    const n = Math.PI - (2 * Math.PI * y) / scale;
+    return [(x / scale) * 360 - 180, (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))];
+  }
+
+  // Move the center so the viewport's world-pixel origin sits on a whole backing
+  // pixel at an integer zoom. Pattern images anchor to that origin, so this is
+  // what keeps a 16px dither tile on the device pixel grid.
+  function snapMapCenter(map, center, zoom) {
+    const lng = center && center.lng != null ? center.lng : (Array.isArray(center) ? center[0] : null);
+    const lat = center && center.lat != null ? center.lat : (Array.isArray(center) ? center[1] : null);
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+    let w = 0, h = 0, pr = 1;
+    try {
+      const canvas = map.getCanvas && map.getCanvas();
+      w = canvas ? canvas.clientWidth : 0;
+      h = canvas ? canvas.clientHeight : 0;
+      pr = (map.getPixelRatio && map.getPixelRatio()) || 1;
+    } catch (_) {}
+    if (!(w > 0) || !(h > 0) || !(pr > 0)) return [lng, lat];
+    const p = mapProject(lng, lat, zoom);
+    const snap = (v, extent) => Math.round((v - extent / 2) * pr) / pr + extent / 2;
+    return mapUnproject(snap(p.x, w), snap(p.y, h), p.scale);
+  }
+
+  function snapMapInPlace(map) {
+    try {
+      const zoom = map.getZoom();
+      if (!Number.isInteger(zoom)) return;
+      const center = snapMapCenter(map, map.getCenter(), zoom);
+      if (center) map.jumpTo({ center: center, zoom: zoom, bearing: 0, pitch: 0 });
+    } catch (_) {}
+  }
+
+  // Decode a registered tile image to ImageData and hand it to the map. Runs
+  // from styleimagemissing (lazy) and from style.load (eager, for every pattern
+  // the style names), tracked in the map's pending set so ready() waits for it.
+  function rasterizeTile(rec, tile) {
+    const map = rec.map;
+    if (!tile || rec.removed) return Promise.resolve();
+    try { if (map.hasImage && map.hasImage(tile.id)) return Promise.resolve(); } catch (_) {}
+    if (rec.loading.has(tile.id)) return rec.loading.get(tile.id);
+    const job = new Promise((resolve) => {
+      const doc = (rec.el && rec.el.ownerDocument) || document;
+      const img = doc.createElement('img');
+      const done = () => {
+        try {
+          if (!rec.removed && img.naturalWidth > 0 && !(map.hasImage && map.hasImage(tile.id))) {
+            const canvas = doc.createElement('canvas');
+            canvas.width = tile.width;
+            canvas.height = tile.height;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0, tile.width, tile.height);
+            map.addImage(tile.id, ctx.getImageData(0, 0, tile.width, tile.height), { pixelRatio: tile.pixelRatio });
+          }
+        } catch (_) {}
+        rec.pending.delete(job);
+        resolve();
+      };
+      img.onload = done;
+      img.onerror = done;
+      img.src = tile.image;
+    });
+    rec.pending.add(job);
+    rec.loading.set(tile.id, job);
+    return job;
+  }
+
+  function preloadTileImages(rec) {
+    let style = null;
+    try { style = rec.map.getStyle(); } catch (_) {}
+    const layers = (style && style.layers) || [];
+    for (const layer of layers) {
+      const paint = layer && layer.paint;
+      if (!paint) continue;
+      for (const key of ['fill-pattern', 'line-pattern', 'background-pattern']) {
+        const id = paint[key];
+        if (typeof id === 'string' && tileImagesById.has(id)) rasterizeTile(rec, tileImagesById.get(id));
+      }
+    }
+  }
+
+  function mapStyleAttribution(map) {
+    try {
+      const style = map.getStyle();
+      const sources = (style && style.sources) || {};
+      for (const key of Object.keys(sources)) {
+        if (sources[key] && sources[key].attribution) return String(sources[key].attribution);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  // The data credit. The OpenStreetMap license requires it on every map, so
+  // attach() writes it into the container (components/_map.scss types it) and
+  // options() turns MapLibre's own control off. An author-placed
+  // .map__attribution is left alone.
+  function ensureAttribution(rec, text) {
+    const el = rec.el;
+    if (!el || !el.querySelector || el.querySelector('.map__attribution')) return;
+    const credit = text || mapStyleAttribution(rec.map) || MAP_TILE_PRESETS.osm.attribution;
+    const node = (el.ownerDocument || document).createElement('span');
+    node.className = 'map__attribution';
+    node.textContent = credit;
+    el.appendChild(node);
+  }
+
+  // Google encoded polyline (Strava's map.summary_polyline): five-bit chunks,
+  // zig-zag deltas, 1e5 precision by default.
+  function decodeEncodedPolyline(str, precision) {
+    const out = [];
+    if (typeof str !== 'string' || !str.length) return out;
+    const factor = Math.pow(10, Number.isFinite(precision) ? precision : 5);
+    let index = 0, lat = 0, lng = 0;
+    while (index < str.length) {
+      let shift = 0, result = 0, byte;
+      do {
+        byte = str.charCodeAt(index++) - 63;
+        result |= (byte & 0x1f) << shift;
+        shift += 5;
+      } while (byte >= 0x20 && index < str.length);
+      lat += (result & 1) ? ~(result >> 1) : (result >> 1);
+      shift = 0;
+      result = 0;
+      do {
+        byte = str.charCodeAt(index++) - 63;
+        result |= (byte & 0x1f) << shift;
+        shift += 5;
+      } while (byte >= 0x20 && index < str.length);
+      lng += (result & 1) ? ~(result >> 1) : (result >> 1);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) break;
+      out.push([lng / factor, lat / factor]);
+    }
+    return out;
+  }
+
+  const TRMNLMaps = {
+    /**
+     * A tile source preset: the vector tile URL, its zoom range and attribution,
+     * the glyph endpoint and the font stacks a style may name. 'osm' is the
+     * default; an object merges over it, so a custom host is
+     * tiles({ url: '...', glyphs: '...' }).
+     *
+     * @param {(string|object)} [preset]
+     * @returns {{id, url, minzoom, maxzoom, attribution, glyphs, fonts: {regular, bold}, workerUrl}}
+     */
+    tiles(preset) {
+      const base = MAP_TILE_PRESETS.osm;
+      if (preset == null) return deepMerge(base, {});
+      if (typeof preset === 'string') return deepMerge(base, MAP_TILE_PRESETS[preset] || {});
+      if (isPlainObject(preset)) return deepMerge(base, preset);
+      return deepMerge(base, {});
+    },
+
+    /**
+     * MapLibre paint for one palette token: { color, ink, pattern }.
+     *
+     * @param {string} token
+     * @param {{el?: (string|Element)}} [opts]
+     */
+    paint(token, opts) {
+      return TRMNLPaint.toMapLibre(TRMNLPaint.bg(token, opts));
+    },
+
+    /**
+     * MapLibre paint for series `i` of `count` from the chart-series ramp, so a
+     * week of routes takes the same ramp a chart does.
+     *
+     * @param {number} i
+     * @param {number} count
+     * @param {{el?: (string|Element)}} [opts]
+     */
+    series(i, count, opts) {
+      const el = opts && opts.el;
+      return TRMNLPaint.toMapLibre(TRMNLPaint.series(i, count, { el: el }));
+    },
+
+    /**
+     * A line layer's layout and paint for route `i` of `n`: the series ink, a
+     * rounded stroke `width` (default 2) scaled through px().
+     *
+     * @param {number} i
+     * @param {number} n
+     * @param {{el?: (string|Element), width?: number}} [opts]
+     * @returns {{type: 'line', layout: object, paint: object}}
+     */
+    path(i, n, opts) {
+      const el = opts && opts.el;
+      const width = opts && Number.isFinite(opts.width) ? opts.width : 2;
+      const ink = TRMNLMaps.series(i, n, { el: el }).ink;
+      const paint = { 'line-width': mapPx(width, el), 'line-blur': 0 };
+      if (ink) paint['line-color'] = ink;
+      return { type: 'line', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: paint };
+    },
+
+    /**
+     * A circle layer's paint for marker `i` of `n`: the series ink with a
+     * contrast ring from the stroke-contrast channel. `radius` defaults to 4.
+     * {hollow:true} swaps the two, a contrast disc with a series ring, so a
+     * start and an end marker read apart on a screen with one ink.
+     *
+     * @param {number} i
+     * @param {number} n
+     * @param {{el?: (string|Element), radius?: number, hollow?: boolean}} [opts]
+     * @returns {{type: 'circle', paint: object}}
+     */
+    marker(i, n, opts) {
+      const el = opts && opts.el;
+      const radius = opts && Number.isFinite(opts.radius) ? opts.radius : 4;
+      const hollow = !!(opts && opts.hollow);
+      const ink = TRMNLMaps.series(i, n, { el: el }).ink;
+      const halo = mapHalo(el);
+      const fill = hollow ? halo : ink;
+      const ring = hollow ? ink : halo;
+      const paint = { 'circle-radius': mapPx(radius, el), 'circle-stroke-width': mapPx(hollow ? 2 : 1, el), 'circle-blur': 0 };
+      if (fill) paint['circle-color'] = fill;
+      if (ring) paint['circle-stroke-color'] = ring;
+      return { type: 'circle', paint: paint };
+    },
+
+    /**
+     * A symbol layer's text layout and paint for a typography role: the
+     * preset's font stack (bold with {bold:true}), the role's resolved size,
+     * the map-label slot ink and a one-pixel halo in the stroke-contrast color.
+     *
+     * @param {string} [role='label']
+     * @param {{el?: (string|Element), bold?: boolean, muted?: boolean, tiles?: (string|object)}} [opts]
+     * @returns {{layout: object, paint: object}}
+     */
+    label(role, opts) {
+      const el = opts && opts.el;
+      const tiles = TRMNLMaps.tiles(opts && opts.tiles);
+      const spec = TRMNLPaint.type(role || 'label', { el: el });
+      const size = parseFloat(spec.fontSize);
+      const slotName = opts && opts.muted ? 'map-label-muted' : 'map-label';
+      const ink = mapInk(TRMNLPaint.slot(slotName, { el: el, kind: 'text' }));
+      const halo = mapHalo(el);
+      const fonts = tiles.fonts || {};
+      const layout = {};
+      const font = opts && opts.bold ? fonts.bold : fonts.regular;
+      if (font) layout['text-font'] = [font];
+      if (size > 0) layout['text-size'] = size;
+      const paint = { 'text-halo-width': mapPx(1, el, 'ui'), 'text-halo-blur': 0 };
+      if (ink) paint['text-color'] = ink;
+      if (halo) paint['text-halo-color'] = halo;
+      return { layout: layout, paint: paint };
+    },
+
+    /**
+     * Paint every element under the screen carrying data-map-slot="<name>" from
+     * that slot (data-map-slot-kind="text"|"border" for the other kinds), so a
+     * legend or a docs swatch shows the paint the map draws with.
+     *
+     * @param {{el?: (string|Element)}} [opts]
+     */
+    applySwatches(opts) {
+      const el = opts && opts.el;
+      const screen = TRMNLPaint.screen(el);
+      if (!screen) return;
+      const marks = Array.prototype.slice.call(screen.querySelectorAll('[data-map-slot]'));
+      for (const node of marks) {
+        const name = node.getAttribute('data-map-slot');
+        const kind = node.getAttribute('data-map-slot-kind');
+        if (kind === 'border') {
+          TRMNLPaint.applyBorder(node, TRMNLPaint.slot(name, { el: node, kind: 'border' }));
+        } else {
+          TRMNLPaint.apply(node, TRMNLPaint.slot(name, { el: node, kind: kind === 'text' ? 'text' : 'bg' }));
+        }
+      }
+    },
+
+    /**
+     * A complete MapLibre style for a preset ('streets' | 'minimal' |
+     * 'outline' | 'blank'), every layer painted from the map slots of the
+     * target screen and sized through px(). {labels:false} drops the labels,
+     * {labels:'major'} keeps only the big place names, {buildings:false}
+     * drops the building footprints, {tiles} names the source preset.
+     *
+     * @param {string} preset
+     * @param {{el?: (string|Element), tiles?: (string|object), labels?: (boolean|'major'), buildings?: boolean}} [opts]
+     * @returns {object} StyleSpecification
+     */
+    style(preset, opts) {
+      const el = opts && opts.el;
+      const tiles = TRMNLMaps.tiles(opts && opts.tiles);
+      const name = Object.prototype.hasOwnProperty.call(MAP_PRESETS, preset) ? preset : 'streets';
+      const groups = MAP_PRESETS[name];
+      const labels = opts && opts.labels;
+      const showLabels = labels !== false;
+      const showMinorLabels = showLabels && labels !== 'major';
+      const showBuildings = !(opts && opts.buildings === false);
+      const slot = (n) => TRMNLPaint.toMapLibre(TRMNLPaint.slot(n, { el: el }));
+      const line = (n) => mapInk(TRMNLPaint.slot(n, { el: el, kind: 'border' }));
+      const ui = (n) => mapPx(n, el, 'ui');
+
+      // Resolve every framework spec ONCE per call.
+      const land = slot('map-land');
+      const water = slot('map-water');
+      const green = slot('map-green');
+      const area = slot('map-area');
+      const building = slot('map-building');
+      const road = line('map-road');
+      const roadMinor = line('map-road-minor');
+      const rail = line('map-rail');
+      const boundary = line('map-boundary');
+      const waterLine = line('map-water-line');
+      const halo = mapHalo(el);
+      const labelMajor = TRMNLMaps.label('label', { el: el, bold: true, tiles: tiles });
+      const labelMinor = TRMNLMaps.label('chart-label', { el: el, muted: true, tiles: tiles });
+
+      const layers = [];
+      const push = (layer) => { if (layer) layers.push(layer); };
+
+      const landPaint = land.pattern
+        ? { 'background-pattern': land.pattern.id }
+        : (land.color ? { 'background-color': land.color } : null);
+      if (landPaint) layers.push({ id: 'background', type: 'background', paint: landPaint });
+
+      if (groups.water) push(mapFillLayer('ocean', 'ocean', null, water));
+      if (groups.area) push(mapFillLayer('land-area', 'land', mapKindFilter(MAP_AREA_KINDS), area));
+      if (groups.green) push(mapFillLayer('land-green', 'land', mapKindFilter(MAP_GREEN_KINDS), green));
+      if (groups.water) push(mapFillLayer('water', 'water_polygons', null, water));
+      if (groups.waterLines) {
+        push(mapLineLayer('water-lines', 'water_lines', null, waterLine,
+          ['match', ['get', 'kind'], 'river', ui(2), 'canal', ui(1.5), ui(1)], { minzoom: 10 }));
+      }
+      if (groups.buildings && showBuildings) push(mapFillLayer('buildings', 'buildings', null, building, 14));
+      if (groups.minor) {
+        const w = ui(1);
+        const minorFilter = ['all', mapKindFilter(MAP_MINOR_ROADS), ['!=', ['get', 'tunnel'], true]];
+        if (halo) push(mapLineLayer('roads-minor-casing', 'streets', minorFilter, halo, w + 2 * ui(1), { minzoom: 12 }));
+        push(mapLineLayer('roads-minor', 'streets', minorFilter, roadMinor, w, { minzoom: 12 }));
+      }
+      if (groups.paths) {
+        const pathFilter = ['all', mapKindFilter(MAP_PATHS), ['!=', ['get', 'tunnel'], true]];
+        push(mapLineLayer('paths', 'streets', pathFilter, roadMinor, ui(1), { minzoom: 13, dash: [2, 2], cap: 'butt' }));
+      }
+      if (groups.major) {
+        const majorFilter = ['all', mapKindFilter(MAP_MAJOR_ROADS), ['!=', ['get', 'tunnel'], true]];
+        const widths = ['match', ['get', 'kind'], 'motorway', ui(3), 'trunk', ui(3), 'primary', ui(2.5), 'secondary', ui(2), ui(1.5)];
+        if (halo) {
+          const casing = ['match', ['get', 'kind'], 'motorway', ui(3) + 2, 'trunk', ui(3) + 2, 'primary', ui(2.5) + 2, 'secondary', ui(2) + 2, ui(1.5) + 2];
+          push(mapLineLayer('roads-major-casing', 'streets', majorFilter, halo, casing));
+        }
+        push(mapLineLayer('roads-major', 'streets', majorFilter, road, widths));
+      }
+      if (groups.rail) {
+        const railFilter = ['all', mapKindFilter(MAP_RAILS), ['!=', ['get', 'tunnel'], true]];
+        push(mapLineLayer('rail', 'streets', railFilter, rail, ui(1.5), { dash: [3, 2], cap: 'butt' }));
+      }
+      if (groups.boundaries && groups.boundaries.length) {
+        const boundaryFilter = ['all', ['in', ['get', 'admin_level'], ['literal', groups.boundaries]], ['!=', ['get', 'maritime'], true]];
+        push(mapLineLayer('boundaries', 'boundaries', boundaryFilter, boundary, ui(1), { dash: [4, 2], cap: 'butt' }));
+      }
+      if (groups.placesMajor && showLabels) {
+        push(mapSymbolLayer('place-labels-major', 'place_labels', mapKindFilter(MAP_PLACES_MAJOR), labelMajor, {
+          'text-padding': ui(4),
+          'symbol-sort-key': ['*', -1, ['coalesce', ['to-number', ['get', 'population']], 0]],
+        }));
+      }
+      if (groups.placesMinor && showMinorLabels) {
+        push(mapSymbolLayer('place-labels-minor', 'place_labels', mapKindFilter(MAP_PLACES_MINOR), labelMinor, {
+          'text-padding': ui(4),
+        }));
+      }
+      if (groups.streetLabels && showMinorLabels) {
+        push(mapSymbolLayer('street-labels', 'street_labels', null, labelMinor, {
+          'symbol-placement': 'line',
+          'text-padding': ui(2),
+        }, { minzoom: 14 }));
+      }
+      if (groups.waterLabels && showMinorLabels) {
+        // Named fountains and ponds are water polygons too; only water with some
+        // area to it earns a label on a still screen.
+        const waterLabelFilter = ['>=', ['coalesce', ['to-number', ['get', 'way_area']], 0], 50000];
+        push(mapSymbolLayer('water-labels', 'water_polygons_labels', waterLabelFilter, labelMinor, {
+          'text-padding': ui(4),
+        }));
+      }
+
+      const style = {
+        version: 8,
+        name: 'trmnl-' + name,
+        sources: {
+          osm: {
+            type: 'vector',
+            tiles: [tiles.url],
+            minzoom: tiles.minzoom,
+            maxzoom: tiles.maxzoom,
+            attribution: tiles.attribution,
+          },
+        },
+        layers: layers,
+      };
+      if (tiles.glyphs) style.glyphs = tiles.glyphs;
+      return style;
+    },
+
+    /**
+     * MapLibre Map options for a still map: the container, every interaction
+     * handler and animation off, no controls, the screen's pixel ratio, and
+     * (with {preset} or {style}) the style, plus {center} and an integer
+     * {zoom}. Pass the result straight to new maplibregl.Map(), or merge()
+     * more on top.
+     *
+     * @param {{el?: (string|Element), preset?: string, style?: object, center?: Array<number>, zoom?: number, tiles?: (string|object), labels?: (boolean|'major'), buildings?: boolean}} [opts]
+     * @returns {object} MapOptions
+     */
+    options(opts) {
+      const o = opts || {};
+      const el = o.el;
+      const out = {
+        container: resolveEl(el) || el,
+        interactive: false,
+        dragPan: false,
+        dragRotate: false,
+        scrollZoom: false,
+        keyboard: false,
+        doubleClickZoom: false,
+        touchZoomRotate: false,
+        touchPitch: false,
+        boxZoom: false,
+        cooperativeGestures: false,
+        fadeDuration: 0,
+        // terminalize toggles every .screen to display:none and back after a
+        // pass, which a size observer would read as a zero-sized map.
+        trackResize: false,
+        refreshExpiredTiles: false,
+        renderWorldCopies: false,
+        attributionControl: false,
+        maplibreLogo: false,
+        validateStyle: false,
+        pitch: 0,
+        bearing: 0,
+        maxPitch: 0,
+        pixelRatio: TRMNLPaint.scale({ el: el }).pixel || 1,
+        canvasContextAttributes: { antialias: false, preserveDrawingBuffer: true, failIfMajorPerformanceCaveat: false },
+      };
+      if (o.style) out.style = o.style;
+      else if (o.preset) out.style = TRMNLMaps.style(o.preset, { el: el, tiles: o.tiles, labels: o.labels, buildings: o.buildings });
+      if (o.center) out.center = o.center;
+      if (Number.isFinite(o.zoom)) out.zoom = Math.round(o.zoom);
+      return out;
+    },
+
+    /**
+     * Decode a Google encoded polyline (Strava's map.summary_polyline) to
+     * [[lng, lat], ...], ready for a GeoJSON LineString.
+     *
+     * @param {string} str
+     * @param {number} [precision=5]
+     * @returns {Array<Array<number>>}
+     */
+    decodePolyline(str, precision) {
+      return decodeEncodedPolyline(str, precision);
+    },
+
+    /**
+     * Fit a map to coordinates (or bounds) without animation, on an integer
+     * zoom, with the center snapped to the pixel grid so dither patterns stay
+     * crisp. Returns the { center, zoom } it jumped to, or null.
+     *
+     * @param {object} map
+     * @param {Array<Array<number>>} coords
+     * @param {{padding?: (number|object), maxZoom?: number}} [opts]
+     * @returns {({center: Array<number>, zoom: number}|null)}
+     */
+    fit(map, coords, opts) {
+      const bounds = mapBounds(coords);
+      if (!map || !bounds || typeof map.cameraForBounds !== 'function') return null;
+      try {
+        const o = opts || {};
+        const camOpts = { padding: o.padding != null ? o.padding : 0 };
+        if (Number.isFinite(o.maxZoom)) camOpts.maxZoom = o.maxZoom;
+        const cam = map.cameraForBounds(bounds, camOpts);
+        if (!cam) return null;
+        const zoom = Math.max(0, Math.floor(cam.zoom));
+        const center = snapMapCenter(map, cam.center, zoom) || cam.center;
+        map.jumpTo({ center: center, zoom: zoom, bearing: 0, pitch: 0 });
+        return { center: center, zoom: zoom };
+      } catch (_) {
+        return null;
+      }
+    },
+
+    /**
+     * Register a map with the runtime: pattern images are decoded and added
+     * as the style asks for them, the camera snaps to the pixel grid once the
+     * map loads, the attribution is written into the container, and ready()
+     * and settle() track it until it is removed. watch() calls this for you.
+     *
+     * @param {object} map
+     * @param {{el?: (string|Element), attribution?: string}} [opts]
+     * @returns {object} the map
+     */
+    attach(map, opts) {
+      if (!map || typeof map.on !== 'function' || attachedMaps.has(map)) return map;
+      attachedMaps.add(map);
+      let el = resolveEl(opts && opts.el);
+      if (!el) { try { el = map.getContainer(); } catch (_) { el = null; } }
+      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false };
+      liveMaps.set(map, rec);
+      try {
+        map.on('styleimagemissing', (event) => {
+          const id = event && event.id;
+          if (tileImagesById.has(id)) rasterizeTile(rec, tileImagesById.get(id));
+        });
+        map.once('style.load', () => { preloadTileImages(rec); ensureAttribution(rec, opts && opts.attribution); });
+        map.once('load', () => snapMapInPlace(map));
+        map.once('remove', () => { rec.removed = true; liveMaps.delete(map); });
+      } catch (_) {}
+      ensureAttribution(rec, opts && opts.attribution);
+      // A map attached after a pass has already flipped READY re-arms it, so a
+      // capture does not catch the frame before the tiles.
+      if (window.TRMNL_PLUGINS_READY === true) { try { scheduleTerminalize(); } catch (_) {} }
+      return map;
+    },
+
+    /**
+     * Resolves once the map has drawn everything it knows about: pending
+     * pattern images added, tiles loaded, and MapLibre idle.
+     *
+     * @param {object} map
+     * @returns {Promise<object>}
+     */
+    ready(map) {
+      if (!map) return Promise.resolve(map);
+      const rec = liveMaps.get(map);
+      const settled = () => {
+        try { return !!(map.loaded && map.loaded() && (!map.areTilesLoaded || map.areTilesLoaded())); } catch (_) { return true; }
+      };
+      const waitIdle = () => new Promise((resolve) => {
+        try { map.once('idle', () => resolve()); } catch (_) { resolve(); }
+      });
+      const step = () => Promise.all(rec ? Array.from(rec.pending) : []).then(() => {
+        if (rec && rec.removed) return map;
+        if (settled() && !(rec && rec.pending.size)) return map;
+        return waitIdle().then(() => ((rec && rec.pending.size) || !settled() ? step() : map));
+      });
+      return step();
+    },
+
+    /**
+     * The readiness wait terminalize runs at the end of a pass: every attached
+     * map is resized to its container if layout moved it, then awaited through
+     * ready(), bounded by maxWaitMs (default 6000, or
+     * window.__TRMNL_MAPS_SETTLE_MS__). Resolves { targets, timedOut }.
+     *
+     * @param {{maxWaitMs?: number}} [opts]
+     * @returns {Promise<{targets: number, timedOut: boolean}>}
+     */
+    settle(opts) {
+      const override = Number(window.__TRMNL_MAPS_SETTLE_MS__);
+      const maxWaitMs = opts && Number.isFinite(opts.maxWaitMs) ? opts.maxWaitMs : (Number.isFinite(override) && override >= 0 ? override : MAP_SETTLE_MS);
+      const recs = Array.from(liveMaps.values()).filter((rec) => !rec.removed);
+      if (!recs.length) return Promise.resolve({ targets: 0, timedOut: false });
+      for (const rec of recs) {
+        try {
+          const el = rec.el || rec.map.getContainer();
+          const canvas = rec.map.getCanvas();
+          if (el && canvas && el.clientWidth > 0 && el.clientHeight > 0 &&
+              (canvas.clientWidth !== el.clientWidth || canvas.clientHeight !== el.clientHeight)) {
+            rec.map.resize();
+            snapMapInPlace(rec.map);
+          }
+        } catch (_) {}
+      }
+      let timedOut = false;
+      const timeout = new Promise((resolve) => setTimeout(() => { timedOut = true; resolve(); }, Math.max(0, maxWaitMs)));
+      return Promise.race([Promise.all(recs.map((rec) => TRMNLMaps.ready(rec.map))), timeout])
+        .then(() => ({ targets: recs.length, timedOut: timedOut }));
+    },
+
+    /**
+     * Whether this browser can draw a MapLibre map (WebGL 2 or WebGL 1).
+     *
+     * @returns {boolean}
+     */
+    supported() {
+      if (mapWebglSupport !== null) return mapWebglSupport;
+      try {
+        const canvas = document.createElement('canvas');
+        mapWebglSupport = !!(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+      } catch (_) {
+        mapWebglSupport = false;
+      }
+      return mapWebglSupport;
+    },
+
+    /**
+     * Deep-merge plain objects (arrays and scalars replace). Layer a map's own
+     * options over options().
+     */
+    merge(base, overrides) {
+      return deepMerge(base, overrides);
+    },
+
+    /**
+     * Build a map now and rebuild it when the screen's device/scale/mode/dark/
+     * theme classes change. buildFn creates and returns the map (new
+     * maplibregl.Map(...)); the previous one is removed before each rebuild and
+     * the new one is attach()ed. Without WebGL the container is flagged
+     * data-map-unsupported and buildFn is not called. Returns stop().
+     *
+     * @param {(string|Element)} el
+     * @param {() => any} buildFn
+     * @returns {() => void}
+     */
+    watch(el, buildFn) {
+      let map = null;
+      const destroy = () => {
+        try { if (map && typeof map.remove === 'function') map.remove(); } catch (_) {}
+        map = null;
+      };
+      const build = () => {
+        destroy();
+        const node = resolveEl(el);
+        if (node && !TRMNLMaps.supported()) {
+          node.setAttribute('data-map-unsupported', '');
+          return;
+        }
+        if (node) node.removeAttribute('data-map-unsupported');
+        map = buildFn() || null;
+        if (map) TRMNLMaps.attach(map, { el: el });
+      };
+      const stopObserving = TRMNLPaint.watch(el, build, { immediate: true });
+      return function stop() {
+        stopObserving();
+        destroy();
+      };
+    },
+  };
+
   window.TRMNLPaint = TRMNLPaint;
   window.TRMNLCharts = TRMNLCharts;
+  window.TRMNLMaps = TRMNLMaps;
 })();
 
 /**

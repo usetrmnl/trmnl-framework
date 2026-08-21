@@ -114,6 +114,10 @@ var css = fill.image
             adapter. <%= render DocsRef.new(page: :chart) %> puts it to work in line, bar, and gauge charts.
           </p>
           <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> does the same for MapLibre GL JS,
+            composing map styles out of the map slots: see <%= render DocsRef.new(page: :paint_maps) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
             Every method takes the same optional <code class="<%= framework_section_code_classes %>">{ el }</code> as
             the resolvers: the chart container id or element whose nearest
             <code class="<%= framework_section_code_classes %>">.screen</code> supplies the paint. Omit it on a

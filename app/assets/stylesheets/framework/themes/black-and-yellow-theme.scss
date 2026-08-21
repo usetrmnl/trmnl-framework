@@ -66,6 +66,17 @@
         // Border levels anchor level 4 to the base hue (yellow-on-yellow on
         // this canvas), so the underline needs its own contrasting token.
         @include theme-slots.border-token-slot('label-underline', 'yellow-30');
+        // Map slots on the yellow canvas. Land and the major lines follow the
+        // canvas and border-strong channels above; the areas sit on the dark
+        // side of the scale like the progress paint, and the minor lines are a
+        // dark tint of the ink side.
+        @include theme-slots.bg-slot('map-water', 'yellow-30');
+        @include theme-slots.bg-slot('map-green', 'yellow-35');
+        @include theme-slots.bg-slot('map-area', 'yellow-40');
+        @include theme-slots.bg-slot('map-building', 'yellow-20');
+        @include theme-slots.border-token-slot('map-road-minor', 'yellow-20');
+        @include theme-slots.border-token-slot('map-boundary', 'yellow-20');
+        @include theme-slots.border-token-slot('map-water-line', 'yellow-30');
 
         // Utility palette remaps (all grays + white → yellow)
         @include theme-slots.utility-remap-grayscale('yellow');
@@ -129,6 +140,15 @@
         // The underline is the contrasting accent: light on the black ground,
         // mirroring the screen block's dark yellow-30 on yellow.
         @include theme-slots.border-token-slot('label-underline', 'yellow-55');
+        // Map areas on the black ground: dark yellow-forward fields like the
+        // component slots above, lines a light tint toward the yellow ink.
+        @include theme-slots.bg-slot('map-water', 'yellow-20');
+        @include theme-slots.bg-slot('map-green', 'yellow-15');
+        @include theme-slots.bg-slot('map-area', 'yellow-10');
+        @include theme-slots.bg-slot('map-building', 'yellow-30');
+        @include theme-slots.border-token-slot('map-road-minor', 'yellow-45');
+        @include theme-slots.border-token-slot('map-boundary', 'yellow-45');
+        @include theme-slots.border-token-slot('map-water-line', 'yellow-25');
 
         @include theme-slots.utility-remap-grayscale('yellow');
         // Filled labels use the black background utility. In inverse contexts

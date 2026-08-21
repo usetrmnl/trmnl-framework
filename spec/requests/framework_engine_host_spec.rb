@@ -478,14 +478,18 @@ RSpec.describe 'Engine host contract' do
                              "disclose #{undisclosed.join(', ')} in ENGINE_INTEGRATION.md, the Open Source page and the README"
     end
 
-    # Named rather than derived: the chart and font glyphs pages carry these script tags
-    # both as live loads and inside code examples, and sass_api.html.erb shows a
-    # trmnl.com snippet it never fetches, so scanning the view tree reads copy as loads.
-    it 'discloses the two demo origins as well' do
+    # Named rather than derived: the chart, map and font glyphs pages carry these script
+    # tags both as live loads and inside code examples, sass_api.html.erb shows a
+    # trmnl.com snippet it never fetches, and the map tile and glyph hosts are reached
+    # by MapLibre from inside plugins.js, so scanning the view tree reads copy as loads.
+    it 'discloses the demo origins as well' do
       aggregate_failures do
-        %w[trmnl.com cdn.jsdelivr.net].each do |origin|
+        %w[trmnl.com cdn.jsdelivr.net vector.openstreetmap.org tiles.versatiles.org].each do |origin|
           expect(integration_doc).to include(origin)
           expect(open_source_page).to include(origin)
+        end
+        %w[vector.openstreetmap.org tiles.versatiles.org].each do |origin|
+          expect(readme).to include(origin)
         end
       end
     end
@@ -495,6 +499,8 @@ RSpec.describe 'Engine host contract' do
         expect(chrome_origins).to contain_exactly('fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com')
         expect(root.join('app/views/framework/font_glyphs.html.erb').read).to include('cdn.jsdelivr.net')
         expect(root.join('app/views/framework/chart.html.erb').read).to include('https://trmnl.com/js/highcharts')
+        expect(root.join('app/views/framework/map.html.erb').read).to include('https://trmnl.com/js/maplibre-gl')
+        expect(root.join('app/javascript/plugin-render/plugins.js').read).to include('https://vector.openstreetmap.org/')
       end
     end
   end

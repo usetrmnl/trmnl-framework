@@ -1,0 +1,789 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :map %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:map) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Usage') %>
+          <p class="<%= framework_section_description_classes %>">
+            Maps are <%= link_to 'MapLibre GL JS', 'https://maplibre.org', target: :_blank, class: 'underline' %>
+            compositions over <%= link_to 'OpenStreetMap', 'https://www.openstreetmap.org', target: :_blank, class: 'underline' %>
+            vector tiles, and every layer is painted by the framework. The plugin runtime bundles a
+            <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> helper that builds the map style from
+            the live screen, the way <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> builds
+            Highcharts options. The methods below are the ones these examples use;
+            <%= render DocsRef.new(page: :paint_maps) %> carries the full list and the resolvers behind it.
+          </p>
+
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">options({ el, preset, center, zoom })</code>: the
+              Map options for a still map, with the style for a preset, the container, and every handler and
+              animation off.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">watch(el, buildFn)</code>: builds the map now and
+              again when device, scale, mode, dark mode or theme changes, removing the previous one first.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">path(i, n, { el, width })</code> and
+              <code class="<%= framework_section_code_classes %>">marker(i, n, { el, radius })</code>: line and circle
+              layer paint for route <em>i</em> of <em>n</em>, from the screen's chart-series ramp.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">fit(map, coords, { padding, maxZoom })</code>: frames
+              the coordinates on an integer zoom, with no animation.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">decodePolyline(str)</code>: a Google encoded polyline
+              (the shape Strava returns) as <code class="<%= framework_section_code_classes %>">[lng, lat]</code> pairs.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">merge(base, overrides)</code>: layer your own layer ids,
+              sources and Map options over the defaults.
+            </li>
+          </ul>
+
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">{ el }</code> is the map container id or element. Omit
+            it on a single-screen plugin.
+          </p>
+
+          <p class="<%= framework_section_description_classes %>">
+            Four style presets ship: <code class="<%= framework_section_code_classes %>">streets</code> draws roads,
+            water, parks, buildings and labels, <code class="<%= framework_section_code_classes %>">minimal</code> keeps
+            the land, water and main roads a route sits on, <code class="<%= framework_section_code_classes %>">outline</code>
+            is coast, water, main roads and the big place names for a small view, and
+            <code class="<%= framework_section_code_classes %>">blank</code> is the land alone for your own overlays.
+            Each preset is the same slot set drawn differently, so a theme restyles all four at once.
+          </p>
+
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> resolves no paint of its own: every color
+            comes from a <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> map slot, so a map on a 1-bit
+            screen draws dither tiles and a map on a color panel draws solids. For anything beyond MapLibre, read the
+            slots directly: see <%= render DocsRef.new(page: :paint_api) %>.
+          </p>
+
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/warning' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="leading-none text-sm font-medium">
+                  Maps are built non-interactive. A device has no input and the screenshot service captures one still
+                  frame, so options() disables every handler and animation: set the camera in the options or with fit(),
+                  never with flyTo or easeTo.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/warning' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="leading-none text-sm font-medium">
+                  OpenStreetMap data is licensed under the ODbL and needs visible credit. watch() and attach() place a
+                  framework-styled "&copy; OpenStreetMap contributors" label on every map: keep it.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="<%= message_sage_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  These examples load MapLibre GL JS from trmnl.com and vector tiles from OpenStreetMap's community
+                  servers, so they render an empty canvas without network. MapLibre is BSD licensed; the map data is
+                  &copy; OpenStreetMap contributors.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Streets') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The streets preset on its own: one place, one zoom, nothing plotted. Load MapLibre from trmnl.com, give
+              the map a container with the map class, and build it inside watch().
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--small">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums">14&deg;C</span>
+                            <span class="label">South Bank</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums">17:53</span>
+                            <span class="label">Sunset</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums">2.1 km</span>
+                            <span class="label">To the office</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="map-streets" class="map stretch w--full"></div>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Map</span>
+                      <span class="instance">Streets</span>
+                    </div>
+                  </div>
+
+                  <script type="text/trmnl-example">
+                    // Wait for both MapLibre and the framework's TRMNLMaps helper
+                    // (bundled in the plugin runtime) before building the map.
+                    function whenReady(cb) {
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLMaps && window.maplibregl) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
+                    }
+
+                    whenReady(function () {
+                      var el = "map-streets";
+                      // watch() rebuilds on device/scale/mode/dark/theme change; options() carries
+                      // the style for the preset, painted from the live screen.
+                      TRMNLMaps.watch(el, function () {
+                        return new maplibregl.Map(TRMNLMaps.options({
+                          el: el, preset: "streets", center: [-0.1276, 51.5072], zoom: 13
+                        }));
+                      });
+                    });
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- import MapLibre GL JS and its stylesheet -->
+<script src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+<link href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+<!-- markup with an empty, ID\'d .map container for the canvas -->
+<div class="view view--full">
+  <div class="layout layout--col gap--small">
+    <div class="grid grid--cols-3">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums">14&deg;C</span>
+          <span class="label">South Bank</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums">17:53</span>
+          <span class="label">Sunset</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums">2.1 km</span>
+          <span class="label">To the office</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="map-streets" class="map stretch w--full"></div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+    <span class="title">Map</span>
+    <span class="instance">Streets</span>
+  </div>
+</div>
+
+<script type="text/javascript">
+  // Wait for MapLibre and the framework TRMNLMaps helper (bundled in the
+  // plugin runtime), then build the map from the live screen.
+  function whenReady(cb) {
+    var tries = 0;
+    (function attempt() {
+      if (window.TRMNLMaps && window.maplibregl) return cb();
+      if (++tries > 200) return;
+      setTimeout(attempt, 50);
+    })();
+  }
+
+  whenReady(function () {
+    var el = "map-streets";
+    // watch() rebuilds on device/scale/mode/dark/theme change; options() carries
+    // the style for the preset, painted from the live screen.
+    TRMNLMaps.watch(el, function () {
+      return new maplibregl.Map(TRMNLMaps.options({
+        el: el, preset: "streets", center: [-0.1276, 51.5072], zoom: 13
+      }));
+    });
+  });
+</script>') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Map styles') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The same view through three presets. Streets is the full map, minimal keeps the shapes a route sits
+              on, and outline is coast, water, main roads and the big names for the smallest views.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--small">
+                      <div class="columns stretch">
+                        <div class="column stretch">
+                          <div class="layout layout--col gap--xsmall stretch">
+                            <div id="map-style-streets" class="map stretch w--full"></div>
+                            <span class="label label--small">streets</span>
+                          </div>
+                        </div>
+                        <div class="column stretch">
+                          <div class="layout layout--col gap--xsmall stretch">
+                            <div id="map-style-minimal" class="map stretch w--full"></div>
+                            <span class="label label--small">minimal</span>
+                          </div>
+                        </div>
+                        <div class="column stretch">
+                          <div class="layout layout--col gap--xsmall stretch">
+                            <div id="map-style-outline" class="map stretch w--full"></div>
+                            <span class="label label--small">outline</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Map</span>
+                      <span class="instance">Styles</span>
+                    </div>
+                  </div>
+
+                  <script type="text/trmnl-example">
+                    function whenReady(cb) {
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLMaps && window.maplibregl) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
+                    }
+
+                    whenReady(function () {
+                      ["streets", "minimal", "outline"].forEach(function (preset) {
+                        var el = "map-style-" + preset;
+                        TRMNLMaps.watch(el, function () {
+                          return new maplibregl.Map(TRMNLMaps.options({
+                            el: el, preset: preset, center: [2.3522, 48.8566], zoom: 12
+                          }));
+                        });
+                      });
+                    });
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '// One watch() per container; only the preset changes.
+["streets", "minimal", "outline"].forEach(function (preset) {
+  var el = "map-style-" + preset;
+  TRMNLMaps.watch(el, function () {
+    return new maplibregl.Map(TRMNLMaps.options({
+      el: el, preset: preset, center: [2.3522, 48.8566], zoom: 12
+    }));
+  });
+});', language: 'javascript') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Markers and routes') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              Plot your own data as GeoJSON sources. path() and marker() hand you the layer paint from the screen's
+              chart-series ramp, and fit() frames the route on an integer zoom.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--small">
+                      <div class="grid grid--cols-3">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums">6.8 km</span>
+                            <span class="label">Distance</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums">24 min</span>
+                            <span class="label">Ride</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums">+41 m</span>
+                            <span class="label">Climb</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="map-commute" class="map stretch w--full"></div>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Map</span>
+                      <span class="instance">Commute</span>
+                    </div>
+                  </div>
+
+                  <script type="text/trmnl-example">
+                    var route = [
+                      [13.4240, 52.5390], [13.4205, 52.5352], [13.4150, 52.5310], [13.4088, 52.5265],
+                      [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
+                    ];
+
+                    function whenReady(cb) {
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLMaps && window.maplibregl) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
+                    }
+
+                    function point(coords, tag) {
+                      return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
+                    }
+
+                    whenReady(function () {
+                      var el = "map-commute";
+                      TRMNLMaps.watch(el, function () {
+                        var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
+                        map.on("load", function () {
+                          map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: route } } });
+                          map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(route[0], "start"), point(route[route.length - 1], "end")] } });
+                          // path()/marker() carry the paint; merge() adds your id, source and filter.
+                          map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+                          map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
+                          map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+                        });
+                        // fit() frames the route on an integer zoom, no animation.
+                        TRMNLMaps.fit(map, route, { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
+                        return map;
+                      });
+                    });
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: 'var route = [
+  [13.4240, 52.5390], [13.4205, 52.5352], [13.4150, 52.5310], [13.4088, 52.5265],
+  [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
+];
+
+function point(coords, tag) {
+  return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
+}
+
+whenReady(function () {
+  var el = "map-commute";
+  TRMNLMaps.watch(el, function () {
+    var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
+    map.on("load", function () {
+      map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: route } } });
+      map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(route[0], "start"), point(route[route.length - 1], "end")] } });
+      // path()/marker() carry the paint; merge() adds your id, source and filter.
+      map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+      map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
+      map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+    });
+    // fit() frames the route on an integer zoom, no animation.
+    TRMNLMaps.fit(map, route, { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
+    return map;
+  });
+});', language: 'javascript') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Grayscale and color') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The map slots default to tokens tuned for 1-bit: land is the canvas, water and parks are dithered tiles,
+              roads and labels are the ink. A full-color screen re-points the same slots at chromatic tokens and a
+              limited palette dithers them to its ink set, so the plugin changes nothing.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              Switch the device picker to a color device or dark mode and the map repaints. A theme restyles the map
+              with the same slot mixins it uses for every other component: see <%= render DocsRef.new(page: :theme_slots) %>.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+                  <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+                  <div class="view view--full">
+                    <div class="layout layout--col gap--small">
+                      <div id="map-color" class="map stretch w--full"></div>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Map</span>
+                      <span class="instance">Sydney Harbour</span>
+                    </div>
+                  </div>
+
+                  <script type="text/trmnl-example">
+                    function whenReady(cb) {
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLMaps && window.maplibregl) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
+                    }
+
+                    whenReady(function () {
+                      var el = "map-color";
+                      TRMNLMaps.watch(el, function () {
+                        return new maplibregl.Map(TRMNLMaps.options({
+                          el: el, preset: "streets", center: [151.2153, -33.8568], zoom: 12
+                        }));
+                      });
+                    });
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '// Nothing here names a device or a color: the slots resolve per screen.
+TRMNLMaps.watch(el, function () {
+  return new maplibregl.Map(TRMNLMaps.options({
+    el: el, preset: "streets", center: [151.2153, -33.8568], zoom: 12
+  }));
+});
+
+// A theme re-points a map slot like any other component slot (SCSS):
+// @include theme-slots.bg-slot("map-water", "blue-65");
+// @include theme-slots.border-token-slot("map-road-minor", "gray-50");', language: 'javascript') %>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Strava activity') %>
+          <p class="<%= framework_section_description_classes %>">
+            Strava returns each activity with <code class="<%= framework_section_code_classes %>">map.summary_polyline</code>,
+            a Google encoded polyline. Decode it, fit the camera to it, draw the route with a start dot and an end ring,
+            and show the activity stats in the framework layout.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            In a plugin the <code class="<%= framework_section_code_classes %>">activity</code> object comes from your
+            polling URL; the example inlines one run. The minimal preset keeps the streets under the route quiet.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <script data-trmnl-src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+                <link data-trmnl-href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+                <div class="view view--full">
+                  <div class="layout layout--col gap--small">
+                    <div class="flex flex--col">
+                      <span class="title title--small">Morning Run</span>
+                      <span class="description">Golden Gate Park, San Francisco</span>
+                    </div>
+
+                    <div id="map-strava" class="map stretch w--full"></div>
+
+                    <div class="grid grid--cols-4">
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--small value--tnums" id="strava-distance">9.2 km</span>
+                          <span class="label">Distance</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--small value--tnums" id="strava-time">47:36</span>
+                          <span class="label">Time</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--small value--tnums" id="strava-pace">5:09 /km</span>
+                          <span class="label">Pace</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <span class="value value--small value--tnums" id="strava-elevation">+94 m</span>
+                          <span class="label">Elev Gain</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                    <span class="title">Strava</span>
+                    <span class="instance">Activity</span>
+                  </div>
+                </div>
+
+                <script type="text/trmnl-example">
+                  // One activity as the Strava API returns it (metres and seconds).
+                  var activity = {
+                    name: "Morning Run",
+                    distance: 9247,
+                    moving_time: 2856,
+                    total_elevation_gain: 94,
+                    map: { summary_polyline: "{lpeFz_mjVNtHt@tHNtHt@tHf@tKnAvKz@tKf@`FnAbFz@`F{@xFSxF{@xFSxFg@nK?nKSnKMpLZnLDpL?dIf@bI?bIf@dI?xRf@vRRxRvBR~CRjCR`AsIfBsI`AsIfBsIDqLn@oLXqLg@sN?sNSsNR}Iz@}IR}Iz@}IMkHZkHDkHwBqLoAoLcBqLcDuC}BuCeDuC{BuCwBkHoAkHcBkH}AuEs@sEqAuE" }
+                  };
+
+                  function whenReady(cb) {
+                    var tries = 0;
+                    (function attempt() {
+                      if (window.TRMNLMaps && window.maplibregl) return cb();
+                      if (++tries > 200) return;
+                      setTimeout(attempt, 50);
+                    })();
+                  }
+
+                  function clock(seconds) {
+                    var m = Math.floor(seconds / 60), s = Math.round(seconds % 60);
+                    return m + ":" + (s < 10 ? "0" : "") + s;
+                  }
+
+                  function point(coords, tag) {
+                    return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
+                  }
+
+                  whenReady(function () {
+                    var el = "map-strava";
+                    var km = activity.distance / 1000;
+                    document.getElementById("strava-distance").textContent = km.toFixed(1) + " km";
+                    document.getElementById("strava-time").textContent = clock(activity.moving_time);
+                    document.getElementById("strava-pace").textContent = clock(activity.moving_time / km) + " /km";
+                    document.getElementById("strava-elevation").textContent = "+" + Math.round(activity.total_elevation_gain) + " m";
+
+                    // decodePolyline() returns [lng, lat] pairs, ready for GeoJSON.
+                    var coords = TRMNLMaps.decodePolyline(activity.map.summary_polyline);
+
+                    TRMNLMaps.watch(el, function () {
+                      var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
+                      map.on("load", function () {
+                        map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: coords } } });
+                        map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(coords[0], "start"), point(coords[coords.length - 1], "end")] } });
+                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
+                        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+                      });
+                      TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
+                      return map;
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<!-- import MapLibre GL JS and its stylesheet -->
+<script src="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+<link href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
+
+<div class="view view--full">
+  <div class="layout layout--col gap--small">
+    <div class="flex flex--col">
+      <span class="title title--small">{{ activity.name }}</span>
+      <span class="description">Golden Gate Park, San Francisco</span>
+    </div>
+
+    <div id="map-strava" class="map stretch w--full"></div>
+
+    <div class="grid grid--cols-4">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums" id="strava-distance"></span>
+          <span class="label">Distance</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums" id="strava-time"></span>
+          <span class="label">Time</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums" id="strava-pace"></span>
+          <span class="label">Pace</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--small value--tnums" id="strava-elevation"></span>
+          <span class="label">Elev Gain</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+    <span class="title">Strava</span>
+    <span class="instance">Activity</span>
+  </div>
+</div>
+
+<script type="text/javascript">
+  // One activity as the Strava API returns it (metres and seconds). In a
+  // plugin this is your polling data: {{ activity | json }}.
+  var activity = {
+    name: "Morning Run",
+    distance: 9247,
+    moving_time: 2856,
+    total_elevation_gain: 94,
+    map: { summary_polyline: "{lpeFz_mjVNtHt@tHNtHt@tHf@tKnAvKz@tKf@`FnAbFz@`F{@xFSxF{@xFSxFg@nK?nKSnKMpLZnLDpL?dIf@bI?bIf@dI?xRf@vRRxRvBR~CRjCR`AsIfBsI`AsIfBsIDqLn@oLXqLg@sN?sNSsNR}Iz@}IR}Iz@}IMkHZkHDkHwBqLoAoLcBqLcDuC}BuCeDuC{BuCwBkHoAkHcBkH}AuEs@sEqAuE" }
+  };
+
+  function whenReady(cb) {
+    var tries = 0;
+    (function attempt() {
+      if (window.TRMNLMaps && window.maplibregl) return cb();
+      if (++tries > 200) return;
+      setTimeout(attempt, 50);
+    })();
+  }
+
+  function clock(seconds) {
+    var m = Math.floor(seconds / 60), s = Math.round(seconds % 60);
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function point(coords, tag) {
+    return { type: "Feature", properties: { tag: tag }, geometry: { type: "Point", coordinates: coords } };
+  }
+
+  whenReady(function () {
+    var el = "map-strava";
+    var km = activity.distance / 1000;
+    document.getElementById("strava-distance").textContent = km.toFixed(1) + " km";
+    document.getElementById("strava-time").textContent = clock(activity.moving_time);
+    document.getElementById("strava-pace").textContent = clock(activity.moving_time / km) + " /km";
+    document.getElementById("strava-elevation").textContent = "+" + Math.round(activity.total_elevation_gain) + " m";
+
+    // decodePolyline() returns [lng, lat] pairs, ready for GeoJSON.
+    var coords = TRMNLMaps.decodePolyline(activity.map.summary_polyline);
+
+    TRMNLMaps.watch(el, function () {
+      var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
+      map.on("load", function () {
+        map.addSource("route", { type: "geojson", data: { type: "Feature", geometry: { type: "LineString", coordinates: coords } } });
+        map.addSource("ends", { type: "geojson", data: { type: "FeatureCollection", features: [point(coords[0], "start"), point(coords[coords.length - 1], "end")] } });
+        map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5 }), { id: "start", source: "ends", filter: ["==", ["get", "tag"], "start"] }));
+        map.addLayer(TRMNLMaps.merge(TRMNLMaps.marker(0, 1, { el: el, radius: 5, hollow: true }), { id: "end", source: "ends", filter: ["==", ["get", "tag"], "end"] }));
+      });
+      // fit() frames the run on an integer zoom, no animation.
+      TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
+      return map;
+    });
+  });
+</script>') %>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

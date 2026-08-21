@@ -6,8 +6,10 @@ resolved paint and converts it into renderer-native forms when CSS cannot paint 
 target directly, such as Highcharts SVG. It does not re-declare the design rules.
 `window.TRMNLCharts` selects chart roles and assembles Highcharts options; it
 delegates paint resolution and renderer conversion to TRMNLPaint.
+`window.TRMNLMaps` selects map slots and assembles MapLibre GL JS style layers;
+it delegates paint resolution and renderer conversion to TRMNLPaint the same way.
 
-This map traces every conversion in the paint/chart IIFE in
+This map traces every conversion in the paint, chart and map IIFE in
 `app/javascript/plugin-render/plugins.js` to the CSS paint it consumes. Its purpose
 is to ensure the adapter introduces no independent paint decisions. DOM lookup,
 mutation observation, null-safe error handling, object merging, and disabled
@@ -42,6 +44,10 @@ line range. A rule keeps its name when the file around it moves.
 | `applySwatches()` uses the same `series()` result as chart series. | `chart-series-ramp` in `mixins/_theme-slots.scss`. | Aligned | Legend marker versus plotted series. |
 | `TRMNLCharts.grid()` requests literal `border--h/v-65` rails from TRMNLPaint; `axisLine()` requests literal black rails; `options()` delegates SVG application back to TRMNLPaint on every render/redraw. | Step rail in the `$color-shade-steps` block of `utilities/_border.scss`; black rail in `.border--h-black` / `.border--v-black` in the same file; pattern sources above. | Fixed | Grid/axis/tick strokes versus adjacent CSS rails for each mode/theme cell. |
 | `TRMNLCharts.textStyle()` passes chart roles to `TRMNLPaint.type()`; TRMNLPaint owns the `.text--small` / `.value` role mapping and Highcharts conversion. | Role declarations above plus the semantic text roles in `utilities/_text.scss`. | Aligned | Font and ink equality in the typography reference cells. |
+| `slot(name, { kind })` projects a component slot's public channel onto standard properties and reads it back: the `-bg-color`/`-bg-image` pair as a background, the `-text-color`/`-text-image`/`-text-under` trio as text paint, or the four `-border-*` longhands plus the slot's own `-border-render-*` program forwarded onto `--framework-border-render-*`, so `readBorder()` reads a slotted line like a utility rail. It maps no slot name to a token. | Slot emission in `bg-slot`, `text-slot` and `border-token-slot` (`mixins/_theme-slots.scss`), the program from `border-render-solid` (`mixins/_border-levels.scss`); the map slot defaults in `_map-slot-defaults` and `_map-line-semantic-slot` (`base/_screen.scss`), the chip-style semantic chains `--framework-slot-map-land-*` and `--framework-slot-map-label-*` included. | Aligned | Returned Fill versus a `bg--<token>` probe of the slot's token on the same screen; the line `render.stroke` versus the slot's stroke chain; live in `test/runtime/paint/maps.spec.js`. |
+| `toMapLibre()` copies a Fill into MapLibre paint: a solid's color becomes `color` and `ink`; a tile's painted ink becomes `ink` and the tile becomes a registered pattern image with the field composited in, `pixelRatio` = tile width over the resolved CSS size; a line fill's CSS-declared stroke becomes `color` and `ink` and never a pattern. It contains no contrast, threshold or color-selection logic. | Field under image in `apply-bg-paint-vars` (`utilities/_background.scss`); tile geometry in `_tile-asset-definitions` and `_bg-tile`, the tile size in the `--dither-bg-size` declaration of `base/_screen-mode-vars.scss`; line strokes from `border-render-solid` (`mixins/_border-levels.scss`). | Aligned | Pattern image pixels versus the CSS swatch; `pixelRatio` versus `--dither-bg-size` on 1x and 2x screens; `ink` versus `.text--*` and rail inks. |
+| The map slot rails: the 1-bit block re-points the gray line slots to the ink, and the color-full and limited-palette blocks re-point the area and line slots at chromatic tokens; every shipped theme restates the token-bound slots. | `_map-slot-one-bit-lines` and `_map-slot-color-defaults` in `base/_screen-mode-vars.scss`; the theme blocks in `themes/black-and-yellow-theme.scss`, `themes/white-and-red-theme.scss`, `themes/dark-theme.scss`. | Aligned | `spec/assets/stylesheets/framework_map_slot_contract_spec.rb` against the compiled bundle; `slot()` per mode in `test/runtime/paint/maps.spec.js`. |
+| `TRMNLMaps.style()`, `path()`, `marker()` and `label()` name map slots, the chart-series ramp, the `stroke-contrast` channel and typography roles, and pass every value through `toMapLibre()`; widths are `px()` of base widths rounded to whole pixels. The Shortbread `kind` lists decide which features a slot paints, not what color they take. | Slot, ramp, semantic and role declarations above. | Aligned | Each style layer's paint versus the slot it names, live in `test/runtime/paint/maps.spec.js`; the `TRMNLMaps` guard in `lib/projs/projs.test.cjs` forbids probes, computed style and color literals in the map layer. |
 
 ## Removed divergences
 
@@ -52,6 +58,7 @@ line range. A rule keeps its name when the file around it moves.
 | Generic `ShortDot` grid approximation | CSS declares exact hard stops, tile widths, row height, stagger, and repeat direction. |
 | `|| '#000000'` text/axis fallbacks | Text and border fallbacks are resolved by their SCSS `var(...)` chains and probes. |
 | JS chart-series span `11` | The base ramp declares 11, the full-color ramp declares 7, and themes declare their own span, all through `chart-series-ramp()`. |
+| A JS map palette (water blue, parks green, roads by class) | The map slots in `_map-slot-defaults` declare the 1-bit grays, the color rails re-point them, and themes restate them; `TRMNLMaps.style()` reads the slots and nothing else. |
 | JS tile-size `16` and text-stroke-width `1px` defaults | Tile dimensions and stroke width come from the resolved asset/CSS utility. |
 | Public `TRMNLPaint.ink({ level })` role selector and adapter fallback plumbing | A paint converter should convert caller-selected paint, not hide semantic role selection or supply unrelated fallbacks to complete `BorderFill` / `TypeSpec` values. Replaced by explicit `textColor(token)`. |
 | `TRMNLCharts.ink()` compatibility wrapper | The chart layer is new in 3.2, so there is no released chart-helper API to preserve. Plotted data uses `series()` and text uses `textStyle()`. |
@@ -65,8 +72,15 @@ design and therefore requires no CSS paint counterpart: locating the nearest `.s
 the local cascade context, creating
 and removing hidden probes, rebuilding after a class change on the screen or on
 one of its ancestors, swallowing
-screenshot-service exceptions, deep-merging Highcharts options, disabling
-animation/mouse interaction, and destroying prior chart instances.
+screenshot-service exceptions, deep-merging Highcharts and MapLibre options, disabling
+animation/mouse interaction, and destroying prior chart and map instances.
+
+The map layer adds a few more of the same kind: decoding a registered tile image
+to `ImageData` and handing it to the map (lazily on `styleimagemissing`, eagerly
+on `style.load`), snapping an integer zoom and a pixel-aligned center so a tile
+pattern lands on the device grid, writing the data credit into the container,
+decoding an encoded polyline, and `settle()`, the bounded wait terminalize runs
+so `TRMNL_PLUGINS_READY` flips only once every attached map is idle.
 
 `watch()` reads its rebuild trigger from the same place the cascade reads its
 gates. `screenSignature()` folds the `screen--*` classes of the screen and every
@@ -86,6 +100,7 @@ behavior publishes the value, and JavaScript reads it back.
 | --- | --- | --- |
 | `getScreenContext().bitDepth` reads `--framework-bit-depth` from the screen. The engines that stand down on richer displays (pixel-perfect fonts, even index widths) gate on it. | `_screen-paint-depth-vars` in `base/_screen-mode-vars.scss`, one entry per mode class plus one per id in `$color-palette-limited-ids` | The mode class that selects a paint rail publishes that rail's depth, in the block order the paint blocks resolve in. A screen wearing a grayscale class and a palette class reports the rail that actually painted, and a new palette reaches the runtime with no JS change. |
 | `scale()` and `px()` read `--device-ui-scale`, `--modifier-scale`, `--ui-scale`, `--content-scale`, `--modifier-text-scale` and `--text-ui-scale` through a width probe, and `screenScaleName()` reads the modifier class. | `base/_screen.scss` composes the products; `utilities/_scale.scss` and `utilities/_text_scale.scss` bind the modifier per class | The factors are `calc()` chains, so only the browser can resolve them. The probe hands the resolved number back instead of JS repeating the multiplication. |
+| `scale().pixel` and `scale().dither` read `--pixel-ratio` and `--dither-ratio` through the same width probe. `TRMNLMaps.options()` sizes the MapLibre backing store with the first; `toMapLibre()` sizes a pattern image from the resolved tile size the second already shaped. | The device profiles in `config/_devices.scss` bind `--pixel-ratio`; the `--dither-ratio` declaration in `base/_screen-mode-vars.scss` and `utilities/_pixel_ratio.scss` bind the dither ratio | The canvas is the renderer's own backing store, so it has to be told the device ratio the screen already scales by; reading it back keeps one texel on one device pixel without a second table of device ratios in JS. |
 
 ## CSS paint not exposed through TRMNLPaint
 
@@ -102,5 +117,5 @@ under-field properties its CSS consumer paints with, and returns a full `Fill`, 
 
 | CSS channel | Where it is declared | Why no resolver |
 | --- | --- | --- |
-| `--framework-slot-*` component slots: title bar, screen backdrop, item meta, progress track/fill/dot, table meta, table head/body row, label gray, label underline | `_component-slot-defaults` in `base/_screen.scss` through the slot mixins in `mixins/_theme-slots.scss`, remapped per theme and by the 1-bit screen-backdrop repoint in `base/_screen-mode-vars.scss` | A slot paints one framework component's own surface. Highcharts and the other non-CSS renderers draw series, rails, and text, never a framework component. |
+| `--framework-slot-*` component slots whose component is a DOM element: title bar, screen backdrop, item meta, progress track/fill/dot, table meta, table head/body row, label gray, label underline, chip | `_component-slot-defaults` in `base/_screen.scss` through the slot mixins in `mixins/_theme-slots.scss`, remapped per theme and by the 1-bit screen-backdrop repoint in `base/_screen-mode-vars.scss` | These slots paint a framework component's own DOM surface, where CSS already reaches the target. `slot()` can read any of them, and the map slots above are read through it because the map is a framework component whose surface is a canvas. |
 | Role aliases `--framework-canvas-bg`, `--framework-surface-bg`, `--framework-backdrop-bg`, `--framework-text-*`, `--framework-fill-*`, `--framework-border-*`, `--framework-stroke-contrast`, `--framework-outline-strong` | `_role-aliases` in `base/_screen.scss` | Each alias is the flat color of a channel `semantic()` already returns in full. Publishing the alias too would hand callers a color-only view of paint that carries a tile. |

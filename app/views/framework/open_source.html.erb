@@ -93,6 +93,7 @@
           <li><strong>terminalize:</strong> the layout engine that fills each device's fixed space, handling overflow columns, text clamping, value fitting, and more. See <%= render DocsRef.new(page: :framework_runtime) %>.</li>
           <li><strong>TRMNLPaint:</strong> reads the live CSS cascade and returns canonical Fill, BorderFill, and TypeSpec objects, so any plugin can resolve framework colors from JavaScript. See <%= render DocsRef.new(page: :paint_api) %>.</li>
           <li><strong>TRMNLCharts:</strong> a Highcharts adapter built on TRMNLPaint, so charts adapt to bit depth, dark mode, and themes with the rest of the screen. See <%= render DocsRef.new(page: :chart) %>.</li>
+          <li><strong>TRMNLMaps:</strong> a MapLibre GL JS adapter built on TRMNLPaint, so a plotted map over OpenStreetMap vector tiles adapts the same way. See <%= render DocsRef.new(page: :map) %>.</li>
         </ul>
       </section>
 
@@ -133,22 +134,24 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'What This Site Loads from Elsewhere') %>
           <p class="<%= framework_section_description_classes %>">
-            The framework bundles fetch nothing from outside their own origin. Pattern images and fonts come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from.
+            The framework bundles fetch nothing from outside their own origin on their own. Pattern images and fonts come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from, and the one external name in <code class="<%= framework_section_code_classes %>">plugins.js</code> is the OpenStreetMap tile preset, which a plugin reaches only when it builds a map.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The docs site around them loads from four third-party origins, all in the page chrome or in a demo. Each one fails on its own page, so a host that blocks all four still serves every page here.
+            The docs site around them loads from six third-party origins, all in the page chrome or in a demo. Each one fails on its own page, so a host that blocks all six still serves every page here.
           </p>
         </div>
 
         <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
           <li><strong>Google Fonts</strong> (<code class="<%= framework_section_code_classes %>">fonts.googleapis.com</code>, <code class="<%= framework_section_code_classes %>">fonts.gstatic.com</code>): Inter and EB Garamond for this site, Space Mono for code, and Inter again inside every demo iframe. Blocked, the site falls back to system fonts and the screens keep their self-hosted families. See <%= render DocsRef.new(page: :font_family) %>.</li>
           <li><strong>unpkg</strong> (<code class="<%= framework_section_code_classes %>">unpkg.com</code>): the <code class="<%= framework_section_code_classes %>">@trmnl/picker</code> component behind the device selector. Blocked, the picker stays blank.</li>
-          <li><strong>trmnl.com</strong>: Highcharts and Chartkick, on the chart page and in the Shopify example. Blocked, those charts render empty. See <%= render DocsRef.new(page: :chart) %>.</li>
+          <li><strong>trmnl.com</strong>: Highcharts and Chartkick on the chart page and in the Shopify example, and MapLibre GL JS with its stylesheet on the map page. Blocked, those charts render empty and those maps stay blank. See <%= render DocsRef.new(page: :chart) %> and <%= render DocsRef.new(page: :map) %>.</li>
           <li><strong>jsDelivr</strong> (<code class="<%= framework_section_code_classes %>">cdn.jsdelivr.net</code>): opentype.js, which reads the glyph tables. Blocked, those tables stay empty. See <%= render DocsRef.new(page: :font_glyphs) %>.</li>
+          <li><strong>OpenStreetMap</strong> (<code class="<%= framework_section_code_classes %>">vector.openstreetmap.org</code>): the vector tiles behind the map demos. Blocked, the maps draw nothing but their attribution label. See <%= render DocsRef.new(page: :map) %>.</li>
+          <li><strong>VersaTiles</strong> (<code class="<%= framework_section_code_classes %>">tiles.versatiles.org</code>): the glyph ranges map labels are set from. Blocked, maps draw without labels.</li>
         </ul>
 
         <p class="<%= framework_section_description_classes %>">
-          Mounting the engine in another Rails app brings all four with it. <code class="<%= framework_section_code_classes %>">docs/ENGINE_INTEGRATION.md</code> repeats this list with the CSP directives each origin needs.
+          Mounting the engine in another Rails app brings all six with it. <code class="<%= framework_section_code_classes %>">docs/ENGINE_INTEGRATION.md</code> repeats this list with the CSP directives each origin needs. The two map hosts are development endpoints; <code class="<%= framework_section_code_classes %>">docs/MAPS_GO_LIVE.md</code> is the switch to a TRMNL-hosted tile service.
         </p>
       </section>
 
@@ -164,6 +167,9 @@
           </p>
           <p class="<%= framework_section_description_classes %>">
             Highcharts is a commercial library the framework does not include. The chart examples load it from trmnl.com, where TRMNL serves it under its own license, and <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> is only the adapter. A custom stack brings its own charting library and license: see <%= render DocsRef.new(page: :chart) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            MapLibre GL JS is BSD licensed and the map examples load it from trmnl.com, where TRMNL mirrors it. The map data is &copy; OpenStreetMap contributors under the ODbL, which is why every map keeps its credit visible, and <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> is only the adapter: see <%= render DocsRef.new(page: :map) %>.
           </p>
         </div>
       </section>

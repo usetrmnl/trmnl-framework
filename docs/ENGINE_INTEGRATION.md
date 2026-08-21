@@ -135,23 +135,32 @@ pinned to a 3.1.x bundle.
 
 ## Third-party origins the docs chrome loads
 
-Mounting the engine makes the browser fetch from four origins the gem does not
-control. None of them are in the framework bundles: `plugins.css` and
-`plugins.js` reference no external host, and everything they fetch (pattern
-images, fonts) comes from the same origin as the bundle. These four are the docs
-chrome and the demos around it.
+Mounting the engine makes the browser fetch from six origins the gem does not
+control. None of them are fetched by the framework bundles on their own:
+`plugins.css` references no external host, everything it fetches (pattern
+images, fonts) comes from the same origin as the bundle, and the one external
+name in `plugins.js` is the OpenStreetMap tile preset `TRMNLMaps.tiles()`
+carries, which a plugin reaches only when it builds a map. These six are the
+docs chrome and the demos around it.
 
 | Origin | What it loads | Where it comes from | Blocked |
 | --- | --- | --- | --- |
 | `fonts.googleapis.com`, `fonts.gstatic.com` | Inter and EB Garamond for the docs UI, Space Mono for code, Inter again inside every demo iframe | `app/views/layouts/framework.html.erb`, the `@import` at the top of `app/assets/tailwind/application.css` (so it is baked into the `tailwind.css` the gem ships), and `buildSrcdoc` in `app/javascript/framework_docs/controllers/framework_examples_controller.js` | Docs chrome and demo iframes fall back to system fonts. Framework screens keep the self-hosted `/fonts` families either way. |
 | `unpkg.com` | `@trmnl/picker`, the screen-picker web component | `config/importmap.rb` | The device picker stays blank. Every page still renders. |
-| `trmnl.com` | Highcharts and Chartkick | The chart docs page and the Shopify example fixture | Those charts render empty. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here. |
+| `trmnl.com` | Highcharts and Chartkick; MapLibre GL JS and its stylesheet | The chart docs page and the Shopify example fixture; the map docs page | Those charts render empty and those maps stay blank. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here; MapLibre is BSD licensed and mirrored there beside it. |
 | `cdn.jsdelivr.net` | opentype.js | The font glyphs docs page | The glyph tables stay empty. |
+| `vector.openstreetmap.org` | OpenStreetMap vector tiles (Shortbread schema), fetched by MapLibre over XHR | The map docs page, through the `osm` preset in `TRMNLMaps.tiles()` | The maps draw nothing but their attribution label. |
+| `tiles.versatiles.org` | Glyph ranges for map labels | The map docs page, same preset | Roads and areas still draw; labels do not. |
 
-Each failure is local to its own page, so a host that blocks all four still
+Each failure is local to its own page, so a host that blocks all six still
 serves every docs page. Under a strict CSP, allow `style-src` and `font-src` for
-the two Google Fonts hosts and `script-src` for the other three, or accept the
-degradation above. The engine has no setting that turns them off.
+the two Google Fonts hosts, `script-src` for trmnl.com, unpkg.com and
+cdn.jsdelivr.net, `style-src` for trmnl.com (the MapLibre stylesheet),
+`connect-src` for vector.openstreetmap.org and tiles.versatiles.org, and
+`worker-src blob:` for the MapLibre worker, or accept the degradation above.
+The engine has no setting that turns them off. The two map hosts are
+development endpoints: [MAPS_GO_LIVE.md](MAPS_GO_LIVE.md) is the checklist that
+moves them to a TRMNL host before a map plugin ships.
 
 ## Runtime
 

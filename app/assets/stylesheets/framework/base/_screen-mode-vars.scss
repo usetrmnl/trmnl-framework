@@ -853,6 +853,32 @@ $_limited-palette-paint-depth: 4;
     }
 }
 
+// Map lines on 1-bit. The grayscale blocks quantize fills to tiles, but
+// --stroke-<token>-color keeps the token's hex on every rail, so a gray map
+// line would hand the device dither a mid-gray hairline that comes out as
+// speckle. On 1-bit the line slots take the ink; hierarchy is width and dash.
+// 2-bit keeps its two real grays.
+@mixin _map-slot-one-bit-lines {
+    @include theme-slots.border-token-slot('map-road-minor', 'black');
+    @include theme-slots.border-token-slot('map-boundary', 'black');
+    @include theme-slots.border-token-slot('map-water-line', 'black');
+}
+
+// Map slots on the color rails. The defaults in base/_screen.scss are grays
+// tuned for 1-bit; a panel that can print a hue gets water and greens in
+// their own hue and lines a step back from the ink, the way the chart ramp
+// trades its shade ladder for a categorical ramp. Limited palettes take the
+// same tokens and resolve them through their own rails.
+@mixin _map-slot-color-defaults {
+    @include theme-slots.bg-slot('map-water', 'blue-70');
+    @include theme-slots.bg-slot('map-green', 'green-70');
+    @include theme-slots.bg-slot('map-area', 'gray-70');
+    @include theme-slots.bg-slot('map-building', 'gray-50');
+    @include theme-slots.border-token-slot('map-road-minor', 'gray-50');
+    @include theme-slots.border-token-slot('map-boundary', 'purple-40');
+    @include theme-slots.border-token-slot('map-water-line', 'blue-60');
+}
+
 // ============================================
 // CSS Output: Mode variable declarations
 // ============================================
@@ -897,6 +923,14 @@ $_limited-palette-paint-depth: 4;
     .screen.screen--1bit.screen--dark-mode#{helpers.$theme-exempt},
     .screen.screen--1bit#{helpers.$theme-exempt}:not(.screen--dark-mode) .inverse {
         @include theme-slots.bg-slot('screen-backdrop', 'gray-75');
+    }
+
+    // Map lines take the ink on the 1-bit rail, light and dark alike (the
+    // stroke chain remaps black to white on the dark ground). See
+    // _map-slot-one-bit-lines.
+    .screen.screen--1bit#{helpers.$theme-exempt},
+    .screen.screen--1bit#{helpers.$theme-exempt} .inverse {
+        @include _map-slot-one-bit-lines;
     }
 
     // ── 2-bit mode: grayscale--2bit dither patterns ──
@@ -951,6 +985,7 @@ $_limited-palette-paint-depth: 4;
             vars.$color-full-chart-series,
             $span: vars.$color-full-chart-series-span
         );
+        @include _map-slot-color-defaults;
     }
 
     // ── Limited color palettes (actual + preview) ──
@@ -964,6 +999,13 @@ $_limited-palette-paint-depth: 4;
             // emit only the grayscale rail here to avoid 900 dead declarations.
             @include _border-token-pattern-vars('borders-token', $chromatic: false);
             @include _border-token-palette-vars($palette-id);
+        }
+
+        // Themeable, unlike the paint vars above, so it rides its own
+        // theme-exempt rule like the color-full chart ramp.
+        .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _map-slot-color-defaults;
         }
 
         .screen.screen--preview-colors.screen--color-#{$palette-id},

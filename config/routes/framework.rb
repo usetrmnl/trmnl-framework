@@ -2,8 +2,8 @@ framework_v1_components = %w[background image border view layout title_bar colum
                              label value table chart item gap clamp overflow format_value fit_value content_limiter flex size text spacing mashup pixel_perfect rich_text text_stroke image_stroke]
 framework_v2_components = %w[v2_overview upgrade_guide enhancement_guide troubleshooting_guide trmnl_x_guide]
 framework_v3_components = %w[structure screen background image border rounded outline view layout title_bar columns grid title description
-                             label value table table_overflow chart item progress gap clamp overflow format_value fit_value content_limiter flex size responsive text_size text_scale font_weight font_family font_glyphs text_color text_alignment spacing mashup pixel_perfect rich_text text_stroke image_stroke visibility divider scale aspect_ratio responsive_test framework_runtime
-                             v3_overview v3_upgrade_guide v3_enhancement_guide open_source contributing colors color_palettes tokens themes paint_api paint_colors paint_charts paint_borders paint_typography sass_api sass_build sass_devices sass_mixins theme_authoring theme_slots variables_api inverse
+                             label value table table_overflow chart map item progress gap clamp overflow format_value fit_value content_limiter flex size responsive text_size text_scale font_weight font_family font_glyphs text_color text_alignment spacing mashup pixel_perfect rich_text text_stroke image_stroke visibility divider scale aspect_ratio responsive_test framework_runtime
+                             v3_overview v3_upgrade_guide v3_enhancement_guide open_source contributing colors color_palettes tokens themes paint_api paint_colors paint_charts paint_maps paint_borders paint_typography sass_api sass_build sass_devices sass_mixins theme_authoring theme_slots variables_api inverse
                              devices rendering_modes]
 framework_docs_components = (framework_v1_components + framework_v2_components + framework_v3_components).uniq
 

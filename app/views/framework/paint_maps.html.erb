@@ -1,0 +1,386 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :paint_maps %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:paint_maps) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Map slots') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every resolver takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
+            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code> ancestor
+            supplies the paint. Each returns a canonical
+            <code class="<%= framework_section_code_classes %>">Fill</code>; see
+            <%= render DocsRef.new(page: :paint_api) %> for the shape.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">slot(name, { el, kind })</code>: the Fill of one
+              component slot. <code class="<%= framework_section_code_classes %>">kind</code> is
+              <code class="<%= framework_section_code_classes %>">'bg'</code> (the default) for an area,
+              <code class="<%= framework_section_code_classes %>">'text'</code> for a label, or
+              <code class="<%= framework_section_code_classes %>">'border'</code> for a line, which returns a
+              BorderFill whose <code class="<%= framework_section_code_classes %>">render.stroke</code> is the one
+              color a line can take.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">series(i, count, { el })</code>: the fill for route
+              <em>i</em> of <em>count</em>, from the same chart-series ramp charts use. See
+              <%= render DocsRef.new(page: :paint_charts) %>.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The map slots are the areas <code class="<%= framework_section_code_classes %>">map-land</code>,
+            <code class="<%= framework_section_code_classes %>">map-water</code>,
+            <code class="<%= framework_section_code_classes %>">map-green</code>,
+            <code class="<%= framework_section_code_classes %>">map-area</code> and
+            <code class="<%= framework_section_code_classes %>">map-building</code>, the lines
+            <code class="<%= framework_section_code_classes %>">map-road</code>,
+            <code class="<%= framework_section_code_classes %>">map-road-minor</code>,
+            <code class="<%= framework_section_code_classes %>">map-rail</code>,
+            <code class="<%= framework_section_code_classes %>">map-boundary</code> and
+            <code class="<%= framework_section_code_classes %>">map-water-line</code>, and the text roles
+            <code class="<%= framework_section_code_classes %>">map-label</code> and
+            <code class="<%= framework_section_code_classes %>">map-label-muted</code>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Each one resolves through the device mode: a dither tile on 1- and 2-bit screens, a solid on 4-bit and
+            up, a hue on the color panels. Land follows the canvas and the major lines follow the strong border, so a
+            theme restates only the tinted areas and minor lines, with the same slot mixins it uses for every other
+            component: see <%= render DocsRef.new(page: :theme_slots) %>.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// An area: a tile on 1-bit, a solid on 4-bit, blue on a color panel.
+var water = TRMNLPaint.slot("map-water", { el: "my-map" });
+
+// A line: the BorderFill carries the CSS-declared stroke.
+var road = TRMNLPaint.slot("map-road", { el: "my-map", kind: "border" });
+var ink = road.render.stroke;
+
+// A label: the ink of the map-label text role.
+var label = TRMNLPaint.slot("map-label", { el: "my-map", kind: "text" });', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'MapLibre adapters') %>
+          <p class="<%= framework_section_description_classes %>">
+            Adapters shape a resolved <code class="<%= framework_section_code_classes %>">Fill</code> or
+            <code class="<%= framework_section_code_classes %>">BorderFill</code> for one specific renderer. They copy
+            resolved values into the renderer's native form; no adapter adds contrast heuristics, thresholds or
+            substitute design rules.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">toMapLibre(fill)</code>: returns
+              <code class="<%= framework_section_code_classes %>">{ color, ink, pattern }</code>. A solid Fill gives
+              its color as both <code class="<%= framework_section_code_classes %>">color</code> and
+              <code class="<%= framework_section_code_classes %>">ink</code>; a tile Fill gives its painted ink and a
+              registered pattern image for <code class="<%= framework_section_code_classes %>">fill-pattern</code>,
+              with the field composited in and a pixel ratio that lands one tile pixel on one device pixel; a line
+              Fill gives its stroke and never a pattern.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> (see the next section) is the
+            MapLibre composition layer over TRMNLPaint, the way
+            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> is for Highcharts:
+            <%= render DocsRef.new(page: :paint_charts) %>. Pattern images are added to the map as the style asks
+            for them, so a plugin never handles the image itself.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '// MapLibre: a flat color on solid panels, a registered pattern on 1- and 2-bit screens.
+var water = TRMNLPaint.toMapLibre(TRMNLPaint.slot("map-water", { el: "my-map" }));
+var paint = water.pattern
+  ? { "fill-pattern": water.pattern.id }   // dither tile
+  : { "fill-color": water.color };         // solid
+
+// A line layer takes the ink.
+var road = TRMNLPaint.toMapLibre(TRMNLPaint.slot("map-road", { el: "my-map", kind: "border" }));
+var linePaint = { "line-color": road.ink, "line-width": TRMNLPaint.px(2, { el: "my-map" }) };', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'The TRMNLMaps API') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> ships in the same
+            <code class="<%= framework_section_code_classes %>">plugins.js</code> runtime as
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and composes MapLibre GL JS styles
+            and options out of it. It resolves no paint of its own: every value it returns comes from a TRMNLPaint
+            resolver and adapter. <%= render DocsRef.new(page: :map) %> puts it to work in street, route and Strava
+            examples.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Every method takes the same optional <code class="<%= framework_section_code_classes %>">{ el }</code> as
+            the resolvers: the map container id or element whose nearest
+            <code class="<%= framework_section_code_classes %>">.screen</code> supplies the paint. Omit it on a
+            single-screen plugin.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Resolving map paint') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">paint(token, { el })</code>: one palette token as
+                MapLibre paint, <code class="<%= framework_section_code_classes %>">{ color, ink, pattern }</code>.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">series(i, count, { el })</code>: the MapLibre paint
+                for route <em>i</em> of <em>count</em> from the screen's chart-series ramp.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">path(i, count, { el, width })</code>: a line layer's
+                layout and paint for that route, rounded caps and joins,
+                <code class="<%= framework_section_code_classes %>">width</code> scaled through
+                <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> (default 2).
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">marker(i, count, { el, radius, hollow })</code>: a
+                circle layer's paint for that route, the series ink with a contrast ring (default radius 4).
+                <code class="<%= framework_section_code_classes %>">hollow: true</code> swaps ring and fill, so a start
+                dot and an end ring read apart on one ink.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">label(role, { el, bold, muted })</code>: a symbol
+                layer's text layout and paint for a typography role: the preset's font stack, the role's size, the
+                map-label ink and a one-pixel contrast halo.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints every element
+                under the screen carrying <code class="<%= framework_section_code_classes %>">data-map-slot="map-water"</code>
+                (and <code class="<%= framework_section_code_classes %>">data-map-slot-kind="text"</code> or
+                <code class="<%= framework_section_code_classes %>">"border"</code>) from that slot, for a legend.
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Building the style') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">tiles(preset)</code>: a tile source preset, the
+                vector tile URL, zoom range, attribution, glyph endpoint and font stacks.
+                <code class="<%= framework_section_code_classes %>">'osm'</code> is the default; an object merges over it
+                for a custom host.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">style(preset, { el, tiles, labels, buildings })</code>:
+                a complete MapLibre style for <code class="<%= framework_section_code_classes %>">streets</code>,
+                <code class="<%= framework_section_code_classes %>">minimal</code>,
+                <code class="<%= framework_section_code_classes %>">outline</code> or
+                <code class="<%= framework_section_code_classes %>">blank</code>, every layer painted from the map
+                slots. <code class="<%= framework_section_code_classes %>">labels: false</code> drops the labels,
+                <code class="<%= framework_section_code_classes %>">labels: 'major'</code> keeps the big place names,
+                <code class="<%= framework_section_code_classes %>">buildings: false</code> drops the footprints.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">options({ el, preset, center, zoom })</code>: Map
+                options for a still map: the container, every handler and animation off, no controls, the screen's
+                pixel ratio, and the style for the preset. Pass the result to
+                <code class="<%= framework_section_code_classes %>">new maplibregl.Map()</code>.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">merge(base, overrides)</code>: a deep merge of two
+                plain objects, where arrays and scalars replace. Layer your own ids, sources and options over the
+                defaults with it.
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Fitting and decoding') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">fit(map, coords, { padding, maxZoom })</code>: frames
+                the coordinates without animation, on an integer zoom with the center snapped to the pixel grid so
+                dither patterns stay crisp. Returns the <code class="<%= framework_section_code_classes %>">{ center, zoom }</code>
+                it jumped to.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">decodePolyline(str, precision)</code>: a Google
+                encoded polyline (Strava's <code class="<%= framework_section_code_classes %>">map.summary_polyline</code>)
+                as <code class="<%= framework_section_code_classes %>">[lng, lat]</code> pairs, ready for a GeoJSON
+                LineString.
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Keeping the map current') %>
+            <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+              <li>
+                <code class="<%= framework_section_code_classes %>">watch(el, buildFn)</code>: builds the map now and
+                again whenever the device, scale, mode, dark-mode or theme classes change.
+                <code class="<%= framework_section_code_classes %>">buildFn</code> creates and returns the map; the
+                previous one is removed first and the new one attached. Returns a stop function.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">attach(map, { el })</code>: registers a map you
+                built yourself: pattern images, the pixel-grid snap, the attribution label and readiness.
+                <code class="<%= framework_section_code_classes %>">watch()</code> calls it for you.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">ready(map)</code>: a promise that resolves once the
+                map has drawn everything it knows about.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">settle({ maxWaitMs })</code>: the bounded wait the
+                runtime runs at the end of a pass, so
+                <code class="<%= framework_section_code_classes %>">window.TRMNL_PLUGINS_READY</code> flips only once
+                every attached map is idle. Default 6000 ms, or
+                <code class="<%= framework_section_code_classes %>">window.__TRMNL_MAPS_SETTLE_MS__</code>.
+              </li>
+              <li>
+                <code class="<%= framework_section_code_classes %>">supported()</code>: whether this browser can draw a
+                MapLibre map. Without WebGL, <code class="<%= framework_section_code_classes %>">watch()</code> flags the
+                container <code class="<%= framework_section_code_classes %>">data-map-unsupported</code> and shows a
+                <code class="<%= framework_section_code_classes %>">.map__fallback</code> child if you placed one.
+              </li>
+            </ul>
+            <p class="<%= framework_subsection_description_classes %>">
+              MapLibre numbers do not read CSS, so resolve widths, radii and padding with
+              <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> inside the build function. See
+              <%= render DocsRef.new(page: :paint_api) %>.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: 'var el = "my-map";
+
+// watch() rebuilds on every device, mode, dark-mode and theme change.
+TRMNLMaps.watch(el, function () {
+  var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
+  map.on("load", function () {
+    map.addSource("route", { type: "geojson", data: routeFeature });
+    map.addLayer(TRMNLMaps.merge(TRMNLMaps.path(0, 1, { el: el, width: 3 }), { id: "route", source: "route" }));
+  });
+  TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
+  return map;
+});', language: 'javascript') %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Live example') %>
+          <p class="<%= framework_section_description_classes %>">
+            The swatches below are painted with
+            <code class="<%= framework_section_code_classes %>">TRMNLMaps.applySwatches()</code> inside
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.watch()</code>, with no map library
+            involved. Change the device mode or Style in the screen picker and they repaint from the live cascade:
+            tiles on 1- and 2-bit screens, solids on 4-bit, hues on a color panel.
+          </p>
+        </div>
+
+        <div class="<%= framework_example_classes %>">
+          <div class="<%= framework_example_inner_classes %>">
+            <div class="<%= framework_example_wrapper_classes %>">
+              <div class="screen">
+                <div class="view view--full">
+                  <div class="layout layout--col gap--space-between">
+                    <div class="grid grid--cols-3" id="map-slot-swatches">
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <div class="w--14 h--4 mb--2 rounded--small" data-map-slot="map-land"></div>
+                          <span class="label">Land</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <div class="w--14 h--4 mb--2 rounded--small" data-map-slot="map-water"></div>
+                          <span class="label">Water</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <div class="w--14 h--4 mb--2 rounded--small" data-map-slot="map-green"></div>
+                          <span class="label">Green</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <div class="w--14 h--4 mb--2 rounded--small" data-map-slot="map-building"></div>
+                          <span class="label">Building</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <div class="w--14 h--1.5 mb--2" data-map-slot="map-road" data-map-slot-kind="border"></div>
+                          <span class="label">Road</span>
+                        </div>
+                      </div>
+                      <div class="item">
+                        <div class="meta"></div>
+                        <div class="content">
+                          <div class="w--14 h--1.5 mb--2" data-map-slot="map-road-minor" data-map-slot-kind="border"></div>
+                          <span class="label">Minor road</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="title_bar">
+                    <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                    <span class="title">Painting Maps</span>
+                    <span class="instance">Map slots</span>
+                  </div>
+                </div>
+
+                <script type="text/trmnl-example">
+                  function whenReady(cb) {
+                    var tries = 0;
+                    (function attempt() {
+                      if (window.TRMNLMaps) return cb();
+                      if (++tries > 200) return;
+                      setTimeout(attempt, 50);
+                    })();
+                  }
+
+                  whenReady(function () {
+                    var el = "map-slot-swatches";
+                    TRMNLPaint.watch(el, function () {
+                      TRMNLMaps.applySwatches({ el: el });
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(demo_code: '<div class="w--14 h--4 mb--2 rounded--small" data-map-slot="map-water"></div>
+<div class="w--14 h--1.5 mb--2" data-map-slot="map-road" data-map-slot-kind="border"></div>
+
+<script type="text/javascript">
+  var el = "map-slot-swatches";
+  TRMNLPaint.watch(el, function () {
+    TRMNLMaps.applySwatches({ el: el });
+  });
+</script>') %>
+        </div>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

@@ -78,6 +78,9 @@ class FrameworkController < Framework.parent_controller_class
   # :foundation gains Devices and Rendering Modes behind Screen: the two things a
   # screen states about its hardware before any content goes in it. Both are
   # 3.2-only, like every other page added to this hash rather than to V3_DOC_GROUPS.
+  #
+  # :components gains Map behind Chart, and :paint gains Painting Maps behind
+  # Painting Charts: TRMNLMaps ships in the 3.2 runtime, so both pages are 3.2-only.
   V3_2_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
     case group
     when :guides
@@ -85,6 +88,9 @@ class FrameworkController < Framework.parent_controller_class
     when :foundation
       screen_index = pages.index('screen') || -1
       groups[:foundation] = pages.dup.insert(screen_index + 1, 'devices', 'rendering_modes')
+    when :components
+      chart_index = pages.index('chart') || -1
+      groups[:components] = pages.dup.insert(chart_index + 1, 'map')
     when :styling
       groups[:styling] = (pages - %w[colors tokens]) + %w[inverse]
     when :typography
@@ -92,7 +98,7 @@ class FrameworkController < Framework.parent_controller_class
       groups[:typography] = pages.dup.insert(text_size_index + 1, 'text_scale')
     when :modulations
       groups[:runtime] = %w[framework_runtime] + (pages - %w[framework_runtime])
-      groups[:paint] = %w[paint_api paint_colors paint_charts paint_borders paint_typography]
+      groups[:paint] = %w[paint_api paint_colors paint_charts paint_maps paint_borders paint_typography]
       groups[:sass] = %w[sass_api sass_build sass_devices sass_mixins]
       groups[:themes] = %w[themes theme_authoring theme_slots]
       groups[:variables] = %w[variables_api colors color_palettes tokens]
@@ -187,6 +193,7 @@ class FrameworkController < Framework.parent_controller_class
   def paint_api; end
   def paint_colors; end
   def paint_charts; end
+  def paint_maps; end
   def paint_borders; end
   def paint_typography; end
   def sass_api; end
@@ -215,6 +222,7 @@ class FrameworkController < Framework.parent_controller_class
   def table; end
   def table_overflow; end
   def chart; end
+  def map; end
   def item; end
   def gap; end
   def clamp; end

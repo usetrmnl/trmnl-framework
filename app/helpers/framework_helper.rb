@@ -15,6 +15,7 @@ module FrameworkHelper
     'paint_api' => 'Paint API',
     'paint_colors' => 'Painting Colors',
     'paint_charts' => 'Painting Charts',
+    'paint_maps' => 'Painting Maps',
     'paint_borders' => 'Painting Borders',
     'paint_typography' => 'Painting Typography',
     'sass_api' => 'Sass API',
@@ -53,6 +54,7 @@ module FrameworkHelper
     'table' => 'Table',
     'table_overflow' => 'Table Overflow',
     'chart' => 'Chart',
+    'map' => 'Map',
     'overflow' => 'Overflow',
     'format_value' => 'Format Value',
     'fit_value' => 'Fit Value',
@@ -114,6 +116,7 @@ module FrameworkHelper
     'paint_api' => 'TRMNLPaint: read the live CSS cascade from JavaScript to resolve framework colors and tile patterns',
     'paint_colors' => 'Resolve background, text, stroke, and semantic tokens from JavaScript as canonical Fill objects',
     'paint_charts' => 'Chart series colors from the framework ramp, with Highcharts adapters',
+    'paint_maps' => 'Map slot colors from the framework paint, with MapLibre GL JS adapters',
     'paint_borders' => 'Read border rails as BorderFill objects for custom rails and Highcharts axes',
     'paint_typography' => 'Read text roles as TypeSpec objects for custom text and chart labels',
     'sass_api' => 'The framework SCSS source: architecture, cascade layers, and what a custom stack can build from it',
@@ -152,6 +155,7 @@ module FrameworkHelper
     'table' => 'Create data tables optimized for 1-bit rendering',
     'table_overflow' => 'Handle table rows overflow',
     'chart' => 'Visualize data optimized for 1-bit rendering',
+    'map' => 'Plot locations and routes on a vector map painted for 1-bit and color screens',
     'overflow' => 'Handle column items overflow',
     'format_value' => 'Format numbers and values with consistent styling',
     'fit_value' => 'Automatically resize numbers and values to fit within their containers',
@@ -326,6 +330,9 @@ module FrameworkHelper
     'chart' => [
       { page: :paint_charts, inline: true }
     ],
+    'map' => [
+      { page: :paint_maps, inline: true }
+    ],
     'responsive' => [
       { page: :sass_mixins, partial: 'sass_mixins' }
     ],
@@ -346,9 +353,10 @@ module FrameworkHelper
       'color_palettes' => 'A palette tells a screen which inks its panel can print. Four grayscale palettes map onto the bit-depth classes, five limited color palettes dither every framework token down to a fixed ink set, and screen--color-full paints every token at its actual hex on 12-bit and 24-bit displays.',
       'tokens' => "The Tokens reference lists every Framework CSS variable from <code>_variables_root.scss</code> and display overrides in <code>_variables_overrides.scss</code>. Use it to understand defaults, 2-bit visual/layout behavior, high-density typography, and 4-bit-and-up scaling.",
       'themes' => 'Themes are standalone stylesheets that re-point semantic channels, component slots, and utility tokens at different palette tokens. A themed screen still renders through its device mode: dither patterns on 1-bit, palette images on limited color, solids on full color.',
-      'paint_api' => 'TRMNLPaint is the framework\'s public JavaScript paint API. It reads the live CSS cascade (bit depth, dark mode, theme, limited palette, and tiles all resolved) and hands back a canonical Fill, so token mappings are never duplicated in JavaScript. Charts are just one consumer; any plugin can resolve framework colors from JS for any purpose.',
+      'paint_api' => 'TRMNLPaint is the framework\'s public JavaScript paint API. It reads the live CSS cascade (bit depth, dark mode, theme, limited palette, and tiles all resolved) and hands back a canonical Fill, so token mappings are never duplicated in JavaScript. Charts and maps are two consumers; any plugin can resolve framework colors from JS for any purpose.',
       'paint_colors' => 'The color resolvers read background, text, stroke, and semantic tokens from the live cascade and return canonical Fill objects. Use them when JavaScript needs the exact paint a CSS utility would produce.',
       'paint_charts' => 'The chart resolvers pick evenly spaced series colors from the framework chart ramp, resolved through the live cascade. Adapters convert the resulting Fills into Highcharts color options.',
+      'paint_maps' => 'The map resolvers read the map slots (land, water, roads, parks, buildings, labels) from the live cascade and return canonical Fill objects. Adapters convert them into MapLibre GL JS paint properties, and TRMNLMaps assembles whole styles out of them.',
       'paint_borders' => 'The border resolvers read the framework border rails as BorderFill objects. Apply them to custom rails, or convert them for Highcharts axes and grid lines.',
       'paint_typography' => 'The typography resolver reads a text role or utility class as a TypeSpec: font, size, weight, paint, and optional stroke. Apply it to custom text, or convert it for Highcharts labels.',
       'sass_api' => 'The Sass API is the framework\'s SCSS source, open since 3.2. A custom stack serves either an official released build or its own build compiled from this source; these pages document the build-your-own path. The TRMNL Platform always serves official builds.',
@@ -373,6 +381,7 @@ module FrameworkHelper
       'table' => 'Tabular data with optional row indexes. Five size variants, and the Overflow and Clamp engines drop rows and truncate cells that do not fit the space available.',
       'table_overflow' => 'When a table has more rows than can fit within the available vertical space, it constrains its height and appends a trailing "and X more" row to indicate the hidden entries.',
       'chart' => 'With careful, minimal styling choices, TRMNL can display a variety of numerical or time centric content as charts and graphs.',
+      'map' => 'Maps render OpenStreetMap vector tiles through MapLibre GL JS, with every layer painted by the framework. The plugin runtime bundles TRMNLMaps, which composes the map style from the live screen, so a map adapts to the device, bit depth, dark mode, and themes like the rest of the screen. Maps are plotted, never satellite, and never interactive.',
       'item' => 'A row for lists, schedules, and other repeating content, with optional meta text, an index, or an icon. Stack items in a Layout and let the Overflow engine handle the ones that do not fit.',
       'progress' => 'Progress bars and step dots for completion state. The fill renders as a bitmap pattern on 1-bit displays and as a solid color on 4-bit+ displays.',
       'flex' => 'Utility classes for Flexbox layouts. Row and column directions with alignment, centering, and stretching modifiers.',
@@ -641,6 +650,7 @@ module FrameworkHelper
     'color_palettes' => 'colors',
     'paint_colors' => 'colors',
     'paint_charts' => 'chart',
+    'paint_maps' => 'map',
     'paint_borders' => 'border',
     'paint_typography' => 'text',
     'sass_api' => 'curly_brackets',
@@ -771,7 +781,7 @@ module FrameworkHelper
       typography: 'Font families, glyphs, text size and scale, weight, color, alignment, and stroke utilities for controlling how text appears across devices and orientations.',
       modulations: 'Engines and systems that adapt content at render time: overflow, clamping, value formatting and fitting, content limiting, pixel-perfect text, and the Framework Runtime.',
       runtime: 'The Framework Runtime and the engines it drives at render time: overflow, clamping, value formatting and fitting, content limiting, and pixel-perfect text.',
-      paint: 'TRMNLPaint, the JavaScript paint API. Read the live CSS cascade to resolve framework colors, borders, and typography for canvases, SVGs, and charts.',
+      paint: 'TRMNLPaint, the JavaScript paint API. Read the live CSS cascade to resolve framework colors, borders, and typography for canvases, SVGs, charts, and maps.',
       sass: 'The framework SCSS source for custom stacks. Compile your own build, add custom device profiles, and author device-aware styles with the framework mixins.',
       themes: 'Opt-in stylesheets that re-theme screens while preserving device-capability rendering: usage, the authoring contract, and every themable slot.',
       variables: 'The public CSS variable surface: the palette, every token with its per-mode values, and the contract for who reads, re-points, and generates them.',

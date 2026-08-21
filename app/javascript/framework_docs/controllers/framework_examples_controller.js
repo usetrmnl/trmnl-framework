@@ -156,16 +156,23 @@ export default class extends Controller {
   // library the parent has no business holding. So a demo declares its libraries with
   // data-trmnl-src and its own code with type="text/trmnl-example", neither of which
   // the parent executes, and both become the real thing on the way into the srcdoc.
-  // The <template> parse is inert too, so nothing runs while they are rewritten.
+  // A stylesheet a library needs (MapLibre lays its canvas out from its own CSS)
+  // takes the same road as data-trmnl-href on a <link>: inert in the parent, href
+  // inside the srcdoc. The <template> parse is inert too, so nothing runs while they
+  // are rewritten.
   exampleBodyHtml(wrapper) {
     const html = wrapper.innerHTML
-    if (!html.includes('data-trmnl-src') && !html.includes('text/trmnl-example')) return html
+    if (!html.includes('data-trmnl-src') && !html.includes('data-trmnl-href') && !html.includes('text/trmnl-example')) return html
 
     const template = document.createElement('template')
     template.innerHTML = html
     template.content.querySelectorAll('script[data-trmnl-src]').forEach((script) => {
       script.setAttribute('src', script.getAttribute('data-trmnl-src'))
       script.removeAttribute('data-trmnl-src')
+    })
+    template.content.querySelectorAll('link[data-trmnl-href]').forEach((link) => {
+      link.setAttribute('href', link.getAttribute('data-trmnl-href'))
+      link.removeAttribute('data-trmnl-href')
     })
     template.content.querySelectorAll('script[type="text/trmnl-example"]').forEach((script) => {
       script.setAttribute('type', 'text/javascript')

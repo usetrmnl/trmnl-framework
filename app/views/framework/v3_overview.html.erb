@@ -97,6 +97,18 @@
 
       <section class="space-y-6">
         <div class="space-y-1">
+          <%= framework_heading(3, 'Adaptive Maps') %>
+          <p class="<%= framework_section_description_classes %>">
+            Maps join charts on TRMNLPaint. The runtime bundles <code class="<%= framework_section_code_classes %>">TRMNLMaps</code>, a MapLibre GL JS adapter that composes the map style from the framework's map slots over OpenStreetMap vector tiles, so a plotted map takes dither tiles on 1-bit, solids on 4-bit, hues on a color panel, and a theme's own tokens. Maps render as one still frame, with no interaction and no animation.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Usage and live examples, including a Strava activity: <%= render DocsRef.new(page: :map) %>. The resolvers and adapter behind it: <%= render DocsRef.new(page: :paint_maps) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
           <%= framework_heading(3, 'Adaptive Icons') %>
           <p class="<%= framework_section_description_classes %>">
             Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to a monochrome silhouette icon and the framework repaints it with the screen's icon paint, following the same Raw/Preview, bit-depth, dark-mode, and theme cascade as framework text. One set of icons works everywhere, as long as they are same-origin or CORS-readable. See <%= render DocsRef.new(page: :image) %>.

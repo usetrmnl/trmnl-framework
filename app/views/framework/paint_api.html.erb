@@ -61,6 +61,14 @@
             </ul>
           <% end %>
 
+          <%= render FrameworkDocCardComponent.new(icon: :map, title: 'Painting Maps', docs_page: :paint_maps) do %>
+            <p class="<%= framework_subsection_description_classes %>">Map slots for land, water, roads and labels, and the MapLibre GL JS paint adapter.</p>
+            <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
+              <li><code class="<%= framework_section_code_classes %>">slot()</code></li>
+              <li><code class="<%= framework_section_code_classes %>">toMapLibre()</code></li>
+            </ul>
+          <% end %>
+
           <%= render FrameworkDocCardComponent.new(icon: :border, title: 'Painting Borders', docs_page: :paint_borders) do %>
             <p class="<%= framework_subsection_description_classes %>">Border and divider rails as BorderFills, for custom rails and Highcharts axes.</p>
             <ul class="list-disc list-inside space-y-1 <%= framework_list_classes %>">
