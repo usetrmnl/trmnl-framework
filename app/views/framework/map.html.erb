@@ -354,7 +354,8 @@
             <%= framework_heading(4, 'Markers and routes') %>
             <p class="<%= framework_subsection_description_classes %>">
               Plot your own data. route() and dot() draw it as crisp fills painted from the screen's chart-series
-              ramp, and fit() frames the route on an integer zoom.
+              ramp, and fit() frames it on an integer zoom. A second route takes the next step of the ramp (a dither
+              on 1-bit), so the ride in and the ride home read apart.
             </p>
           </div>
 
@@ -406,6 +407,10 @@
                       [13.4240, 52.5390], [13.4205, 52.5352], [13.4150, 52.5310], [13.4088, 52.5265],
                       [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
                     ];
+                    var home = [
+                      [13.3759, 52.5096], [13.3850, 52.5150], [13.3960, 52.5232], [13.4060, 52.5290],
+                      [13.4150, 52.5345], [13.4240, 52.5390]
+                    ];
 
                     function whenReady(cb) {
                       var tries = 0;
@@ -421,13 +426,15 @@
                       TRMNLMaps.watch(el, function () {
                         var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
                         map.on("load", function () {
-                          // route() and dot() draw crisp fills from the chart-series ramp.
-                          TRMNLMaps.route(map, route, { el: el, width: 3 });
+                          // route() and dot() draw crisp fills from the chart-series ramp:
+                          // the ride in takes step 0 of 2, the ride home step 1.
+                          TRMNLMaps.route(map, route, { el: el, width: 3, i: 0, n: 2 });
+                          TRMNLMaps.route(map, home, { el: el, id: "home", width: 3, i: 1, n: 2 });
                           TRMNLMaps.dot(map, route[0], { el: el, id: "start", radius: 5 });
                           TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", radius: 5, hollow: true });
                         });
-                        // fit() frames the route on an integer zoom, no animation.
-                        TRMNLMaps.fit(map, route, { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
+                        // fit() frames both routes on an integer zoom, no animation.
+                        TRMNLMaps.fit(map, route.concat(home), { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
                         return map;
                       });
                     });
@@ -442,19 +449,25 @@
   [13.4240, 52.5390], [13.4205, 52.5352], [13.4150, 52.5310], [13.4088, 52.5265],
   [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
 ];
+var home = [
+  [13.3759, 52.5096], [13.3850, 52.5150], [13.3960, 52.5232], [13.4060, 52.5290],
+  [13.4150, 52.5345], [13.4240, 52.5390]
+];
 
 whenReady(function () {
   var el = "map-commute";
   TRMNLMaps.watch(el, function () {
     var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
     map.on("load", function () {
-      // route() and dot() draw crisp fills from the chart-series ramp.
-      TRMNLMaps.route(map, route, { el: el, width: 3 });
+      // route() and dot() draw crisp fills from the chart-series ramp:
+      // the ride in takes step 0 of 2, the ride home step 1.
+      TRMNLMaps.route(map, route, { el: el, width: 3, i: 0, n: 2 });
+      TRMNLMaps.route(map, home, { el: el, id: "home", width: 3, i: 1, n: 2 });
       TRMNLMaps.dot(map, route[0], { el: el, id: "start", radius: 5 });
       TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", radius: 5, hollow: true });
     });
-    // fit() frames the route on an integer zoom, no animation.
-    TRMNLMaps.fit(map, route, { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
+    // fit() frames both routes on an integer zoom, no animation.
+    TRMNLMaps.fit(map, route.concat(home), { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
     return map;
   });
 });', language: 'javascript') %>
@@ -465,15 +478,16 @@ whenReady(function () {
           <div class="space-y-2">
             <%= framework_heading(4, 'Grayscale and color') %>
             <p class="<%= framework_subsection_description_classes %>">
-              The map slots default to tokens tuned for 1-bit: land is the canvas, water, parks and fields are
-              dithered tiles, roads are grays short of the ink, labels are the ink. A full-color screen re-points
-              the same slots at chromatic tokens and a limited palette dithers them to its ink set, so the plugin
-              changes nothing.
+              The map slots default to grays tuned for 1-bit: land and the built-up blocks are the canvas, water,
+              parks and buildings are dither tiles, roads are grays short of the ink, labels are the ink. A full-color
+              screen re-points the same slots at chromatic tokens and a limited palette dithers them to its ink set,
+              so the plugin changes nothing.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
               Labels are framework elements placed over the canvas, so they take the screen's own fonts (TRMNL
               pixel fonts on 1-bit and 2-bit low-density panels, Inter on 4-bit and high density) with a large
-              text stroke, on whole pixels.
+              text stroke, on whole pixels. The biggest names win the space: small places wait for closer zooms,
+              and a small map holds a few names instead of a crowd.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
               Switch the device picker to a color device or dark mode and the map repaints. A theme restyles the map

@@ -64,13 +64,26 @@ async function installFakeMap(page) {
         project(lngLat) { return { x: 150 + (lngLat[0] - 10) * 100, y: 100 - (lngLat[1] - 50) * 100 }; },
         unproject(pt) { return { lng: 10 + (pt[0] - 150) / 100, lat: 50 - (pt[1] - 100) / 100 }; },
         getSource(id) {
-          if (!fake.sources[id]) fake.sources[id] = { setData(data) { fake.calls.setData.push({ id, features: data.features.length }); } };
+          if (!fake.sources[id]) {
+            fake.sources[id] = {
+              setData(data) {
+                // One MultiPolygon per source; count its rings and check they
+                // all wind the same way (a ring wound against the rest would
+                // read as a hole in the ring before it).
+                const rings = data.features.flatMap((f) => (f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates.map((poly) => poly[0]) : [f.geometry.coordinates[0]]));
+                const signs = new Set(rings.map((ring) => Math.sign(ring.reduce((sum, pt, i) => { const q = ring[(i + 1) % ring.length]; return sum + (pt[0] * q[1] - q[0] * pt[1]); }, 0))));
+                fake.calls.setData.push({ id, features: data.features.length, rings: rings.length, windings: signs.size });
+              },
+            };
+          }
           return fake.sources[id];
         },
         addSource(id) { fake.calls.addSource.push(id); return fake.getSource(id); },
         addLayer(layer) { fake.layers.push(layer); },
         getLayer(id) { return fake.layers.find((layer) => layer.id === id) || null; },
-        isStyleLoaded() { return true; },
+        // Dirty after the first addLayer, as a real style reports itself; the
+        // runtime installs against getStyle() (loaded once), not this.
+        isStyleLoaded() { return false; },
         triggerRepaint() {},
       };
       fake.sources = {};
@@ -163,7 +176,7 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
           routePaint: fake.layers.find((layer) => layer.id === 'trmnl-route-route').paint,
           casingPaint: fake.layers.find((layer) => layer.id === 'trmnl-route-route-casing').paint,
           corePaint: fake.layers.find((layer) => layer.id === 'trmnl-dot-end-core').paint,
-          setData: fake.calls.setData.filter((call) => /trmnl-(route|dot)/.test(call.id)).map((call) => call.id + ':' + call.features),
+          setData: fake.calls.setData.filter((call) => /trmnl-(route|dot)/.test(call.id)).map((call) => call.id + ':' + call.features + '/' + call.rings + '/' + call.windings),
         };
       })(),
       tiles: maps.tiles({ url: 'x' }),
@@ -225,7 +238,9 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.overlays.routePaint['fill-antialias']).toBe(false);
   expect(result.overlays.casingPaint['fill-color']).toMatch(/^rgb/);
   expect(result.overlays.corePaint['fill-color']).toBe(result.overlays.casingPaint['fill-color']);
-  expect(result.overlays.setData).toEqual(expect.arrayContaining(['trmnl-route-route:3', 'trmnl-route-route-casing:3', 'trmnl-dot-start:1', 'trmnl-dot-end-core:1']));
+  // One MultiPolygon feature per source (features/rings/windings): a two-point
+  // route is a quad plus a join dot at each end, every ring wound the same way.
+  expect(result.overlays.setData).toEqual(expect.arrayContaining(['trmnl-route-route:1/3/1', 'trmnl-route-route-casing:1/3/1', 'trmnl-dot-start:1/1/1', 'trmnl-dot-end-core:1/1/1']));
   expect(result.tiles.url).toBe('x');
   expect(result.tiles.glyphs).toBeUndefined();
   expect(result.merged).toEqual({ a: { b: 1, c: [2] }, d: 1, e: 2 });
@@ -350,9 +365,12 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
     };
   });
   expect(attached.attribution).toBe('© OpenStreetMap contributors');
-  // The in-view road became stroke polygons (quads plus joins); the far one was skipped.
-  expect(attached.roadData.features).toBeGreaterThan(0);
-  expect(attached.roadCasingData.features).toBe(attached.roadData.features);
+  // The in-view road became one MultiPolygon of stroke pieces (quads plus
+  // joins), the far one was skipped, and the casing mirrors it ring for ring.
+  expect(attached.roadData.features).toBe(1);
+  expect(attached.roadData.rings).toBeGreaterThan(2);
+  expect(attached.roadData.windings).toBe(1);
+  expect(attached.roadCasingData.rings).toBe(attached.roadData.rings);
   // Alpha wins its pixel over Beta (bigger city first), the duplicate Alpha is
   // folded, Gamma and Big Lake fit, the pond is too small to name.
   expect(attached.labels.map((label) => label.text)).toEqual(['Alpha', 'Gamma', 'Big Lake']);
@@ -407,10 +425,26 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => screen.classList.add('screen--dark-mode'));
   await page.waitForFunction(() => window.__TRMNL_MAP_WATCH__.builds === 2);
   expect(await removes()).toEqual([1, 0]);
+  // refresh(): every watched map is built again and settled, and no pass
+  // re-runs (the rebuilt map's attach() does not re-arm terminalize, where a
+  // late attach() on a READY page does).
+  await page.waitForFunction(() => window.TRMNL_PLUGINS_READY === true);
+  const refreshed = await page.evaluate(async () => {
+    const passes = window.__TRMNL_TEST_SIGNALS__.stats.length;
+    const result = await window.TRMNLMaps.refresh({ maxWaitMs: 30 });
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    return { result, builds: window.__TRMNL_MAP_WATCH__.builds, passesAfter: window.__TRMNL_TEST_SIGNALS__.stats.length - passes, ready: window.TRMNL_PLUGINS_READY };
+  });
+  expect(refreshed.builds).toBe(3);
+  // Two live maps settle: the fake attached at the top of the test and the rebuilt watched one.
+  expect(refreshed.result).toEqual({ targets: 2, timedOut: true });
+  expect(refreshed.passesAfter).toBe(0);
+  expect(refreshed.ready).toBe(true);
+  expect(await removes()).toEqual([1, 1, 0]);
   await page.evaluate(() => window.__TRMNL_STOP_MAP_WATCH__());
-  expect(await removes()).toEqual([1, 1]);
+  expect(await removes()).toEqual([1, 1, 1]);
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => screen.classList.add('screen--2bit'));
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  expect(await page.evaluate(() => window.__TRMNL_MAP_WATCH__.builds)).toBe(2);
+  expect(await page.evaluate(() => window.__TRMNL_MAP_WATCH__.builds)).toBe(3);
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
 });

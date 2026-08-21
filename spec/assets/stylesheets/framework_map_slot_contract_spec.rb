@@ -58,16 +58,21 @@ RSpec.describe 'Framework map slot contract' do
     end
   end
 
-  it 'binds the 1-bit defaults: land to the canvas, areas to gray tiles, every line to a gray short of the ink' do
+  it 'binds the grayscale defaults: land to the canvas, areas to gray tiles, every line to a gray short of the ink' do
     aggregate_failures do
       expect_declared(screen, '--framework-slot-map-land-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
       expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-60-color, transparent)')
       expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-65-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-building-bg-color', 'var(--bg-gray-40-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-building-bg-color', 'var(--bg-gray-65-color, transparent)')
       expect_declared(screen, '--framework-slot-map-road-bg-color', 'var(--bg-gray-35-color, transparent)')
       expect_declared(screen, '--framework-slot-map-road-minor-bg-color', 'var(--bg-gray-50-color, transparent)')
       expect_declared(screen, '--framework-slot-map-path-bg-color', 'var(--bg-gray-45-color, transparent)')
       expect_declared(screen, '--framework-slot-map-label-text-color', 'var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))')
+      # The 1-bit rail folds the residential field into the canvas: a light
+      # gray is a sparse speckle there, texture over every built-up block.
+      expect_declared(screen, '--framework-slot-map-area-bg-color', 'var(--bg-gray-75-color, transparent)')
+      expect_declared(one_bit, '--framework-slot-map-area-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
+      expect_declared(one_bit, '--framework-slot-map-area-bg-image', 'var(--framework-semantic-canvas-bg-image, none)')
     end
   end
 

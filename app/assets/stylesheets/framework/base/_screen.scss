@@ -70,11 +70,12 @@
 // mixin it uses for every other component. A line painted from a tile is drawn
 // as the polygon of its stroke filled with that tile: the 1-bit gray of a road
 // is the same screen-aligned dither its area would be, never a hex the panel
-// cannot print. The defaults are
-// chosen for 1-bit: areas are light tiles, and every line is a gray rather than
-// the ink, so a plotted route drawn in the ink (the chart-series ramp) reads on
-// top of the roads. base/_screen-mode-vars.scss re-points the area and line
-// slots at chromatic tokens on the color rails.
+// cannot print. The defaults are chosen for the grayscale rails: areas are
+// light tiles, buildings a light gray under the dark roads, and every line is a
+// gray rather than the ink, so a plotted route drawn in the ink (the
+// chart-series ramp) reads on top of the roads. base/_screen-mode-vars.scss
+// folds the residential field into the canvas on the 1-bit rail and re-points
+// the area and line slots at chromatic tokens on the color rails.
 //
 // Land and the labels name semantic channels instead of tokens, the way the
 // chip does: land is the canvas and labels are the primary text, so a theme,
@@ -88,7 +89,7 @@
     @include theme-slots.bg-slot('map-sand', 'gray-75');
     @include theme-slots.bg-slot('map-area', 'gray-75');
     @include theme-slots.bg-slot('map-site', 'gray-70');
-    @include theme-slots.bg-slot('map-building', 'gray-40');
+    @include theme-slots.bg-slot('map-building', 'gray-65');
     @include theme-slots.bg-slot('map-transit', 'gray-30');
     @include theme-slots.bg-slot('map-road', 'gray-35');
     @include theme-slots.bg-slot('map-road-minor', 'gray-50');

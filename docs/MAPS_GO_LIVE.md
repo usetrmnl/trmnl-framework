@@ -61,13 +61,18 @@ points there. This file is the list of what that takes.
       are framework elements). Host either only if a preset gains them.
 - [ ] **Cache and limits.** Immutable `Cache-Control` per tile build, CDN in
       front, per-IP rate limits, a 404 for out-of-range tiles.
-- [ ] **Renderer.** The screenshot service's headless Chromium must expose WebGL
+- [ ] **Renderer.** The screenshot service's headless browser must expose WebGL
       (`TRMNLMaps.supported()` is true; SwiftShader or ANGLE flags if there is no
       GPU), wait for `window.TRMNL_PLUGINS_READY`, which `TRMNLMaps.settle()`
       holds until every attached map is idle (6000 ms by default,
-      `window.__TRMNL_MAPS_SETTLE_MS__` to tune), send an identifying
-      User-Agent, and time out unreachable tiles so a plugin still renders with
-      an empty canvas.
+      `window.__TRMNL_MAPS_SETTLE_MS__` to tune; the renderer's own readiness
+      timeout has to cover it), send an identifying User-Agent, and time out
+      unreachable tiles so a plugin still renders with an empty canvas. A
+      renderer that lays the page out at 1x and sets the capture pixel ratio
+      afterwards (the way core's converter does) applies that capture style,
+      then awaits `TRMNLMaps.refresh()`, which rebuilds every watched map for
+      the new ratio and settles, and only then freezes timers and captures:
+      a map sizes its canvas and its pattern images when it is built.
 - [ ] **CSP and allowlists.** On the renderer and on trmnl.com plugin previews:
       `script-src` and `style-src` for wherever MapLibre is served from,
       `connect-src` for the tile host, `worker-src blob:` (or a served worker),

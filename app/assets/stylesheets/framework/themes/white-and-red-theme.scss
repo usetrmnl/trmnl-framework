@@ -74,14 +74,15 @@
         // canvas), so the underline needs its own contrasting token.
         @include theme-slots.border-token-slot('label-underline', 'red-75');
         // Map slots on the red canvas. Land and the labels follow the canvas
-        // and text channels above; the areas are bright tints like the
-        // component slots, and every line a tint short of the white ink.
+        // and text channels above, the residential field is the canvas itself,
+        // the other areas are bright tints like the component slots, and every
+        // line a tint short of the white ink.
         @include theme-slots.bg-slot('map-water', 'red-60');
         @include theme-slots.bg-slot('map-water-line', 'red-65');
         @include theme-slots.bg-slot('map-green', 'red-65');
         @include theme-slots.bg-slot('map-farmland', 'red-55');
         @include theme-slots.bg-slot('map-sand', 'red-55');
-        @include theme-slots.bg-slot('map-area', 'red-55');
+        @include theme-slots.bg-slot('map-area', 'red');
         @include theme-slots.bg-slot('map-site', 'red-60');
         @include theme-slots.bg-slot('map-building', 'red-45');
         @include theme-slots.bg-slot('map-transit', 'red-65');
@@ -161,7 +162,7 @@
         @include theme-slots.bg-slot('map-green', 'red-70');
         @include theme-slots.bg-slot('map-farmland', 'red-75');
         @include theme-slots.bg-slot('map-sand', 'red-75');
-        @include theme-slots.bg-slot('map-area', 'red-75');
+        @include theme-slots.bg-slot('map-area', 'white');
         @include theme-slots.bg-slot('map-site', 'red-70');
         @include theme-slots.bg-slot('map-building', 'red-55');
         @include theme-slots.bg-slot('map-transit', 'red-45');

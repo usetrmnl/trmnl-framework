@@ -39,7 +39,8 @@
             <code class="<%= framework_section_code_classes %>">map-green</code> (parks, forest, grass, wetland),
             <code class="<%= framework_section_code_classes %>">map-farmland</code>,
             <code class="<%= framework_section_code_classes %>">map-sand</code> (beach, sand, bare rock),
-            <code class="<%= framework_section_code_classes %>">map-area</code> (residential, commercial, industrial),
+            <code class="<%= framework_section_code_classes %>">map-area</code> (residential, commercial, industrial; the
+            canvas itself on 1-bit),
             <code class="<%= framework_section_code_classes %>">map-site</code> (schools, hospitals, parking),
             <code class="<%= framework_section_code_classes %>">map-building</code> (also piers, dams, bridges) and
             <code class="<%= framework_section_code_classes %>">map-transit</code> (station dots).
@@ -253,6 +254,11 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
                 <code class="<%= framework_section_code_classes %>">window.__TRMNL_MAPS_SETTLE_MS__</code>.
               </li>
               <li>
+                <code class="<%= framework_section_code_classes %>">refresh({ maxWaitMs })</code>: rebuilds every watched
+                map from the live cascade and settles them, without re-running the pass. For a host that rescales the
+                screen after the pass, the way a screenshot service sets its capture pixel ratio last.
+              </li>
+              <li>
                 <code class="<%= framework_section_code_classes %>">supported()</code>: whether this browser can draw a
                 MapLibre map. Without WebGL, <code class="<%= framework_section_code_classes %>">watch()</code> flags the
                 container <code class="<%= framework_section_code_classes %>">data-map-unsupported</code> and shows a
@@ -272,7 +278,8 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
               Nothing TRMNLMaps draws is a MapLibre line or circle, which would be anti-aliased and, for a tile,
               filtered along the line. Every road, dash, stop, route and dot is the polygon of its stroke, filled
               with the slot's tile or solid without anti-aliasing, so it lands on the pixel grid like every other
-              tile on the screen. The runtime widens them after the tiles load and again for every camera.
+              tile on the screen. The runtime widens them after the tiles load and again for every camera, in device
+              pixels: a 1px line is one row of the panel's pixels on a 1.8x device as on a 1x one.
             </p>
           </div>
 
@@ -285,6 +292,11 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
               <code class="<%= framework_section_code_classes %>">label label--small</code> (towns, suburbs, water)
               with <code class="<%= framework_section_code_classes %>">text-stroke text-stroke--large</code>, snaps it
               to whole pixels, and keeps the biggest that fit without overlap. Every tier takes the map-label ink.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              The biggest names win the space. Small kinds wait for closer zooms (towns from zoom 9, villages from 11,
+              suburbs from 12, neighbourhoods from 13), water earns a name once it covers about a label's worth of
+              screen, and a small map holds a few names instead of a crowd. No label lands on the credit.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
               So labels take the screen's own typography (TRMNL pixel fonts on 1-bit and 2-bit low-density panels,

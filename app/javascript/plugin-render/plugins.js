@@ -5506,6 +5506,7 @@ window.markFrameworkReady = markFrameworkReady;
   const MAP_MINOR_ROADS = ['residential', 'living_street', 'unclassified', 'service', 'pedestrian', 'busway', 'bus_guideway'];
   const MAP_PATHS = ['track', 'path', 'footway', 'cycleway', 'steps'];
   const MAP_RAILS = ['rail', 'light_rail', 'subway', 'tram', 'narrow_gauge', 'monorail', 'funicular'];
+  const MAP_WATER_LINES = ['river', 'canal', 'stream', 'ditch', 'drain'];
   const MAP_TRANSIT_KINDS = ['station', 'halt', 'tram_stop', 'ferry_terminal'];
   const MAP_PLACES_MAJOR = ['capital', 'state_capital', 'city'];
   const MAP_PLACES_MINOR = ['town', 'village', 'suburb', 'quarter', 'neighbourhood', 'hamlet'];
@@ -5530,6 +5531,11 @@ window.markFrameworkReady = markFrameworkReady;
 
   const liveMaps = new Map();
   const attachedMaps = new WeakSet();
+  // Every watch() builder, so refresh() can rebuild the maps a host resizes
+  // after the pass; true while refresh() runs, so a rebuilt map does not
+  // re-arm the terminalize pass the way a late attach() does.
+  const mapWatchers = new Set();
+  let mapRefreshing = false;
   let mapWebglSupport = null;
 
   function mapInk(fill) {
@@ -5581,9 +5587,16 @@ window.markFrameworkReady = markFrameworkReady;
   // in pixel space, and sets the polygons as source data. Geometry, not paint:
   // every fill comes from a slot or the chart ramp.
   const MAP_SHAPE_SOURCE = 'trmnl-shape-';
+  // Vertex budget per shape per pass. Features are widened in priority order
+  // (motorway before tertiary, residential before service), so a crowded view
+  // sheds its least important features, never a random tail.
   const MAP_SHAPE_CAP = 6000;
   const MAP_SHAPE_MARGIN = 8;
   const MAP_DOT_SIDES = 16;
+  // Joins are cheaper dots, and only where a line really bends (the cosine of
+  // a ten degree turn); consecutive quads already overlap where it barely does.
+  const MAP_JOIN_SIDES = 8;
+  const MAP_JOIN_COS = 0.985;
 
   function emptyGeoJson() {
     return { type: 'geojson', data: { type: 'FeatureCollection', features: [] } };
@@ -5601,7 +5614,8 @@ window.markFrameworkReady = markFrameworkReady;
 
   // The fill layer(s), empty sources and geometry rule for one shape of the
   // style. A dashed line takes the tile's ink: the renderer cannot pattern a
-  // dash, and on the 1-bit rail that is the one ink anyway.
+  // dash, and on the 1-bit rail that is the one ink anyway. `kinds` is the
+  // spec's kind list in priority order, for the budget in mapShapeFeatures.
   function mapShapeSpec(id, paint, geometry, halo, sources, layers, specs) {
     const dashed = !!geometry.dash;
     const fill = mapShapePaint(dashed && paint && typeof paint === 'object' ? (paint.ink || paint.color) : paint);
@@ -5613,6 +5627,7 @@ window.markFrameworkReady = markFrameworkReady;
       kind: geometry.kind === 'point' ? 'point' : 'line',
       sourceLayer: geometry.sourceLayer || null,
       filter: geometry.filter || null,
+      kinds: Array.isArray(geometry.kinds) ? geometry.kinds : null,
       widths: geometry.widths != null ? geometry.widths : 1,
       zoomStep: !!geometry.zoomStep,
       minzoom: geometry.minzoom != null ? geometry.minzoom : 0,
@@ -5637,33 +5652,75 @@ window.markFrameworkReady = markFrameworkReady;
     return Math.max(1, Math.round(base));
   }
 
-  function mapDotPolygon(cx, cy, radius) {
+  // Every ring below is wound the same way (a quad's corners run with its
+  // segment, a dot's run the other way round the clock to match), because one
+  // pass hands the renderer all of a shape's rings as one MultiPolygon, and a
+  // ring wound against the others would read as a hole in the ring before it.
+  function mapDotPolygon(cx, cy, radius, sides) {
+    const n = sides || MAP_DOT_SIDES;
     const pts = [];
-    for (let k = 0; k < MAP_DOT_SIDES; k++) {
-      const a = ((Math.PI * 2) / MAP_DOT_SIDES) * k;
+    for (let k = n - 1; k >= 0; k--) {
+      const a = ((Math.PI * 2) / n) * k;
       pts.push([cx + Math.cos(a) * radius, cy + Math.sin(a) * radius]);
     }
     pts.push(pts[0]);
     return pts;
   }
 
+  // A join dot earns its place at a cap or at a real turn.
+  function mapNeedsJoin(points, i) {
+    if (i === 0 || i === points.length - 1) return true;
+    const a = points[i - 1];
+    const b = points[i];
+    const c = points[i + 1];
+    const ux = b[0] - a[0];
+    const uy = b[1] - a[1];
+    const vx = c[0] - b[0];
+    const vy = c[1] - b[1];
+    const ul = Math.sqrt(ux * ux + uy * uy);
+    const vl = Math.sqrt(vx * vx + vy * vy);
+    if (!(ul > 0) || !(vl > 0)) return true;
+    return (ux * vx + uy * vy) / (ul * vl) < MAP_JOIN_COS;
+  }
+
+  // One quad of a stroke from p to q at `width`. An axis-aligned segment snaps
+  // its two long edges to the pixel grid, so a 1px line is one row of pixels
+  // along its whole length instead of a fringe that flickers between zero and
+  // two rows wherever the edge crosses a pixel center.
+  function mapStrokeQuad(p, q, width) {
+    const dx = q[0] - p[0];
+    const dy = q[1] - p[1];
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (!(len > 0)) return null;
+    const half = width / 2;
+    if (Math.abs(dy) < 0.01) {
+      const top = Math.round(p[1] - half);
+      const near = dx >= 0 ? top + width : top;
+      const far = dx >= 0 ? top : top + width;
+      return [[p[0], near], [q[0], near], [q[0], far], [p[0], far], [p[0], near]];
+    }
+    if (Math.abs(dx) < 0.01) {
+      const left = Math.round(p[0] - half);
+      const near = dy >= 0 ? left : left + width;
+      const far = dy >= 0 ? left + width : left;
+      return [[near, p[1]], [near, q[1]], [far, q[1]], [far, p[1]], [near, p[1]]];
+    }
+    const nx = (-dy / len) * half;
+    const ny = (dx / len) * half;
+    return [[p[0] + nx, p[1] + ny], [q[0] + nx, q[1] + ny], [q[0] - nx, q[1] - ny], [p[0] - nx, p[1] - ny], [p[0] + nx, p[1] + ny]];
+  }
+
   // The stroke of one polyline (pixel space) as quads per segment plus a dot
-  // per vertex for joins and caps. Pieces overlap freely: the fill is
-  // screen-anchored, so overlaps paint the same pixels.
+  // at each cap and turn. Pieces overlap freely: the fill is screen-anchored,
+  // so overlaps paint the same pixels.
   function mapStrokePolygons(points, width, out) {
     const half = width / 2;
     for (let i = 0; i < points.length; i++) {
       const p = points[i];
-      if (half > 0.75) out.push(mapDotPolygon(p[0], p[1], half));
+      if (half > 0.75 && mapNeedsJoin(points, i)) out.push(mapDotPolygon(p[0], p[1], half, MAP_JOIN_SIDES));
       if (i === points.length - 1) continue;
-      const q = points[i + 1];
-      const dx = q[0] - p[0];
-      const dy = q[1] - p[1];
-      const len = Math.sqrt(dx * dx + dy * dy);
-      if (!(len > 0)) continue;
-      const nx = (-dy / len) * half;
-      const ny = (dx / len) * half;
-      out.push([[p[0] + nx, p[1] + ny], [q[0] + nx, q[1] + ny], [q[0] - nx, q[1] - ny], [p[0] - nx, p[1] - ny], [p[0] + nx, p[1] + ny]]);
+      const quad = mapStrokeQuad(p, points[i + 1], width);
+      if (quad) out.push(quad);
     }
   }
 
@@ -5673,7 +5730,6 @@ window.markFrameworkReady = markFrameworkReady;
     const on = Math.max(1, dash[0] * width);
     const off = Math.max(1, dash[1] * width);
     const cycle = on + off;
-    const half = width / 2;
     let phase = 0;
     for (let i = 0; i < points.length - 1; i++) {
       const p = points[i];
@@ -5684,16 +5740,13 @@ window.markFrameworkReady = markFrameworkReady;
       if (!(len > 0)) continue;
       const ux = dx / len;
       const uy = dy / len;
-      const nx = -uy * half;
-      const ny = ux * half;
       let pos = 0;
       while (pos < len) {
         const lit = phase < on;
         const step = Math.min(lit ? on - phase : cycle - phase, len - pos);
         if (lit) {
-          const a = [p[0] + ux * pos, p[1] + uy * pos];
-          const b = [p[0] + ux * (pos + step), p[1] + uy * (pos + step)];
-          out.push([[a[0] + nx, a[1] + ny], [b[0] + nx, b[1] + ny], [b[0] - nx, b[1] - ny], [a[0] - nx, a[1] - ny], [a[0] + nx, a[1] + ny]]);
+          const quad = mapStrokeQuad([p[0] + ux * pos, p[1] + uy * pos], [p[0] + ux * (pos + step), p[1] + uy * (pos + step)], width);
+          if (quad) out.push(quad);
         }
         pos += step;
         phase += step;
@@ -5725,9 +5778,18 @@ window.markFrameworkReady = markFrameworkReady;
     }
   }
 
+  // The features of one shape for the current camera, as one MultiPolygon per
+  // source: the renderer tiles one feature instead of one per stroke piece,
+  // which is what keeps a dense city view cheap. Geometry is built in device
+  // pixels (the canvas backing store, CSS pixels times the map's pixel ratio),
+  // so widths are whole device pixels and the snapped edges land on the grid
+  // the dither tiles sit on, on a 1.8x panel as on a 1x one.
   function mapShapeFeatures(map, spec, el, zoom) {
-    const width = el.clientWidth;
-    const height = el.clientHeight;
+    let pr = 1;
+    try { pr = (map.getPixelRatio && map.getPixelRatio()) || 1; } catch (_) {}
+    if (!(pr > 0)) pr = 1;
+    const width = el.clientWidth * pr;
+    const height = el.clientHeight * pr;
     let features = spec.features || null;
     if (!features) {
       try {
@@ -5736,22 +5798,39 @@ window.markFrameworkReady = markFrameworkReady;
         features = [];
       }
     }
+    // Priority before budget: the spec's kind list runs from the most important
+    // kind to the least, so a crowded view sheds service roads and footways
+    // first and keeps its motorways.
+    if (spec.kinds && features.length > 1) {
+      const rank = (feature) => {
+        const i = spec.kinds.indexOf(feature.properties && feature.properties.kind);
+        return i < 0 ? spec.kinds.length : i;
+      };
+      features = features.slice().sort((a, b) => rank(a) - rank(b));
+    }
     const polygons = [];
     const casings = [];
     let budget = MAP_SHAPE_CAP;
     const inside = (minX, minY, maxX, maxY, m) => !(maxX < -m || maxY < -m || minX > width + m || minY > height + m);
+    const project = (lngLat) => {
+      const p = map.project(lngLat);
+      return p && Number.isFinite(p.x) && Number.isFinite(p.y) ? [p.x * pr, p.y * pr] : null;
+    };
     for (const feature of features) {
       if (budget <= 0) break;
       const kind = feature.properties && feature.properties.kind;
-      const w = mapShapeWidth(spec, kind, zoom);
+      // Whole device pixels: the spec's width is CSS pixels, the canvas is not.
+      // A casing adds one CSS pixel of contrast on each side.
+      const w = Math.max(1, Math.round(mapShapeWidth(spec, kind, zoom) * pr));
+      const ring = Math.max(1, Math.round(pr));
       if (spec.kind === 'point') {
         for (const lngLat of mapPointCoordinates(feature.geometry)) {
           let p;
-          try { p = map.project(lngLat); } catch (_) { continue; }
-          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y) || !inside(p.x, p.y, p.x, p.y, w + MAP_SHAPE_MARGIN)) continue;
+          try { p = project(lngLat); } catch (_) { continue; }
+          if (!p || !inside(p[0], p[1], p[0], p[1], w + MAP_SHAPE_MARGIN)) continue;
           budget -= 1;
-          polygons.push(mapDotPolygon(p.x, p.y, w));
-          if (spec.casing) casings.push(mapDotPolygon(p.x, p.y, w + 1));
+          polygons.push(mapDotPolygon(p[0], p[1], w));
+          if (spec.casing) casings.push(mapDotPolygon(p[0], p[1], w + ring));
         }
         continue;
       }
@@ -5760,13 +5839,13 @@ window.markFrameworkReady = markFrameworkReady;
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         for (const lngLat of line) {
           let p;
-          try { p = map.project(lngLat); } catch (_) { continue; }
-          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
-          pts.push([p.x, p.y]);
-          if (p.x < minX) minX = p.x;
-          if (p.x > maxX) maxX = p.x;
-          if (p.y < minY) minY = p.y;
-          if (p.y > maxY) maxY = p.y;
+          try { p = project(lngLat); } catch (_) { continue; }
+          if (!p) continue;
+          pts.push(p);
+          if (p[0] < minX) minX = p[0];
+          if (p[0] > maxX) maxX = p[0];
+          if (p[1] < minY) minY = p[1];
+          if (p[1] > maxY) maxY = p[1];
         }
         if (pts.length < 2 || !inside(minX, minY, maxX, maxY, w + MAP_SHAPE_MARGIN)) continue;
         budget -= pts.length;
@@ -5774,15 +5853,23 @@ window.markFrameworkReady = markFrameworkReady;
           mapDashPolygons(pts, w, spec.dash, polygons);
         } else {
           mapStrokePolygons(pts, w, polygons);
-          if (spec.casing) mapStrokePolygons(pts, w + 2, casings);
+          if (spec.casing) mapStrokePolygons(pts, w + 2 * ring, casings);
         }
       }
     }
-    const toFeatures = (rings) => rings.map((ring) => ({
-      type: 'Feature',
-      properties: {},
-      geometry: { type: 'Polygon', coordinates: [ring.map((pt) => { const ll = map.unproject(pt); return [ll.lng, ll.lat]; })] },
-    }));
+    const toFeatures = (rings) => {
+      if (!rings.length) return [];
+      const coordinates = [];
+      for (const ring of rings) {
+        const poly = [];
+        for (const pt of ring) {
+          const ll = map.unproject([pt[0] / pr, pt[1] / pr]);
+          poly.push([ll.lng, ll.lat]);
+        }
+        coordinates.push([poly]);
+      }
+      return [{ type: 'Feature', properties: {}, geometry: { type: 'MultiPolygon', coordinates: coordinates } }];
+    };
     return { shape: toFeatures(polygons), casing: toFeatures(casings) };
   }
 
@@ -5812,7 +5899,10 @@ window.markFrameworkReady = markFrameworkReady;
       } catch (_) {}
     };
     for (const spec of specs) {
-      const data = zoom < spec.minzoom ? { shape: [], casing: [] } : mapShapeFeatures(map, spec, el, zoom);
+      let data = { shape: [], casing: [] };
+      if (zoom >= spec.minzoom) {
+        try { data = mapShapeFeatures(map, spec, el, zoom); } catch (_) { data = { shape: [], casing: [] }; }
+      }
       set(spec.source, data.shape);
       if (spec.casing) set(spec.casing, data.casing);
     }
@@ -5851,8 +5941,12 @@ window.markFrameworkReady = markFrameworkReady;
       rec.shapeSignature = null;
       try { map.triggerRepaint(); } catch (_) {}
     };
-    let loaded = true;
-    try { if (typeof map.isStyleLoaded === 'function') loaded = map.isStyleLoaded(); } catch (_) {}
+    // Installed as soon as the style has loaded once, not only while it is
+    // clean: a style with a source or layer just added reports itself not
+    // loaded until the next render, and style.load never fires again, so a
+    // second route() or dot() in the same handler would otherwise wait forever.
+    let loaded = false;
+    try { loaded = !!(typeof map.getStyle === 'function' && map.getStyle()); } catch (_) {}
     if (loaded) install();
     else { try { map.once('style.load', install); } catch (_) { install(); } }
   }
@@ -5870,6 +5964,15 @@ window.markFrameworkReady = markFrameworkReady;
     minor: 'map__label label label--small text-stroke text-stroke--large',
     water: 'map__label label label--small text-stroke text-stroke--large',
   };
+  // The zoom each place kind starts labelling at, on top of what the tile
+  // carries: a still screen has no pan or hover to thin a crowd of names, so
+  // the small kinds wait for the zooms where they have room.
+  const MAP_PLACE_MINZOOM = { town: 9, village: 11, suburb: 12, hamlet: 13, quarter: 13, neighbourhood: 13 };
+  // Water earns a name once it covers about a label's worth of screen.
+  const MAP_WATER_LABEL_MIN_PX = 1600;
+  // Screen area one label may claim on average, so a small map holds a few
+  // names instead of a crowd; the overlap pass keeps the biggest of them.
+  const MAP_LABEL_PX_PER_LABEL = 14000;
 
   function mapLabelConfig(map) {
     try {
@@ -5881,15 +5984,22 @@ window.markFrameworkReady = markFrameworkReady;
     }
   }
 
-  function mapLabelCandidates(map, cfg) {
+  // Mercator metres per CSS pixel at a zoom, the unit a tile's areas come in.
+  function mapMetersPerPixel(zoom) {
+    return 40075016.686 / (MAP_TILE_SIZE * Math.pow(2, zoom));
+  }
+
+  function mapLabelCandidates(map, cfg, zoom) {
     const out = [];
     const seen = new Set();
     const query = (sourceLayer) => {
       try { return map.querySourceFeatures('osm', { sourceLayer: sourceLayer }) || []; } catch (_) { return []; }
     };
+    // One label per name and tier: a place that reaches the tiles twice (a
+    // suburb and its neighbourhood, a node on a tile seam) is still one place.
     const add = (tier, name, coords, priority) => {
       if (!name || !Array.isArray(coords) || !Number.isFinite(coords[0]) || !Number.isFinite(coords[1])) return;
-      const key = tier + '|' + name + '|' + Math.round(coords[0] * 1e4) + ',' + Math.round(coords[1] * 1e4);
+      const key = tier + '|' + name;
       if (seen.has(key)) return;
       seen.add(key);
       out.push({ tier: tier, name: String(name), lng: coords[0], lat: coords[1], priority: priority });
@@ -5897,20 +6007,21 @@ window.markFrameworkReady = markFrameworkReady;
     if (cfg.major || cfg.minor) {
       for (const feature of query('place_labels')) {
         const props = feature.properties || {};
-        const tier = MAP_PLACES_MAJOR.indexOf(props.kind) >= 0 ? 'major' : (MAP_PLACES_MINOR.indexOf(props.kind) >= 0 ? 'minor' : null);
+        const kind = props.kind;
+        const tier = MAP_PLACES_MAJOR.indexOf(kind) >= 0 ? 'major' : (MAP_PLACES_MINOR.indexOf(kind) >= 0 ? 'minor' : null);
         if (!tier || !cfg[tier]) continue;
+        if (zoom < (MAP_PLACE_MINZOOM[kind] || 0)) continue;
         const population = Number(props.population) || 0;
         // Places before water, big places before small: tier first, then size.
         add(tier, props.name, feature.geometry && feature.geometry.coordinates, (tier === 'major' ? 2e12 : 1e12) + population);
       }
     }
     if (cfg.water) {
+      const metersPerPixel = mapMetersPerPixel(zoom);
       for (const feature of query('water_polygons_labels')) {
         const props = feature.properties || {};
         const area = Number(props.way_area) || 0;
-        // Named fountains and ponds are water polygons too; only water with some
-        // area to it earns a label on a still screen.
-        if (area < 50000) continue;
+        if (area / (metersPerPixel * metersPerPixel) < MAP_WATER_LABEL_MIN_PX) continue;
         add('water', props.name, feature.geometry && feature.geometry.coordinates, area);
       }
     }
@@ -5922,6 +6033,10 @@ window.markFrameworkReady = markFrameworkReady;
     const map = rec.map;
     const el = rec.el;
     if (!el || rec.removed) return;
+    // Placed once per camera: the tiles behind a camera are all in by the idle
+    // that places them, so a later idle with the same camera has nothing new.
+    const signature = mapCameraSignature(map, el);
+    if (signature && signature === rec.labelSignature) return;
     const doc = el.ownerDocument || document;
     let overlay = el.querySelector('.map__labels');
     if (!overlay) {
@@ -5930,14 +6045,27 @@ window.markFrameworkReady = markFrameworkReady;
       el.appendChild(overlay);
     }
     overlay.textContent = '';
+    rec.labelSignature = signature;
     const cfg = mapLabelConfig(map);
     if (!cfg) return;
     const width = el.clientWidth;
     const height = el.clientHeight;
     if (!(width > 0) || !(height > 0)) return;
-    const pad = mapPx(4, el, 'ui');
+    let zoom = 0;
+    try { zoom = map.getZoom(); } catch (_) {}
+    const pad = mapPx(6, el, 'ui');
+    const room = Math.max(2, Math.round((width * height) / MAP_LABEL_PX_PER_LABEL));
     const placed = [];
-    for (const candidate of mapLabelCandidates(map, cfg)) {
+    // The credit is spoken for: no label lands on it.
+    const credit = el.querySelector('.map__attribution');
+    if (credit) {
+      const host = el.getBoundingClientRect();
+      const box = credit.getBoundingClientRect();
+      if (box.width > 0 && box.height > 0) placed.push({ l: box.left - host.left, t: box.top - host.top, r: box.right - host.left, b: box.bottom - host.top });
+    }
+    const reserved = placed.length;
+    for (const candidate of mapLabelCandidates(map, cfg, zoom)) {
+      if (placed.length - reserved >= room) break;
       let point;
       try { point = map.project([candidate.lng, candidate.lat]); } catch (_) { continue; }
       if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
@@ -5959,12 +6087,6 @@ window.markFrameworkReady = markFrameworkReady;
       span.style.top = top + 'px';
       placed.push(box);
     }
-  }
-
-  // Integer widths that step with zoom: a step expression keeps every value a
-  // whole pixel, where an interpolation would hand the renderer fractions.
-  function mapStepWidth(base) {
-    return ['step', ['zoom'], Math.max(1, Math.round(base / 2)), 12, base, 16, base * 2];
   }
 
   function mapBounds(coords) {
@@ -6282,10 +6404,9 @@ window.markFrameworkReady = markFrameworkReady;
       const showMinorLabels = showLabels && labels !== 'major';
       const showBuildings = !(opts && opts.buildings === false);
       // Every map slot is a bg slot: a line's paint is the paint of a surface,
-      // a tile on the dither rails and a solid on the solid ones, and the line
-      // layer turns a tile into a line pattern at its width (mapLinePaint).
+      // a tile on the dither rails and a solid on the solid ones, and the
+      // runtime widens the line into a fill with it (paintShapes).
       const slot = (n) => TRMNLPaint.toMapLibre(TRMNLPaint.slot(n, { el: el }));
-      const line = slot;
       const ui = (n) => mapPx(n, el, 'ui');
 
       // Resolve every framework spec ONCE per call.
@@ -6298,12 +6419,12 @@ window.markFrameworkReady = markFrameworkReady;
       const site = slot('map-site');
       const building = slot('map-building');
       const transit = slot('map-transit');
-      const road = line('map-road');
-      const roadMinor = line('map-road-minor');
-      const path = line('map-path');
-      const rail = line('map-rail');
-      const boundary = line('map-boundary');
-      const waterLine = line('map-water-line');
+      const road = slot('map-road');
+      const roadMinor = slot('map-road-minor');
+      const path = slot('map-path');
+      const rail = slot('map-rail');
+      const boundary = slot('map-boundary');
+      const waterLine = slot('map-water-line');
       const halo = mapHalo(el);
 
       const layers = [];
@@ -6315,7 +6436,7 @@ window.markFrameworkReady = markFrameworkReady;
       const addLine = (id, sourceLayer, filter, paint, width, extra) => {
         const e = extra || {};
         mapShapeSpec(id, paint, {
-          kind: 'line', sourceLayer: sourceLayer, filter: filter,
+          kind: 'line', sourceLayer: sourceLayer, filter: filter, kinds: e.kinds,
           widths: e.widths != null ? e.widths : width, zoomStep: e.zoomStep, minzoom: e.minzoom, dash: e.dash, casing: e.casing,
         }, halo, sources, layers, shapeSpecs);
       };
@@ -6333,49 +6454,50 @@ window.markFrameworkReady = markFrameworkReady;
       if (groups.sites) push(mapFillLayer('sites', 'sites', null, site, 14));
       if (groups.water) push(mapFillLayer('water', 'water_polygons', ['!=', ['get', 'kind'], 'glacier'], water));
       if (groups.waterLines) {
-        addLine('water-lines', 'water_lines', null, waterLine, ui(1), { minzoom: 10, widths: { river: ui(2), canal: ui(1.5), fallback: ui(1) } });
+        addLine('water-lines', 'water_lines', null, waterLine, ui(1), { minzoom: 10, widths: { river: ui(2), canal: ui(1.5), fallback: ui(1) }, kinds: MAP_WATER_LINES });
       }
-      if (groups.ferries) addLine('ferries', 'ferries', null, waterLine, ui(1), { dash: [3, 3], cap: 'butt' });
+      if (groups.ferries) addLine('ferries', 'ferries', null, waterLine, ui(1), { dash: [3, 3] });
       if (groups.structures) {
         push(mapFillLayer('pier-polygons', 'pier_polygons', null, building, 12));
         push(mapFillLayer('dam-polygons', 'dam_polygons', null, building, 12));
         push(mapFillLayer('bridges', 'bridges', null, building, 12));
-        addLine('pier-lines', 'pier_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' });
-        addLine('dam-lines', 'dam_lines', null, roadMinor, ui(1), { minzoom: 12, cap: 'butt' });
+        addLine('pier-lines', 'pier_lines', null, roadMinor, ui(1), { minzoom: 12 });
+        addLine('dam-lines', 'dam_lines', null, roadMinor, ui(1), { minzoom: 12 });
       }
-      if (groups.streetAreas) push(mapFillLayer('street-areas', 'street_polygons', mapKindFilter(['pedestrian', 'service']), area, 12));
+      if (groups.streetAreas) push(mapFillLayer('street-areas', 'street_polygons', mapKindFilter(['pedestrian', 'service']), area, 13));
       if (groups.runways) {
         push(mapFillLayer('runways', 'street_polygons', mapKindFilter(['runway', 'taxiway']), roadMinor, 11));
-        addLine('runway-lines', 'streets', mapKindFilter(['runway', 'taxiway']), roadMinor, ui(2), { minzoom: 11, cap: 'butt' });
+        addLine('runway-lines', 'streets', mapKindFilter(['runway', 'taxiway']), roadMinor, ui(2), { minzoom: 11 });
       }
       if (groups.buildings && showBuildings) push(mapFillLayer('buildings', 'buildings', null, building, 14));
+      // The small roads wait for the zooms where they have room: on a still
+      // screen a residential grid at z12 is texture, not streets.
       if (groups.minor) {
-        const w = ui(1);
         const minorFilter = ['all', mapKindFilter(MAP_MINOR_ROADS), ['!=', ['get', 'tunnel'], true]];
-        addLine('roads-minor', 'streets', minorFilter, roadMinor, w, { minzoom: 12, casing: true });
+        addLine('roads-minor', 'streets', minorFilter, roadMinor, ui(1), { minzoom: 13, casing: true, kinds: MAP_MINOR_ROADS });
       }
       if (groups.paths) {
         const pathFilter = ['all', mapKindFilter(MAP_PATHS), ['!=', ['get', 'tunnel'], true]];
-        addLine('paths', 'streets', pathFilter, path, ui(1), { minzoom: 13, dash: [2, 2], cap: 'butt' });
+        addLine('paths', 'streets', pathFilter, path, ui(1), { minzoom: 14, dash: [2, 2], kinds: MAP_PATHS });
       }
       if (groups.major) {
         const majorFilter = ['all', mapKindFilter(MAP_MAJOR_ROADS), ['!=', ['get', 'tunnel'], true]];
         const byKind = { motorway: ui(3), trunk: ui(3), primary: ui(2.5), secondary: ui(2), fallback: ui(1.5) };
-        addLine('roads-major', 'streets', majorFilter, road, byKind.fallback, { casing: true, widths: byKind, zoomStep: true });
+        addLine('roads-major', 'streets', majorFilter, road, byKind.fallback, { casing: true, widths: byKind, zoomStep: true, kinds: MAP_MAJOR_ROADS });
       }
       if (groups.rail) {
         const railFilter = ['all', mapKindFilter(MAP_RAILS), ['!=', ['get', 'tunnel'], true]];
-        addLine('rail', 'streets', railFilter, rail, ui(1.5), { dash: [3, 2], cap: 'butt' });
+        addLine('rail', 'streets', railFilter, rail, ui(1), { dash: [3, 2], kinds: MAP_RAILS });
       }
-      if (groups.aerialways) addLine('aerialways', 'aerialways', null, rail, ui(1), { minzoom: 12, dash: [1, 2], cap: 'butt' });
+      if (groups.aerialways) addLine('aerialways', 'aerialways', null, rail, ui(1), { minzoom: 12, dash: [1, 2] });
       if (groups.boundaries && groups.boundaries.length) {
         const boundaryFilter = ['all', ['in', ['get', 'admin_level'], ['literal', groups.boundaries]], ['!=', ['get', 'maritime'], true]];
-        addLine('boundaries', 'boundaries', boundaryFilter, boundary, ui(1), { dash: [4, 2], cap: 'butt' });
+        addLine('boundaries', 'boundaries', boundaryFilter, boundary, ui(1), { dash: [4, 2] });
       }
       if (groups.transit) {
         // A stop is a dot in the transit slot's ink with a contrast ring.
         mapShapeSpec('transit', transit.color || transit.ink, {
-          kind: 'point', sourceLayer: 'public_transport', filter: mapKindFilter(MAP_TRANSIT_KINDS), widths: ui(2), minzoom: 12, casing: true,
+          kind: 'point', sourceLayer: 'public_transport', filter: mapKindFilter(MAP_TRANSIT_KINDS), widths: ui(2), minzoom: 13, casing: true,
         }, halo, sources, layers, shapeSpecs);
       }
 
@@ -6510,7 +6632,7 @@ window.markFrameworkReady = markFrameworkReady;
       attachedMaps.add(map);
       let el = resolveEl(opts && opts.el);
       if (!el) { try { el = map.getContainer(); } catch (_) { el = null; } }
-      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0, shapes: [], shapeSignature: null };
+      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0, shapes: [], shapeSignature: null, labelSignature: null };
       liveMaps.set(map, rec);
       try {
         map.on('styleimagemissing', (event) => {
@@ -6534,7 +6656,7 @@ window.markFrameworkReady = markFrameworkReady;
       try { if (typeof map.triggerRepaint === 'function') map.triggerRepaint(); } catch (_) {}
       // A map attached after a pass has already flipped READY re-arms it, so a
       // capture does not catch the frame before the tiles.
-      if (window.TRMNL_PLUGINS_READY === true) { try { scheduleTerminalize(); } catch (_) {} }
+      if (window.TRMNL_PLUGINS_READY === true && !mapRefreshing) { try { scheduleTerminalize(); } catch (_) {} }
       return map;
     },
 
@@ -6588,6 +6710,7 @@ window.markFrameworkReady = markFrameworkReady;
             rec.map.resize();
             snapMapInPlace(rec.map);
             rec.shapeSignature = null;
+            rec.labelSignature = null;
           }
         } catch (_) {}
       }
@@ -6646,14 +6769,47 @@ window.markFrameworkReady = markFrameworkReady;
           return;
         }
         if (node) node.removeAttribute('data-map-unsupported');
-        map = buildFn() || null;
+        try {
+          map = buildFn() || null;
+        } catch (error) {
+          // A build that throws (MapLibre missing, a bad option) leaves the
+          // container empty and the watcher alive for the next change.
+          console.error('TRMNLMaps.watch: build failed', error);
+          map = null;
+        }
         if (map) TRMNLMaps.attach(map, { el: el });
       };
+      const watcher = { build: build };
+      mapWatchers.add(watcher);
       const stopObserving = TRMNLPaint.watch(el, build, { immediate: true });
       return function stop() {
+        mapWatchers.delete(watcher);
         stopObserving();
         destroy();
       };
+    },
+
+    /**
+     * Rebuild every watched map from the live cascade and wait for the rebuilt
+     * maps to settle, without re-running the terminalize pass. For a host that
+     * changes the screen's scale after the pass, the way the screenshot
+     * service sets the capture pixel ratio once layout is final: a map sizes
+     * its canvas and its pattern images when it is built, so it is built
+     * again. Resolves { targets, timedOut } like settle().
+     *
+     * @param {{maxWaitMs?: number}} [opts]
+     * @returns {Promise<{targets: number, timedOut: boolean}>}
+     */
+    refresh(opts) {
+      mapRefreshing = true;
+      try {
+        for (const watcher of Array.from(mapWatchers)) {
+          try { watcher.build(); } catch (_) {}
+        }
+      } finally {
+        mapRefreshing = false;
+      }
+      return TRMNLMaps.settle(opts);
     },
   };
 
