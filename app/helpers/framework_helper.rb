@@ -79,9 +79,9 @@ module FrameworkHelper
     'enhancement_guide' => 'V2 Enhancement Guide',
     'troubleshooting_guide' => 'V2 Troubleshooting',
     'trmnl_x_guide' => 'TRMNL X Guide',
-    'v3_overview' => 'V3.2 Overview',
-    'v3_upgrade_guide' => 'V3.2 Upgrade Guide',
-    'v3_enhancement_guide' => 'V3.2 Enhancement Guide',
+    'v3_overview' => 'V3.3 Overview',
+    'v3_upgrade_guide' => 'V3.3 Upgrade Guide',
+    'v3_enhancement_guide' => 'V3.3 Enhancement Guide',
     'open_source' => 'Open Source',
     'contributing' => 'Contributing',
     'layout_examples' => 'Layout Examples'
@@ -180,8 +180,8 @@ module FrameworkHelper
     'enhancement_guide' => 'Device, bit-depth, and orientation-responsive patterns for plugins',
     'troubleshooting_guide' => "Resolve issues surfaced by v2's stricter markup requirements",
     'trmnl_x_guide' => 'Framework changes for TRMNL X compatibility',
-    'v3_overview' => "What's new in Framework 3.2: themes, the TRMNLPaint JS API, adaptive charts and icons, and theme-driven borders",
-    'v3_upgrade_guide' => 'Compatibility notes for upgrading plugins to Framework 3.2',
+    'v3_overview' => "What's new in Framework 3.3: themes, the TRMNLPaint JS API, adaptive charts, maps and icons, and theme-driven borders",
+    'v3_upgrade_guide' => 'Compatibility notes for upgrading plugins to Framework 3.3',
     'v3_enhancement_guide' => 'Make your plugin theme-ready and adopt adaptive charts, icons, and JS paint',
     'open_source' => 'What this repository is, how it fits together, and the paint mandate that shapes it',
     'contributing' => 'Run the framework locally, find your way around, run the tests, and open a good pull request'
@@ -423,9 +423,9 @@ module FrameworkHelper
       'text_scale' => 'Text Scale adjusts every framework font size and pixel line height from one screen modifier. It composes with Scale, so you can change text readability without applying the same factor to interface geometry or text strokes.',
       'troubleshooting_guide' => "When upgrading to v2, validate markup against intended usage. This guide lists common issues surfaced by v2's more precise behavior.",
       'trmnl_x_guide' => 'TRMNL X is a larger, 4-bit ePaper display. This guide covers what changed in the Framework to support it: new size modifiers, container query units, responsive overflow columns, and layout improvements. Existing plugins keep working; adopt these features to use the larger screen, portrait orientation, and expanded grayscale.',
-      'v3_overview' => 'Framework 3.2 makes plugins theme-aware. It adds opt-in theme stylesheets, the TRMNLPaint JavaScript paint API, adaptive charts and icons, rebuilt border, outline, and stroke utilities, and Fluid Mashups for arranging views, all on top of the v3 color system. Existing markup keeps working; every 3.2 feature is opt-in.',
-      'v3_upgrade_guide' => 'Framework 3.2 is fully backward compatible with 3.0 and 3.1. Existing class names render unchanged, and every 3.2 feature (themes, the paint API, adaptive charts, adaptive icons) is opt-in. This guide lists the few things worth reviewing when you upgrade.',
-      'v3_enhancement_guide' => 'Framework 3.2 lets an existing plugin follow themes, dark mode, and device modes everywhere: in markup, in charts, in icons, and in text and image outlines. This guide walks through each enhancement you can adopt (theme readiness, adaptive charts, adaptive icons, JS paint, the border step rail, and legible overlaid text and images), one at a time and in any order.',
+      'v3_overview' => 'Framework 3.3 makes plugins theme-aware. It adds opt-in theme stylesheets, the TRMNLPaint JavaScript paint API, adaptive charts, maps and icons, rebuilt border, outline, and stroke utilities, and Fluid Mashups for arranging views, all on top of the v3 color system. Existing markup keeps working; every 3.2 and 3.3 feature is opt-in.',
+      'v3_upgrade_guide' => 'Framework 3.3 is fully backward compatible with 3.0, 3.1 and 3.2. Existing class names render unchanged, and every 3.2 and 3.3 feature (themes, the paint API, adaptive charts, maps and icons) is opt-in. This guide lists the few things worth reviewing when you upgrade.',
+      'v3_enhancement_guide' => 'Framework 3.3 lets an existing plugin follow themes, dark mode, and device modes everywhere: in markup, in charts, in maps, in icons, and in text and image outlines. This guide walks through each enhancement you can adopt (theme readiness, adaptive charts, adaptive icons, JS paint, the border step rail, and legible overlaid text and images), one at a time and in any order.',
       'open_source' => 'The TRMNL Framework is open source as of version 3.2. It is the design system TRMNL plugin screens are built with, tuned for 1-bit, 2-bit, and limited-color ePaper displays. This repository holds the CSS, the JavaScript runtime, the design tokens, and the documentation site you are reading.',
       'contributing' => 'Everything you need to make your first contribution to the TRMNL Framework: run it locally, find your way around the code, run the test suites, and open a pull request that lands. Start here, then read CONTRIBUTING.md for the fine print.',
       'font_family' => 'The Framework ships two pixel font bundles: Classic (NicoPups, NicoClean, BlockKie) and TRMNL (TRMNL12, TRMNL16, TRMNL21). Low-density displays use the selected bundle; high-density displays use Inter Variable for legibility.',
@@ -800,7 +800,7 @@ module FrameworkHelper
                                          when '3.1'
                                            'Framework 3.1 guides for color system, migration, font bundle defaults, enhancement workflows, and TRMNL X compatibility.'
                                          else
-                                           'Framework 3.2 guides for migration, enhancement workflows, and TRMNL X compatibility, plus how the open-source repository is built and how to contribute.'
+                                           'Framework 3.3 guides for migration, enhancement workflows, and TRMNL X compatibility, plus how the open-source repository is built and how to contribute.'
                                          end
 
     base_descriptions.merge(guides: version_specific_guide_description).with_indifferent_access

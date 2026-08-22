@@ -34,14 +34,17 @@ class FrameworkController < Framework.parent_controller_class
 
   layout -> { params[:_raw].present? ? false : 'framework' }
 
-  CURRENT_DOCS_VERSION = '3.2'.freeze
-  SUPPORTED_DOCS_VERSIONS = %w[1.2 2.3 3.0 3.1 3.2].freeze
+  CURRENT_DOCS_VERSION = '3.3'.freeze
+  SUPPORTED_DOCS_VERSIONS = %w[1.2 2.3 3.0 3.1 3.3].freeze
+  # 3.2 never had a docs generation of its own: its pages moved to 3.3 with the release,
+  # so every 3.2 URL redirects to its 3.3 twin the way the v1/v2/v3 aliases do.
   LEGACY_DOCS_VERSION_ALIASES = {
     'v1' => '1.2',
     'v2' => '2.3',
-    'v3' => CURRENT_DOCS_VERSION
+    'v3' => CURRENT_DOCS_VERSION,
+    '3.2' => CURRENT_DOCS_VERSION
   }.freeze
-  DOCS_VERSION_MENU = %w[3.2 3.1 3.0 2.3 1.2].freeze
+  DOCS_VERSION_MENU = %w[3.3 3.1 3.0 2.3 1.2].freeze
   CACHED_PAGE_TTL = 12.hours
 
   V3_DOC_GROUPS = {
@@ -76,12 +79,13 @@ class FrameworkController < Framework.parent_controller_class
   # Inverse from 3.1.7.
   #
   # :foundation gains Devices and Rendering Modes behind Screen: the two things a
-  # screen states about its hardware before any content goes in it. Both are
-  # 3.2-only, like every other page added to this hash rather than to V3_DOC_GROUPS.
+  # screen states about its hardware before any content goes in it. Both belong to
+  # the current track only, like every other page added to this hash rather than to
+  # V3_DOC_GROUPS.
   #
   # :components gains Map behind Chart, and :paint gains Painting Maps behind
-  # Painting Charts: TRMNLMaps ships in the 3.2 runtime, so both pages are 3.2-only.
-  V3_2_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
+  # Painting Charts: TRMNLMaps ships in the 3.3 runtime, so both pages are current-only.
+  CURRENT_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
     case group
     when :guides
       groups[:guides] = pages + %w[open_source contributing]
@@ -127,7 +131,7 @@ class FrameworkController < Framework.parent_controller_class
     }.freeze,
     '3.0' => V3_DOC_GROUPS,
     '3.1' => V3_1_DOC_GROUPS,
-    CURRENT_DOCS_VERSION => V3_2_DOC_GROUPS
+    CURRENT_DOCS_VERSION => CURRENT_DOC_GROUPS
   }.freeze
 
   # 3.0/3.1 share the current v3 templates; framework_v3_1 holds only the

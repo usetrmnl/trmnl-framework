@@ -70,7 +70,8 @@ scope :framework do
 
       framework_docs_components.each do |component|
         canonical_component = legacy_version == 'v3' && component == 'text' ? 'text_color' : component
-        get "/#{legacy_version}/#{component}", to: redirect("/framework/docs/#{canonical_version}/#{canonical_component}"), as: "framework_docs_alias_#{legacy_version}_#{component}_redirect"
+        # A route name takes no dot: the 3.2 alias names its redirects framework_docs_alias_3_2_*.
+        get "/#{legacy_version}/#{component}", to: redirect("/framework/docs/#{canonical_version}/#{canonical_component}"), as: "framework_docs_alias_#{legacy_version.tr('.', '_')}_#{component}_redirect"
       end
     end
 

@@ -143,7 +143,7 @@ RSpec.describe 'Engine host contract' do
 
     # The two controls the fork was missing, named the way the picker labels them.
     it 'reaches the page with the Style and Text Scale controls on it', type: :request do
-      get '/framework/docs/3.2'
+      get "/framework/docs/#{FrameworkController::CURRENT_DOCS_VERSION}"
 
       aggregate_failures do
         expect(response.body).to include('>Style</span>')

@@ -14,6 +14,8 @@ require 'rails_helper'
 # statically across each track's view trees and resolves every one through those same
 # helpers. Three rendered pages remain as emission drift guards.
 RSpec.describe 'Framework docs cross references', type: :request do
+  let(:current) { FrameworkController::CURRENT_DOCS_VERSION }
+
   before(:all) { FrameworkBuild.docs_assets! }
 
   engine_root = Framework::Engine.root
@@ -62,7 +64,7 @@ RSpec.describe 'Framework docs cross references', type: :request do
   end
 
   it 'scans a chip population, not an empty tree' do
-    expect(chips_for.call('3.2').size).to be >= 100
+    expect(chips_for.call(current).size).to be >= 100
   end
 
   FrameworkController::SUPPORTED_DOCS_VERSIONS.each do |version|
@@ -95,12 +97,12 @@ RSpec.describe 'Framework docs cross references', type: :request do
   # One rendered page pins the scan to what the component emits: every chip href on the
   # page must come from the resolved universe the sweep checked.
   it 'emits chip hrefs only from the resolved universe on a partial-heavy page' do
-    get '/framework/docs/3.2/structure'
+    get "/framework/docs/#{current}/structure"
     expect(response).to have_http_status(:ok)
 
-    allowed = chips_for.call('3.2')
-                       .select { |key, _file| framework_page_reachable?(key, '3.2') }
-                       .map { |key, _file| framework_page_path(key, version: '3.2') }
+    allowed = chips_for.call(current)
+                       .select { |key, _file| framework_page_reachable?(key, current) }
+                       .map { |key, _file| framework_page_path(key, version: current) }
     expect(chip_hrefs).not_to be_empty
     expect(chip_hrefs - allowed).to be_empty
   end
