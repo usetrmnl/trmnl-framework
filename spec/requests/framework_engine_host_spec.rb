@@ -490,17 +490,17 @@ RSpec.describe 'Engine host contract' do
       end
     end
 
-    # The map tiles are the one fetch the engine makes server-side: the browser asks the
-    # host for /framework/tiles/, and the host fetches from Framework.tile_source_url. The
-    # default source is a community endpoint with a usage policy, so every disclosure
-    # names it and the switch.
-    it 'discloses the tile source the engine fetches from, and names no tile host in the runtime' do
+    # The map tiles: a map names no source by default and fetches the public OSMF endpoint
+    # itself, and the engine serves TRMNL's own source at /framework/tiles/ from
+    # Framework.tile_source_url. Both carry a usage policy, so every disclosure names the
+    # public default, the engine path and the switch.
+    it 'discloses the public tile default and the engine tile endpoint' do
       aggregate_failures do
         expect([integration_doc, open_source_page, readme]).to all(include('vector.openstreetmap.org').and(include('/framework/tiles/')))
         expect(Framework::DEFAULT_TILE_SOURCE_URL).to include('vector.openstreetmap.org')
         runtime = root.join('app/javascript/plugin-render/plugins.js').read
         expect(runtime).to include('/framework/tiles/{z}/{x}/{y}.mvt')
-        expect(runtime).not_to include('vector.openstreetmap.org')
+        expect(runtime).to include('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt')
       end
     end
 

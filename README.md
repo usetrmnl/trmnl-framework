@@ -316,14 +316,16 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   - Highcharts and Chartkick from `trmnl.com`, on the chart page and in the Shopify
     example fixture: those charts render empty. See the License section.
   - opentype.js from jsDelivr on the font glyphs page: the glyph tables stay empty.
-- The framework CSS and JS bundles themselves reference no external host. Everything they
-  fetch (pattern images, fonts, map tiles) is served from the same origin as the bundle: a
-  map asks its host for `/framework/tiles/{z}/{x}/{y}.mvt`, and the engine answers by
-  fetching the tile server-side from `Framework.tile_source_url` (default: OpenStreetMap's
-  community server at `vector.openstreetmap.org`, whose usage policy allows a docs site
-  and forbids a device fleet). No tile data is stored anywhere. A host that renders map
-  plugins for devices points that setting at its own tile source first; see
-  [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).
+- The framework CSS and JS bundles themselves reference one external host: a map that
+  names no tile source fetches OpenStreetMap's public Shortbread tiles
+  (`vector.openstreetmap.org`) directly, on the free tier, so a plugin costs the host
+  nothing. Everything else they fetch (pattern images, fonts) is served from the same
+  origin as the bundle. A plugin names its own source and key with
+  `options({ tiles: { url, key } })`, a host injects one per plugin instance as
+  `window.__TRMNL_MAPS__`, and the engine serves TRMNL's own source at
+  `/framework/tiles/{z}/{x}/{y}.mvt` (the `'trmnl'` preset, a pass-through from
+  `Framework.tile_source_url`; no tile data is stored anywhere). The public default's usage
+  policy allows light use and forbids a fleet; see [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).
 - A host mounting the engine inherits all four. The table in
   [docs/ENGINE_INTEGRATION.md](docs/ENGINE_INTEGRATION.md) names each origin, what loads
   from it, and the CSP directive it needs; the Open Source docs page carries the same list

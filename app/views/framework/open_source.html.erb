@@ -134,7 +134,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'What This Site Loads from Elsewhere') %>
           <p class="<%= framework_section_description_classes %>">
-            The framework bundles fetch nothing from outside their own origin. Pattern images, fonts and map tiles come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from: a map asks its own host for <code class="<%= framework_section_code_classes %>">/framework/tiles/</code>, which the engine answers by fetching the tile server-side from the source the host configures.
+            The framework bundles fetch from one host outside their own origin: a map that names no tile source fetches OpenStreetMap's public tiles directly. Pattern images and fonts come from wherever <code class="<%= framework_section_code_classes %>">plugins.css</code> came from.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The docs site around them loads from four third-party origins, all in the page chrome or in a demo. Each one fails on its own page, so a host that blocks all four still serves every page here.
@@ -153,7 +153,11 @@
         </p>
 
         <p class="<%= framework_section_description_classes %>">
-          The map tiles are one more fetch, made by the host rather than the browser: <code class="<%= framework_section_code_classes %>">/framework/tiles/{z}/{x}/{y}.mvt</code> fetches each tile from <code class="<%= framework_section_code_classes %>">Framework.tile_source_url</code>, by default OpenStreetMap's community server (<code class="<%= framework_section_code_classes %>">vector.openstreetmap.org</code>), whose usage policy allows a docs site and forbids a device fleet. A host that renders map plugins for devices points that setting at its own tile source first; <code class="<%= framework_section_code_classes %>">docs/MAPS_GO_LIVE.md</code> is the checklist. See <%= render DocsRef.new(page: :map) %>.
+          Map tiles come from OpenStreetMap's public Shortbread endpoint (<code class="<%= framework_section_code_classes %>">vector.openstreetmap.org</code>) by default, fetched by the page itself on the free tier, whose usage policy allows light use and forbids a fleet. A plugin names its own source and key, a host injects one per plugin instance, and the engine serves TRMNL's own source at <code class="<%= framework_section_code_classes %>">/framework/tiles/{z}/{x}/{y}.mvt</code> (a pass-through from <code class="<%= framework_section_code_classes %>">Framework.tile_source_url</code>; the docs demos use it, nothing is stored).
+        </p>
+
+        <p class="<%= framework_section_description_classes %>">
+          <code class="<%= framework_section_code_classes %>">docs/MAPS_GO_LIVE.md</code> is the checklist for a host that renders map plugins for devices. See <%= render DocsRef.new(page: :map) %>.
         </p>
       </section>
 

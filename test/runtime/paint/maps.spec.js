@@ -181,6 +181,20 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         };
       })(),
       tiles: maps.tiles({ url: 'x' }),
+      tileSources: (() => {
+        const byDefault = maps.tiles().url;
+        const trmnl = maps.tiles('trmnl').url;
+        const keyed = maps.tiles({ url: 'https://tiles.example.com/{z}/{x}/{y}.pbf?key={key}', key: 'a b' }).url;
+        const keyIgnored = maps.tiles({ url: 'https://tiles.example.com/{z}/{x}/{y}.pbf', key: 'abc' }).url;
+        window.__TRMNL_MAPS__ = { tiles: { url: 'https://host.example.com/{z}/{x}/{y}.mvt?k={key}', key: 'hostkey' } };
+        const hosted = maps.tiles().url;
+        const hostedStyle = maps.style('minimal', { el: target }).sources.osm.tiles[0];
+        const explicitOverHost = maps.tiles('osm').url;
+        window.__TRMNL_MAPS__ = { tiles: 'trmnl' };
+        const hostedPreset = maps.tiles().url;
+        delete window.__TRMNL_MAPS__;
+        return { byDefault, trmnl, keyed, keyIgnored, hosted, hostedStyle, explicitOverHost, hostedPreset };
+      })(),
       merged: maps.merge({ a: { b: 1, c: [1] }, d: 1 }, { a: { c: [2] }, e: 2 }),
       decoded: decoded.map((pair) => pair.map((n) => Number(n.toFixed(3)))),
     };
@@ -202,8 +216,8 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
     antialias: false,
   });
   expect(result.style.version).toBe(8);
-  // The engine's own endpoint on the page's origin, never a tile host.
-  expect(result.style.source).toBe(`${result.origin}/framework/tiles/{z}/{x}/{y}.mvt`);
+  // The default source is the public endpoint, fetched by the page itself.
+  expect(result.style.source).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
   expect(result.style.glyphs).toBeUndefined();
   expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-farmland', 'land-green', 'land-sand', 'sites', 'water', 'ferries', 'buildings', 'roads-minor', 'paths', 'roads-major', 'rail', 'transit', 'boundaries']));
   // Labels are framework elements the runtime places, never MapLibre glyph text.
@@ -245,6 +259,15 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.overlays.setData).toEqual(expect.arrayContaining(['trmnl-route-route:1/3/1', 'trmnl-route-route-casing:1/3/1', 'trmnl-dot-start:1/1/1', 'trmnl-dot-end-core:1/1/1']));
   expect(result.tiles.url).toBe('x');
   expect(result.tiles.glyphs).toBeUndefined();
+  // Source order: the argument, then the host's per-instance source, then the public default.
+  expect(result.tileSources.byDefault).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
+  expect(result.tileSources.trmnl).toBe(`${result.origin}/framework/tiles/{z}/{x}/{y}.mvt`);
+  expect(result.tileSources.keyed).toBe('https://tiles.example.com/{z}/{x}/{y}.pbf?key=a%20b');
+  expect(result.tileSources.keyIgnored).toBe('https://tiles.example.com/{z}/{x}/{y}.pbf');
+  expect(result.tileSources.hosted).toBe('https://host.example.com/{z}/{x}/{y}.mvt?k=hostkey');
+  expect(result.tileSources.hostedStyle).toBe('https://host.example.com/{z}/{x}/{y}.mvt?k=hostkey');
+  expect(result.tileSources.explicitOverHost).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
+  expect(result.tileSources.hostedPreset).toBe(`${result.origin}/framework/tiles/{z}/{x}/{y}.mvt`);
   expect(result.merged).toEqual({ a: { b: 1, c: [2] }, d: 1, e: 2 });
   expect(result.decoded).toEqual([[-120.2, 38.5], [-120.95, 40.7], [-126.453, 43.252]]);
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));

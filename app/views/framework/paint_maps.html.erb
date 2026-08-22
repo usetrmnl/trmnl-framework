@@ -181,11 +181,14 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
             <%= framework_heading(4, 'Building the style') %>
             <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
               <li>
-                <code class="<%= framework_section_code_classes %>">tiles(preset)</code>: a tile source preset, the
-                vector tile URL, zoom range and attribution.
-                <code class="<%= framework_section_code_classes %>">'osm'</code> is the default, the framework's own
-                endpoint on the page's host (<code class="<%= framework_section_code_classes %>">/framework/tiles/{z}/{x}/{y}.mvt</code>);
-                an object merges over it for a custom host.
+                <code class="<%= framework_section_code_classes %>">tiles(preset)</code>: a tile source, the vector
+                tile URL template, zoom range and attribution. Resolved in order: the argument
+                (<code class="<%= framework_section_code_classes %>">'osm'</code>,
+                <code class="<%= framework_section_code_classes %>">'trmnl'</code>, or
+                <code class="<%= framework_section_code_classes %>">{ url, key, preset }</code> merging over a preset),
+                then the host's <code class="<%= framework_section_code_classes %>">window.__TRMNL_MAPS__.tiles</code>,
+                then <code class="<%= framework_section_code_classes %>">'osm'</code>, the public endpoint. A url may
+                carry <code class="<%= framework_section_code_classes %>">{key}</code>.
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">style(preset, { el, tiles, labels, buildings })</code>:

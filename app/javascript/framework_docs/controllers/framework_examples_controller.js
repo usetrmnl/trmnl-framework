@@ -414,6 +414,10 @@ export default class extends Controller {
     const shouldUseSingleBundle = fetchedSingleBundleMode !== null ? fetchedSingleBundleMode : singleBundleMode
     const effectiveThemeCssUrls = (fetchedThemeCssUrls && typeof fetchedThemeCssUrls === 'object') ? fetchedThemeCssUrls : (themeCssUrls || {})
     const themeCssUrlsTag = `<script>window.TRMNL_THEME_CSS_URLS = ${JSON.stringify(effectiveThemeCssUrls)};</script>`
+    // The docs site's maps draw from TRMNL's own tile source (the engine endpoint on this
+    // host), the way a host injects a per-instance source for a plugin; a plugin that names
+    // none rides the public default. The snippets show none, so a reader copies the default.
+    const mapsTag = `<script>window.__TRMNL_MAPS__ = { tiles: 'trmnl' };</script>`
     // Theme CSS is inert without a screen--theme-* class, so load all of it up
     // front (mirroring the parent layout). Hardcoded theme demos and picker
     // broadcasts then only ever toggle classes.
@@ -443,7 +447,7 @@ export default class extends Controller {
       }
     }
 
-    return `<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="${fonts}" rel="stylesheet">\n    <link href="${effectiveCss}" rel="stylesheet">\n    ${themeCssLinkTags}\n      </head>\n  <body class="environment trmnl">\n    ${safeHtml}\n    ${pluginsLoaderTag}\n    ${themeCssUrlsTag}\n    ${bridgeScript}\n  </body>\n</html>`
+    return `<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset="utf-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="${fonts}" rel="stylesheet">\n    <link href="${effectiveCss}" rel="stylesheet">\n    ${themeCssLinkTags}\n      </head>\n  <body class="environment trmnl">\n    ${safeHtml}\n    ${pluginsLoaderTag}\n    ${themeCssUrlsTag}\n    ${mapsTag}\n    ${bridgeScript}\n  </body>\n</html>`
   }
 
   buildBridgeScript(scopeName, frozenRuntime) {

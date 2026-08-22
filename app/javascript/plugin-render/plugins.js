@@ -5472,37 +5472,68 @@ window.markFrameworkReady = markFrameworkReady;
   // to the pixel grid, a polyline decoder, and the readiness wait terminalize
   // calls.
 
-  // Tile source. Every host that mounts the framework engine answers
-  // /framework/tiles/{z}/{x}/{y}.mvt from the source it configures
-  // (Framework::Tiles; docs/MAPS_GO_LIVE.md), so the `osm` preset names that
-  // path on the page's own origin, never a tile host: the docs site, a plugin
-  // preview and a device render all fetch from the host that served them. A
-  // page with no origin (a renderer writing into about:blank) falls back to
-  // trmnl.com, and window.__TRMNL_TILES_URL__ names a template outright. No
-  // glyph endpoint: labels are framework elements the screen typesets itself
-  // (see placeMapLabels).
-  const MAP_TILES_PATH = '/framework/tiles/{z}/{x}/{y}.mvt';
+  // Tile sources, and who pays for them. `osm` is the default: the public
+  // OSMF Shortbread endpoint, fetched by the page itself, so a plugin that
+  // names no source costs its host nothing and rides the free tier. `trmnl`
+  // is the framework engine's own endpoint on the page's host,
+  // /framework/tiles/{z}/{x}/{y}.mvt, which the host answers from the source
+  // it configures (Framework::Tiles; docs/MAPS_GO_LIVE.md): the docs site and
+  // TRMNL's own plugins use it, third-party plugins do not by default. A
+  // page with no origin (a renderer writing into about:blank) resolves it
+  // against trmnl.com. A plugin names its own source with tiles({ url, key })
+  // or options({ tiles }), where the url template may carry {key}; and the
+  // host injects one per plugin instance as window.__TRMNL_MAPS__.tiles (a
+  // preset name or the same object), which is how a plugin author's key or a
+  // user's key reaches a map without a key in the markup. No glyph endpoint:
+  // labels are framework elements the screen typesets itself (placeMapLabels).
+  const MAP_TILES_TRMNL_PATH = '/framework/tiles/{z}/{x}/{y}.mvt';
   const MAP_TILES_FALLBACK_ORIGIN = 'https://trmnl.com';
-  function mapTilesUrl() {
-    const configured = window.__TRMNL_TILES_URL__;
-    if (typeof configured === 'string' && configured) return configured;
-    let origin = null;
-    // window.origin is the document's origin, the page's host inside a srcdoc
-    // frame too; location.origin is the URL's, 'null' there and in about:blank.
-    try { origin = window.origin || (window.location && window.location.origin) || null; } catch (_) {}
-    if (typeof origin !== 'string' || !/^https?:\/\//.test(origin)) origin = MAP_TILES_FALLBACK_ORIGIN;
-    return origin + MAP_TILES_PATH;
-  }
   const MAP_TILE_PRESETS = {
     osm: {
       id: 'osm',
-      url: null,
+      url: 'https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt',
       minzoom: 0,
       maxzoom: 14,
       attribution: '© OpenStreetMap contributors',
       workerUrl: null,
+      key: null,
+    },
+    trmnl: {
+      id: 'trmnl',
+      url: null,
     },
   };
+
+  // The engine endpoint on the page's own host. window.origin is the
+  // document's origin, the page's host inside a srcdoc frame too;
+  // location.origin is the URL's, 'null' there and in about:blank.
+  function mapTrmnlTilesUrl() {
+    let origin = null;
+    try { origin = window.origin || (window.location && window.location.origin) || null; } catch (_) {}
+    if (typeof origin !== 'string' || !/^https?:\/\//.test(origin)) origin = MAP_TILES_FALLBACK_ORIGIN;
+    return origin + MAP_TILES_TRMNL_PATH;
+  }
+
+  function mapTilePreset(name) {
+    if (name === 'trmnl') return deepMerge(MAP_TILE_PRESETS.trmnl, { url: mapTrmnlTilesUrl() });
+    return MAP_TILE_PRESETS[name] || {};
+  }
+
+  // The host's per-instance source, if it set one.
+  function mapHostTiles() {
+    const host = window.__TRMNL_MAPS__;
+    const tiles = host && typeof host === 'object' ? host.tiles : null;
+    return (typeof tiles === 'string' && tiles) || isPlainObject(tiles) ? tiles : null;
+  }
+
+  // A key lands where the template says; a template without {key} is used as
+  // written, so a key never leaks onto a source that did not ask for it.
+  function mapTilesWithKey(source) {
+    if (typeof source.url === 'string' && source.key != null && source.key !== '') {
+      source.url = source.url.split('{key}').join(encodeURIComponent(String(source.key)));
+    }
+    return source;
+  }
 
   // Bounded readiness wait, overridable per call and by window.__TRMNL_MAPS_SETTLE_MS__.
   const MAP_SETTLE_MS = 6000;
@@ -6272,21 +6303,24 @@ window.markFrameworkReady = markFrameworkReady;
 
   const TRMNLMaps = {
     /**
-     * A tile source preset: the vector tile URL, its zoom range and attribution.
-     * 'osm' is the default, the framework engine's own endpoint on the page's
-     * host (/framework/tiles/{z}/{x}/{y}.mvt); an object merges over it, so a
-     * custom host is tiles({ url: '...' }). No glyph endpoint: labels are
-     * framework elements.
+     * A tile source: the vector tile URL template, its zoom range and
+     * attribution. Resolved in this order: the argument (a preset name, 'osm'
+     * or 'trmnl', or an object with url, key and preset that merges over the
+     * preset), then the host's per-instance window.__TRMNL_MAPS__.tiles, then
+     * 'osm', the public endpoint. A url may carry {key}, filled from key. No
+     * glyph endpoint: labels are framework elements.
      *
      * @param {(string|object)} [preset]
-     * @returns {{id, url, minzoom, maxzoom, attribution, workerUrl}}
+     * @returns {{id, url, minzoom, maxzoom, attribution, workerUrl, key}}
      */
     tiles(preset) {
-      const base = deepMerge(MAP_TILE_PRESETS.osm, { url: mapTilesUrl() });
-      if (preset == null) return base;
-      if (typeof preset === 'string') return deepMerge(base, MAP_TILE_PRESETS[preset] || {});
-      if (isPlainObject(preset)) return deepMerge(base, preset);
-      return base;
+      const pick = preset != null ? preset : mapHostTiles();
+      let source;
+      if (typeof pick === 'string') source = deepMerge(MAP_TILE_PRESETS.osm, mapTilePreset(pick));
+      else if (isPlainObject(pick)) source = deepMerge(deepMerge(MAP_TILE_PRESETS.osm, mapTilePreset(pick.preset)), pick);
+      else source = deepMerge(MAP_TILE_PRESETS.osm, {});
+      delete source.preset;
+      return mapTilesWithKey(source);
     },
 
     /**

@@ -1,14 +1,25 @@
 # Maps go-live checklist
 
-`TRMNLMaps` renders OpenStreetMap vector tiles through MapLibre GL JS. A map
-asks the host that served the page for its tiles, at
-`/framework/tiles/{z}/{x}/{y}.mvt`; the engine answers that route by fetching
-each tile server-side from `Framework.tile_source_url` and handing the bytes on
-(a pass-through: nothing is stored in the gem, on disk or in a database). The
-default source is a community server:
+`TRMNLMaps` renders OpenStreetMap vector tiles through MapLibre GL JS. Who
+fetches the tiles, and who pays, follows the source a map resolves:
 
-- `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt`
-  (OSMF, Shortbread 1.0 schema, zoom 0 to 14)
+- **Default (no source named):** the public OSMF Shortbread endpoint,
+  `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt` (Shortbread
+  1.0, zoom 0 to 14), fetched by the page itself. Free tier, no key, no cost to
+  the host.
+- **A plugin's own source:** `options({ tiles: { url, key } })`, a
+  `{z}/{x}/{y}` template with `{key}` filled from the key. The plugin owner's
+  account pays.
+- **A host-injected source:** `window.__TRMNL_MAPS__ = { tiles: { url, key } }`
+  per plugin instance, which is how the platform hands a plugin author's key
+  (plugin configuration) or a user's key (plugin settings) to the map; core
+  decides which of the two it injects. A source named in code wins over it.
+- **TRMNL's own source:** the `'trmnl'` preset, `/framework/tiles/{z}/{x}/{y}.mvt`
+  on the page's host, which the engine answers by fetching each tile
+  server-side from `Framework.tile_source_url` and handing the bytes on (a
+  pass-through: nothing is stored in the gem, on disk or in a database). The
+  docs site and TRMNL's own plugins use it; third-party plugins do not by
+  default.
 
 Labels need no glyph host: they are framework elements the runtime places over
 the canvas, typeset by the screen itself.
@@ -16,22 +27,23 @@ the canvas, typeset by the screen itself.
 The [OSMF vector tile usage policy](https://operations.osmfoundation.org/policies/vector/)
 allows light use with a valid, application-specific User-Agent or Referer and
 HTTP caching, forbids heavy and bulk use, and gives no SLA. The docs site is
-light use. A fleet of devices refreshing map plugins is heavy use, and the
-engine's endpoint does not change that: with the default source every device
-render on trmnl.com reaches OSMF from TRMNL's workers. So nothing ships a map
-plugin to devices until `tile_source_url` points at a tile source TRMNL runs.
-This file is the list of what that takes. The switch itself is configuration,
-not a framework release.
+light use. A fleet of devices refreshing map plugins is heavy use whichever
+path the tiles take: a device render originates on TRMNL's workers, so every
+plugin on the public default reaches OSMF from there, and the engine endpoint
+with its default upstream does the same. So a map plugin that goes out to many
+devices brings its own source (the plugin owner's key), or TRMNL's own source
+behind `tile_source_url` carries it. This file is the list of what that takes;
+the switches are configuration, not a framework release.
 
 ## Current wiring
 
-- `TRMNLMaps.tiles()` resolves the `osm` preset's URL from the page's own origin
-  (`window.origin` + `/framework/tiles/{z}/{x}/{y}.mvt`), falls back to
-  `https://trmnl.com` on a page with no origin (a renderer writing into
-  `about:blank`; core's converter rewrites that prefix to the worker-local
-  host), and honors `window.__TRMNL_TILES_URL__` as a template outright. The
-  preset also carries the zoom range, the attribution and a `workerUrl` slot for
-  a CSP-hosted worker.
+- `TRMNLMaps.tiles()` resolves the source in order: the argument (`'osm'`,
+  `'trmnl'`, or `{ url, key, preset }`), then `window.__TRMNL_MAPS__.tiles`,
+  then `'osm'`. The `'trmnl'` preset is `window.origin` +
+  `/framework/tiles/{z}/{x}/{y}.mvt`, `https://trmnl.com` on a page with no
+  origin (a renderer writing into `about:blank`; core's converter rewrites that
+  prefix to the worker-local host). A preset carries the zoom range, the
+  attribution and a `workerUrl` slot for a CSP-hosted worker.
 - `FrameworkTilesController` and `Framework::Tiles` (this gem) answer the route:
   a zoom and extent check, one `Net::HTTP` GET with an identifying User-Agent
   and an 8 s timeout, then the vector tile content type, the upstream gzip
@@ -98,14 +110,21 @@ not a framework release.
       `script-src` and `style-src` for `trmnl.com/js/maplibre-gl/`,
       `connect-src 'self'` for the tiles, `worker-src blob:` (or a served
       worker), `img-src data: blob:` for pattern images. Core sends no CSP today.
-- [ ] **Switch the source.** Set `config.trmnl_framework.tile_source_url` (or
-      `TRMNL_FRAMEWORK_TILE_SOURCE_URL`) on every host that renders maps, the
-      workers included. No framework release is involved; if the default ever
+- [ ] **Switch TRMNL's source.** Set `config.trmnl_framework.tile_source_url`
+      (or `TRMNL_FRAMEWORK_TILE_SOURCE_URL`) on every host that renders maps,
+      the workers included, so the `'trmnl'` preset stops proxying OSMF. No
+      framework release is involved; if the runtime's public default ever
       changes, update the disclosure set in the same commit:
       `docs/ENGINE_INTEGRATION.md`, the Open Source docs page
       (`app/views/framework/open_source.html.erb`), `README.md`, and
       `spec/requests/framework_engine_host_spec.rb`. Attribution text stays
       `© OpenStreetMap contributors`.
+- [ ] **Keys per plugin instance (core).** Give a plugin author a place for a
+      tile source and key in the plugin configuration and a user a place in the
+      plugin settings, and write the winner into the plugin document as
+      `window.__TRMNL_MAPS__ = { tiles: { url, key } }` (the user's key over the
+      author's is the natural order). Keys stay out of markup and out of the
+      framework.
 - [ ] **Size the load.** `requests per day = devices with map plugins x (1440 /
       refresh minutes) x tiles per render`. An 800x480 view at zoom 13 is about
       6 tiles of 512 px, about 12 with MapLibre's buffer, about 20 on the large

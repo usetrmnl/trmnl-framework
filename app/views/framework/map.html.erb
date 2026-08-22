@@ -70,6 +70,33 @@
             slots directly: see <%= render DocsRef.new(page: :paint_api) %>.
           </p>
 
+          <%= framework_heading(4, 'Tiles and keys') %>
+          <p class="<%= framework_section_description_classes %>">
+            A map names no tile host by default: it fetches OpenStreetMap's public Shortbread tiles itself, on the
+            free tier, and whoever renders the plugin pays nothing. Name a source when you have one:
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">options({ tiles: { url, key } })</code>: your own
+              source. <code class="<%= framework_section_code_classes %>">url</code> is a
+              <code class="<%= framework_section_code_classes %>">{z}/{x}/{y}</code> template and may carry
+              <code class="<%= framework_section_code_classes %>">{key}</code>, which the key fills.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">options({ tiles: 'trmnl' })</code>: TRMNL's own source,
+              the framework endpoint on the page's host. The docs site and TRMNL's plugins use it.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">window.__TRMNL_MAPS__ = { tiles: { url, key } }</code>:
+              set by the host per plugin instance, so a plugin author's key or a user's key from the plugin settings
+              reaches the map without a key in the markup. A source named in code wins over it.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The style speaks the Shortbread tile schema, so a source has to as well. Keep the OpenStreetMap credit
+            whatever the source: the data is theirs either way.
+          </p>
+
           <div class="<%= message_warning_classes %>">
             <div class="flex items-center w-full">
               <div class="flex-shrink-0 items-center">

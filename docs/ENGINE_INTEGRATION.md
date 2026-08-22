@@ -136,11 +136,12 @@ pinned to a 3.1.x bundle.
 ## Third-party origins the docs chrome loads
 
 Mounting the engine makes the browser fetch from four origins the gem does not
-control. None of them are in the framework bundles: `plugins.css` and
-`plugins.js` reference no external host, and everything they fetch (pattern
-images, fonts, map tiles) comes from the same origin as the bundle. These four
-are the docs chrome and the demos around it; the map tiles are a fifth fetch the
-engine makes server-side, covered below.
+control, plus the public map tile endpoint a map fetches by default. The
+framework bundles reference no external host apart from that one:
+`plugins.css` fetches nothing outside its origin, and `plugins.js` names the
+public tile endpoint in `TRMNLMaps.tiles()`, which a plugin reaches only when it
+builds a map and names no source of its own. The four below are the docs chrome
+and the demos around it; the tiles are covered in their own section.
 
 | Origin | What it loads | Where it comes from | Blocked |
 | --- | --- | --- | --- |
@@ -158,13 +159,25 @@ setting that turns them off.
 
 ### Map tiles
 
-`TRMNLMaps` fetches vector tiles from the host that served the page, at
-`/framework/tiles/{z}/{x}/{y}.mvt` (`connect-src 'self'` covers it). The engine
-answers that route (`FrameworkTilesController`, `Framework::Tiles`) by fetching
-the tile server-side from `Framework.tile_source_url`, a URL template with `{z}`,
-`{x}` and `{y}`, and handing the bytes on with the vector tile content type, the
+A map names no tile host by default: `TRMNLMaps` fetches OpenStreetMap's public
+Shortbread endpoint (`vector.openstreetmap.org`) from the page itself, so a
+plugin with no source of its own costs the host nothing and `connect-src`
+needs that origin. A plugin names its own source with `options({ tiles: { url,
+key } })` (a `{z}/{x}/{y}` template, `{key}` filled from the key), and the host
+injects one per plugin instance as `window.__TRMNL_MAPS__ = { tiles: { url, key } }`
+(or a preset name), which is how a plugin author's key or a user's key from the
+plugin settings reaches a map; a source named in code wins over the injected
+one. Keys never live in the framework.
+
+The engine also serves TRMNL's own source, the `'trmnl'` preset:
+`/framework/tiles/{z}/{x}/{y}.mvt` on the page's host (`connect-src 'self'`).
+`FrameworkTilesController` and `Framework::Tiles` answer it by fetching the tile
+server-side from `Framework.tile_source_url`, a URL template with `{z}`, `{x}`
+and `{y}`, and handing the bytes on with the vector tile content type, the
 upstream encoding, a day of public cache and an open CORS origin. Nothing is
-stored: no tile data lives in the gem, on disk or in a database.
+stored: no tile data lives in the gem, on disk or in a database. The docs site
+uses this preset (its demo iframes set `window.__TRMNL_MAPS__ = { tiles: 'trmnl' }`);
+a host's own plugins can, and third-party plugins do not by default.
 
 - `config.trmnl_framework.tile_source_url`, then the `TRMNL_FRAMEWORK_TILE_SOURCE_URL`
   environment variable, then the default: OSMF's Shortbread endpoint,
@@ -172,12 +185,14 @@ stored: no tile data lives in the gem, on disk or in a database.
 - `config.trmnl_framework.tile_source_user_agent` names the host to the upstream
   (default `TRMNL Framework tiles (+https://trmnl.com)`).
 
-The default is a community server whose [usage policy](https://operations.osmfoundation.org/policies/vector/)
-allows light use, such as a docs site, and forbids a fleet. A host that renders
-map plugins for devices points `tile_source_url` at its own Shortbread tile
-source before the first one ships; [MAPS_GO_LIVE.md](MAPS_GO_LIVE.md) is that
-checklist. Put a CDN in front of `/framework/tiles/`: devices refetch the same
-tiles every refresh, so the cache takes most of the load.
+The default upstream of that endpoint, and the public default the runtime
+fetches directly, are the same community server, whose
+[usage policy](https://operations.osmfoundation.org/policies/vector/) allows
+light use and forbids a fleet; a host that renders many map plugins for devices
+points `tile_source_url` at its own Shortbread tile source, or has plugins
+bring their own. [MAPS_GO_LIVE.md](MAPS_GO_LIVE.md) is that checklist. Put a
+CDN in front of `/framework/tiles/`: devices refetch the same tiles every
+refresh, so the cache takes most of the load.
 
 ## Runtime
 
