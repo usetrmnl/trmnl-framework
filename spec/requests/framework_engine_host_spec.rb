@@ -479,16 +479,28 @@ RSpec.describe 'Engine host contract' do
     end
 
     # Named rather than derived: the chart, map and font glyphs pages carry these script
-    # tags both as live loads and inside code examples, sass_api.html.erb shows a
-    # trmnl.com snippet it never fetches, and the map tile host is reached by MapLibre
-    # from inside plugins.js, so scanning the view tree reads copy as loads.
+    # tags both as live loads and inside code examples, and sass_api.html.erb shows a
+    # trmnl.com snippet it never fetches, so scanning the view tree reads copy as loads.
     it 'discloses the demo origins as well' do
       aggregate_failures do
-        %w[trmnl.com cdn.jsdelivr.net vector.openstreetmap.org].each do |origin|
+        %w[trmnl.com cdn.jsdelivr.net].each do |origin|
           expect(integration_doc).to include(origin)
           expect(open_source_page).to include(origin)
         end
-        expect(readme).to include('vector.openstreetmap.org')
+      end
+    end
+
+    # The map tiles are the one fetch the engine makes server-side: the browser asks the
+    # host for /framework/tiles/, and the host fetches from Framework.tile_source_url. The
+    # default source is a community endpoint with a usage policy, so every disclosure
+    # names it and the switch.
+    it 'discloses the tile source the engine fetches from, and names no tile host in the runtime' do
+      aggregate_failures do
+        expect([integration_doc, open_source_page, readme]).to all(include('vector.openstreetmap.org').and(include('/framework/tiles/')))
+        expect(Framework::DEFAULT_TILE_SOURCE_URL).to include('vector.openstreetmap.org')
+        runtime = root.join('app/javascript/plugin-render/plugins.js').read
+        expect(runtime).to include('/framework/tiles/{z}/{x}/{y}.mvt')
+        expect(runtime).not_to include('vector.openstreetmap.org')
       end
     end
 
@@ -497,8 +509,9 @@ RSpec.describe 'Engine host contract' do
         expect(chrome_origins).to contain_exactly('fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com')
         expect(root.join('app/views/framework/font_glyphs.html.erb').read).to include('cdn.jsdelivr.net')
         expect(root.join('app/views/framework/chart.html.erb').read).to include('https://trmnl.com/js/highcharts')
+        # The map demos load the engine's own copy; the snippets teach the trmnl.com mirror.
         expect(root.join('app/views/framework/map.html.erb').read).to include('/framework-docs/maplibre-gl-5.24.0.js')
-        expect(root.join('app/javascript/plugin-render/plugins.js').read).to include('https://vector.openstreetmap.org/')
+        expect(root.join('app/views/framework/map.html.erb').read).to include('https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js')
       end
     end
   end

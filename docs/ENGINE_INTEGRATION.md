@@ -135,30 +135,49 @@ pinned to a 3.1.x bundle.
 
 ## Third-party origins the docs chrome loads
 
-Mounting the engine makes the browser fetch from five origins the gem does not
-control. None of them are fetched by the framework bundles on their own:
-`plugins.css` references no external host, everything it fetches (pattern
-images, fonts) comes from the same origin as the bundle, and the one external
-name in `plugins.js` is the OpenStreetMap tile preset `TRMNLMaps.tiles()`
-carries, which a plugin reaches only when it builds a map. These five are the
-docs chrome and the demos around it.
+Mounting the engine makes the browser fetch from four origins the gem does not
+control. None of them are in the framework bundles: `plugins.css` and
+`plugins.js` reference no external host, and everything they fetch (pattern
+images, fonts, map tiles) comes from the same origin as the bundle. These four
+are the docs chrome and the demos around it; the map tiles are a fifth fetch the
+engine makes server-side, covered below.
 
 | Origin | What it loads | Where it comes from | Blocked |
 | --- | --- | --- | --- |
 | `fonts.googleapis.com`, `fonts.gstatic.com` | Inter and EB Garamond for the docs UI, Space Mono for code, Inter again inside every demo iframe | `app/views/layouts/framework.html.erb`, the `@import` at the top of `app/assets/tailwind/application.css` (so it is baked into the `tailwind.css` the gem ships), and `buildSrcdoc` in `app/javascript/framework_docs/controllers/framework_examples_controller.js` | Docs chrome and demo iframes fall back to system fonts. Framework screens keep the self-hosted `/fonts` families either way. |
 | `unpkg.com` | `@trmnl/picker`, the screen-picker web component | `config/importmap.rb` | The device picker stays blank. Every page still renders. |
-| `trmnl.com` | Highcharts and Chartkick | The chart docs page and the Shopify example fixture | Those charts render empty. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here. MapLibre GL JS, by contrast, is BSD licensed and vendored: the engine serves it at `/framework-docs/maplibre-gl-5.24.0.js` and `.css` from `vendor/javascript/`, so the map page adds no library origin. |
+| `trmnl.com` | Highcharts and Chartkick | The chart docs page and the Shopify example fixture | Those charts render empty. Highcharts is commercial and TRMNL serves it under its own license, so it is not vendorable here. MapLibre GL JS, by contrast, is BSD licensed and vendored: the map demos load it from the engine at `/framework-docs/maplibre-gl-5.24.0.js` and `.css` (`vendor/javascript/`), and the plugin snippets name the same build mirrored beside Highcharts at `trmnl.com/js/maplibre-gl/5.24.0/`. |
 | `cdn.jsdelivr.net` | opentype.js | The font glyphs docs page | The glyph tables stay empty. |
-| `vector.openstreetmap.org` | OpenStreetMap vector tiles (Shortbread schema), fetched by MapLibre over XHR | The map docs page, through the `osm` preset in `TRMNLMaps.tiles()` | The maps draw nothing but their attribution label. Labels need no glyph host: they are framework elements the screen typesets. |
 
-Each failure is local to its own page, so a host that blocks all five still
+Each failure is local to its own page, so a host that blocks all four still
 serves every docs page. Under a strict CSP, allow `style-src` and `font-src` for
 the two Google Fonts hosts, `script-src` for trmnl.com, unpkg.com and
-cdn.jsdelivr.net, `connect-src` for vector.openstreetmap.org, and
-`worker-src blob:` for the MapLibre worker, or accept the degradation above.
-The engine has no setting that turns them off. The tile host is a development
-endpoint: [MAPS_GO_LIVE.md](MAPS_GO_LIVE.md) is the checklist that moves it to
-a TRMNL host before a map plugin ships.
+cdn.jsdelivr.net, and `worker-src blob:` plus `img-src data:` for the MapLibre
+worker and pattern images, or accept the degradation above. The engine has no
+setting that turns them off.
+
+### Map tiles
+
+`TRMNLMaps` fetches vector tiles from the host that served the page, at
+`/framework/tiles/{z}/{x}/{y}.mvt` (`connect-src 'self'` covers it). The engine
+answers that route (`FrameworkTilesController`, `Framework::Tiles`) by fetching
+the tile server-side from `Framework.tile_source_url`, a URL template with `{z}`,
+`{x}` and `{y}`, and handing the bytes on with the vector tile content type, the
+upstream encoding, a day of public cache and an open CORS origin. Nothing is
+stored: no tile data lives in the gem, on disk or in a database.
+
+- `config.trmnl_framework.tile_source_url`, then the `TRMNL_FRAMEWORK_TILE_SOURCE_URL`
+  environment variable, then the default: OSMF's Shortbread endpoint,
+  `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt`.
+- `config.trmnl_framework.tile_source_user_agent` names the host to the upstream
+  (default `TRMNL Framework tiles (+https://trmnl.com)`).
+
+The default is a community server whose [usage policy](https://operations.osmfoundation.org/policies/vector/)
+allows light use, such as a docs site, and forbids a fleet. A host that renders
+map plugins for devices points `tile_source_url` at its own Shortbread tile
+source before the first one ships; [MAPS_GO_LIVE.md](MAPS_GO_LIVE.md) is that
+checklist. Put a CDN in front of `/framework/tiles/`: devices refetch the same
+tiles every refresh, so the cache takes most of the load.
 
 ## Runtime
 

@@ -303,7 +303,7 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   (`server/config/application.rb`, which assigns `config.x.docs_base_url`); a host app
   can set either that or `config.trmnl_framework.docs_base_url`. Both feed
   `Framework.docs_base_url`, which every absolute URL in the engine reads.
-- The docs site loads from five external origins, all of them in the docs chrome or in a
+- The docs site loads from four external origins, all of them in the docs chrome or in a
   demo. Offline, each one degrades on its own page and the rest of the site still works:
   - Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`): Inter and EB Garamond in
     `app/views/layouts/framework.html.erb`, Space Mono through the `@import` at the top of
@@ -316,15 +316,15 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   - Highcharts and Chartkick from `trmnl.com`, on the chart page and in the Shopify
     example fixture: those charts render empty. See the License section.
   - opentype.js from jsDelivr on the font glyphs page: the glyph tables stay empty.
-  - OpenStreetMap vector tiles from `vector.openstreetmap.org`, on the map page: the maps
-    draw nothing but their attribution. Labels need no glyph host (they are framework
-    elements). The tile host is a development endpoint that moves to a TRMNL host before
-    maps go live; see [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).
-- The framework CSS and JS bundles themselves fetch from no external host on their own.
-  Everything they load (pattern images, fonts) is served from the same origin as the
-  bundle. The one external name in `plugins.js` is the OpenStreetMap tile preset
-  `TRMNLMaps.tiles()` carries, which a plugin reaches only when it builds a map.
-- A host mounting the engine inherits all five. The table in
+- The framework CSS and JS bundles themselves reference no external host. Everything they
+  fetch (pattern images, fonts, map tiles) is served from the same origin as the bundle: a
+  map asks its host for `/framework/tiles/{z}/{x}/{y}.mvt`, and the engine answers by
+  fetching the tile server-side from `Framework.tile_source_url` (default: OpenStreetMap's
+  community server at `vector.openstreetmap.org`, whose usage policy allows a docs site
+  and forbids a device fleet). No tile data is stored anywhere. A host that renders map
+  plugins for devices points that setting at its own tile source first; see
+  [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).
+- A host mounting the engine inherits all four. The table in
   [docs/ENGINE_INTEGRATION.md](docs/ENGINE_INTEGRATION.md) names each origin, what loads
   from it, and the CSP directive it needs; the Open Source docs page carries the same list
   for readers of the site.
@@ -370,7 +370,7 @@ serves it under its own license. That license does not come with this repo:
 and its own license.
 
 MapLibre GL JS is BSD licensed and vendored under `vendor/javascript/`, served by the
-engine next to the runtime; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) carries its
-notice. The map data is © OpenStreetMap contributors under the ODbL, which is why every
+engine next to the runtime and mirrored for plugins at `trmnl.com/js/maplibre-gl/5.24.0/`;
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) carries its notice. The map data is © OpenStreetMap contributors under the ODbL, which is why every
 map keeps its attribution visible. `TRMNLMaps` is an adapter, so a fork brings its own
 tile source and keeps the credit.

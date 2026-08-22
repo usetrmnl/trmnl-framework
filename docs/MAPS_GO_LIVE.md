@@ -1,10 +1,13 @@
 # Maps go-live checklist
 
-`TRMNLMaps` renders OpenStreetMap vector tiles through MapLibre GL JS. While the
-feature is in development, the `osm` tile preset in
-`app/javascript/plugin-render/plugins.js` points at a community server:
+`TRMNLMaps` renders OpenStreetMap vector tiles through MapLibre GL JS. A map
+asks the host that served the page for its tiles, at
+`/framework/tiles/{z}/{x}/{y}.mvt`; the engine answers that route by fetching
+each tile server-side from `Framework.tile_source_url` and handing the bytes on
+(a pass-through: nothing is stored in the gem, on disk or in a database). The
+default source is a community server:
 
-- Tiles: `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt`
+- `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt`
   (OSMF, Shortbread 1.0 schema, zoom 0 to 14)
 
 Labels need no glyph host: they are framework elements the runtime places over
@@ -13,49 +16,67 @@ the canvas, typeset by the screen itself.
 The [OSMF vector tile usage policy](https://operations.osmfoundation.org/policies/vector/)
 allows light use with a valid, application-specific User-Agent or Referer and
 HTTP caching, forbids heavy and bulk use, and gives no SLA. The docs site is
-light use. A fleet of devices refreshing map plugins is heavy use. So nothing
-ships a map plugin to devices until TRMNL hosts tiles itself, and the preset
-points there. This file is the list of what that takes.
+light use. A fleet of devices refreshing map plugins is heavy use, and the
+engine's endpoint does not change that: with the default source every device
+render on trmnl.com reaches OSMF from TRMNL's workers. So nothing ships a map
+plugin to devices until `tile_source_url` points at a tile source TRMNL runs.
+This file is the list of what that takes. The switch itself is configuration,
+not a framework release.
 
 ## Current wiring
 
-- `TRMNLMaps.tiles()` carries the preset: URL, zoom range, attribution, and a
-  `workerUrl` slot for a CSP-hosted worker. The go-live switch is one edit to
-  that preset, plus the disclosure set below.
+- `TRMNLMaps.tiles()` resolves the `osm` preset's URL from the page's own origin
+  (`window.origin` + `/framework/tiles/{z}/{x}/{y}.mvt`), falls back to
+  `https://trmnl.com` on a page with no origin (a renderer writing into
+  `about:blank`; core's converter rewrites that prefix to the worker-local
+  host), and honors `window.__TRMNL_TILES_URL__` as a template outright. The
+  preset also carries the zoom range, the attribution and a `workerUrl` slot for
+  a CSP-hosted worker.
+- `FrameworkTilesController` and `Framework::Tiles` (this gem) answer the route:
+  a zoom and extent check, one `Net::HTTP` GET with an identifying User-Agent
+  and an 8 s timeout, then the vector tile content type, the upstream gzip
+  untouched, `Cache-Control: public, max-age=86400`, `Access-Control-Allow-Origin: *`,
+  204 for an empty or missing tile, 502/504 (`no-store`) when the upstream
+  fails. `Framework.tile_source_url` reads `config.trmnl_framework.tile_source_url`,
+  then `TRMNL_FRAMEWORK_TILE_SOURCE_URL`, then the OSMF default.
 - MapLibre GL JS 5.24.0 is vendored under `vendor/javascript/` and served by
   `Framework::Static` at `/framework-docs/maplibre-gl-5.24.0.js` and
-  `/framework-docs/maplibre-gl-5.24.0.css`, the way Prism and jQuery are. The
-  docs page and every snippet name that root-relative path today, so it
-  resolves on `bin/dev` and on any host that mounts the engine (trmnl.com
-  included) without a separate upload. 5.24.0 is the last release with a UMD
-  build: MapLibre 6.x ships `dist/maplibre-gl.mjs` only, and a plugin loads the
-  library with a classic `<script>` tag and reads `window.maplibregl`, the same
-  contract as Highcharts. Moving to 6.x means a module script in every plugin
-  and in the docs demo rewrite, so it is a separate decision.
+  `/framework-docs/maplibre-gl-5.24.0.css`, the way Prism and jQuery are; the
+  docs demos load that copy. Plugins load the same build from the mirror beside
+  Highcharts, `https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js` and
+  `.css` (byte-identical to the npm `dist/` files; core hosts them under
+  `public/js/` and rewrites `https://trmnl.com/js/` to the worker-local host at
+  render time). 5.24.0 is the last release with a UMD build: MapLibre 6.x ships
+  `dist/maplibre-gl.mjs` only, and a plugin loads the library with a classic
+  `<script>` tag and reads `window.maplibregl`, the same contract as
+  Highcharts. Moving to 6.x means a module script in every plugin and in the
+  docs demo rewrite, so it is a separate decision.
 - Attribution is written into every map container by `TRMNLMaps.attach()` and
   typed by `components/_map.scss`. It stays after the switch: the data is
   OpenStreetMap either way.
 
 ## Checklist (owner: core and ops)
 
-- [ ] **Decide where plugins load MapLibre from.** Today the engine serves the
-      vendored copy at `/framework-docs/maplibre-gl-5.24.0.js`, which a plugin
-      rendered by a host that mounts the engine can reach root-relative. If the
-      library should instead sit beside Highcharts on the CDN, upload
-      `maplibre-gl.js`, `maplibre-gl.css` and the BSD LICENSE to
-      `trmnl.com/js/maplibre-gl/5.24.0/` with long-lived immutable cache headers
-      and the same CORS setup, then repoint the docs snippets. If the renderer or
-      the previews send a CSP without `worker-src blob:`, serve the
+- [x] **Decide where plugins load MapLibre from.** Decided: the mirror beside
+      Highcharts. Core hosts `maplibre-gl.js`, `maplibre-gl.css` and
+      `LICENSE.txt` under `public/js/maplibre-gl/5.24.0/` and the snippets name
+      `https://trmnl.com/js/maplibre-gl/5.24.0/`. If the renderer or the
+      previews ever send a CSP without `worker-src blob:`, serve the
       `maplibre-gl-csp.js` build and `maplibre-gl-csp-worker.js` too and set the
       preset's `workerUrl` (MapLibre reads it as `maplibregl.workerUrl`).
-- [ ] **Stand up a tile host.** Self-hosted Shortbread 1.0 tiles, built with
-      tilemaker (the Shortbread config) or Planetiler, or the VersaTiles planet
-      build, served as PMTiles or MBTiles behind a CDN at a TRMNL host, for
-      example `tiles.trmnl.com/shortbread_v1/{z}/{x}/{y}.mvt`. Zoom 0 to 14 with
-      client overzoom, a rebuild cadence (weekly is plenty for a still map), and
-      a storage estimate for the planet. A caching proxy in front of OSMF is not
-      a go-live option: the policy forbids the fleet's request volume whatever
-      sits in front of it.
+- [ ] **Stand up a tile source and point `tile_source_url` at it.** The style
+      speaks the Shortbread 1.0 schema, so the source has to as well. Least
+      effort: the VersaTiles planet (one PMTiles file in that schema, rebuilt
+      regularly) on R2 or S3 behind a small PMTiles server or a Cloudflare
+      Worker, for example `https://tiles.trmnl.com/{z}/{x}/{y}.mvt`, then
+      `TRMNL_FRAMEWORK_TILE_SOURCE_URL` on trmnl.com. More control: build your
+      own Shortbread tiles with Planetiler or tilemaker. A commercial provider
+      only if it serves Shortbread (most serve OpenMapTiles, which would mean
+      rewriting the style's layer catalog). Zoom 0 to 14 with client overzoom, a
+      rebuild cadence (weekly is plenty for a still map), and a storage estimate
+      for the planet. A caching proxy in front of OSMF, which is what the
+      default source amounts to, is not a go-live option: the policy forbids the
+      fleet's request volume whatever sits in front of it.
 - [ ] **Sprites and glyphs.** Confirm the presets use no icon sprite and no
       glyph endpoint (they do not today: a 1-bit map draws no icons, and labels
       are framework elements). Host either only if a preset gains them.
@@ -74,13 +95,15 @@ points there. This file is the list of what that takes.
       the new ratio and settles, and only then freezes timers and captures:
       a map sizes its canvas and its pattern images when it is built.
 - [ ] **CSP and allowlists.** On the renderer and on trmnl.com plugin previews:
-      `script-src` and `style-src` for wherever MapLibre is served from,
-      `connect-src` for the tile host, `worker-src blob:` (or a served worker),
-      `img-src data: blob:` for pattern images.
-- [ ] **Switch the preset.** Edit the `osm` preset in `plugins.js`, then update
-      the disclosure set in the same commit: `docs/ENGINE_INTEGRATION.md`, the
-      Open Source docs page (`app/views/framework/open_source.html.erb`),
-      `README.md`, and the origin list in
+      `script-src` and `style-src` for `trmnl.com/js/maplibre-gl/`,
+      `connect-src 'self'` for the tiles, `worker-src blob:` (or a served
+      worker), `img-src data: blob:` for pattern images. Core sends no CSP today.
+- [ ] **Switch the source.** Set `config.trmnl_framework.tile_source_url` (or
+      `TRMNL_FRAMEWORK_TILE_SOURCE_URL`) on every host that renders maps, the
+      workers included. No framework release is involved; if the default ever
+      changes, update the disclosure set in the same commit:
+      `docs/ENGINE_INTEGRATION.md`, the Open Source docs page
+      (`app/views/framework/open_source.html.erb`), `README.md`, and
       `spec/requests/framework_engine_host_spec.rb`. Attribution text stays
       `© OpenStreetMap contributors`.
 - [ ] **Size the load.** `requests per day = devices with map plugins x (1440 /

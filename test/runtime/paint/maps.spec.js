@@ -112,6 +112,7 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
     const decoded = maps.decodePolyline('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
     return {
       maplibre: typeof window.maplibregl,
+      origin: window.origin,
       options: {
         container: options.container === target,
         interactive: options.interactive,
@@ -201,7 +202,8 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
     antialias: false,
   });
   expect(result.style.version).toBe(8);
-  expect(result.style.source).toContain('vector.openstreetmap.org/shortbread_v1');
+  // The engine's own endpoint on the page's origin, never a tile host.
+  expect(result.style.source).toBe(`${result.origin}/framework/tiles/{z}/{x}/{y}.mvt`);
   expect(result.style.glyphs).toBeUndefined();
   expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-farmland', 'land-green', 'land-sand', 'sites', 'water', 'ferries', 'buildings', 'roads-minor', 'paths', 'roads-major', 'rail', 'transit', 'boundaries']));
   // Labels are framework elements the runtime places, never MapLibre glyph text.

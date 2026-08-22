@@ -183,8 +183,9 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
               <li>
                 <code class="<%= framework_section_code_classes %>">tiles(preset)</code>: a tile source preset, the
                 vector tile URL, zoom range and attribution.
-                <code class="<%= framework_section_code_classes %>">'osm'</code> is the default; an object merges over it
-                for a custom host.
+                <code class="<%= framework_section_code_classes %>">'osm'</code> is the default, the framework's own
+                endpoint on the page's host (<code class="<%= framework_section_code_classes %>">/framework/tiles/{z}/{x}/{y}.mvt</code>);
+                an object merges over it for a custom host.
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">style(preset, { el, tiles, labels, buildings })</code>:

@@ -35,6 +35,11 @@ end
 scope :framework do
   get '/', to: 'framework#index', as: :framework
 
+  # The vector tiles behind TRMNLMaps, fetched from the source the host configures
+  # (Framework::Tiles); the runtime resolves this path from the page's own origin.
+  get '/tiles/:z/:x/:y', to: 'framework_tiles#show', as: :framework_tiles,
+                         constraints: { z: /\d{1,2}/, x: /\d+/, y: /\d+/, format: /mvt/ }, defaults: { format: 'mvt' }
+
   if draw_test_harness
     scope :test do
       get "/overflow", to: 'framework_tests#overflow', as: :framework_test_overflow

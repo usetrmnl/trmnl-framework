@@ -5472,14 +5472,31 @@ window.markFrameworkReady = markFrameworkReady;
   // to the pixel grid, a polyline decoder, and the readiness wait terminalize
   // calls.
 
-  // Tile sources. `osm` is the OSMF Shortbread vector tile service, a community
-  // server for development and docs; docs/MAPS_GO_LIVE.md is the switch to a
-  // TRMNL host, one preset edit here. No glyph endpoint: labels are framework
-  // elements the screen typesets itself (see placeMapLabels).
+  // Tile source. Every host that mounts the framework engine answers
+  // /framework/tiles/{z}/{x}/{y}.mvt from the source it configures
+  // (Framework::Tiles; docs/MAPS_GO_LIVE.md), so the `osm` preset names that
+  // path on the page's own origin, never a tile host: the docs site, a plugin
+  // preview and a device render all fetch from the host that served them. A
+  // page with no origin (a renderer writing into about:blank) falls back to
+  // trmnl.com, and window.__TRMNL_TILES_URL__ names a template outright. No
+  // glyph endpoint: labels are framework elements the screen typesets itself
+  // (see placeMapLabels).
+  const MAP_TILES_PATH = '/framework/tiles/{z}/{x}/{y}.mvt';
+  const MAP_TILES_FALLBACK_ORIGIN = 'https://trmnl.com';
+  function mapTilesUrl() {
+    const configured = window.__TRMNL_TILES_URL__;
+    if (typeof configured === 'string' && configured) return configured;
+    let origin = null;
+    // window.origin is the document's origin, the page's host inside a srcdoc
+    // frame too; location.origin is the URL's, 'null' there and in about:blank.
+    try { origin = window.origin || (window.location && window.location.origin) || null; } catch (_) {}
+    if (typeof origin !== 'string' || !/^https?:\/\//.test(origin)) origin = MAP_TILES_FALLBACK_ORIGIN;
+    return origin + MAP_TILES_PATH;
+  }
   const MAP_TILE_PRESETS = {
     osm: {
       id: 'osm',
-      url: 'https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt',
+      url: null,
       minzoom: 0,
       maxzoom: 14,
       attribution: '© OpenStreetMap contributors',
@@ -6256,18 +6273,20 @@ window.markFrameworkReady = markFrameworkReady;
   const TRMNLMaps = {
     /**
      * A tile source preset: the vector tile URL, its zoom range and attribution.
-     * 'osm' is the default; an object merges over it, so a custom host is
-     * tiles({ url: '...' }). No glyph endpoint: labels are framework elements.
+     * 'osm' is the default, the framework engine's own endpoint on the page's
+     * host (/framework/tiles/{z}/{x}/{y}.mvt); an object merges over it, so a
+     * custom host is tiles({ url: '...' }). No glyph endpoint: labels are
+     * framework elements.
      *
      * @param {(string|object)} [preset]
      * @returns {{id, url, minzoom, maxzoom, attribution, workerUrl}}
      */
     tiles(preset) {
-      const base = MAP_TILE_PRESETS.osm;
-      if (preset == null) return deepMerge(base, {});
+      const base = deepMerge(MAP_TILE_PRESETS.osm, { url: mapTilesUrl() });
+      if (preset == null) return base;
       if (typeof preset === 'string') return deepMerge(base, MAP_TILE_PRESETS[preset] || {});
       if (isPlainObject(preset)) return deepMerge(base, preset);
-      return deepMerge(base, {});
+      return base;
     },
 
     /**
