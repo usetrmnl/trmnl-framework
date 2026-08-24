@@ -9,6 +9,18 @@
     <div class="space-y-16">
       <section class="space-y-6">
         <div class="space-y-1">
+          <%= framework_heading(3, 'Open Source') %>
+          <p class="<%= framework_section_description_classes %>">
+            The design system behind every TRMNL screen is now yours to read, fork, and build on. It lived inside the core product since inception; 3.2 pulled it out into its own public repository at <%= link_to 'github.com/usetrmnl/trmnl-framework', 'https://github.com/usetrmnl/trmnl-framework', target: :_blank, class: 'font-medium underline' %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            It is yours to shape too. Test suites and CI run on every pull request, and the <%= render DocsRef.new(page: :open_source) %> and <%= render DocsRef.new(page: :contributing) %> guides show where everything lives and how to ship a change.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
           <%= framework_heading(3, 'The v3 Color Foundation') %>
           <p class="<%= framework_section_description_classes %>">
             3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup.
