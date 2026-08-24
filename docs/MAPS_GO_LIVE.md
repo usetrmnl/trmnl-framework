@@ -89,12 +89,12 @@ the switches are configuration, not a framework release.
       for the planet. A caching proxy in front of OSMF, which is what the
       default source amounts to, is not a go-live option: the policy forbids the
       fleet's request volume whatever sits in front of it.
-- [ ] **Sprites and glyphs.** Confirm the presets use no icon sprite and no
-      glyph endpoint (they do not today: a 1-bit map draws no icons, and labels
-      are framework elements). Host either only if a preset gains them.
+- [x] **Sprites and glyphs.** Confirmed: the presets use no icon sprite and no
+      glyph endpoint (a 1-bit map draws no icons, and labels are framework
+      elements). Host either only if a preset gains them.
 - [ ] **Cache and limits.** Immutable `Cache-Control` per tile build, CDN in
       front, per-IP rate limits, a 404 for out-of-range tiles.
-- [ ] **Renderer.** The screenshot service's headless browser must expose WebGL
+- [x] **Renderer** (done in core PR #4438). The screenshot service's headless browser must expose WebGL
       (`TRMNLMaps.supported()` is true; SwiftShader or ANGLE flags if there is no
       GPU), wait for `window.TRMNL_PLUGINS_READY`, which `TRMNLMaps.settle()`
       holds until every attached map is idle (6000 ms by default,
@@ -119,7 +119,7 @@ the switches are configuration, not a framework release.
       (`app/views/framework/open_source.html.erb`), `README.md`, and
       `spec/requests/framework_engine_host_spec.rb`. Attribution text stays
       `© OpenStreetMap contributors`.
-- [ ] **Keys per plugin instance (core).** Give a plugin author a place for a
+- [x] **Keys per plugin instance** (done in core PR #4438). Give a plugin author a place for a
       tile source and key in the plugin configuration and a user a place in the
       plugin settings, and write the winner into the plugin document as
       `window.__TRMNL_MAPS__ = { tiles: { url, key } }` (the user's key over the
