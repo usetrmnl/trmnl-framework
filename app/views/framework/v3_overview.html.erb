@@ -13,6 +13,9 @@
           <p class="<%= framework_section_description_classes %>">
             The design system behind every TRMNL screen is now yours to read, fork, and build on. It lived inside the core product since inception; 3.2 pulled it out into its own public repository at <%= link_to 'github.com/usetrmnl/trmnl-framework', 'https://github.com/usetrmnl/trmnl-framework', target: :_blank, class: 'font-medium underline' %>.
           </p>
+          <p class="<%= framework_section_description_classes %>">
+            It is yours to shape too. Test suites and CI run on every pull request, and the <%= render DocsRef.new(page: :open_source) %> and <%= render DocsRef.new(page: :contributing) %> guides show where everything lives and how to ship a change.
+          </p>
         </div>
       </section>
 
@@ -167,7 +170,6 @@
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li>Upgrading an existing plugin? → <%= render DocsRef.new(page: :v3_upgrade_guide) %>.</li>
             <li>Want to adopt themes, adaptive charts, and adaptive icons? → <%= render DocsRef.new(page: :v3_enhancement_guide) %>.</li>
-            <li>Want to run the framework yourself or contribute? → <%= render DocsRef.new(page: :open_source) %> and <%= render DocsRef.new(page: :contributing) %>.</li>
           </ul>
         </div>
       </section>
