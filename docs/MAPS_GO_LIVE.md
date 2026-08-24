@@ -14,10 +14,12 @@ fetches the tiles, and who pays, follows the source a map resolves:
   per plugin instance, which is how the platform hands a plugin author's key
   (plugin configuration) or a user's key (plugin settings) to the map; core
   decides which of the two it injects. A source named in code wins over it.
-- **TRMNL's own source:** the `'trmnl'` preset, `/framework/tiles/{z}/{x}/{y}.mvt`
-  on the page's host, which the engine answers by fetching each tile
-  server-side from `Framework.tile_source_url` and handing the bytes on (a
-  pass-through: nothing is stored in the gem, on disk or in a database). The
+- **TRMNL's own source:** the `'trmnl'` preset,
+  `https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`, TRMNL's own Shortbread planet
+  behind a CDN. The engine's own `/framework/tiles/{z}/{x}/{y}.mvt` route stays
+  for a host that wants to proxy a source of its own from
+  `Framework.tile_source_url` (a pass-through: nothing is stored in the gem, on
+  disk or in a database). The
   docs site and TRMNL's own plugins use it; third-party plugins do not by
   default.
 
@@ -39,11 +41,12 @@ the switches are configuration, not a framework release.
 
 - `TRMNLMaps.tiles()` resolves the source in order: the argument (`'osm'`,
   `'trmnl'`, or `{ url, key, preset }`), then `window.__TRMNL_MAPS__.tiles`,
-  then `'osm'`. The `'trmnl'` preset is `window.origin` +
-  `/framework/tiles/{z}/{x}/{y}.mvt`, `https://trmnl.com` on a page with no
-  origin (a renderer writing into `about:blank`; core's converter rewrites that
-  prefix to the worker-local host). A preset carries the zoom range, the
-  attribution and a `workerUrl` slot for a CSP-hosted worker.
+  then `'osm'`. The `'trmnl'` preset is the absolute
+  `https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`: a render writes its document
+  into `about:blank`, which has no origin to build a relative url against, and a
+  plugin on someone else's engine should not route its tiles through their
+  server. A preset carries the zoom range, the attribution and a `workerUrl`
+  slot for a CSP-hosted worker.
 - `FrameworkTilesController` and `Framework::Tiles` (this gem) answer the route:
   a zoom and extent check, one `Net::HTTP` GET with an identifying User-Agent
   and an 8 s timeout, then the vector tile content type, the upstream gzip

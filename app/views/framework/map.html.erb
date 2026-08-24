@@ -84,7 +84,8 @@
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">options({ tiles: 'trmnl' })</code>: TRMNL's own source,
-              the framework endpoint on the page's host. The docs site and TRMNL's plugins use it.
+              <code class="<%= framework_section_code_classes %>">tiles.trmnl.com</code>, a Shortbread planet behind a CDN.
+              The docs site and TRMNL's plugins use it.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">window.__TRMNL_MAPS__ = { tiles: { url, key } }</code>:
@@ -134,9 +135,9 @@
               <div class="w-full flex items-center justify-between ml-3">
                 <p class="text-sm font-medium">
                   A plugin loads MapLibre GL JS from trmnl.com/js/maplibre-gl/5.24.0/, the same build the framework
-                  serves next to the runtime for these examples, and the tiles come from the page's own host at
-                  /framework/tiles/, so a map renders an empty canvas without network. MapLibre is BSD licensed; the
-                  map data is &copy; OpenStreetMap contributors.
+                  serves next to the runtime for these examples, and the tiles come from tiles.trmnl.com, so a map
+                  renders an empty canvas without network. MapLibre is BSD licensed; the map data is
+                  &copy; OpenStreetMap contributors.
                 </p>
               </div>
             </div>
