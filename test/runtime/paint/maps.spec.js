@@ -112,7 +112,6 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
     const decoded = maps.decodePolyline('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
     return {
       maplibre: typeof window.maplibregl,
-      origin: window.origin,
       options: {
         container: options.container === target,
         interactive: options.interactive,
@@ -261,13 +260,13 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.tiles.glyphs).toBeUndefined();
   // Source order: the argument, then the host's per-instance source, then the public default.
   expect(result.tileSources.byDefault).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
-  expect(result.tileSources.trmnl).toBe(`${result.origin}/framework/tiles/{z}/{x}/{y}.mvt`);
+  expect(result.tileSources.trmnl).toBe('https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}');
   expect(result.tileSources.keyed).toBe('https://tiles.example.com/{z}/{x}/{y}.pbf?key=a%20b');
   expect(result.tileSources.keyIgnored).toBe('https://tiles.example.com/{z}/{x}/{y}.pbf');
   expect(result.tileSources.hosted).toBe('https://host.example.com/{z}/{x}/{y}.mvt?k=hostkey');
   expect(result.tileSources.hostedStyle).toBe('https://host.example.com/{z}/{x}/{y}.mvt?k=hostkey');
   expect(result.tileSources.explicitOverHost).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
-  expect(result.tileSources.hostedPreset).toBe(`${result.origin}/framework/tiles/{z}/{x}/{y}.mvt`);
+  expect(result.tileSources.hostedPreset).toBe('https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}');
   expect(result.merged).toEqual({ a: { b: 1, c: [2] }, d: 1, e: 2 });
   expect(result.decoded).toEqual([[-120.2, 38.5], [-120.95, 40.7], [-126.453, 43.252]]);
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));

@@ -5475,19 +5475,21 @@ window.markFrameworkReady = markFrameworkReady;
   // Tile sources, and who pays for them. `osm` is the default: the public
   // OSMF Shortbread endpoint, fetched by the page itself, so a plugin that
   // names no source costs its host nothing and rides the free tier. `trmnl`
-  // is the framework engine's own endpoint on the page's host,
-  // /framework/tiles/{z}/{x}/{y}.mvt, which the host answers from the source
-  // it configures (Framework::Tiles; docs/MAPS_GO_LIVE.md): the docs site and
-  // TRMNL's own plugins use it, third-party plugins do not by default. A
-  // page with no origin (a renderer writing into about:blank) resolves it
-  // against trmnl.com. A plugin names its own source with tiles({ url, key })
-  // or options({ tiles }), where the url template may carry {key}; and the
-  // host injects one per plugin instance as window.__TRMNL_MAPS__.tiles (a
-  // preset name or the same object), which is how a plugin author's key or a
-  // user's key reaches a map without a key in the markup. No glyph endpoint:
-  // labels are framework elements the screen typesets itself (placeMapLabels).
-  const MAP_TILES_TRMNL_PATH = '/framework/tiles/{z}/{x}/{y}.mvt';
-  const MAP_TILES_FALLBACK_ORIGIN = 'https://trmnl.com';
+  // is TRMNL's own planet on the edge, named absolutely rather than against
+  // the page's origin: a render writes its document into about:blank, which
+  // has no origin to build a relative url from, and a plugin running on
+  // someone else's engine should not route its tiles through their server.
+  // The docs site and TRMNL's own plugins use it, third-party plugins do not
+  // by default, and the engine's own /framework/tiles/ endpoint stays for a
+  // host proxying the source it configures (Framework::Tiles;
+  // docs/MAPS_GO_LIVE.md). A plugin names its own source with
+  // tiles({ url, key }) or options({ tiles }), where the url template may
+  // carry {key}; and the host injects one per plugin instance as
+  // window.__TRMNL_MAPS__.tiles (a preset name or the same object), which is
+  // how a plugin author's key or a user's key reaches a map without a key in
+  // the markup. No glyph endpoint: labels are framework elements the screen
+  // typesets itself (placeMapLabels).
+  const MAP_TILES_TRMNL_URL = 'https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}';
   const MAP_TILE_PRESETS = {
     osm: {
       id: 'osm',
@@ -5500,22 +5502,11 @@ window.markFrameworkReady = markFrameworkReady;
     },
     trmnl: {
       id: 'trmnl',
-      url: null,
+      url: MAP_TILES_TRMNL_URL,
     },
   };
 
-  // The engine endpoint on the page's own host. window.origin is the
-  // document's origin, the page's host inside a srcdoc frame too;
-  // location.origin is the URL's, 'null' there and in about:blank.
-  function mapTrmnlTilesUrl() {
-    let origin = null;
-    try { origin = window.origin || (window.location && window.location.origin) || null; } catch (_) {}
-    if (typeof origin !== 'string' || !/^https?:\/\//.test(origin)) origin = MAP_TILES_FALLBACK_ORIGIN;
-    return origin + MAP_TILES_TRMNL_PATH;
-  }
-
   function mapTilePreset(name) {
-    if (name === 'trmnl') return deepMerge(MAP_TILE_PRESETS.trmnl, { url: mapTrmnlTilesUrl() });
     return MAP_TILE_PRESETS[name] || {};
   }
 

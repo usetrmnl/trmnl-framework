@@ -322,8 +322,9 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   nothing. Everything else they fetch (pattern images, fonts) is served from the same
   origin as the bundle. A plugin names its own source and key with
   `options({ tiles: { url, key } })`, a host injects one per plugin instance as
-  `window.__TRMNL_MAPS__`, and the engine serves TRMNL's own source at
-  `/framework/tiles/{z}/{x}/{y}.mvt` (the `'trmnl'` preset, a pass-through from
+  `window.__TRMNL_MAPS__`, and the `'trmnl'` preset names TRMNL's own planet at
+  `https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`. The engine also serves
+  `/framework/tiles/{z}/{x}/{y}.mvt` for a host proxying its own source (a pass-through from
   `Framework.tile_source_url`; no tile data is stored anywhere). The public default's usage
   policy allows light use and forbids a fleet; see [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).
 - A host mounting the engine inherits all four. The table in

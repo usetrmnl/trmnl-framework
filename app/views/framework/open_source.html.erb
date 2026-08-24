@@ -153,7 +153,7 @@
         </p>
 
         <p class="<%= framework_section_description_classes %>">
-          Map tiles come from OpenStreetMap's public Shortbread endpoint (<code class="<%= framework_section_code_classes %>">vector.openstreetmap.org</code>) by default, fetched by the page itself on the free tier, whose usage policy allows light use and forbids a fleet. A plugin names its own source and key, a host injects one per plugin instance, and the engine serves TRMNL's own source at <code class="<%= framework_section_code_classes %>">/framework/tiles/{z}/{x}/{y}.mvt</code> (a pass-through from <code class="<%= framework_section_code_classes %>">Framework.tile_source_url</code>; the docs demos use it, nothing is stored).
+          Map tiles come from OpenStreetMap's public Shortbread endpoint (<code class="<%= framework_section_code_classes %>">vector.openstreetmap.org</code>) by default, fetched by the page itself on the free tier, whose usage policy allows light use and forbids a fleet. A plugin names its own source and key, a host injects one per plugin instance, and the <code class="<%= framework_section_code_classes %>">'trmnl'</code> preset names TRMNL's own planet at <code class="<%= framework_section_code_classes %>">tiles.trmnl.com</code>, which the docs demos use. The engine also serves <code class="<%= framework_section_code_classes %>">/framework/tiles/{z}/{x}/{y}.mvt</code> for a host proxying a source of its own (a pass-through from <code class="<%= framework_section_code_classes %>">Framework.tile_source_url</code>; nothing is stored).
         </p>
 
         <p class="<%= framework_section_description_classes %>">

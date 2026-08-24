@@ -169,8 +169,12 @@ injects one per plugin instance as `window.__TRMNL_MAPS__ = { tiles: { url, key 
 plugin settings reaches a map; a source named in code wins over the injected
 one. Keys never live in the framework.
 
-The engine also serves TRMNL's own source, the `'trmnl'` preset:
-`/framework/tiles/{z}/{x}/{y}.mvt` on the page's host (`connect-src 'self'`).
+The `'trmnl'` preset is TRMNL's own planet on the edge,
+`https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`, so a page offering it needs
+`connect-src https://tiles.trmnl.com` rather than `'self'`.
+
+The engine also serves `/framework/tiles/{z}/{x}/{y}.mvt` on the page's host
+(`connect-src 'self'`) for a host proxying a source of its own.
 `FrameworkTilesController` and `Framework::Tiles` answer it by fetching the tile
 server-side from `Framework.tile_source_url`, a URL template with `{z}`, `{x}`
 and `{y}`, and handing the bytes on with the vector tile content type, the
