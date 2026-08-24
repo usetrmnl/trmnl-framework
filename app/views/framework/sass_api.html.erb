@@ -9,7 +9,7 @@
     <div class="space-y-16">
       <%= render FrameworkComparisonComponent.new(variant: :platform_vs_custom) do |c| %>
         <% c.with_left_message do %>
-          <p class="text-sm font-medium">You never build or serve the framework. The TRMNL Platform renders every plugin against its official builds: recipes can pin a specific release, and the developer license lets a private plugin tie to one.</p>
+          <p class="text-sm font-medium">The TRMNL Platform serves the framework for you, rendering every plugin against its official builds. Recipes can pin a specific release, and the developer license lets a private plugin do the same.</p>
         <% end %>
         <% c.with_right_message do %>
           <p class="text-sm font-medium">You choose the framework build your screens load: a released build straight from the releases CDN, or your own build compiled from this SCSS source.</p>
@@ -42,12 +42,12 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'The source at a glance') %>
+          <%= framework_heading(3, 'The Source at a Glance') %>
           <p class="<%= framework_section_description_classes %>">
             Everything compiles from one entrypoint. <code class="<%= framework_section_code_classes %>">plugins.scss</code>
             loads the <code class="<%= framework_section_code_classes %>">framework</code> module
-            (<code class="<%= framework_section_code_classes %>">framework/index.scss</code>), which composes the
-            configuration, the mixins, and the style layers in a fixed cascade order.
+            (<code class="<%= framework_section_code_classes %>">framework/index.scss</code>), which loads the
+            configuration, the mixins, and the style layers in a fixed order.
           </p>
         </div>
 
@@ -66,17 +66,18 @@
           <p class="<%= framework_section_description_classes %>">
             Every rule lands in a <code class="<%= framework_section_code_classes %>">tn--</code> prefixed cascade
             layer, so a custom stack can run the framework next to other CSS without specificity fights. The codebase
-            is pure Dart Sass module system: <code class="<%= framework_section_code_classes %>">@use</code> and
-            <code class="<%= framework_section_code_classes %>">@forward</code> throughout, no
+            uses the Dart Sass module system throughout: <code class="<%= framework_section_code_classes %>">@use</code> and
+            <code class="<%= framework_section_code_classes %>">@forward</code>, never
             <code class="<%= framework_section_code_classes %>">@import</code>.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><code class="<%= framework_section_code_classes %>">config/</code>: the device map, design-token maps, generated color maps, fonts, and the root CSS variables.</li>
             <li><code class="<%= framework_section_code_classes %>">mixins/</code>: screen targeting, theme slots, and the scale functions. This is the consumer-facing Sass surface; see <%= render DocsRef.new(page: :sass_mixins) %>.</li>
-            <li><code class="<%= framework_section_code_classes %>">base/</code>, <code class="<%= framework_section_code_classes %>">elements/</code>, <code class="<%= framework_section_code_classes %>">components/</code>, <code class="<%= framework_section_code_classes %>">utilities/</code>: the screen scaffolding, text elements, higher components, and utility classes the docs document page by page.</li>
+            <li><code class="<%= framework_section_code_classes %>">base/</code>, <code class="<%= framework_section_code_classes %>">elements/</code>, <code class="<%= framework_section_code_classes %>">components/</code>, <code class="<%= framework_section_code_classes %>">utilities/</code>: the screen scaffolding, text elements, larger components, and utility classes these docs cover page by page.</li>
             <li><code class="<%= framework_section_code_classes %>">themes/</code>: standalone theme stylesheets, compiled separately from <code class="<%= framework_section_code_classes %>">plugins.css</code>. See <%= render DocsRef.new(page: :themes) %>.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
+            The source lives at <%= link_to 'github.com/usetrmnl/trmnl-framework', 'https://github.com/usetrmnl/trmnl-framework', target: :_blank, class: 'font-medium underline' %>.
             For the repository tour, the license, and the release pipeline, see <%= render DocsRef.new(page: :open_source) %>.
           </p>
         </div>
@@ -84,10 +85,10 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Public and internal surface') %>
+          <%= framework_heading(3, 'Public and Internal Surface') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li><strong>Public:</strong> the <code class="<%= framework_section_code_classes %>">$custom-devices</code> configuration, the three supported <code class="<%= framework_section_code_classes %>">framework/mixins</code> families (screen targeting, scale functions, theme slots) named on <%= render DocsRef.new(page: :sass_mixins) %>, the compiled CSS classes, and the public <code class="<%= framework_section_code_classes %>">--*</code> variables listed on <%= render DocsRef.new(page: :tokens) %>.</li>
-            <li><strong>Internal:</strong> members whose names start with <code class="<%= framework_section_code_classes %>">-</code> or <code class="<%= framework_section_code_classes %>">_</code> (private to their module), every other mixin and function <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards, and the paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>) owned by the screen-mode engine. Internal members can change without notice.</li>
+            <li><strong>Internal:</strong> members whose names start with <code class="<%= framework_section_code_classes %>">-</code> or <code class="<%= framework_section_code_classes %>">_</code> (private to their module), every other mixin and function that <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards, and the paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>) the framework's rendering owns. Internal members can change without notice.</li>
             <li><strong>Generated:</strong> files with a DO NOT EDIT header (the device map, the color maps) regenerate from <code class="<%= framework_section_code_classes %>">db/data/</code> via rake tasks. Configure or extend them; do not hand-edit them.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -100,7 +101,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Go deeper') %>
+          <%= framework_heading(3, 'Go Deeper') %>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <%= render FrameworkDocCardComponent.new(icon: :cog, title: 'Compiling the Framework', docs_page: :sass_build) do %>

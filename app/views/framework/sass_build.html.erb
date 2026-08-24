@@ -24,7 +24,8 @@
           <p class="<%= framework_section_description_classes %>">
             Create an entrypoint that loads the framework module, then compile it with the framework source on the
             load path. <code class="<%= framework_section_code_classes %>">bin/build</code> in the repository runs
-            exactly this for the released artifacts.
+            exactly this for the released artifacts. Clone the source from
+            <%= link_to 'github.com/usetrmnl/trmnl-framework', 'https://github.com/usetrmnl/trmnl-framework', target: :_blank, class: 'font-medium underline' %>.
           </p>
         </div>
 
@@ -46,9 +47,9 @@
             <%= render DocsRef.new(page: :sass_devices) %>.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The compiled stylesheet embeds every dither tile as data URIs, so it is large on disk. Serve it
+            The compiled stylesheet embeds every dither pattern as a data URI, so it is large on disk. Serve it
             compressed; the release pipeline ships a <code class="<%= framework_section_code_classes %>">.gz</code>
-            next to every artifact for the same reason.
+            next to every artifact for the same reason. Fonts are the only asset it loads by URL.
           </p>
         </div>
       </section>
@@ -59,8 +60,8 @@
           <p class="<%= framework_section_description_classes %>">
             Every <code class="<%= framework_section_code_classes %>">@font-face</code> block in the framework points
             at a root-relative <code class="<%= framework_section_code_classes %>">/fonts/</code> URL, so a host has to
-            serve those files. Without them the pixel families fall back to the browser default. Nothing errors, the
-            type is simply wrong at every size.
+            serve those files. Without them the pixel families fall back to the browser default. Nothing errors, but the
+            type is wrong at every size.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Font URLs resolve against the host that serves the stylesheet, not the page. Link
@@ -71,7 +72,7 @@
         </div>
 
         <div class="space-y-4">
-          <%= framework_heading(4, 'What the host serves') %>
+          <%= framework_heading(4, 'What the Host Serves') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">TRMNL12</code>,
@@ -118,21 +119,12 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Palette tiles') %>
-          <p class="<%= framework_section_description_classes %>">
-            The compiled stylesheet embeds every dither tile as a data URI, on grayscale screens and color palettes
-            alike. Fonts are the only asset it loads by URL, so a custom stack has no pattern images to serve.
-          </p>
-        </div>
-      </section>
-
-      <section class="space-y-8">
-        <div class="space-y-4">
           <%= framework_heading(3, 'Themes') %>
           <p class="<%= framework_section_description_classes %>">
-            Themes are not bundled into <code class="<%= framework_section_code_classes %>">plugins.css</code>. Each
+            Each
             theme under <code class="<%= framework_section_code_classes %>">framework/themes/</code> compiles to its
-            own stylesheet and loads as a second <code class="<%= framework_section_code_classes %>">&lt;link&gt;</code>
+            own stylesheet, separate from <code class="<%= framework_section_code_classes %>">plugins.css</code>,
+            and loads as a second <code class="<%= framework_section_code_classes %>">&lt;link&gt;</code>
             next to the framework. Usage is on <%= render DocsRef.new(page: :themes) %>; the authoring contract is
             on <%= render DocsRef.new(page: :theme_authoring) %>.
           </p>
@@ -148,7 +140,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'The JavaScript runtime') %>
+          <%= framework_heading(3, 'The JavaScript Runtime') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">plugins.js</code> is hand-authored and ships verbatim:
             no bundler, no build step. Copy
@@ -162,16 +154,15 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Releases and minification') %>
+          <%= framework_heading(3, 'Releases and Minification') %>
           <p class="<%= framework_section_description_classes %>">
             The repository's release task compiles, minifies, and precompresses (gzip and brotli) every published version reproducibly; those
-            artifacts are what the releases CDN serves. If you don't need a modified build, serve a released version
-            directly and skip the toolchain entirely.
+            artifacts are what the releases CDN serves.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Minifying your own build is optional. If you do, keep custom properties intact: the framework's JavaScript
-            reads public <code class="<%= framework_section_code_classes %>">--*</code> variables from the live
-            cascade.
+            reads public <code class="<%= framework_section_code_classes %>">--*</code> variables at
+            runtime.
           </p>
         </div>
       </section>

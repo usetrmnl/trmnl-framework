@@ -11,28 +11,29 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
-            Any CDN-enabled JavaScript library may be used to develop charting interfaces,
-            however the examples below leverage <%= link_to 'Highcharts', 'https://highcharts.com', target: :_blank, class: 'underline' %>
+            Any JavaScript library you can load from a CDN can draw charts. The examples below
+            use <%= link_to 'Highcharts', 'https://highcharts.com', target: :_blank, class: 'underline' %>
             and <%= link_to 'Chartkick', 'https://chartkick.com', target: :_blank, class: 'underline' %>.
           </p>
 
           <p class="<%= framework_section_description_classes %>">
-            Charts paint with explicit colors, so they historically ignored bit depth, dark mode and themes
-            while the rest of the screen adapted. The plugin runtime bundles a small
-            <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> helper that resolves adaptive
-            paint from the live screen at build time. The methods below are the ones these examples use;
-            <%= render DocsRef.new(page: :paint_charts) %> carries the full signature list and the resolvers behind it.
+            Use the <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> helper for your chart
+            colors. It is bundled in the plugin runtime and reads the right paint from the screen as the chart
+            builds, so a chart follows the device and the active theme like the rest of the screen. The methods
+            below are the ones these examples use;
+            <%= render DocsRef.new(page: :paint_charts) %> carries the full list.
           </p>
 
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">series(i, n, { el })</code>: the fill for
-              series <em>i</em> of <em>n</em> from the screen's chart-series ramp.
+              series <em>i</em> of <em>n</em>, correct for the current device, mode, and theme.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">applySwatches({ el })</code>: paints legend
               markers tagged <code class="<%= framework_section_code_classes %>">data-chart-series="i"</code>
-              from the same ramp.
+              with matching series colors. Add <code class="<%= framework_section_code_classes %>">data-chart-series-count="n"</code>
+              when the series total differs from the number of marks on screen.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">textStyle(role, { el })</code>: resolves a
@@ -48,14 +49,14 @@
               when device, scale, mode, dark mode or theme changes.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">paint(token, { el })</code>: a single token,
-              a flat color on solid panels or a dither pattern on 1- and 2-bit screens.
+              <code class="<%= framework_section_code_classes %>">paint(token, { el })</code>: one framework color,
+              as a flat color on solid panels or a dither pattern on 1- and 2-bit screens.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">grid({ el, dir })</code> and
               <code class="<%= framework_section_code_classes %>">axisLine({ el })</code>: the grid-line and
-              axis/tick options <code class="<%= framework_section_code_classes %>">options()</code> already applies,
-              for an axis you build by hand.
+              axis and tick options that <code class="<%= framework_section_code_classes %>">options()</code> already
+              applies, for an axis you build by hand.
             </li>
           </ul>
 
@@ -71,13 +72,18 @@
             rest of the screen. For anything beyond Highcharts, use TRMNLPaint directly: see
             <%= render DocsRef.new(page: :paint_api) %>.
           </p>
-
           <p class="<%= framework_section_description_classes %>">
-            Highcharts numeric dimensions do not read CSS automatically. Resolve heights, spacing, line widths, and label offsets with <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> inside <code class="<%= framework_section_code_classes %>">TRMNLCharts.watch()</code>. The watcher rebuilds the chart after a scale change, and the paint API supplies the new numbers.
+            On screens that dither, series paints are patterns that Highcharts draws through its pattern-fill
+            module; load <code class="<%= framework_section_code_classes %>">pattern-fill.js</code> next to
+            <code class="<%= framework_section_code_classes %>">highcharts.js</code> as the examples do.
           </p>
 
           <p class="<%= framework_section_description_classes %>">
-            If you set the <code class="<%= framework_section_code_classes %>">height: null</code> within your highchart's settings, the chart will automatically expand to fill the available space.
+            Highcharts takes sizes as plain numbers, so they do not follow the device scale on their own. Pass heights, spacing, line widths, and label offsets through <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> inside <code class="<%= framework_section_code_classes %>">TRMNLCharts.watch()</code>. The watcher rebuilds the chart after a scale change, and the paint API supplies the new numbers.
+          </p>
+
+          <p class="<%= framework_section_description_classes %>">
+            Set <code class="<%= framework_section_code_classes %>">height: null</code> in the chart options and the chart expands to fill the available space.
           </p>
 
           <div class="<%= message_warning_classes %>">
@@ -87,7 +93,7 @@
               </div>
               <div class="w-full flex items-center justify-between ml-3">
                 <p class="leading-none text-sm font-medium">
-                  Take care to disable animation effects, otherwise your chart may be only partially captured by TRMNL's screenshot rendering service.
+                  Disable animations, or TRMNL's screenshot service may capture the chart only partially drawn.
                 </p>
               </div>
             </div>
@@ -113,7 +119,7 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'Line Chart') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Line charts effectively display trends over time. This example shows a simple line chart with customized styling to match the TRMNL aesthetic.
+              A line chart tracks a value over time.
             </p>
           </div>
 
@@ -180,8 +186,8 @@
 
                     whenReady(function () {
                       var el = "chart-123";
-                      // watch() rebuilds on device/scale/mode/dark/theme change; series() resolves
-                      // plotted-data paint from the framework chart ramp.
+                      // watch() rebuilds on device/scale/mode/dark/theme change; series() picks
+                      // the paint for each plotted line.
                       TRMNLCharts.watch(el, function () {
                         var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
                         var linePaint = TRMNLCharts.series(0, 1, { el: el });
@@ -281,8 +287,8 @@
 
   whenReady(function () {
     var el = "chart-123";
-    // watch() rebuilds on device/scale/mode/dark/theme change; series() resolves plotted-data
-    // paint from the framework chart ramp.
+    // watch() rebuilds on device/scale/mode/dark/theme change; series() picks the paint
+    // for each plotted line.
     TRMNLCharts.watch(el, function () {
       var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
       var linePaint = TRMNLCharts.series(0, 1, { el: el });
@@ -322,7 +328,7 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'Multi-Series Line Chart') %>
             <p class="<%= framework_subsection_description_classes %>">
-              For comparing data across multiple time periods or categories, multi-series line charts are ideal. This example demonstrates a comparison between current and previous period data with distinct styling for each series.
+              A multi-series chart compares several lines in one plot. This example plots the current period against the previous one.
             </p>
           </div>
 
@@ -442,7 +448,7 @@
                         whenReady(function () {
                           var el = 'multi-series-chart';
                           // watch() rebuilds when the screen's device/scale/mode/dark/theme classes change,
-                          // re-reading adaptive paint from the live cascade each time.
+                          // re-reading the current paint each time.
                           TRMNLCharts.watch(el, function () {
                             var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
                             var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
@@ -474,7 +480,7 @@
                                 tickPixelInterval: px(120)
                               }
                             }));
-                            // Paint the legend swatches from the same ramp so they match the series.
+                            // Paint the legend swatches so they match the series.
                             TRMNLCharts.applySwatches({ el: el });
                             return chart;
                           });
@@ -612,12 +618,12 @@
       whenReady(function () {
         var el = "multi-series-chart";
         // watch() rebuilds when the screen device/scale/mode/dark/theme changes, re-reading
-        // adaptive paint from the live cascade each time.
+        // the current paint each time.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-          // series(i, 2) draws each line from the framework chart-series ramp
-          // (ink for the first, a legible step toward the canvas for the second),
-          // and applySwatches() paints the matching legend markers.
+          // series(i, 2) picks the paint for each line (ink for the first, a
+          // legible step toward the background for the second), and
+          // applySwatches() paints the matching legend markers.
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
             chart: { type: "spline", height: px(203), spacing: px([10, 10, 5, 10]) },
             series: [{
@@ -667,7 +673,7 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'Bar Chart') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Bar charts are ideal for comparing discrete categories side by side. This example displays four different metrics across multiple time periods.
+              Bar charts compare discrete categories side by side. This example plots four metrics across six months.
             </p>
           </div>
 
@@ -775,10 +781,9 @@
                           var el = 'example-bar-chart';
                           TRMNLCharts.watch(el, function () {
                             var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-                            // series(i, 4) draws each bar from the framework chart-series ramp,
-                            // and applySwatches() paints the matching legend markers from the same
-                            // ramp, so bars and swatches stay in lockstep across bit depths, dark
-                            // mode and themes.
+                            // series(i, 4) picks the paint for each bar, and applySwatches()
+                            // paints the matching legend markers, so bars and swatches stay
+                            // in step on every device and theme.
                             var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
                               chart: { type: 'column', height: px(284), spacing: px([10, 10, 5, 10]) },
                               plotOptions: { series: { pointPadding: 0.05, groupPadding: 0.1, borderWidth: 0 } },
@@ -940,9 +945,9 @@
 
       whenReady(function () {
         var el = "example-bar-chart";
-        // series(i, 4) draws each bar from the framework chart-series ramp, and
-        // applySwatches() paints the matching legend markers from the same ramp,
-        // so bars and swatches stay in lockstep in every bit depth, dark mode and theme.
+        // series(i, 4) picks the paint for each bar, and applySwatches() paints
+        // the matching legend markers, so bars and swatches stay in step on
+        // every device and theme.
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var chart = Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
@@ -996,8 +1001,7 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'Gauge Chart') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Gauge charts can effectively display single metrics or scores. This example shows multiple gauges in a row with a main summary gauge,
-              perfect for displaying daily and weekly metrics like sleep quality scores.
+              A gauge shows a single score. This example puts seven daily gauges in a row above one weekly summary gauge.
             </p>
           </div>
 

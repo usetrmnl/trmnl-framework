@@ -11,11 +11,11 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'From Framework 3.0 or 3.1') %>
           <p class="<%= framework_section_description_classes %>">
-            Upgrade and rerender: your plugin looks the same until you opt into 3.2 features. Two things are worth reviewing.
+            On the TRMNL platform there is nothing to install: plugins render against the platform's current framework build, and a custom stack upgrades by pointing at the 3.2 stylesheet. Your plugin looks the same until you opt into 3.2 features. Two things are worth reviewing.
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
-            <li><strong>Numbered border levels are deprecated:</strong> <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> (and vertical counterparts) still render, but will be removed in Framework 4.0. Prefer the shade-step rail (<code class="<%= framework_section_code_classes %>">border--h-10</code> to <code class="<%= framework_section_code_classes %>">border--h-75</code>) in new markup. See <%= render DocsRef.new(page: :border) %>.</li>
-            <li><strong>Themed screens ignore dark mode:</strong> if you add a <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> class, <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> no longer applies. A theme is a complete color statement. See <%= render DocsRef.new(page: :themes) %>.</li>
+            <li><strong>Numbered border levels are deprecated:</strong> <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> (and vertical counterparts) still render, but will be removed in Framework 4.0. Prefer the shade steps (<code class="<%= framework_section_code_classes %>">border--h-10</code> to <code class="<%= framework_section_code_classes %>">border--h-75</code>) in new markup. See <%= render DocsRef.new(page: :border) %>.</li>
+            <li><strong>Themed screens ignore dark mode:</strong> if you add a <code class="<%= framework_section_code_classes %>">screen--theme-&lt;id&gt;</code> class, <code class="<%= framework_section_code_classes %>">screen--dark-mode</code> no longer applies. A theme already decides every color. See <%= render DocsRef.new(page: :themes) %>.</li>
           </ul>
         </div>
       </section>
@@ -24,7 +24,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'From Framework v2') %>
           <p class="<%= framework_section_description_classes %>">
-            v3 is structurally backward compatible with v2: your class names still compile and render. One visual change needs review: v3 rebuilt the <code class="<%= framework_section_code_classes %>">1bit</code> grayscale dither patterns on a 14-step linear scale, so most shade names produce different lightness values than they did in v2.
+            v3 is backward compatible with v2: your class names still render. One visual change needs review. v3 rebuilt the 1-bit grayscale dither patterns on a 14-step linear scale, so most shade names look lighter or darker than they did in v2.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The full shade-by-shade migration table lives in the
@@ -38,7 +38,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'Verifying the Upgrade') %>
           <p class="<%= framework_section_description_classes %>">
-            Use the Raw / Preview toggle in Device Preview to compare full-bright token values against panel-accurate output. To check theme behavior, pick a Style in the screen picker and confirm your plugin stays legible under each theme.
+            Use the Raw / Preview toggle in the screen picker (top right) to compare the raw colors against what the panel will actually show. To check themes, pick a Style in the same picker and confirm your plugin stays legible under each one.
           </p>
         </div>
       </section>

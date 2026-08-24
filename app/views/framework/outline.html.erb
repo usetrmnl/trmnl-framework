@@ -10,12 +10,6 @@
       <section class="space-y-8">
         <div class="space-y-4">
           <%= framework_heading(3, 'Basic Usage') %>
-          <p class="<%= framework_section_description_classes %>">
-            The outline utility applies a pixel-perfect dotted rounded border to any element. On 1-bit displays,
-            it uses pure CSS gradients to place single-pixel dots at exact integer coordinates along
-            a rounded rectangle path. On 2-bit and 4-bit displays, it falls back to a standard CSS border
-            with border-radius.
-          </p>
         </div>
 
         <div class="space-y-6">
@@ -69,12 +63,10 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'How It Works') %>
           <p class="<%= framework_section_description_classes %>">
-            The outline utility uses 56 CSS background layers to place each dot at an exact integer pixel
-            coordinate. Four edge layers use <code class="<%= framework_section_code_classes %>">repeating-linear-gradient</code>
-            for a 1px dot every 4px, and 16 corner layers use individual
-            <code class="<%= framework_section_code_classes %>">linear-gradient</code> blocks sized to 1x1px
-            and positioned with pixel-precise offsets. The remaining 36 layers are corner fill-ins that stay
-            transparent until a device with a dither pixel ratio of 2 or more turns them on.
+            The outline draws every dot with CSS backgrounds, 56 layers in total, so each dot lands on an exact
+            pixel. Four edge layers repeat a 1px dot every 4px, and sixteen corner layers place one 1x1px dot
+            each. The remaining 36 are corner fill-ins that stay invisible until a device with a dither pixel ratio
+            of 2 or more turns them on.
           </p>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">dither-pixel-ratio</code> is a separate profile field
@@ -87,17 +79,17 @@
           <div class="space-y-2">
             <%= framework_heading(4, 'CSS Gradient Dots') %>
             <p class="<%= framework_subsection_description_classes %>">
-              No images are used. Each dot is computed mathematically by the CSS engine,
-              guaranteeing pixel-grid alignment at any element size.
+              The dots are generated gradients, not image files, so they stay on the pixel grid
+              at any element size.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
-              The dot color resolves in three steps:
+              The dot color is looked up in three steps, and the first one set wins:
               <code class="<%= framework_section_code_classes %>">--framework-semantic-border-strong-border-color</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-outline-strong</code>,
               then <code class="<%= framework_section_code_classes %>">--framework-border-strong</code>.
-              A theme repoints the first step through
-              <code class="<%= framework_section_code_classes %>">theme-slots.semantic-border</code>, so dark mode
-              and themes recolor the outline without separate assets.
+              A theme sets the first through
+              <code class="<%= framework_section_code_classes %>">theme-slots.semantic-border</code>, so a theme
+              recolors the outline with no extra assets.
             </p>
           </div>
 
@@ -124,18 +116,13 @@
       <section class="space-y-8">
         <div class="space-y-4">
           <%= framework_heading(3, 'Bit-Depth Behavior') %>
-          <p class="<%= framework_section_description_classes %>">
-            The outline utility adapts to different display bit-depths automatically. On 1-bit displays, it uses
-            CSS gradient dots for pixel-perfect rendering. On 2-bit and 4-bit displays, it falls back to
-            standard CSS borders with border-radius for smoother rendering.
-          </p>
         </div>
 
         <div class="space-y-6">
           <div class="space-y-2">
             <%= framework_heading(4, '1-bit Displays') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Uses pure CSS gradients to place sparse single-pixel dots at exact integer coordinates.
+              1-bit displays get the gradient dots.
               Dark mode works automatically because
               <code class="<%= framework_section_code_classes %>">--framework-semantic-border-strong-border-color</code>
               flips to white.
@@ -143,10 +130,10 @@
           </div>
 
           <div class="space-y-2 mt-6">
-            <%= framework_heading(4, '2-bit and 4-bit Displays') %>
+            <%= framework_heading(4, '2-bit, 4-bit, and Full-Color Displays') %>
             <p class="<%= framework_subsection_description_classes %>">
-              Falls back to a standard 1px solid border for smoother rendering that takes advantage of the
-              additional grayscale capabilities. The corner radius is 7px, scaled by the content scale.
+              Draws a standard 1px solid border instead: with real grays or full color available, a smooth
+              line beats dots. The corner radius is 7px, scaled by the content scale.
             </p>
           </div>
 
@@ -157,9 +144,10 @@
     @include outline-dots;
 }
 
-/* 2-bit and 4-bit: Falls back to CSS border */
+/* 2-bit, 4-bit, and full color: falls back to a CSS border */
 .screen--2bit .outline::after,
-.screen--4bit .outline::after {
+.screen--4bit .outline::after,
+.screen--color-full .outline::after {
     background: none;
     border: 1px solid var(--framework-semantic-border-strong-border-color,
         var(--framework-outline-strong, var(--framework-border-strong)));

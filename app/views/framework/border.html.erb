@@ -11,28 +11,27 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
-            Use directional step selectors:
-            <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and
+            Use <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and
             <code class="<%= framework_section_code_classes %>">border--v-{step}</code>
-            with steps 10 to 75
-            (the background utility shade scale), plus semantic
-            <code class="<%= framework_section_code_classes %>">border--h-black</code> /
-            <code class="<%= framework_section_code_classes %>">border--h-white</code>.
-            Borders render grayscale by default; themes repaint the whole rail.
+            with steps 10 to 75, the same shade scale as backgrounds, plus black and white lines in both
+            directions (<code class="<%= framework_section_code_classes %>">border--h-black</code>,
+            <code class="<%= framework_section_code_classes %>">border--h-white</code>, and their
+            <code class="<%= framework_section_code_classes %>">v-</code> counterparts).
+            Borders render grayscale by default; a theme recolors all of them.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            4-bit and full-color screens give each of the 14 steps its own art. Everywhere else (the default rail,
-            1-bit, 2-bit, and the limited palettes) the steps pair onto the seven border levels, so
+            4-bit and full-color screens give each of the 14 steps its own shade. Everywhere else (1-bit, 2-bit,
+            the limited palettes, and screens with no mode class) two neighboring steps share a line, so
             <code class="<%= framework_section_code_classes %>">border--h-40</code> and
             <code class="<%= framework_section_code_classes %>">border--h-45</code> draw the same line.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Pick steps two apart when two rules have to read differently on a 1-bit panel.
+            Pick steps 10 apart, like 40 and 50, when two lines have to read differently on a 1-bit panel.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The numbered level classes (<code class="<%= framework_section_code_classes %>">border--h-1</code> through
             <code class="<%= framework_section_code_classes %>">border--h-7</code>, and their vertical counterparts) are
-            deprecated and will be removed in Framework 4.0. Prefer step selectors in new markup.
+            deprecated and will be removed in Framework 4.0. Use the step classes in new markup.
           </p>
         </div>
 
@@ -82,7 +81,7 @@
                 </div>
                 <div class="w-full flex items-center justify-between ml-3">
                   <p class="text-sm font-medium">
-                    <strong>Dark Mode Notice:</strong> The color palette appears inverted because dark mode remaps the framework tokens: black and white swap, grays and chromatic steps mirror. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens are exempt from dark mode entirely.
+                    <strong>Dark Mode Notice:</strong> The palette appears inverted because dark mode swaps black and white and mirrors the gray and color ladders. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens ignore dark mode entirely.
                   </p>
                 </div>
               </div>
@@ -149,20 +148,20 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Themed Borders') %>
           <p class="<%= framework_section_description_classes %>">
-            There are no per-hue border classes: the step rail renders the classic
-            patterns by default, and a theme recolors them (and
-            <code class="<%= framework_section_code_classes %>">.divider</code>) without changing their
-            geometry via <code class="<%= framework_section_code_classes %>">theme-slots.utility-remap-border-grayscale($hue, $side)</code>.
-            The <code class="<%= framework_section_code_classes %>">dark</code> side paints black-on-hue,
-            <code class="<%= framework_section_code_classes %>">bright</code> paints hue-on-white.
-            Pick a Style in the screen picker to watch the rails above repaint.
+            Recolor borders from a theme, not with a class:
+            <code class="<%= framework_section_code_classes %>">theme-slots.utility-remap-border-grayscale($hue, $side)</code>
+            repaints every rule (and
+            <code class="<%= framework_section_code_classes %>">.divider</code>) in the hue without changing its shape.
+            The <code class="<%= framework_section_code_classes %>">dark</code> side paints black on the hue,
+            <code class="<%= framework_section_code_classes %>">bright</code> paints the hue on white.
+            Pick a Style in the screen picker to watch the lines above repaint.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            The 2-bit rail is the exception: its four tones are literal in the line data, so a hue remap leaves it
-            black, white and two grays. That is deliberate, since a hue quantizes to gray on a 4-tone panel anyway.
+            2-bit borders are the exception: their four tones are drawn into the line itself, so a hue remap leaves
+            them black, white, and two grays. That is deliberate: on a 4-tone panel a hue would print as gray anyway.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            A theme that wants to move the 2-bit rail names levels instead, with
+            A theme that wants to change the 2-bit borders swaps levels instead, with
             <code class="<%= framework_section_code_classes %>">theme-slots.utility-border-level($level, $dir, $from-level)</code>,
             the way the shipped Dark theme does. See <%= render DocsRef.new(page: :theme_slots) %>.
           </p>
@@ -180,10 +179,10 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Black & White Borders') %>
           <p class="<%= framework_section_description_classes %>">
-            Semantic <code class="<%= framework_section_code_classes %>">border--h-black</code> /
-            <code class="<%= framework_section_code_classes %>">border--h-white</code> borders adapt to themes
-            automatically. They resolve through framework semantic fill tokens, so they always
-            represent the strongest and softest fill in the current theme context.
+            <code class="<%= framework_section_code_classes %>">border--h-black</code> and
+            <code class="<%= framework_section_code_classes %>">border--h-white</code> adapt to themes
+            automatically. They read the theme's strongest and softest fill colors, so they stay the
+            darkest and lightest lines whatever the theme.
           </p>
         </div>
 
@@ -238,14 +237,14 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Borders in JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Border rails are readable from JS through the paint API:
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint.border(spec, { dir })</code> resolves a step,
-            or the literal <code class="<%= framework_section_code_classes %>">'black'</code> /
-            <code class="<%= framework_section_code_classes %>">'white'</code> rails straight from the live cascade
-            (theme tinting, bit depth and dark mode included), and
-            <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints it onto a node. Because these
-            fill-backed utilities carry real ink in every mode, they are the reliable hairline source for JS-drawn visuals
-            like chart grids. See <%= render DocsRef.new(page: :paint_borders) %>.
+            JavaScript can read the border lines too:
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.border(spec, { dir })</code> returns the
+            line for a step, or for <code class="<%= framework_section_code_classes %>">'black'</code> /
+            <code class="<%= framework_section_code_classes %>">'white'</code>, with the device and the active theme
+            already applied.
+            <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints it onto a node. These
+            lines stay visible in every mode, which makes them the reliable source for JS-drawn hairlines
+            like chart grids; see <%= render DocsRef.new(page: :paint_borders) %>.
           </p>
         </div>
       </section>

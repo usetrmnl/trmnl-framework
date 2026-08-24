@@ -11,8 +11,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
-            Add <code class="<%= framework_section_code_classes %>">inverse</code> to a container to apply the opposite of the screen's color scheme to that container and its descendants.
-            Use it as a visual treatment, or apply it semantically to identify the active item, selected row, or current state.
+            Add <code class="<%= framework_section_code_classes %>">inverse</code> to a container to flip it and everything inside.
           </p>
         </div>
 
@@ -31,8 +30,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Active Collection Rows') %>
           <p class="<%= framework_section_description_classes %>">
-            Invert individual rows to make active resources scannable inside a longer collection.
-            The row background, text, item metadata, and other framework paint change together.
+            Invert individual rows so the active ones stand out in a longer list.
+            The row's background, text, and other framework paint change together.
           </p>
         </div>
 
@@ -118,7 +117,7 @@
           <%= framework_heading(3, 'Active Collection Cards') %>
           <p class="<%= framework_section_description_classes %>">
             Use inverse cards when several resources share the same grid and only some need attention.
-            The stronger surface separates occupied rooms from available rooms without changing the grid structure.
+            The stronger surface separates the occupied rooms from the available ones.
           </p>
         </div>
 
@@ -193,8 +192,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'State Transitions') %>
           <p class="<%= framework_section_description_classes %>">
-            Apply inverse to a larger status surface when a state transition should change the whole composition.
-            For example, an occupied meeting room can invert its schedule, dividers, and attendee details as one semantic state.
+            Apply inverse to a whole surface when a state change should recolor everything on it.
+            An occupied meeting room, for example, inverts its schedule, dividers, and attendee details as one.
           </p>
         </div>
 
@@ -243,18 +242,17 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Paint and Cascade Behavior') %>
+          <%= framework_heading(3, 'What Inverse Flips') %>
           <p class="<%= framework_section_description_classes %>">
-            Inverse flips framework background, text, border, stroke, semantic, icon, chart, and component-slot paint for the element subtree.
-            It applies dark paint on a light screen and light paint on a dark-mode screen without changing siblings.
+            Inverse flips everything the framework paints inside the element: backgrounds, text, borders, strokes, icons, and chart colors.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            A slot value declared directly on the element overrides the inverse default, and a theme can define its own inverse treatment with <code class="<%= framework_section_code_classes %>">.screen--theme-&lt;id&gt; .inverse</code>.
+            Anything you set directly on the element wins over the inverse defaults, and a theme can style its own inverse with <code class="<%= framework_section_code_classes %>">.screen--theme-&lt;id&gt; .inverse</code>.
             See <%= render DocsRef.new(page: :theme_slots) %> and <%= render DocsRef.new(page: :themes) %>.
           </p>
           <p class="<%= framework_section_description_classes %>">
-            Unlike the <code class="<%= framework_section_code_classes %>">invert</code> image filter, inverse changes semantic framework paint instead of flipping pixels.
-            <code class="<%= framework_section_code_classes %>">dark:</code> utilities still require <code class="<%= framework_section_code_classes %>">screen--dark-mode</code>; inverse changes paint, not variant activation.
+            Inverse is not the <code class="<%= framework_section_code_classes %>">invert</code> image filter: it changes what the framework paints instead of flipping pixels.
+            It also does not turn on <code class="<%= framework_section_code_classes %>">dark:</code> utilities; those still need <code class="<%= framework_section_code_classes %>">screen--dark-mode</code>.
           </p>
         </div>
       </section>

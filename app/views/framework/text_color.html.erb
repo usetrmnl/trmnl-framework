@@ -13,7 +13,7 @@
           <%= framework_heading(3, 'Usage') %>
           <p class="<%= framework_section_description_classes %>">
             Use the <code class="<%= framework_section_code_classes %>">text--{shade}</code> utility classes to apply
-            text color patterns to any element. The shade comes from one of three schemes
+            text color patterns to any element. The shade comes from one of these schemes
             (see <%= link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline' %>):
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -32,13 +32,15 @@
               <strong>Semantic:</strong> <code class="<%= framework_section_code_classes %>">text--primary</code>,
               <code class="<%= framework_section_code_classes %>">text--success</code>,
               <code class="<%= framework_section_code_classes %>">text--error</code>, and
-              <code class="<%= framework_section_code_classes %>">text--warning</code>.
+              <code class="<%= framework_section_code_classes %>">text--warning</code>. See
+              <%= link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline' %> for how
+              each role resolves per device.
             </li>
             <li>
               <strong>Ink roles:</strong> <code class="<%= framework_section_code_classes %>">text--default</code>,
               <code class="<%= framework_section_code_classes %>">text--muted</code>, and
-              <code class="<%= framework_section_code_classes %>">text--inverse</code> paint the screen's own text
-              roles. They resolve through the theme slot chain, so a theme repaints them, and they mirror
+              <code class="<%= framework_section_code_classes %>">text--inverse</code> paint the text colors the
+              screen itself uses. A theme recolors them, and they mirror
               <code class="<%= framework_section_code_classes %>">bg--canvas</code> and its siblings on
               <%= render DocsRef.new(page: :background) %>.
             </li>
@@ -107,7 +109,7 @@
             </div>
             <div class="w-full flex items-center justify-between ml-3">
               <p class="text-sm font-medium">
-                <strong>Dark Mode Notice:</strong> The color palette appears inverted because dark mode remaps the framework tokens: black and white swap, grays and chromatic steps mirror. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens are exempt from dark mode entirely.
+                <strong>Dark Mode Notice:</strong> The palette appears inverted because dark mode swaps black and white and mirrors the gray and color ladders. Images are not affected unless they opt in via <code class="<%= framework_section_code_classes %>">image--adaptive</code>. Themed screens ignore dark mode entirely.
               </p>
             </div>
           </div>
@@ -135,6 +137,13 @@
         </div>
       </section>
 
+      <section class="space-y-4">
+        <p class="<%= framework_section_description_classes %>">
+          Switch the screen picker (top right) to a color device (e.g. Inky Impression 7.3, Tidbyt) to see the
+          hue sections below in color.
+        </p>
+      </section>
+
       <% %w[red orange yellow lime green cyan blue violet purple pink].each do |hue| %>
         <% steps_before = %w[10 15 20 25 30 35 40].map { |s| "#{hue}-#{s}" } %>
         <% steps_after = %w[45 50 55 60 65 70 75].map { |s| "#{hue}-#{s}" } %>
@@ -155,9 +164,6 @@
                 <%= hue %> ladder (e.g. text--<%= hue %>-50), on the same 10 to 75 scale as grayscale.
               </li>
             </ul>
-            <p class="<%= framework_section_description_classes %>">
-              Use the Device Preview (top right) to switch to a color device (e.g. Inky Impression 7.3, Tidbyt) to see these colors.
-            </p>
           </div>
 
           <div class="<%= framework_example_classes %>">
@@ -216,7 +222,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Backward Compatibility') %>
           <p class="<%= framework_section_description_classes %>">
-            For backward compatibility, the original shade names (<code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code>) are still supported but deprecated. These map to equivalent extended shades:
+            For backward compatibility, the original shade names (<code class="<%= framework_section_code_classes %>">gray-1</code> through <code class="<%= framework_section_code_classes %>">gray-7</code>) are still supported but deprecated. Each maps to one of the new shade names:
           </p>
         </div>
 
@@ -310,30 +316,18 @@
             </div>
           </div>
 
-          <div class="<%= message_classes %>">
-            <div class="flex items-center w-full">
-              <div class="flex-shrink-0 items-center">
-                <%= render 'shared/icons/info' %>
-              </div>
-              <div class="w-full flex items-center justify-between ml-3">
-                <p class="text-sm font-medium">
-                  Text color classes accept size, orientation, and bit-depth prefixes. Bit-depth prefixes (1bit:, 2bit:, 4bit:) override the shade for a specific device color depth.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Patterned ink on a filled element') %>
+          <%= framework_heading(3, 'Patterned Ink on a Filled Element') %>
           <p class="<%= framework_section_description_classes %>">
-            On a screen with no true gray, a gray shade is painted through the shape of the glyphs
-            rather than as a color. An element has one background, and only one of these can use
-            it, so a patterned ink and a <code class="<%= framework_section_code_classes %>">bg--{shade}</code>
-            fill cannot sit on the same element. Put the fill on the box and the ink on an element
-            inside it, which black and white never need because they are real colors.
+            On a screen with no true gray, a gray shade is painted as a pattern clipped to the letters.
+            That pattern uses the element's one background, so a patterned text color and a
+            <code class="<%= framework_section_code_classes %>">bg--{shade}</code>
+            fill cannot sit on the same element. Put the fill on the box and the text color on an element
+            inside it; black and white never need this, because they are real colors.
           </p>
         </div>
 

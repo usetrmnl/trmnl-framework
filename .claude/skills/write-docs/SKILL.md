@@ -32,6 +32,48 @@ Gold standard, a 3.2 release note that does all of the above in one paragraph:
 - No marketing filler (powerful, seamless, elegant, simply, just). No hedging.
 - Explain the why in one clause when it changes what the reader does, otherwise skip it.
 
+## Plain words first
+
+The 3.2 readability complaint, and the pattern to rewrite on sight: sentences built from framework vocabulary (semantic channels, slots, token references, the live cascade, canonical Fills) before the reader has plain-language footing.
+
+- Open with a sentence a first-time reader can parse: what the thing is or does, in everyday words.
+- Introduce a framework term only where the reader needs it to act, and ground it in the same sentence that introduces it.
+- Say what the reader gets before how the framework does it. Internal rationale (why the architecture is shaped this way) stays out of intros entirely.
+- Break any sentence that chains three or more clauses, and turn a parenthetical list of three or more items into a bulleted list or its own sentence.
+- Keep the concrete device triplets ("dither patterns on 1-bit, solids on full color"); concreteness is not the problem, stacked abstraction is.
+- Say the sentence aloud to a colleague who has never read the source. Any term that needs the codebase to parse (the chart ramp, resolvers, rails, the cascade) gets replaced by what it means for the reader.
+
+Before: "Themes are standalone stylesheets that re-point semantic channels, component slots, and utility tokens at different palette tokens."
+
+After: "A theme is a stylesheet you load next to plugins.css to recolor a screen. It swaps the colors the framework classes paint with, so your markup stays exactly as written."
+
+A rewrite can still fail the bar. This one traded one set of insider words for a smaller set and was flagged by a reader anyway:
+
+Still too complex: "The chart resolvers pick evenly spaced series colors from the framework's chart ramp, adjusted to the current device, mode, and theme."
+
+Plain: "These functions pick the colors for a chart. Ask for series 2 of 5 and you get its paint, correct for the current device, mode, and theme."
+
+## Earn the paragraph
+
+Before polishing a sentence, ask whether it should exist. Delete on sight:
+
+- A fact the page already states. One page says one thing once: if the intro or an earlier section covered it, a later section must not restate it in new clothes. The screen-picker tip appears at most once per page.
+- A tautology ("Dark is how you render a plugin dark").
+- A demo explained as behaving the way the feature behaves ("the example follows the Style you pick, exactly as your plugin would"). Every demo does; say nothing.
+- A fact restated as its own negation ("Themes never ship JavaScript. A theme is only CSS, and JavaScript can read..."). State what happens, once, in the positive: "JavaScript can read everything it needs from a theme's CSS."
+- A distinction that dissolves on inspection ("rendering stays the framework's job", said about a feature that is itself part of the framework).
+
+## Write for the reader, not the framework
+
+A fourth calibration round: pages still explained things from the framework's point of view. The register, especially in intros, guide pages, and card blurbs:
+
+- An intro answers "what is this for?" in the reader's terms before anything else. "Themes are a simple way to visually customize any TRMNL plugin" beats any technically precise definition. Mechanism comes later on the page, where the reader acts on it.
+- Guide sections tell the reader what to do and what they get: "Use TRMNLCharts for your charts. They become device-responsive and follow the active theme." Not a contrast-framed description of the problem.
+- Concept lists must carry their meaning in the bullet itself. "Allowed: semantic channel refs (mixin names)" is gibberish to a newcomer; "Set the whole screen's colors at once with the semantic channels (mixin names)" is the same fact, usable.
+- Do not present dark mode as a headline feature. Keep it out of intros, benefit lists, and feature enumerations; mention it only where an API contract requires it or a section documents it directly.
+- Device rendering, canonical phrasing: colors dither down to the panel's inks where needed and paint exactly on full color. Never mention palette images or palette tiles; that mechanism is gone.
+- An overview intro names the release's features evenly or stays above them; it never deep-dives one feature while skipping the rest.
+
 ## Punctuation
 
 - **Never use em-dashes**: no `—`, no `&mdash;`, no ` -- `. Rewrite with a period, comma, colon, or parentheses. This applies to all copy: docs, commit messages, code comments, notices.

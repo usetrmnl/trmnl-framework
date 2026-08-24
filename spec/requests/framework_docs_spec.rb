@@ -186,7 +186,7 @@ RSpec.describe 'Framework docs routing', type: :request do
         expect(response.body).to include('--dither-pixel-ratio')
         expect(response.body).to include('--device-ui-scale')
         expect(response.body).to include('screen--density-2x')
-        expect(response.body).to include('Rating a panel')
+        expect(response.body).to include('Rating a Panel')
         expect(response.body).to include('$custom-devices')
       end
     end

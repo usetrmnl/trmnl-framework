@@ -13,7 +13,6 @@
           <p class="<%= framework_section_description_classes %>">
             Use <code class="<%= framework_section_code_classes %>">divider</code> or <code class="<%= framework_section_code_classes %>">divider--h</code> for horizontal dividers,
             and <code class="<%= framework_section_code_classes %>">divider--v</code> for vertical dividers.
-            Divider uses the same rendering pipeline as border utilities and defaults to border level 6.
           </p>
           <p class="<%= framework_section_description_classes %>">
             The background variants (<code class="<%= framework_section_code_classes %>">divider--on-white</code>,
@@ -28,7 +27,7 @@
           <div class="space-y-4">
             <%= framework_heading(4, 'Border Shorthand') %>
             <p class="<%= framework_section_description_classes %>">
-              Divider is a convenience alias for the common separator pattern. Use it when you want a
+              Use it when you want a
               one-pixel horizontal or vertical separator without writing a full border utility class.
             </p>
             <div class="<%= framework_example_classes %>">
@@ -82,7 +81,7 @@
           <div class="space-y-4">
             <%= framework_heading(4, 'Vertical Dividers') %>
             <p class="<%= framework_section_description_classes %>">
-              Vertical dividers use the same border-level pipeline as horizontal dividers.
+              Vertical dividers draw the same way as horizontal ones.
             </p>
             <div class="<%= framework_example_classes %>">
               <div class="<%= framework_example_inner_classes %>">
@@ -100,7 +99,7 @@
                             <div class="divider--v"></div>
                             <div class="flex flex--col flex--center stretch">
                               <span class="label">Right Side</span>
-                              <span class="description">Auto-detected</span>
+                              <span class="description">Same divider</span>
                             </div>
                           </div>
 
@@ -113,7 +112,7 @@
                             <div class="divider--v"></div>
                             <div class="flex flex--col flex--center stretch">
                               <span class="label text--white">Right Side</span>
-                              <span class="description text--white">Auto-detected</span>
+                              <span class="description text--white">Same divider</span>
                             </div>
                           </div>
                         </div>
@@ -203,13 +202,13 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Dividers in JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            The divider rail is readable from JS via
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider({ dir })</code>, which resolves the
-            level-6 rail straight from the live cascade (theme, bit depth and dark mode included), and
+            JavaScript can read the divider line too:
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.divider({ dir })</code> returns the
+            level-6 line with the device and the active theme already applied.
             <code class="<%= framework_section_code_classes %>">applyBorder()</code> paints the returned
             <code class="<%= framework_section_code_classes %>">BorderFill</code> onto a node. Unlike the
-            <code class="<%= framework_section_code_classes %>">.border--*</code> utilities, the divider paints on the
-            element itself, so it is probed there rather than on a pseudo. See
+            <code class="<%= framework_section_code_classes %>">.border--*</code> utilities, a divider paints on the
+            element itself, so that is where the paint is read; see
             <%= render DocsRef.new(page: :paint_borders) %>.
           </p>
         </div>

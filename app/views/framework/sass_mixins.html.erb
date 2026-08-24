@@ -9,11 +9,11 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Screen targeting') %>
+          <%= framework_heading(3, 'Screen Targeting') %>
           <p class="<%= framework_section_description_classes %>">
-            The screen mixins scope rules to a screen's size, orientation, and bit depth: the same grammar as the
-            responsive utility classes (<%= render DocsRef.new(page: :responsive) %>), for styles you author in SCSS.
-            Load the mixins module and wrap declarations.
+            Load the mixins module and wrap declarations. Each wrapped block applies only on screens that match,
+            using the same grammar as the responsive utility classes (<%= render DocsRef.new(page: :responsive) %>).
+            Your build needs the framework source on the load path; see <%= render DocsRef.new(page: :sass_build) %>.
           </p>
         </div>
 
@@ -43,7 +43,7 @@
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">screen($modifiers...)</code>: one to three modifiers
-              in any order, sorted internally to size, orientation, bit depth. A size modifier is mobile-first (that
+              in any order. A size modifier is mobile-first (that
               size and up). Bit depth accepts <code class="<%= framework_section_code_classes %>">'1bit'</code> or
               <code class="<%= framework_section_code_classes %>">'1'</code>.
             </li>
@@ -70,7 +70,7 @@
               <code class="<%= framework_section_code_classes %>">for-density($tier)</code>: density tier targeting (<code class="<%= framework_section_code_classes %>">'1x'</code>, <code class="<%= framework_section_code_classes %>">'2x'</code>).
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">for-combo</code> / <code class="<%= framework_section_code_classes %>">for-combo-up</code> / <code class="<%= framework_section_code_classes %>">for-triple</code> / <code class="<%= framework_section_code_classes %>">for-triple-up</code>: the explicit combination helpers behind <code class="<%= framework_section_code_classes %>">screen()</code> and <code class="<%= framework_section_code_classes %>">screen-only()</code>.
+              <code class="<%= framework_section_code_classes %>">for-combo</code> / <code class="<%= framework_section_code_classes %>">for-combo-up</code> / <code class="<%= framework_section_code_classes %>">for-triple</code> / <code class="<%= framework_section_code_classes %>">for-triple-up</code>: target an exact combination directly. <code class="<%= framework_section_code_classes %>">for-combo</code> takes two modifiers, <code class="<%= framework_section_code_classes %>">for-triple</code> takes three, and the <code class="<%= framework_section_code_classes %>">-up</code> variants are mobile-first; <code class="<%= framework_section_code_classes %>">screen()</code> and <code class="<%= framework_section_code_classes %>">screen-only()</code> call these for you.
             </li>
           </ul>
         </div>
@@ -78,10 +78,10 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Scale functions') %>
+          <%= framework_heading(3, 'Scale Functions') %>
           <p class="<%= framework_section_description_classes %>">
-            The scale functions wrap pixel values in the framework's scale variables, so custom CSS follows device
-            density, Scale, and Text Scale exactly like framework CSS. Non-px and zero values pass through unchanged;
+            Each function wraps a pixel value in one of the framework's scale variables.
+            Non-px and zero values pass through unchanged;
             lists are scaled item by item.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -93,7 +93,7 @@
             <li>
               <code class="<%= framework_section_code_classes %>">ui-scaled($value)</code>: multiplies by
               <code class="<%= framework_section_code_classes %>">--ui-scale</code>, which includes device density.
-              Use for framework-owned component geometry.
+              Use for geometry that should scale like the framework's own components.
             </li>
             <li>
               <code class="<%= framework_section_code_classes %>">text-ui-scaled($value)</code>: multiplies by
@@ -115,7 +115,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Public surface') %>
+          <%= framework_heading(3, 'Public Surface') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards every module the
             framework compiles itself with, which is far more than it supports. Three families are public: their
@@ -139,12 +139,12 @@
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
-            Everything else the module forwards is internal. That covers the selector helpers
+            Everything else the module forwards is internal: the selector helpers
             (<code class="<%= framework_section_code_classes %>">scope-selector</code>,
-            <code class="<%= framework_section_code_classes %>">generate-screen-utilities</code>), the variant
+            <code class="<%= framework_section_code_classes %>">generate-screen-utilities</code>) and the variant
             emitters (<code class="<%= framework_section_code_classes %>">with-all-variants</code>,
-            <code class="<%= framework_section_code_classes %>">generate-triple-variants</code>), the factorized
-            utility emitters, the pattern, border-level and text-paint helpers, and the
+            <code class="<%= framework_section_code_classes %>">generate-triple-variants</code>). The internal set
+            also includes the shared utility emitters, the pattern, border-level, and text-paint helpers, and the
             <code class="<%= framework_section_code_classes %>">trmnl-namespace</code> wrapper. They exist to compile
             the framework's own classes and can change or disappear in any release, with no deprecation notice and no
             entry in the release notes.
@@ -160,7 +160,7 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Where the rest lives') %>
+          <%= framework_heading(3, 'Where the Rest Lives') %>
           <p class="<%= framework_section_description_classes %>">
             The class-based variants for markup are on <%= render DocsRef.new(page: :responsive) %>, and
             <%= render DocsRef.new(page: :responsive_test) %> renders mixins and classes side by side to prove they

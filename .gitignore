@@ -40,3 +40,5 @@ node_modules/
 .DS_Store
 .idea
 .vscode/
+# zero: local voice memos
+.zero/memos/

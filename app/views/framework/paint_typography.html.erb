@@ -11,31 +11,22 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Typography') %>
           <p class="<%= framework_section_description_classes %>">
-            Every resolver takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
-            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code> ancestor
-            supplies the paint. The probe technique is documented on <%= render DocsRef.new(page: :paint_api) %>.
+            Every function takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
+            or element whose nearest <code class="<%= framework_section_code_classes %>">.screen</code>
+            supplies the paint. How the reading works is on <%= render DocsRef.new(page: :paint_api) %>.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">type(classOrRole, { el, stroke })</code>: the
-              resolved typography of a role or class as a
-              <code class="<%= framework_section_code_classes %>">TypeSpec</code>. The role
-              <code class="<%= framework_section_code_classes %>">'chart-label'</code> maps to
-              <code class="<%= framework_section_code_classes %>">text--small</code>;
-              <code class="<%= framework_section_code_classes %>">'value'</code>,
-              <code class="<%= framework_section_code_classes %>">'label'</code>,
-              <code class="<%= framework_section_code_classes %>">'title'</code> and
-              <code class="<%= framework_section_code_classes %>">'description'</code> map to their own classes; any
-              other string passes through as a literal class list (e.g.
-              <code class="<%= framework_section_code_classes %>">'value value--xxlarge'</code>). Font family, size,
-              weight and line-height follow the active font bundle and density, so they are always probed, never read
-              from vars. Pass <code class="<%= framework_section_code_classes %>">stroke</code> (a size token, or
-              <code class="<%= framework_section_code_classes %>">true</code> for the base ring) to also resolve a
-              text-stroke onto the spec.
+              typography of a role or class as a
+              <code class="<%= framework_section_code_classes %>">TypeSpec</code>. Pass
+              <code class="<%= framework_section_code_classes %>">stroke</code> (a size token, or
+              <code class="<%= framework_section_code_classes %>">true</code> for the base size) to include a
+              text stroke.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">strokeSpec(sizeToken, { el })</code>: the resolved
-              text-stroke ring as <code class="<%= framework_section_code_classes %>">{ color, width, radius }</code>.
+              <code class="<%= framework_section_code_classes %>">strokeSpec(sizeToken, { el })</code>: one
+              text stroke as <code class="<%= framework_section_code_classes %>">{ color, width, radius }</code>.
               The <code class="<%= framework_section_code_classes %>">sizeToken</code> is
               <code class="<%= framework_section_code_classes %>">'small'</code> /
               <code class="<%= framework_section_code_classes %>">'medium'</code> /
@@ -45,11 +36,22 @@
               <code class="<%= framework_section_code_classes %>">text-stroke</code>.
             </li>
           </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The roles map to framework classes: <code class="<%= framework_section_code_classes %>">'chart-label'</code>
+            to <code class="<%= framework_section_code_classes %>">text--small</code>;
+            <code class="<%= framework_section_code_classes %>">'value'</code>,
+            <code class="<%= framework_section_code_classes %>">'label'</code>,
+            <code class="<%= framework_section_code_classes %>">'title'</code>, and
+            <code class="<%= framework_section_code_classes %>">'description'</code> to their own classes. Any other
+            string passes through as a literal class list (e.g.
+            <code class="<%= framework_section_code_classes %>">'value value--xxlarge'</code>). Font family, size,
+            weight, and line-height are measured live, so they always match the active font bundle and density.
+          </p>
         </div>
 
         <div class="mt-4">
           <%= render CodeExampleComponent.new(demo_code: 'TypeSpec = {
-  fontFamily:      string | null,  // resolved family for the active bundle x density
+  fontFamily:      string | null,  // resolved family for the active bundle and density
   fontSize:        string | null,  // e.g. "38px" for .value
   fontWeight:      string | null,
   fontStyle:       string | null,
@@ -58,14 +60,14 @@
   webkitFontSmoothing: string | null,
   letterSpacing:   string | null,
   lineHeight:      string | null,
-  color:           string | null,  // exact computed color; transparent in clipped-tile modes
-  backgroundColor: string | null,  // the text tile under-field
-  backgroundImage: string | null,  // exact computed image; dither ink rides here
+  color:           string | null,  // exact computed color; transparent when text paints with a pattern
+  backgroundColor: string | null,  // the color under the text pattern
+  backgroundImage: string | null,  // exact computed image; the dither pattern lives here
   backgroundSize:  string | null,
   backgroundPosition: string | null,
   backgroundRepeat:string | null,
   clip:            string | null,  // computed background-clip
-  textShadow:      string | null,  // exact 16-ring program when stroke was requested
+  textShadow:      string | null,  // the stacked drop shadows when a stroke was requested
   filter:          string | null,
   overflow:        string | null,
   stroke:          null | { color, width, radius },  // present only when stroke was requested
@@ -81,18 +83,17 @@ var axis = TRMNLPaint.type("chart-label", { el: "my-chart" });', language: 'java
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Painting type') %>
+          <%= framework_heading(3, 'Painting Type') %>
           <p class="<%= framework_section_description_classes %>">
-            A resolved spec is written back complete, so dither ink and stroke rings survive instead of collapsing to
-            a solid color. Wrap paints in <code class="<%= framework_section_code_classes %>">watch()</code> so type
-            re-resolves when the bundle, density or theme changes; see <%= render DocsRef.new(page: :paint_api) %>.
+            A TypeSpec is written back complete, so dither patterns and strokes survive instead of collapsing to
+            a solid color. Wrap the painting in <code class="<%= framework_section_code_classes %>">watch()</code> so
+            text re-reads when the bundle, density, or theme changes; see <%= render DocsRef.new(page: :paint_api) %>.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
               <code class="<%= framework_section_code_classes %>">applyType(node, typeSpec)</code>: writes a
-              <code class="<%= framework_section_code_classes %>">TypeSpec</code>'s exact computed font, text paint,
-              clipping and optional stroke longhands onto a node. Dither ink, its under-field and the full 16-ring
-              text-shadow round-trip instead of being reduced to a solid color.
+              <code class="<%= framework_section_code_classes %>">TypeSpec</code>'s font, text paint,
+              clipping, and optional stroke onto a node, exactly as computed.
             </li>
           </ul>
         </div>
@@ -100,10 +101,10 @@ var axis = TRMNLPaint.type("chart-label", { el: "my-chart" });', language: 'java
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Highcharts labels') %>
+          <%= framework_heading(3, 'Highcharts Labels') %>
           <p class="<%= framework_section_description_classes %>">
-            The text adapter copies a resolved spec into Highcharts' label options; the fill adapter and the
-            adapter ground rules live on <%= render DocsRef.new(page: :paint_charts) %>.
+            The text adapter copies a TypeSpec into Highcharts' label options; the fill adapter and the
+            rules all adapters follow are on <%= render DocsRef.new(page: :paint_charts) %>.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
@@ -112,8 +113,8 @@ var axis = TRMNLPaint.type("chart-label", { el: "my-chart" });', language: 'java
               <code class="<%= framework_section_code_classes %>">{ color, textOutline, fontFamily?, fontSize?, ... }</code>.
               Font keys appear only when resolved, and
               <code class="<%= framework_section_code_classes %>">textOutline</code> is
-              <code class="<%= framework_section_code_classes %>">'none'</code> unless a real opaque stroke was
-              requested, which kills Highcharts' default white halo on data labels.
+              <code class="<%= framework_section_code_classes %>">'none'</code> unless a stroke was
+              requested, so data labels lose Highcharts' default white halo.
             </li>
           </ul>
         </div>
@@ -128,16 +129,14 @@ var label = TRMNLPaint.toHighchartsText(
 
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Live example') %>
+          <%= framework_heading(3, 'Live Example') %>
           <p class="<%= framework_section_description_classes %>">
             The two stat tiles below are built from plain spans that carry no framework classes.
             <code class="<%= framework_section_code_classes %>">TRMNLPaint.type()</code> resolves the
             <code class="<%= framework_section_code_classes %>">value</code> role (the big-number face used by stat
-            tiles) and the <code class="<%= framework_section_code_classes %>">chart-label</code> role (mapped to
-            <code class="<%= framework_section_code_classes %>">text--small</code>), and
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint.applyType()</code> writes the resolved
-            font and text-paint longhands onto them. Toggle the font bundle or density in the picker and the tiles
-            follow, because family and size are probed from the live cascade rather than hardcoded.
+            tiles) and the <code class="<%= framework_section_code_classes %>">chart-label</code> role, and
+            <code class="<%= framework_section_code_classes %>">TRMNLPaint.applyType()</code> writes the
+            font and text paint onto them. Toggle the font bundle or density in the picker and the tiles follow.
           </p>
         </div>
 
