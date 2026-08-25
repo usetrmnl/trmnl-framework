@@ -381,6 +381,69 @@ $preview-color-palette: (
   'blue-75': #E8EEF6
 );
 
+$palette-hue-accents: (
+  'color-3bwr': (
+    'red': 'red',
+    'orange': 'red',
+    'yellow': 'red',
+    'lime': 'red',
+    'green': 'red',
+    'cyan': 'red',
+    'blue': 'red',
+    'violet': 'red',
+    'purple': 'red',
+    'pink': 'red'
+  ),
+  'color-3bwy': (
+    'red': 'yellow',
+    'orange': 'yellow',
+    'yellow': 'yellow',
+    'lime': 'yellow',
+    'green': 'yellow',
+    'cyan': 'yellow',
+    'blue': 'yellow',
+    'violet': 'yellow',
+    'purple': 'yellow',
+    'pink': 'yellow'
+  ),
+  'color-4bwry': (
+    'red': 'red',
+    'orange': 'red',
+    'yellow': 'yellow',
+    'lime': 'yellow',
+    'green': 'yellow',
+    'cyan': 'yellow',
+    'blue': 'red',
+    'violet': 'red',
+    'purple': 'red',
+    'pink': 'red'
+  ),
+  'color-6a': (
+    'red': 'red',
+    'orange': 'red',
+    'yellow': 'yellow',
+    'lime': 'green',
+    'green': 'green',
+    'cyan': 'green',
+    'blue': 'blue',
+    'violet': 'blue',
+    'purple': 'blue',
+    'pink': 'red'
+  ),
+  'color-7a': (
+    'red': 'red',
+    'orange': 'orange',
+    'yellow': 'yellow',
+    'lime': 'green',
+    'green': 'green',
+    'cyan': 'green',
+    'blue': 'blue',
+    'violet': 'blue',
+    'purple': 'blue',
+    'pink': 'red'
+  )
+);
+
 $border-token-lines: (
   'black': ('solid', #000000),
   'gray-10': ('seq', #000000, #FFFFFF, 1),
