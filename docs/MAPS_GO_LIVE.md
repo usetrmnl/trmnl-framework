@@ -15,7 +15,7 @@ fetches the tiles, and who pays, follows the source a map resolves:
   (plugin configuration) or a user's key (plugin settings) to the map; core
   decides which of the two it injects. A source named in code wins over it.
 - **TRMNL's own source:** the `'trmnl'` preset,
-  `https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`, TRMNL's own Shortbread planet
+  `https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`, TRMNL's own Shortbread planet
   behind a CDN. The engine's own `/framework/tiles/{z}/{x}/{y}.mvt` route stays
   for a host that wants to proxy a source of its own from
   `Framework.tile_source_url` (a pass-through: nothing is stored in the gem, on
@@ -42,7 +42,7 @@ the switches are configuration, not a framework release.
 - `TRMNLMaps.tiles()` resolves the source in order: the argument (`'osm'`,
   `'trmnl'`, or `{ url, key, preset }`), then `window.__TRMNL_MAPS__.tiles`,
   then `'osm'`. The `'trmnl'` preset is the absolute
-  `https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`: a render writes its document
+  `https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`: a render writes its document
   into `about:blank`, which has no origin to build a relative url against, and a
   plugin on someone else's engine should not route its tiles through their
   server. A preset carries the zoom range, the attribution and a `workerUrl`
@@ -83,7 +83,7 @@ the switches are configuration, not a framework release.
       speaks the Shortbread 1.0 schema, so the source has to as well. Least
       effort: the VersaTiles planet (one PMTiles file in that schema, rebuilt
       regularly) on R2 or S3 behind a small PMTiles server or a Cloudflare
-      Worker, for example `https://tiles.trmnl.com/{z}/{x}/{y}.mvt`, then
+      Worker, for example `https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`, then
       `TRMNL_FRAMEWORK_TILE_SOURCE_URL` on trmnl.com. More control: build your
       own Shortbread tiles with Planetiler or tilemaker. A commercial provider
       only if it serves Shortbread (most serve OpenMapTiles, which would mean
