@@ -25,13 +25,15 @@ RSpec.describe 'Framework pattern systems' do
 
   before(:all) { FrameworkBuild.sass! }
 
-  # The bundle is one compressed line. Take the declaration block whose selector
-  # list starts at a rule boundary with the given text.
+  # The bundle is one compressed line. Take the declaration blocks whose
+  # selector list starts at a rule boundary with the given text. More than one
+  # rule may carry the same selector list (a mode's paint vars and its border
+  # art are written separately), so every match is read, not just the first.
   def block_starting_with(prefix)
-    match = css.match(/[{}]#{Regexp.escape(prefix)}[^{}]*\{([^{}]*)\}/)
-    raise "no rule starting with #{prefix}" if match.nil?
+    blocks = css.scan(/[{}]#{Regexp.escape(prefix)}[^{}]*\{([^{}]*)\}/).flatten
+    raise "no rule starting with #{prefix}" if blocks.empty?
 
-    match[1]
+    blocks.join(';')
   end
 
   # Repeated border gradients are registered once as --bline-N and referenced by

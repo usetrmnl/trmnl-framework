@@ -5,6 +5,12 @@
 // TRMNL Framework - List Component
 // ============================================
 
+// The strong border paint the framework's own .outline draws with, so a card's
+// marks track the same channel a theme already remaps.
+$_border-art-paint: var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
+$_tick-arm: vars.ui-scaled(10px);
+$_tick-thickness: vars.ui-scaled(2px);
+
 @include mixins.trmnl-namespace {
     .list {
         display: flex;
@@ -24,6 +30,53 @@
         // Zero by default, so an unthemed item is laid out exactly as before.
         // A card theme sets these to give the fill and border something to hold.
         padding: var(--framework-slot-item-padding-y, 0) var(--framework-slot-item-padding-x, 0);
+        // The card fill. Transparent and imageless until a theme sets the pair,
+        // so an unthemed item still paints nothing at all.
+        background-color: var(--framework-slot-item-bg-color, transparent);
+        background-image: var(--framework-slot-item-bg-image, none);
+        // A tile fill repeats at the dither size; a ramp is one strip that
+        // tiles down the card only, so both fields take the slot first.
+        background-repeat: var(--framework-slot-item-bg-repeat, repeat);
+        background-size: var(--framework-slot-item-bg-size, var(--dither-bg-size, auto));
+        // Containing block for the border art below; nothing under an item was
+        // anchored above it (.meta and .label each carry their own).
+        position: relative;
+
+        // Ready-made art a theme points the border slot at. Both are values, not
+        // paint: the dotted stack comes from the .outline mixin so the drawing
+        // keeps one source, and the marks are eight art-deco corner brackets.
+        @include mixins.outline-dots($property: '--framework-item-border-art-outline');
+        --framework-item-border-art-ticks:
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 0 / #{$_tick-arm} #{$_tick-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 0 / #{$_tick-thickness} #{$_tick-arm} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 0 / #{$_tick-arm} #{$_tick-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 0 / #{$_tick-thickness} #{$_tick-arm} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 100% / #{$_tick-arm} #{$_tick-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 100% / #{$_tick-thickness} #{$_tick-arm} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 100% / #{$_tick-arm} #{$_tick-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 100% / #{$_tick-thickness} #{$_tick-arm} no-repeat;
+
+        // The screen ink, captured one level above .content: a var() inside a
+        // custom property resolves where it is declared, so the forwarding down
+        // there cannot name the channel it is overriding.
+        --framework-internal-item-ink-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
+        --framework-internal-item-ink-image: var(--framework-semantic-text-primary-text-image, none);
+        --framework-internal-item-ink-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+        --framework-internal-item-ink-under: var(--framework-semantic-text-primary-text-under, transparent);
+        --framework-internal-item-ink-solid: var(--framework-semantic-text-primary-text-solid, var(--framework-internal-item-ink-color));
+
+        // One slot read twice, because a gradient stack is invalid as a `border`
+        // and a `1px solid` line is invalid as a `background`: whichever the art
+        // resolves to, the other declaration drops out at computed-value time.
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: var(--framework-slot-item-border-art, none);
+            border: var(--framework-slot-item-border-art, none);
+            border-radius: vars.corner-scaled(7px);
+        }
 
         &--shrink {
             flex: 1 1 auto;
@@ -37,7 +90,21 @@
             justify-content: flex-end;
             overflow: hidden;
         }
-        
+
+        // A dark card fill needs its content in a paired ink. The primary text
+        // channel is repointed rather than restated per element, so the label
+        // modifiers that name a channel of their own keep their own paint.
+        .content {
+            --framework-semantic-text-primary-text-color: var(--framework-slot-item-text-color, var(--framework-internal-item-ink-color));
+            --framework-semantic-text-primary-text-image: var(--framework-slot-item-text-image, var(--framework-internal-item-ink-image));
+            --framework-semantic-text-primary-text-clip: var(--framework-slot-item-text-clip, var(--framework-internal-item-ink-clip));
+            --framework-semantic-text-primary-text-under: var(--framework-slot-item-text-under, var(--framework-internal-item-ink-under));
+            --framework-semantic-text-primary-text-solid: var(--framework-slot-item-text-solid, var(--framework-internal-item-ink-solid));
+            // Bare text in the content box inherits its ink, exactly as .screen
+            // hands it down, so the slot reaches text no element class wraps.
+            color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+        }
+
         .label {
             &.label--small {
                 padding-top: vars.ui-scaled(2px);
@@ -107,6 +174,15 @@
                     @include mixins.semantic-text-paint('text-inverse', var(--framework-text-inverse));
                 }
             }
+        }
+    }
+
+    // The rails whose inks dither draw .outline as a clean 1px line instead of
+    // the dotted arc, so the published art has to make the same switch. The
+    // ::after reads it into `background` too, where it drops out as invalid.
+    @include mixins.for-screen-modifier('2bit', '4bit', 'color-full') {
+        .item {
+            --framework-item-border-art-outline: 1px solid #{$_border-art-paint};
         }
     }
 

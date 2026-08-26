@@ -8,6 +8,7 @@
 @use '../config/custom' as custom;
 @use '../config/variables_overrides' as device-vars;
 @use '../config/tokens' as tokens;
+@use '../config/dither_ramps_generated' as dither-ramps;
 
 @mixin _semantic-icon-default {
     --framework-semantic-icon-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
@@ -408,6 +409,8 @@
         @include _role-aliases;
         @include _component-slot-defaults;
     }
+
+    @include dither-ramps.item-fill-ramp-vars;
 }
 
 // Preview-only fallback for non-retina displays:

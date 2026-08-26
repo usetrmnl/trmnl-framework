@@ -53,6 +53,25 @@ $chart-series-slots: 16;
     --framework-slot-#{$slot}-icon-under: var(--text-#{$token}-under, transparent);
 }
 
+// The card pair: a fill on the item and the ink its content takes on top of it,
+// so a theme that darkens the fill cannot leave the text behind.
+@mixin item-fill($token) { @include bg-slot('item', $token); }
+
+// A generated ramp instead of a token tile: one strip that tiles down the card
+// at its own natural width, never stretched, so its decided pixels survive.
+@mixin item-fill-ramp($art: var(--framework-item-fill-ramp), $size: var(--framework-item-fill-ramp-size)) {
+    --framework-slot-item-bg-image: #{$art};
+    --framework-slot-item-bg-size: #{$size};
+    --framework-slot-item-bg-repeat: repeat-y;
+}
+@mixin item-ink($token) { @include ink-slot('item', $token); }
+
+// The art vars are published on .item, and a var() inside a custom property
+// resolves on the element that declares it, so the slot is set there too.
+@mixin item-border($art) {
+    .item { --framework-slot-item-border-art: #{$art}; }
+}
+
 // Structure factors: unitless multipliers over the unthemed geometry. Each
 // rides its own consumption chain (content scale + table rows, radii, bar and
 // icon heights, progress sizes), so 1 is always the unthemed screen.

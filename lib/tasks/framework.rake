@@ -7,6 +7,7 @@ require_relative '../framework/color_data'
 require_relative '../framework/color_manifest'
 require_relative '../framework/border_line_specs'
 require_relative '../framework/bayer_tiles'
+require_relative '../framework/dither_ramps'
 require_relative '../framework/themes'
 
 # Standalone port of core's framework:colors tasks. The generator libs are
@@ -453,8 +454,98 @@ namespace :framework do
     puts "Generated #{out_path}"
   end
 
-  desc "Regenerate all framework color artifacts (tokens, CSS variables)"
-  task colors: [:color_tokens, :css_variables]
+  # The one color task with no YAML behind it: the ramps are Bayer math over the
+  # constants in Framework::DitherRamps, so this one skips the resolved manifest.
+  desc "Generate item-fill dither ramp SCSS from the Bayer threshold map"
+  task dither_ramps: :environment do
+    FileUtils.mkdir_p(STYLES_DIR)
+
+    ramp_assets_scss = Framework::DitherRamps.rail_uris.map { |rail, uri| "'#{rail}': \"#{uri}\"" }.join(",\n  ")
+
+    generated = <<~SCSS
+      // ============================================
+      // TRMNL Framework - Item fill dither ramps (GENERATED)
+      // ============================================
+      // Generated from lib/framework/dither_ramps.rb
+      // Regenerate with: rake framework:dither_ramps
+      // ============================================
+
+      @use 'tokens' as vars;
+
+      $item-fill-ramp-width: #{Framework::DitherRamps::RAMP_WIDTH}px;
+      $item-fill-ramp-height: #{Framework::DitherRamps::RAMP_HEIGHT}px;
+
+      $item-fill-ramp-assets: (
+        #{ramp_assets_scss}
+      );
+
+      $item-fill-ramp-full: "#{Framework::DitherRamps.full_ramp_value}";
+
+      // The ramp art, then the rail each mode paints it from. Selection is per
+      // mode and not per theme: which tones a screen can render is device
+      // capability, the same thing the --bg-* rails encode, so a theme names
+      // --framework-item-fill-ramp and gets its own screen's art.
+      //
+      // A fill paints one with:
+      //   background-image: var(--framework-item-fill-ramp);
+      //   background-size: var(--framework-item-fill-ramp-size);
+      //   background-repeat: repeat-y;
+      //   background-position: left top;
+      @mixin item-fill-ramp-vars {
+          .screen {
+              @each $rail, $uri in $item-fill-ramp-assets {
+                  // Double quotes are load-bearing: the URIs carry raw single quotes, and
+                  // Dart Sass 1.94+ splices custom-property text verbatim instead of re-quoting.
+                  --framework-item-fill-ramp-\#{$rail}: url("\#{$uri}");
+              }
+              --framework-item-fill-ramp-full: \#{$item-fill-ramp-full};
+
+              // An unclassed screen makes no device claim, so it takes the most
+              // constrained rail: the same reading --framework-bit-depth publishes,
+              // and the safe one, because a smooth gradient is what a 1-bit panel
+              // cannot render while dithered art reads on every rail.
+              --framework-item-fill-ramp: var(--framework-item-fill-ramp-1bit);
+              // Natural size over the screen's own transform scale, so one source
+              // pixel lands on one device pixel. Anything else resamples pixels the
+              // dither already decided and reads as a blur.
+              --framework-item-fill-ramp-size: calc(\#{$item-fill-ramp-width} / var(--dither-ratio)) calc(\#{$item-fill-ramp-height} / var(--dither-ratio));
+          }
+
+          .screen.screen--2bit {
+              --framework-item-fill-ramp: var(--framework-item-fill-ramp-2bit);
+          }
+
+          .screen.screen--4bit,
+          .screen.screen--8bit,
+          .screen.screen--16bit {
+              --framework-item-fill-ramp: var(--framework-item-fill-ramp-4bit);
+          }
+
+          // Solid-capable rails take the gradient the dithered ones quantize, sized
+          // to the box because a gradient has no natural width worth preserving.
+          .screen.screen--color-full {
+              --framework-item-fill-ramp: var(--framework-item-fill-ramp-full);
+              --framework-item-fill-ramp-size: auto;
+          }
+
+          // Limited palettes paint their grays on the 1-bit rail, so a palette
+          // screen wearing a deeper mode class takes the 1-bit ramp back. Same
+          // last-rule-wins ordering _screen-paint-depth-vars relies on.
+          @each $palette-id in vars.$color-palette-limited-ids {
+              .screen.screen--color-\#{$palette-id} {
+                  --framework-item-fill-ramp: var(--framework-item-fill-ramp-1bit);
+              }
+          }
+      }
+    SCSS
+
+    out_path = File.join(STYLES_DIR, '_dither_ramps_generated.scss')
+    File.write(out_path, generated)
+    puts "Generated #{out_path} (#{File.size(out_path)} bytes)"
+  end
+
+  desc "Regenerate all framework color artifacts (tokens, CSS variables, dither ramps)"
+  task colors: [:color_tokens, :css_variables, :dither_ramps]
 
   # The docs chrome is Tailwind, and a host cannot rebuild it: the input scans the
   # gem's views and pulls npm plugins. So the gem ships a snapshot of the build,

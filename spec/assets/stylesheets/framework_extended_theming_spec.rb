@@ -216,6 +216,92 @@ RSpec.describe 'Framework extended theming contract' do
     end
   end
 
+  # A theme turns plugin items into cards through the stylesheet alone: a fill
+  # slot, the ink its content takes on top of that fill, and a border-art slot
+  # pointed at art the framework publishes. All three default to nothing, so the
+  # item every plugin already ships keeps rendering as it does today.
+  describe 'item slots' do
+    subject(:item) { declarations_for(/\A\.trmnl \.item\z/).join }
+
+    let(:overlay) { declarations_for(/\A\.trmnl \.item::after\z/).join }
+    let(:content) { declarations_for(/\A\.trmnl \.item \.content\z/).join }
+
+    it 'reads the card fill pair off the item slot' do
+      expect(item).to include('background-color:var(--framework-slot-item-bg-color, transparent)')
+      expect(item).to include('background-image:var(--framework-slot-item-bg-image, none)')
+    end
+
+    # A token fill still lands on the dither grid; a generated ramp overrides
+    # both fields, since it is one strip rather than a repeating tile.
+    it 'tiles the fill on the dither grid unless the slot states otherwise' do
+      expect(item).to include('background-size:var(--framework-slot-item-bg-size, var(--dither-bg-size, auto))')
+      expect(item).to include('background-repeat:var(--framework-slot-item-bg-repeat, repeat)')
+    end
+
+    # The channel is repointed rather than restated per element, so a label
+    # modifier naming a channel of its own keeps its paint inside a card.
+    it 'forwards the item ink into the content primary text channel' do
+      %w[color image clip under solid].each do |field|
+        expect(content).to include(
+          "--framework-semantic-text-primary-text-#{field}: var(--framework-slot-item-text-#{field},"
+        )
+      end
+    end
+
+    it 'falls back to the screen ink the elements read before the slot existed' do
+      expect(item).to include(
+        '--framework-internal-item-ink-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))'
+      )
+      expect(content).to include('var(--framework-slot-item-text-color, var(--framework-internal-item-ink-color))')
+    end
+
+    # One slot read twice: a gradient stack is invalid as a `border` and a
+    # `1px solid` line is invalid as a `background`, so whichever the art
+    # resolves to, the other declaration drops out at computed-value time.
+    it 'paints the border art on an overlay that takes it as either channel' do
+      expect(overlay).to include('background:var(--framework-slot-item-border-art, none)')
+      expect(overlay).to include('border:var(--framework-slot-item-border-art, none)')
+    end
+
+    it 'rounds the overlay with the theme corner factor' do
+      expect(overlay).to include('border-radius:calc(7px*var(--ui-scale, 1)*var(--framework-layout-corner-factor, 1))')
+    end
+
+    it 'publishes the dotted outline art as the exact stack the .outline utility draws' do
+      published = item[/--framework-item-border-art-outline:\s*(.*?)(?=;--|\z)/m, 1]
+      drawn = declarations_for(/\A\.trmnl \.outline::after\z/).join[/(?:\A|;)background:(.*?)(?=;[a-z-]+:|\z)/m, 1]
+
+      expect(published).to eq(drawn)
+    end
+
+    it 'publishes eight corner marks as the ticks art' do
+      ticks = item[/--framework-item-border-art-ticks:\s*(.*?)(?=;--|\z)/m, 1]
+
+      expect(ticks.scan('linear-gradient').size).to eq(8)
+      expect(ticks).to include('var(--framework-semantic-border-strong-border-color,')
+    end
+
+    # The limited palettes dither their inks, so the framework's .outline swaps
+    # the dotted arc for a clean 1px line there. The published art has to swap
+    # with it or a card theme keeps a dithered border on those rails.
+    it 'switches the published outline art to a solid line on the dithering rails' do
+      switched = declarations_for(/\A\.trmnl \.screen--2bit \.item,/).join
+
+      expect(switched).to include('--framework-item-border-art-outline: 1px solid')
+    end
+
+    it 'leaves an unthemed item with nothing to paint' do
+      inert = item.split(';').grep_v(/\A--/)
+
+      expect(inert).to include(
+        'padding:var(--framework-slot-item-padding-y, 0) var(--framework-slot-item-padding-x, 0)',
+        'background-color:var(--framework-slot-item-bg-color, transparent)',
+        'background-image:var(--framework-slot-item-bg-image, none)'
+      )
+      expect(inert.grep(/\Aborder(?!-)/)).to be_empty
+    end
+  end
+
   describe 'the font weight shift' do
     it 'shifts every vector role weight inside the renderable clamp' do
       expect(css).to include('--title-bar-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900)')
