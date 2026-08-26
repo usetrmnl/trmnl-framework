@@ -3155,7 +3155,7 @@ function wrapAdaptiveForStroke(img) {
   } catch (_) { /* wrapping is decorative; the icon still renders unwrapped */ }
 }
 
-async function applyAdaptiveImages(root = document) {
+function applyAdaptiveImages(root = document) {
   const scope = root || document;
   // Only un-armed icons are processed and armed below; arming behavior is unchanged.
   const imgs = Array.from(scope.querySelectorAll('img.image--adaptive:not([data-adaptive])'));
@@ -3167,37 +3167,25 @@ async function applyAdaptiveImages(root = document) {
   let armed = 0;
   let skipped = 0;
 
-  const readAsDataURL = (blob) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error || new Error('read failed'));
-    reader.readAsDataURL(blob);
-  });
+  const arm = (img) => {
+    img.setAttribute('data-adaptive', 'true');
+    wrapAdaptiveForStroke(img);
+    armed += 1;
+  };
 
-  await Promise.all(imgs.map(async (img) => {
+  imgs.forEach((img) => {
     // Author-supplied mask source (manual form): trust it, just flip the gate.
-    if (img.style.getPropertyValue('--framework-icon-src').trim()) {
-      img.setAttribute('data-adaptive', 'true');
-      wrapAdaptiveForStroke(img);
-      armed += 1;
+    if (img.style.getPropertyValue('--framework-icon-src').trim()) return arm(img);
+
+    const src = img.currentSrc || img.src || '';
+    if (!src) {
+      skipped += 1;
       return;
     }
-    const src = img.currentSrc || img.src || '';
-    if (!src) return;
-    try {
-      const response = await fetch(src, { mode: 'cors', credentials: 'omit' });
-      if (!response.ok) throw new Error(`status ${response.status}`);
-      const dataUri = await readAsDataURL(await response.blob());
-      img.style.setProperty('--framework-icon-src', `url("${String(dataUri).replace(/"/g, '\\"')}")`);
-      img.setAttribute('data-adaptive', 'true');
-      wrapAdaptiveForStroke(img);
-      armed += 1;
-    } catch (_) {
-      // Icon is not readable (e.g. cross-origin host without CORS headers).
-      // Leave it as a plain image; recoloring is simply unavailable here.
-      skipped += 1;
-    }
-  }));
+    // A mask is not subject to CORS, so the icon's own url works even on another origin.
+    img.style.setProperty('--framework-icon-src', `url("${String(src).replace(/"/g, '\\"')}")`);
+    arm(img);
+  });
 
   // targets = total adaptive images present (already-armed + newly-armed candidates)
   // so the step reports consistently across re-terminalize passes. armed is the

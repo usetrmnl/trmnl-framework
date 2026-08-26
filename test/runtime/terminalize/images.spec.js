@@ -107,3 +107,79 @@ test('arms adaptive images and wraps a title-bar icon only once', async ({ page 
   expect(state.stats.every((stats) => stats.engineNames.includes('Adaptive images'))).toBe(true);
   expectNoUnexpectedErrors(browserSignals, state);
 });
+
+test.describe('arming an adaptive icon', () => {
+  const iconPath = '/__runtime-test__/icon.svg';
+  const otherOrigin = 'https://icons.example.test/icon.svg';
+
+  // Counts any read of the icon back over fetch(), which is how arming used to inline it.
+  const armIcon = async (page, src) => {
+    const browserSignals = await openRuntimePage(page);
+    await mountFixture(page, {
+      html: `<img id="icon" class="image--adaptive" src="${src}" alt="">`,
+    });
+    await page.evaluate((url) => {
+      window.__iconFetches = 0;
+      const realFetch = window.fetch;
+      window.fetch = function (...args) {
+        if (String(args[0]).includes(url)) window.__iconFetches += 1;
+        return realFetch.apply(this, args);
+      };
+    }, src);
+
+    await runTerminalize(page, 1);
+
+    const result = await page.evaluate(() => {
+      const icon = document.querySelector('#icon');
+      return {
+        armed: icon.dataset.adaptive,
+        source: icon.style.getPropertyValue('--framework-icon-src'),
+        iconFetches: window.__iconFetches,
+      };
+    });
+    return { browserSignals, result };
+  };
+
+  test.beforeEach(async ({ page }) => {
+    await page.route(`**${iconPath}`, (route) => route.fulfill({
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4"/></svg>',
+      contentType: 'image/svg+xml',
+    }));
+    await page.route(otherOrigin, (route) => route.fulfill({
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4"/></svg>',
+      contentType: 'image/svg+xml',
+    }));
+  });
+
+  test('masks it with the icon url', async ({ page }) => {
+    const { result } = await armIcon(page, iconPath);
+    // currentSrc resolves to an absolute url, so match the path rather than the whole value.
+    expect(result.source).toContain(iconPath);
+  });
+
+  test('does not copy the icon into the mask', async ({ page }) => {
+    const { result } = await armIcon(page, iconPath);
+    expect(result.source.startsWith('url("data:')).toBe(false);
+  });
+
+  test('does not read the icon back over the network', async ({ page }) => {
+    const { result } = await armIcon(page, iconPath);
+    expect(result.iconFetches).toBe(0);
+  });
+
+  test('arms an icon served from another origin', async ({ page }) => {
+    const { result } = await armIcon(page, otherOrigin);
+    expect(result.armed).toBe('true');
+  });
+
+  test('masks a cross-origin icon with its own url', async ({ page }) => {
+    const { result } = await armIcon(page, otherOrigin);
+    expect(result.source).toContain(otherOrigin);
+  });
+
+  test('reports no runtime errors while arming', async ({ page }) => {
+    const { browserSignals } = await armIcon(page, iconPath);
+    const state = await runtimeSignals(page);
+    expectNoUnexpectedErrors(browserSignals, state);
+  });
+});
