@@ -162,6 +162,18 @@ RSpec.describe 'Framework extended theming contract' do
         .to include('letter-spacing:var(--framework-text-description-tracking, normal)')
     end
 
+    # The bar's title span carries the .title element class, so the two need
+    # separate modifiers or a theme's title treatment follows it into the bar.
+    it 'keeps the title bar text on its own modifiers, not the title element' do
+      bar_title = declarations_for(/\.title_bar[^{]*\.title(?![\w-])/).join
+      bar_instance = declarations_for(/\.title_bar[^{]*\.instance(?![\w-])/).join
+
+      expect(bar_title).to include('text-transform:var(--framework-text-title-bar-transform, none)')
+      expect(bar_title).to include('letter-spacing:var(--framework-text-title-bar-tracking, normal)')
+      expect(bar_instance).to include('text-transform:var(--framework-text-title-bar-instance-transform, none)')
+      expect(bar_instance).to include('letter-spacing:var(--framework-text-title-bar-instance-tracking, normal)')
+    end
+
     it 'reads case and tracking on the table head, its own label tier' do
       head_rules = declarations_for(/\.table[^{]*th(?![\w-])/).join
 
@@ -176,6 +188,19 @@ RSpec.describe 'Framework extended theming contract' do
 
     it 'never publishes a size or line-height modifier, which stay device axes' do
       expect(css).not_to match(/--framework-text-[a-z-]*(size|line-height)/)
+    end
+  end
+
+  describe 'the divider slot' do
+    # Level 6 is shared with the tables and the .border--* utilities, so a
+    # theme quieting dividers must not reach for the level itself.
+    it 'reads its own slot before level 6' do
+      divider_rules = declarations_for(/\.divider(?![\w-])/).join
+
+      expect(divider_rules).to include(
+        'background-color:var(--framework-slot-divider-border-color, var(--theme-border-6-h-color,'
+      )
+      expect(divider_rules).to include('background-image:var(--framework-slot-divider-border-image,')
     end
   end
 

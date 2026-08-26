@@ -12,28 +12,32 @@
 // left a divider and a border--h-6 a different thickness apart on every
 // screen--scale-* modifier and on the two devices with a ui-scale of their own,
 // while the level art underneath stayed a hairline in both.
-@mixin divider-level-horizontal($level) {
+@mixin divider-level-horizontal($level, $slot: null) {
     width: 100%;
     height: 1px;
     min-height: 1px;
-    @include mixins.border-level-vars($level, h);
+    @include mixins.border-level-vars($level, h, $slot);
 }
 
-@mixin divider-level-vertical($level) {
+@mixin divider-level-vertical($level, $slot: null) {
     width: 1px;
     min-width: 1px;
     height: 100%;
-    @include mixins.border-level-vars($level, v);
+    @include mixins.border-level-vars($level, v, $slot);
 }
 
 @include mixins.trmnl-namespace {
+    // The default divider takes a slot so a theme can repaint or silence it
+    // without repointing level 6, which the tables and .border--* utilities
+    // share. The deprecated variants below stay on the bare level: they are
+    // 3.x compatibility aliases and leave at 4.0.
     .divider,
     .divider--h {
-        @include divider-level-horizontal(6);
+        @include divider-level-horizontal(6, 'divider');
     }
 
     .divider--v {
-        @include divider-level-vertical(6);
+        @include divider-level-vertical(6, 'divider');
     }
 
     // ── Background variants (deprecated) ──

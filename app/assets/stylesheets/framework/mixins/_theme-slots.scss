@@ -85,12 +85,16 @@ $chart-series-slots: 16;
     $label-transform: null, $label-tracking: null,
     $value-transform: null, $value-tracking: null,
     $title-transform: null, $title-tracking: null,
-    $description-tracking: null,
-    $table-head-transform: null, $table-head-tracking: null, $table-body-tracking: null
+    $description-transform: null, $description-tracking: null,
+    $table-head-transform: null, $table-head-tracking: null, $table-body-tracking: null,
+    $title-bar-transform: null, $title-bar-tracking: null,
+    $title-bar-instance-transform: null, $title-bar-instance-tracking: null
 ) {
     @each $name, $value in ('label': $label-tracking, 'value': $value-tracking,
                             'title': $title-tracking, 'description': $description-tracking,
-                            'table head': $table-head-tracking, 'table body': $table-body-tracking) {
+                            'table head': $table-head-tracking, 'table body': $table-body-tracking,
+                            'title bar': $title-bar-tracking,
+                            'title bar instance': $title-bar-instance-tracking) {
         @if $value != null and meta.type-of($value) == 'number' {
             @if math.unit($value) != 'px' or $value < 0 or $value != math.round($value) {
                 @error '#{$name} tracking takes whole positive pixels, got #{$value}.';
@@ -103,7 +107,12 @@ $chart-series-slots: 16;
     @if $value-tracking != null { --framework-text-value-tracking: #{$value-tracking}; }
     @if $title-transform != null { --framework-text-title-transform: #{$title-transform}; }
     @if $title-tracking != null { --framework-text-title-tracking: #{$title-tracking}; }
+    @if $description-transform != null { --framework-text-description-transform: #{$description-transform}; }
     @if $description-tracking != null { --framework-text-description-tracking: #{$description-tracking}; }
+    @if $title-bar-transform != null { --framework-text-title-bar-transform: #{$title-bar-transform}; }
+    @if $title-bar-tracking != null { --framework-text-title-bar-tracking: #{$title-bar-tracking}; }
+    @if $title-bar-instance-transform != null { --framework-text-title-bar-instance-transform: #{$title-bar-instance-transform}; }
+    @if $title-bar-instance-tracking != null { --framework-text-title-bar-instance-tracking: #{$title-bar-instance-tracking}; }
     @if $table-head-transform != null { --framework-text-table-head-transform: #{$table-head-transform}; }
     @if $table-head-tracking != null { --framework-text-table-head-tracking: #{$table-head-tracking}; }
     @if $table-body-tracking != null { --framework-text-table-body-tracking: #{$table-body-tracking}; }

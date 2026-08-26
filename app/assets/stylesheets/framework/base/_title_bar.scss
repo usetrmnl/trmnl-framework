@@ -86,6 +86,10 @@
         }
 
         .title {
+            // The bar's title carries the .title element class, so without its
+            // own modifiers a theme's title treatment would follow it in here.
+            text-transform: var(--framework-text-title-bar-transform, none);
+            letter-spacing: var(--framework-text-title-bar-tracking, normal);
             font-family: var(--title-bar-font-family);
             -webkit-font-smoothing: var(--title-bar-font-smoothing);
             font-size: var(--title-bar-font-size);
@@ -110,6 +114,8 @@
         // so a filled bar recolors both with one slot and still lets the
         // instance de-emphasize separately.
         .instance {
+            text-transform: var(--framework-text-title-bar-instance-transform, none);
+            letter-spacing: var(--framework-text-title-bar-instance-tracking, normal);
             font-family: var(--title-bar-font-family);
             -webkit-font-smoothing: var(--title-bar-font-smoothing);
             font-size: var(--title-bar-font-size);
