@@ -192,13 +192,25 @@
             <code class="<%= framework_section_code_classes %>">rounded--*</code> values) stay literal: they are a
             plugin author's stated intent, not a theme default.
           </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">text-modifiers(...)</code> sets case and tracking per
+            text role: <code class="<%= framework_section_code_classes %>">$label-transform</code>,
+            <code class="<%= framework_section_code_classes %>">$label-tracking</code>,
+            <code class="<%= framework_section_code_classes %>">$value-tracking</code>,
+            <code class="<%= framework_section_code_classes %>">$title-transform</code>,
+            <code class="<%= framework_section_code_classes %>">$title-tracking</code>, and
+            <code class="<%= framework_section_code_classes %>">$description-tracking</code>. Sizes and line heights
+            are deliberately not part of it: those are the device and reader scale axes, and a theme that moved them
+            would fight the reader's own text-scale setting.
+          </p>
         </div>
 
         <div class="mt-4">
           <%= render CodeExampleComponent.new(
-            demo_code: '// Airy, square-cornered, slightly bolder.
+            demo_code: '// Airy, square-cornered, slightly bolder, editorial labels.
 @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0);
-@include theme-slots.font-weight-shift(100);',
+@include theme-slots.font-weight-shift(100);
+@include theme-slots.text-modifiers($label-transform: uppercase, $label-tracking: 0.12em);',
             language: 'scss'
           ) %>
         </div>

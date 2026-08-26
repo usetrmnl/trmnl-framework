@@ -69,6 +69,23 @@ $chart-series-slots: 16;
     --framework-font-weight-shift: #{$shift};
 }
 
+// Case and tracking per text role. Sizes and line heights are deliberately
+// absent: those are the device and user scale axes, and a theme that moved
+// them would fight the reader's own text-scale setting.
+@mixin text-modifiers(
+    $label-transform: null, $label-tracking: null,
+    $value-tracking: null,
+    $title-transform: null, $title-tracking: null,
+    $description-tracking: null
+) {
+    @if $label-transform != null { --framework-text-label-transform: #{$label-transform}; }
+    @if $label-tracking != null { --framework-text-label-tracking: #{$label-tracking}; }
+    @if $value-tracking != null { --framework-text-value-tracking: #{$value-tracking}; }
+    @if $title-transform != null { --framework-text-title-transform: #{$title-transform}; }
+    @if $title-tracking != null { --framework-text-title-tracking: #{$title-tracking}; }
+    @if $description-tracking != null { --framework-text-description-tracking: #{$description-tracking}; }
+}
+
 // A level pointed at a slot, as the three background longhands its consumers
 // read. The theme layer comes first, the same order border-level-vars reads a
 // level in. A slot points at a level, so it has to follow that level wherever

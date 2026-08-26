@@ -20,6 +20,8 @@
         display: inline-flex;
         align-items: center;
         max-width: 100%;
+        text-transform: var(--framework-text-label-transform, none);
+        letter-spacing: var(--framework-text-label-tracking, normal);
         font-family: var(--label-font-family);
         -webkit-font-smoothing: var(--label-font-smoothing);
         font-size: var(--label-font-size);

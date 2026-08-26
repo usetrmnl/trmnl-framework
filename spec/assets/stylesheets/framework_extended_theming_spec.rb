@@ -13,8 +13,11 @@ RSpec.describe 'Framework extended theming contract' do
   subject(:css) { FrameworkBuild.plugins_css }
 
   # The declarations of every rule whose selector list matches the matcher.
+  # The lookbehind takes `{` as well as `}`: the first rule inside an @layer
+  # block follows the block's opening brace, and anchoring on `}` alone
+  # silently skipped it.
   def declarations_for(matcher)
-    css.scan(/(?:\A|(?<=\}))([^{}]*)\{([^{}]*)\}/)
+    css.scan(/(?:\A|(?<=[{}]))([^{}]*)\{([^{}]*)\}/)
        .select { |selectors, _| selectors.match?(matcher) }
        .map(&:last)
   end
@@ -127,6 +130,38 @@ RSpec.describe 'Framework extended theming contract' do
         /--title-bar-image-height:\s*calc\(28px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-title-bar-height-factor, 1\)\)/
       )
       expect(css).to match(/--title-bar-font-size:\s*calc\(16px\s*\*\s*var\(--text-ui-scale\)\)/)
+    end
+  end
+
+  describe 'text modifiers' do
+    # Case and tracking are theme decisions; size is not. The modifiers ride
+    # the elements themselves so a theme never restates a font metric.
+    it 'reads case and tracking on the label' do
+      label_rules = declarations_for(/\.label(?![\w-])/).join
+
+      expect(label_rules).to include('text-transform:var(--framework-text-label-transform, none)')
+      expect(label_rules).to include('letter-spacing:var(--framework-text-label-tracking, normal)')
+    end
+
+    it 'reads tracking on the value' do
+      expect(declarations_for(/\.value(?![\w-])/).join)
+        .to include('letter-spacing:var(--framework-text-value-tracking, normal)')
+    end
+
+    it 'reads case and tracking on the title' do
+      title_rules = declarations_for(/\.title(?![\w-])/).join
+
+      expect(title_rules).to include('text-transform:var(--framework-text-title-transform, none)')
+      expect(title_rules).to include('letter-spacing:var(--framework-text-title-tracking, normal)')
+    end
+
+    it 'reads tracking on the description' do
+      expect(declarations_for(/\.description(?![\w-])/).join)
+        .to include('letter-spacing:var(--framework-text-description-tracking, normal)')
+    end
+
+    it 'never publishes a size or line-height modifier, which stay device axes' do
+      expect(css).not_to match(/--framework-text-[a-z-]*(size|line-height)/)
     end
   end
 
