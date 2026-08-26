@@ -170,8 +170,8 @@ plugin settings reaches a map; a source named in code wins over the injected
 one. Keys never live in the framework.
 
 The `'trmnl'` preset is TRMNL's own planet on the edge,
-`https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}`, so a page offering it needs
-`connect-src https://tiles.trmnl.com` rather than `'self'`.
+`https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`, so a page offering it needs
+`connect-src https://maps.trmnl.com` rather than `'self'`.
 
 The engine also serves `/framework/tiles/{z}/{x}/{y}.mvt` on the page's host
 (`connect-src 'self'`) for a host proxying a source of its own.

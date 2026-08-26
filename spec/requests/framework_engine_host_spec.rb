@@ -499,7 +499,7 @@ RSpec.describe 'Engine host contract' do
         expect([integration_doc, open_source_page, readme]).to all(include('vector.openstreetmap.org').and(include('/framework/tiles/')))
         expect(Framework::DEFAULT_TILE_SOURCE_URL).to include('vector.openstreetmap.org')
         runtime = root.join('app/javascript/plugin-render/plugins.js').read
-        expect(runtime).to include('https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}')
+        expect(runtime).to include('https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}')
         expect(runtime).to include('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt')
       end
     end

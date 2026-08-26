@@ -5489,7 +5489,7 @@ window.markFrameworkReady = markFrameworkReady;
   // how a plugin author's key or a user's key reaches a map without a key in
   // the markup. No glyph endpoint: labels are framework elements the screen
   // typesets itself (placeMapLabels).
-  const MAP_TILES_TRMNL_URL = 'https://tiles.trmnl.com/tiles/osm/{z}/{x}/{y}';
+  const MAP_TILES_TRMNL_URL = 'https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}';
   const MAP_TILE_PRESETS = {
     osm: {
       id: 'osm',
