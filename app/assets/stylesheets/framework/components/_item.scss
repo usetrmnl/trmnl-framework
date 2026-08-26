@@ -21,6 +21,9 @@
         line-height: 0;
         align-items: stretch;
         width: 100%;
+        // Zero by default, so an unthemed item is laid out exactly as before.
+        // A card theme sets these to give the fill and border something to hold.
+        padding: var(--framework-slot-item-padding-y, 0) var(--framework-slot-item-padding-x, 0);
 
         &--shrink {
             flex: 1 1 auto;

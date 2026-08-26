@@ -29,7 +29,9 @@
         display: flex;
         align-content: center;
         align-items: center;
-        padding: 0 var(--gap);
+        // Factor over the screen gap, so 0 sits the title and instance flush
+        // with the content edge and the default stays exactly one gap.
+        padding: 0 calc(var(--gap) * var(--framework-layout-title-bar-padding-factor, 1));
         gap: var(--gap);
         position: relative;
         color: var(--framework-slot-title-bar-text-solid, var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))));

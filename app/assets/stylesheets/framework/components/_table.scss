@@ -34,6 +34,17 @@
             @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
         }
 
+        // The head row is the table's own label tier, so it takes its own case
+        // and tracking rather than following the label element's.
+        th {
+            text-transform: var(--framework-text-table-head-transform, none);
+            letter-spacing: var(--framework-text-table-head-tracking, normal);
+        }
+
+        td {
+            letter-spacing: var(--framework-text-table-body-tracking, normal);
+        }
+
         thead, tbody {
             tr {
                 position: relative;

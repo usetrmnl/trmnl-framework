@@ -208,6 +208,37 @@ RSpec.describe 'Framework theme slot contract' do
     it 'publishes the vector weight shift' do
       expect(probe.rule('.weight-shift')['--framework-font-weight-shift']).to eq('-100')
     end
+
+    # The bitmap bundles are drawn on the pixel grid, so a fractional advance
+    # lands their glyphs off-grid and a negative one eats sidebearings that are
+    # part of the drawing. Both are refused at compile time rather than shipped.
+    it 'takes whole positive pixels of tracking' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".ok { @include theme-slots.text-modifiers($label-tracking: 2px); }\n"
+
+      expect(probe.compile(source)).to include('--framework-text-label-tracking: 2px')
+    end
+
+    it 'refuses fractional tracking' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".bad { @include theme-slots.text-modifiers($label-tracking: 1.5px); }\n"
+
+      expect { probe.compile(source) }.to raise_error(/whole positive pixels/)
+    end
+
+    it 'refuses negative tracking' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".bad { @include theme-slots.text-modifiers($value-tracking: -1px); }\n"
+
+      expect { probe.compile(source) }.to raise_error(/whole positive pixels/)
+    end
+
+    it 'refuses em tracking, which cannot stay on the pixel grid' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".bad { @include theme-slots.text-modifiers($title-tracking: 0.12em); }\n"
+
+      expect { probe.compile(source) }.to raise_error(/whole positive pixels/)
+    end
   end
 
   describe 'the chart series ramp' do

@@ -143,9 +143,11 @@ RSpec.describe 'Framework extended theming contract' do
       expect(label_rules).to include('letter-spacing:var(--framework-text-label-tracking, normal)')
     end
 
-    it 'reads tracking on the value' do
-      expect(declarations_for(/\.value(?![\w-])/).join)
-        .to include('letter-spacing:var(--framework-text-value-tracking, normal)')
+    it 'reads case and tracking on the value' do
+      value_rules = declarations_for(/\.value(?![\w-])/).join
+
+      expect(value_rules).to include('text-transform:var(--framework-text-value-transform, none)')
+      expect(value_rules).to include('letter-spacing:var(--framework-text-value-tracking, normal)')
     end
 
     it 'reads case and tracking on the title' do
@@ -160,8 +162,32 @@ RSpec.describe 'Framework extended theming contract' do
         .to include('letter-spacing:var(--framework-text-description-tracking, normal)')
     end
 
+    it 'reads case and tracking on the table head, its own label tier' do
+      head_rules = declarations_for(/\.table[^{]*th(?![\w-])/).join
+
+      expect(head_rules).to include('text-transform:var(--framework-text-table-head-transform, none)')
+      expect(head_rules).to include('letter-spacing:var(--framework-text-table-head-tracking, normal)')
+    end
+
+    it 'reads tracking on the table body' do
+      expect(declarations_for(/\.table[^{]*td(?![\w-])/).join)
+        .to include('letter-spacing:var(--framework-text-table-body-tracking, normal)')
+    end
+
     it 'never publishes a size or line-height modifier, which stay device axes' do
       expect(css).not_to match(/--framework-text-[a-z-]*(size|line-height)/)
+    end
+  end
+
+  describe 'spacing slots' do
+    it 'rides a factor over the screen gap on the title bar, so zero sits flush' do
+      expect(declarations_for(/\.title_bar(?![\w-])/).join)
+        .to include('padding:0 calc(var(--gap)*var(--framework-layout-title-bar-padding-factor, 1))')
+    end
+
+    it 'gives the item padding slots that default to the unthemed zero' do
+      expect(declarations_for(/\.item(?![\w-])/).join)
+        .to include('padding:var(--framework-slot-item-padding-y, 0) var(--framework-slot-item-padding-x, 0)')
     end
   end
 

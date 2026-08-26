@@ -7,6 +7,7 @@
 @use 'sass:list';
 @use 'sass:map';
 @use 'sass:math';
+@use 'sass:meta';
 @use 'sass:string';
 @use '../config/tokens' as tokens;
 @use 'border-levels';
@@ -72,18 +73,49 @@ $chart-series-slots: 16;
 // Case and tracking per text role. Sizes and line heights are deliberately
 // absent: those are the device and user scale axes, and a theme that moved
 // them would fight the reader's own text-scale setting.
+//
+// Tracking takes whole pixels only, and only positive ones. The bitmap
+// bundles (TRMNL12/16/21, NicoClean, NicoPups, BlockKie) are drawn on the
+// pixel grid, so a fractional advance from an em value lands their glyphs
+// off-grid and smears them; tightening is worse still, because their
+// sidebearings are part of the drawing and there is no sub-pixel room to
+// take back. Adding a whole pixel between letters is the one move that
+// stays on the grid, so the contract only offers that.
 @mixin text-modifiers(
     $label-transform: null, $label-tracking: null,
-    $value-tracking: null,
+    $value-transform: null, $value-tracking: null,
     $title-transform: null, $title-tracking: null,
-    $description-tracking: null
+    $description-tracking: null,
+    $table-head-transform: null, $table-head-tracking: null, $table-body-tracking: null
 ) {
+    @each $name, $value in ('label': $label-tracking, 'value': $value-tracking,
+                            'title': $title-tracking, 'description': $description-tracking,
+                            'table head': $table-head-tracking, 'table body': $table-body-tracking) {
+        @if $value != null and meta.type-of($value) == 'number' {
+            @if math.unit($value) != 'px' or $value < 0 or $value != math.round($value) {
+                @error '#{$name} tracking takes whole positive pixels, got #{$value}.';
+            }
+        }
+    }
     @if $label-transform != null { --framework-text-label-transform: #{$label-transform}; }
     @if $label-tracking != null { --framework-text-label-tracking: #{$label-tracking}; }
+    @if $value-transform != null { --framework-text-value-transform: #{$value-transform}; }
     @if $value-tracking != null { --framework-text-value-tracking: #{$value-tracking}; }
     @if $title-transform != null { --framework-text-title-transform: #{$title-transform}; }
     @if $title-tracking != null { --framework-text-title-tracking: #{$title-tracking}; }
     @if $description-tracking != null { --framework-text-description-tracking: #{$description-tracking}; }
+    @if $table-head-transform != null { --framework-text-table-head-transform: #{$table-head-transform}; }
+    @if $table-head-tracking != null { --framework-text-table-head-tracking: #{$table-head-tracking}; }
+    @if $table-body-tracking != null { --framework-text-table-body-tracking: #{$table-body-tracking}; }
+}
+
+// Padding a theme owns. The title bar rides a factor over the screen gap
+// (0 sits its content flush with the edge); the item takes literal lengths
+// because its unthemed padding is zero and a factor could never leave it.
+@mixin spacing-slots($title-bar-padding: null, $item-padding-x: null, $item-padding-y: null) {
+    @if $title-bar-padding != null { --framework-layout-title-bar-padding-factor: #{$title-bar-padding}; }
+    @if $item-padding-x != null { --framework-slot-item-padding-x: #{$item-padding-x}; }
+    @if $item-padding-y != null { --framework-slot-item-padding-y: #{$item-padding-y}; }
 }
 
 // A level pointed at a slot, as the three background longhands its consumers

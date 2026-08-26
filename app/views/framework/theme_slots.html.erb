@@ -196,12 +196,20 @@
             <code class="<%= framework_section_code_classes %>">text-modifiers(...)</code> sets case and tracking per
             text role: <code class="<%= framework_section_code_classes %>">$label-transform</code>,
             <code class="<%= framework_section_code_classes %>">$label-tracking</code>,
+            <code class="<%= framework_section_code_classes %>">$value-transform</code>,
             <code class="<%= framework_section_code_classes %>">$value-tracking</code>,
             <code class="<%= framework_section_code_classes %>">$title-transform</code>,
             <code class="<%= framework_section_code_classes %>">$title-tracking</code>, and
             <code class="<%= framework_section_code_classes %>">$description-tracking</code>. Sizes and line heights
             are deliberately not part of it: those are the device and reader scale axes, and a theme that moved them
             would fight the reader's own text-scale setting.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Tracking takes whole positive pixels, and the mixin refuses anything else. The bitmap bundles are drawn
+            on the pixel grid, so a fractional advance from an
+            <code class="<%= framework_section_code_classes %>">em</code> value puts their glyphs off-grid, and a
+            negative one eats sidebearings that are part of the drawing. Adding a whole pixel between letters is the
+            one move that stays on the grid.
           </p>
         </div>
 
@@ -210,7 +218,7 @@
             demo_code: '// Airy, square-cornered, slightly bolder, editorial labels.
 @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0);
 @include theme-slots.font-weight-shift(100);
-@include theme-slots.text-modifiers($label-transform: uppercase, $label-tracking: 0.12em);',
+@include theme-slots.text-modifiers($label-transform: uppercase, $label-tracking: 1px);',
             language: 'scss'
           ) %>
         </div>

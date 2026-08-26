@@ -8,6 +8,7 @@
 @include mixins.trmnl-namespace {
     .value {
         @include mixins.semantic-text-paint('text-primary', var(--framework-text-primary));
+        text-transform: var(--framework-text-value-transform, none);
         letter-spacing: var(--framework-text-value-tracking, normal);
 
         // The bare element class takes the full ladder here, which title, label,
