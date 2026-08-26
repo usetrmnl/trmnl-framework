@@ -41,13 +41,13 @@ $chart-series-slots: 16;
 // The halo outline a slot's consumers draw around their own glyphs and icons.
 // A filled title bar points this at its field tone so outlines separate the
 // ink from the fill instead of tracking the screen canvas.
-@mixin slot-stroke($slot, $token, $fallback: currentColor) {
+@mixin stroke-slot($slot, $token, $fallback: currentColor) {
     --framework-slot-#{$slot}-stroke-color: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
 }
 
 // Paint for the mask-recolored adaptive icon inside a slot's component, ahead
 // of the screen-wide icon channel.
-@mixin slot-icon($slot, $token, $fallback: currentColor) {
+@mixin icon-slot($slot, $token, $fallback: currentColor) {
     --framework-slot-#{$slot}-icon-color: var(--text-#{$token}-color, var(--#{$token}, #{$fallback}));
     --framework-slot-#{$slot}-icon-image: var(--text-#{$token}-image, none);
     --framework-slot-#{$slot}-icon-under: var(--text-#{$token}-under, transparent);
@@ -75,11 +75,11 @@ $chart-series-slots: 16;
 // Structure factors: unitless multipliers over the unthemed geometry. Each
 // rides its own consumption chain (content scale + table rows, radii, bar and
 // icon heights, progress sizes), so 1 is always the unthemed screen.
-@mixin layout-factors($whitespace: null, $corners: null, $title-bar-height: null, $meters: null) {
+@mixin layout-factors($whitespace: null, $corners: null, $title-bar-height: null, $progress: null) {
     @if $whitespace != null { --framework-layout-whitespace-factor: #{$whitespace}; }
     @if $corners != null { --framework-layout-corner-factor: #{$corners}; }
     @if $title-bar-height != null { --framework-layout-title-bar-height-factor: #{$title-bar-height}; }
-    @if $meters != null { --framework-layout-meter-factor: #{$meters}; }
+    @if $progress != null { --framework-layout-progress-factor: #{$progress}; }
 }
 
 // One signed shift over every vector-face role weight, clamped to renderable
@@ -89,17 +89,7 @@ $chart-series-slots: 16;
     --framework-font-weight-shift: #{$shift};
 }
 
-// Case and tracking per text role. Sizes and line heights are deliberately
-// absent: those are the device and user scale axes, and a theme that moved
-// them would fight the reader's own text-scale setting.
-//
-// Tracking takes whole pixels only, and only positive ones. The bitmap
-// bundles (TRMNL12/16/21, NicoClean, NicoPups, BlockKie) are drawn on the
-// pixel grid, so a fractional advance from an em value lands their glyphs
-// off-grid and smears them; tightening is worse still, because their
-// sidebearings are part of the drawing and there is no sub-pixel room to
-// take back. Adding a whole pixel between letters is the one move that
-// stays on the grid, so the contract only offers that.
+// Case and tracking per text role; the @error below states the tracking rule.
 @mixin text-modifiers(
     $label-transform: null, $label-tracking: null,
     $value-transform: null, $value-tracking: null,

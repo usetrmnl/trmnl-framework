@@ -88,10 +88,10 @@ RSpec.describe 'Framework extended theming contract' do
 
     it 'rides the meter factor on the progress sizes' do
       expect(css).to match(
-        /--progress-bar-height:\s*calc\(24px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-meter-factor, 1\)\)/
+        /--progress-bar-height:\s*calc\(24px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-progress-factor, 1\)\)/
       )
       expect(css).to match(
-        /--progress-dot-size:\s*calc\(16px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-meter-factor, 1\)\)/
+        /--progress-dot-size:\s*calc\(16px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-progress-factor, 1\)\)/
       )
     end
 
@@ -275,7 +275,7 @@ RSpec.describe 'Framework extended theming contract' do
     end
 
     it 'publishes eight corner marks as the ticks art' do
-      ticks = item[/--framework-item-border-art-ticks:\s*(.*?)(?=;--|\z)/m, 1]
+      ticks = item[/--framework-item-border-art-corner-brackets:\s*(.*?)(?=;--|\z)/m, 1]
 
       expect(ticks.scan('linear-gradient').size).to eq(8)
       expect(ticks).to include('var(--framework-semantic-border-strong-border-color,')

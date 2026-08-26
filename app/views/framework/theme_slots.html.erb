@@ -149,11 +149,11 @@
               <code class="<%= framework_section_code_classes %>">title-bar-instance</code>.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">slot-icon($slot, $token)</code>: paint for the
+              <code class="<%= framework_section_code_classes %>">icon-slot($slot, $token)</code>: paint for the
               bar's mask-recolored icon, ahead of the global icon channel.
             </li>
             <li>
-              <code class="<%= framework_section_code_classes %>">slot-stroke($slot, $token)</code>: the halo
+              <code class="<%= framework_section_code_classes %>">stroke-slot($slot, $token)</code>: the halo
               outline around the bar's glyphs and icon. Point it at the bar's own field tone so outlines separate
               ink from fill instead of tracking the canvas.
             </li>
@@ -166,8 +166,8 @@
 @include theme-slots.bg-slot("title-bar", "black");
 @include theme-slots.ink-slot("title-bar", "white");
 @include theme-slots.ink-slot("title-bar-instance", "gray-60");
-@include theme-slots.slot-icon("title-bar", "white");
-@include theme-slots.slot-stroke("title-bar", "black");',
+@include theme-slots.icon-slot("title-bar", "white");
+@include theme-slots.stroke-slot("title-bar", "black");',
             language: 'scss'
           ) %>
         </div>
@@ -179,7 +179,7 @@
           <p class="<%= framework_section_description_classes %>">
             Structure moves through factors: unitless multipliers over the unthemed geometry, so 1 is always the
             unthemed screen and every device density stays correct underneath.
-            <code class="<%= framework_section_code_classes %>">layout-factors($whitespace, $corners, $title-bar-height, $meters)</code>
+            <code class="<%= framework_section_code_classes %>">layout-factors($whitespace, $corners, $title-bar-height, $progress)</code>
             takes any subset. Whitespace rides the content scale, so gaps, pads, and table rows breathe together;
             corners ride every radius, named and component-owned alike (0 squares the screen off); the other two
             size the title bar with its icon, and the progress bars and dots.

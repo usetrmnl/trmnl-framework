@@ -10,13 +10,13 @@
 
 // Emit CSS custom properties from a map.
 // When $scale is true, px values are wrapped in calc(… * var(--ui-scale)).
-// $factor names a theme factor variable multiplied in after the scale, so a
+// $factor-variable names a theme factor multiplied in after the scale, so a
 // component family rides its contract knob without restating every entry.
-@mixin emit-sized-vars($vars, $scale: false, $factor: null) {
+@mixin emit-sized-vars($vars, $scale: false, $factor-variable: null) {
     @each $prop, $value in $vars {
         @if $scale and meta.type-of($value) == 'number' and math.unit($value) == 'px' and $value != 0px {
-            @if $factor {
-                #{$prop}: calc(#{$value} * var(--ui-scale) * var(#{$factor}, 1));
+            @if $factor-variable {
+                #{$prop}: calc(#{$value} * var(--ui-scale) * var(#{$factor-variable}, 1));
             } @else {
                 #{$prop}: calc(#{$value} * var(--ui-scale));
             }
@@ -59,20 +59,19 @@ $progress-size-vars: (
 );
 
 @mixin progress-component-variables {
-    @include emit-sized-vars($progress-size-vars, $scale: true, $factor: '--framework-layout-meter-factor');
+    @include emit-sized-vars($progress-size-vars, $scale: true, $factor-variable: '--framework-layout-progress-factor');
     --progress-bar-radius: calc(10px * var(--ui-scale) * var(--framework-layout-corner-factor, 1));
 }
 
 @mixin table-component-variables {
-    @include emit-sized-vars($table-size-vars, $scale: true, $factor: '--framework-layout-whitespace-factor');
+    @include emit-sized-vars($table-size-vars, $scale: true, $factor-variable: '--framework-layout-whitespace-factor');
 }
 
 // Bind every base component dimension on `.screen`, where --ui-scale is
 // resolved. Values inherited from :root would otherwise resolve against the
 // root's scale of 1 before a device or modifier can participate.
 @mixin base-scaled-display-variables {
-    // Title bar: the bar and icon heights ride the theme's height factor; type
-    // metrics stay put so a taller bar gains air, not larger glyphs.
+    // Title bar: heights ride the theme's height factor; type metrics stay put.
     --title-bar-height: calc(40px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
     --title-bar-small-height: calc(32px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
     --title-bar-font-size: calc(16px * var(--text-ui-scale));

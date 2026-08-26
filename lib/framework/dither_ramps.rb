@@ -3,16 +3,8 @@
 require_relative 'bayer_tiles'
 
 module Framework
-  # Horizontal ordered-dither ramps: ink at the left edge fading to paper at the
-  # right, one per paint rail. Consumed by the CSS emission (framework.rake
-  # dither_ramps), which publishes each rail's ramp as a custom property an item
-  # fill can point at.
-  #
-  # Same Bayer threshold map as the tiles, applied along x instead of at one
-  # level: column x asks for a paper fraction, the matrix decides which of the
-  # rail's renderable tones that pixel lands on. The art is emitted at its
-  # natural size and consumed there; a stretched ramp resamples pixels the
-  # dither already decided and reads as a blur.
+  # Horizontal ordered-dither ramps, one per paint rail, emitted by
+  # framework.rake dither_ramps as the art an item fill points at.
   module DitherRamps
     RAMP_WIDTH = 128
     # The Bayer matrix' own period, so the strip tiles seamlessly with repeat-y.

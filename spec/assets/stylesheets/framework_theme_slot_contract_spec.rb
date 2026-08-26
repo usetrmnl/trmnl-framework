@@ -32,9 +32,9 @@ module ThemeSlotContract
     .short-ramp { @include theme-slots.chart-series-ramp((white, red-70, red-40)); }
     .full-ramp { @include theme-slots.chart-series-ramp((#{FULL_RAMP.join(', ')}), $span: 11); }
     .ink-slot { @include theme-slots.ink-slot('title-bar', 'red-75'); }
-    .icon-slot { @include theme-slots.slot-icon('title-bar', 'red-75'); }
-    .stroke-slot { @include theme-slots.slot-stroke('title-bar', 'black'); }
-    .layout-factors { @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0, $title-bar-height: 1.2, $meters: 1.5); }
+    .icon-slot { @include theme-slots.icon-slot('title-bar', 'red-75'); }
+    .stroke-slot { @include theme-slots.stroke-slot('title-bar', 'black'); }
+    .layout-factors { @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0, $title-bar-height: 1.2, $progress: 1.5); }
     .layout-partial { @include theme-slots.layout-factors($corners: 1.6); }
     .weight-shift { @include theme-slots.font-weight-shift(-100); }
   SCSS
@@ -196,7 +196,7 @@ RSpec.describe 'Framework theme slot contract' do
       # A square-cornered theme passes 0, which must not read as "unset".
       expect(declarations['--framework-layout-corner-factor']).to eq('0')
       expect(declarations['--framework-layout-title-bar-height-factor']).to eq('1.2')
-      expect(declarations['--framework-layout-meter-factor']).to eq('1.5')
+      expect(declarations['--framework-layout-progress-factor']).to eq('1.5')
     end
 
     it 'leaves unnamed factors to the unthemed default' do

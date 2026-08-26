@@ -19,10 +19,6 @@
         drop-shadow(#{$size} calc(#{$size} * -1) 0 #{$color});
 }
 
-// Every ink chain below reads the bar's own slot tier first, so a theme can
-// pair a filled bar with contrasting title/instance/icon inks without moving
-// the screen-wide channels. Unset slots fall through to exactly the chains
-// the bar read before the slots existed.
 @include mixins.trmnl-namespace {
     .title_bar {
         height: var(--title-bar-height);
@@ -55,10 +51,7 @@
             }
         }
 
-        // Mask-recolored icons take the bar's icon slot before the screen-wide
-        // icon channel, so a themed bar can invert its icon alone. The paint
-        // fields are the only overrides; the mask and sizing stay with the
-        // global image--adaptive rule.
+        // Paint fields only; the mask and sizing stay with image--adaptive.
         img.image--adaptive[data-adaptive] {
             background-color: var(--framework-slot-title-bar-icon-color, var(--framework-semantic-icon-color, var(--framework-semantic-text-primary-text-color, currentColor)));
             background-image:
@@ -110,9 +103,6 @@
             @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))), calc(var(--title-bar-text-stroke-width) * 0.5));
         }
 
-        // The instance follows the title ink unless a theme states its own,
-        // so a filled bar recolors both with one slot and still lets the
-        // instance de-emphasize separately.
         .instance {
             text-transform: var(--framework-text-title-bar-instance-transform, none);
             letter-spacing: var(--framework-text-title-bar-instance-tracking, normal);

@@ -56,7 +56,7 @@ RSpec.describe 'Framework scale styles' do
       /\.trmnl \.screen\{[^}]*--rounded:\s*calc\(10px \* var\(--content-scale\) \* var\(--framework-layout-corner-factor, 1\)\)/
     )
     expect(css).to match(
-      /\.trmnl \.screen\{[^}]*--progress-bar-height-xsmall:\s*calc\(6px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-meter-factor, 1\)\)/
+      /\.trmnl \.screen\{[^}]*--progress-bar-height-xsmall:\s*calc\(6px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-progress-factor, 1\)\)/
     )
     expect(css).to match(/\.rounded--\\\[10px\\\]\{border-radius:calc\(10px\s*\*\s*var\(--content-scale, 1\)\)/)
     expect(css).to match(/\.item\{[^}]*gap:calc\(2px\s*\*\s*var\(--ui-scale, 1\)\)/)
