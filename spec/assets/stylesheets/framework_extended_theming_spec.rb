@@ -55,6 +55,13 @@ RSpec.describe 'Framework extended theming contract' do
       expect(bar_rules).to include('var(--framework-slot-title-bar-stroke-color,')
     end
 
+    it 'lets the instance halo diverge before following the bar stroke' do
+      instance_rules = declarations_for(/\.title_bar[^{]*\.instance(?![\w-])/).join
+
+      expect(instance_rules)
+        .to include('var(--framework-slot-title-bar-instance-stroke-color, var(--framework-slot-title-bar-stroke-color,')
+    end
+
     it 'recolors the adaptive title-bar icon through the icon slot' do
       icon_rules = declarations_for(/\.title_bar[^{]*\.image--adaptive\[data-adaptive\]/).join
 

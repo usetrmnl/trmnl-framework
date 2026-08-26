@@ -126,7 +126,7 @@
             background-image: var(--framework-slot-title-bar-instance-text-image, var(--framework-slot-title-bar-text-image, var(--framework-semantic-text-primary-text-image, none)));
             -webkit-background-clip: var(--framework-slot-title-bar-instance-text-clip, var(--framework-slot-title-bar-text-clip, var(--framework-semantic-text-primary-text-clip, border-box)));
             background-clip: var(--framework-slot-title-bar-instance-text-clip, var(--framework-slot-title-bar-text-clip, var(--framework-semantic-text-primary-text-clip, border-box)));
-            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))), calc(var(--title-bar-text-stroke-width) * 0.5));
+            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-slot-title-bar-instance-stroke-color, var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)))), calc(var(--title-bar-text-stroke-width) * 0.5));
         }
     }
 
