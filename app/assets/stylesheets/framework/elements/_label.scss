@@ -86,7 +86,7 @@
         &--outline {
             @include responsive.with-all-variants {
                 border: 1px solid var(--framework-semantic-border-strong-border-color, var(--framework-border-strong));
-                border-radius: vars.ui-scaled(4px);
+                border-radius: vars.corner-scaled(4px);
                 padding-left: vars.ui-scaled(2px);
                 padding-right: vars.ui-scaled(2px);
                 padding-top: 0;
@@ -131,7 +131,7 @@
                 @include responsive.with-all-variants {
                     @include semantic-label-background('black');
                     color: var(--framework-semantic-text-inverse-text-solid, var(--framework-semantic-text-inverse-text-color, var(--framework-text-inverse)));
-                    border-radius: vars.ui-scaled(4px);
+                    border-radius: vars.corner-scaled(4px);
                     padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
                 }
             }
@@ -142,7 +142,7 @@
                 @include responsive.with-all-variants {
                     @include semantic-label-background($token);
                     color: var(--framework-semantic-text-inverse-text-solid, var(--framework-semantic-text-inverse-text-color, var(--framework-text-inverse)));
-                    border-radius: vars.ui-scaled(4px);
+                    border-radius: vars.corner-scaled(4px);
                     padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
                 }
             }
@@ -153,7 +153,7 @@
                 $success-token: map.get(vars.$semantic-colors, 'success');
                 @include semantic-label-background($success-token);
                 color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
-                border-radius: vars.ui-scaled(4px);
+                border-radius: vars.corner-scaled(4px);
                 padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
             }
         }
@@ -162,7 +162,7 @@
             @include responsive.with-all-variants {
                 @include semantic-label-background('yellow');
                 color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
-                border-radius: vars.ui-scaled(4px);
+                border-radius: vars.corner-scaled(4px);
                 padding: vars.ui-scaled(1px) vars.ui-scaled(5px);
             }
         }

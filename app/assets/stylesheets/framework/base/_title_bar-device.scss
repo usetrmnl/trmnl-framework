@@ -28,7 +28,7 @@
             }
 
             .instance {
-                color: var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary)));
+                color: var(--framework-slot-title-bar-instance-text-solid, var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary))));
             }
             
             &::before {

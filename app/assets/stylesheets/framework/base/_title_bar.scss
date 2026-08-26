@@ -19,6 +19,10 @@
         drop-shadow(#{$size} calc(#{$size} * -1) 0 #{$color});
 }
 
+// Every ink chain below reads the bar's own slot tier first, so a theme can
+// pair a filled bar with contrasting title/instance/icon inks without moving
+// the screen-wide channels. Unset slots fall through to exactly the chains
+// the bar read before the slots existed.
 @include mixins.trmnl-namespace {
     .title_bar {
         height: var(--title-bar-height);
@@ -28,7 +32,7 @@
         padding: 0 var(--gap);
         gap: var(--gap);
         position: relative;
-        color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+        color: var(--framework-slot-title-bar-text-solid, var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))));
         z-index: 10;
         border-radius: var(--title-bar-border-radius);
 
@@ -44,9 +48,23 @@
             &:not([data-adaptive]) {
                 @include _title-bar-image-stroke(
                     calc(var(--title-bar-text-stroke-width) * 0.5),
-                    var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))
+                    var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)))
                 );
             }
+        }
+
+        // Mask-recolored icons take the bar's icon slot before the screen-wide
+        // icon channel, so a themed bar can invert its icon alone. The paint
+        // fields are the only overrides; the mask and sizing stay with the
+        // global image--adaptive rule.
+        img.image--adaptive[data-adaptive] {
+            background-color: var(--framework-slot-title-bar-icon-color, var(--framework-semantic-icon-color, var(--framework-semantic-text-primary-text-color, currentColor)));
+            background-image:
+                var(--framework-slot-title-bar-icon-image, var(--framework-semantic-icon-image, none)),
+                linear-gradient(
+                    var(--framework-slot-title-bar-icon-under, var(--framework-semantic-icon-under, transparent)),
+                    var(--framework-slot-title-bar-icon-under, var(--framework-semantic-icon-under, transparent))
+                );
         }
 
         // Runtime host wrapped by plugins.js around a mask-recolored title-bar
@@ -61,7 +79,7 @@
             align-items: center;
             @include _title-bar-image-stroke(
                 calc(var(--title-bar-text-stroke-width) * 0.5),
-                var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))
+                var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)))
             );
         }
 
@@ -76,13 +94,19 @@
             flex: 0 0 auto;
             min-height: var(--title-bar-line-height);
             font-weight: var(--title-bar-font-weight);
-            background-color: var(--framework-semantic-text-primary-text-under, transparent);
-            background-image: var(--framework-semantic-text-primary-text-image, none);
-            -webkit-background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
-            background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
-            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), calc(var(--title-bar-text-stroke-width) * 0.5));
+            // The span also carries the .title element class, whose own paint
+            // beats the bar's inherited ink; restate the chain so the slot wins.
+            color: var(--framework-slot-title-bar-text-color, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+            background-color: var(--framework-slot-title-bar-text-under, var(--framework-semantic-text-primary-text-under, transparent));
+            background-image: var(--framework-slot-title-bar-text-image, var(--framework-semantic-text-primary-text-image, none));
+            -webkit-background-clip: var(--framework-slot-title-bar-text-clip, var(--framework-semantic-text-primary-text-clip, border-box));
+            background-clip: var(--framework-slot-title-bar-text-clip, var(--framework-semantic-text-primary-text-clip, border-box));
+            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))), calc(var(--title-bar-text-stroke-width) * 0.5));
         }
 
+        // The instance follows the title ink unless a theme states its own,
+        // so a filled bar recolors both with one slot and still lets the
+        // instance de-emphasize separately.
         .instance {
             font-family: var(--title-bar-font-family);
             -webkit-font-smoothing: var(--title-bar-font-smoothing);
@@ -97,11 +121,12 @@
             flex: 1 1 auto;
             text-align: right;
             min-height: var(--title-bar-line-height);
-            background-color: var(--framework-semantic-text-primary-text-under, transparent);
-            background-image: var(--framework-semantic-text-primary-text-image, none);
-            -webkit-background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
-            background-clip: var(--framework-semantic-text-primary-text-clip, border-box);
-            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), calc(var(--title-bar-text-stroke-width) * 0.5));
+            color: var(--framework-slot-title-bar-instance-text-solid, var(--framework-slot-title-bar-text-solid, var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)))));
+            background-color: var(--framework-slot-title-bar-instance-text-under, var(--framework-slot-title-bar-text-under, var(--framework-semantic-text-primary-text-under, transparent)));
+            background-image: var(--framework-slot-title-bar-instance-text-image, var(--framework-slot-title-bar-text-image, var(--framework-semantic-text-primary-text-image, none)));
+            -webkit-background-clip: var(--framework-slot-title-bar-instance-text-clip, var(--framework-slot-title-bar-text-clip, var(--framework-semantic-text-primary-text-clip, border-box)));
+            background-clip: var(--framework-slot-title-bar-instance-text-clip, var(--framework-slot-title-bar-text-clip, var(--framework-semantic-text-primary-text-clip, border-box)));
+            @include mixins.shadow-text-stroke(var(--title-bar-text-stroke-width), var(--framework-slot-title-bar-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast))), calc(var(--title-bar-text-stroke-width) * 0.5));
         }
     }
 

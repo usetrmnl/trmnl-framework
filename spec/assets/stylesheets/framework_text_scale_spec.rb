@@ -34,14 +34,20 @@ RSpec.describe 'Framework text scale styles' do
     expect(css).not_to match(/--title-bar-padding-top:[^;]*var\(--text-ui-scale\)/)
     expect(css).to match(/\.item \.meta \.index\{--tn-shadow-stroke-width:\s*calc\(3\.5px\s*\*\s*var\(--ui-scale, 1\)\)/)
     expect(css).to match(/\.table tbody tr td \.meta \.index\{--tn-shadow-stroke-width:\s*calc\(3\.5px\s*\*\s*var\(--ui-scale, 1\)\)/)
-    expect(css).to match(/\.trmnl \.screen\{[^}]*--title-bar-image-height:\s*calc\(28px\s*\*\s*var\(--ui-scale\)\)/)
+    expect(css).to match(
+      /\.trmnl \.screen\{[^}]*--title-bar-image-height:\s*calc\(28px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-title-bar-height-factor, 1\)\)/
+    )
   end
 
   it 'scales the compact title bar height on the screen' do
-    expect(css).to match(/\.trmnl \.screen\{[^}]*--title-bar-small-height:\s*calc\(32px\s*\*\s*var\(--ui-scale\)\)/)
+    expect(css).to match(
+      /\.trmnl \.screen\{[^}]*--title-bar-small-height:\s*calc\(32px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-title-bar-height-factor, 1\)\)/
+    )
   end
 
   it 'scales the compact title bar image height on the screen' do
-    expect(css).to match(/\.trmnl \.screen\{[^}]*--title-bar-small-image-height:\s*calc\(24px\s*\*\s*var\(--ui-scale\)\)/)
+    expect(css).to match(
+      /\.trmnl \.screen\{[^}]*--title-bar-small-image-height:\s*calc\(24px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-title-bar-height-factor, 1\)\)/
+    )
   end
 end

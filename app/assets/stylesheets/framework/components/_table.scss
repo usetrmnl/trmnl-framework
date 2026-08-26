@@ -127,7 +127,7 @@
                     background-color: var(--framework-slot-table-meta-bg-color, transparent);
                     background-image: var(--framework-slot-table-meta-bg-image, none);
                     @include mixins.dither-ready;
-                    border-radius: vars.ui-scaled(3px);
+                    border-radius: vars.corner-scaled(3px);
                     position: absolute;
                     top: 0;
                     bottom: 0;

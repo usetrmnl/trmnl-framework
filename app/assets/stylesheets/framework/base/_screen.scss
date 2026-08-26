@@ -120,7 +120,9 @@
         // Components consume their product; plugin layout utilities consume only
         // the modifier so a device's native density is never applied twice.
         --ui-scale: calc(var(--device-ui-scale) * var(--modifier-scale));
-        --content-scale: var(--modifier-scale);
+        // The whitespace factor is the theme contract's density handle: every
+        // gap, pad, and content-scaled dimension rides it through this product.
+        --content-scale: calc(var(--modifier-scale) * var(--framework-layout-whitespace-factor, 1));
         --text-ui-scale: calc(var(--ui-scale) * var(--modifier-text-scale));
 
         @include device-vars.base-scaled-display-variables;
@@ -129,13 +131,13 @@
         // sentinel stays fixed because any sufficiently large value yields the
         // same fully rounded shape.
         --rounded-none: 0px;
-        --rounded-xsmall: calc(5px * var(--content-scale));
-        --rounded-small: calc(7px * var(--content-scale));
-        --rounded: calc(10px * var(--content-scale));
-        --rounded-medium: calc(15px * var(--content-scale));
-        --rounded-large: calc(20px * var(--content-scale));
-        --rounded-xlarge: calc(25px * var(--content-scale));
-        --rounded-xxlarge: calc(30px * var(--content-scale));
+        --rounded-xsmall: calc(5px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
+        --rounded-small: calc(7px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
+        --rounded: calc(10px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
+        --rounded-medium: calc(15px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
+        --rounded-large: calc(20px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
+        --rounded-xlarge: calc(25px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
+        --rounded-xxlarge: calc(30px * var(--content-scale) * var(--framework-layout-corner-factor, 1));
         --rounded-full: 9999px;
 
         --gap-xsmall: calc(5px * var(--gap-scale) * var(--content-scale));
@@ -220,8 +222,8 @@
             }
 
             .title_bar {
-                border-bottom-left-radius: tokens.ui-scaled(7px);
-                border-bottom-right-radius: tokens.ui-scaled(7px);
+                border-bottom-left-radius: tokens.corner-scaled(7px);
+                border-bottom-right-radius: tokens.corner-scaled(7px);
             }
         }
 

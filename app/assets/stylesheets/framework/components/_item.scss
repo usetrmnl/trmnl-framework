@@ -57,7 +57,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            border-radius: vars.ui-scaled(3px);
+            border-radius: vars.corner-scaled(3px);
 
             .index {
                 @include mixins.shadow-text-stroke(vars.ui-scaled(3.5px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1.75px));

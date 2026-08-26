@@ -21,7 +21,9 @@
             <li>Recolor what plugins set with <code class="<%= framework_section_code_classes %>">bg--</code> and <code class="<%= framework_section_code_classes %>">text--</code> classes through the utility remaps: <code class="<%= framework_section_code_classes %>">theme-slots.utility-*</code> and the bulk <code class="<%= framework_section_code_classes %>">utility-remap-*</code> helpers.</li>
             <li>Optionally give icons their own color with <code class="<%= framework_section_code_classes %>">theme-slots.semantic-icon</code>; without it, <code class="<%= framework_section_code_classes %>">image--adaptive</code> icons follow the theme's primary text color.</li>
             <li>Pick the colors charts draw their series with: <code class="<%= framework_section_code_classes %>">theme-slots.chart-series-ramp</code>.</li>
-            <li>Do not override the base palette (<code class="<%= framework_section_code_classes %>">--white</code>, <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--gray-*</code>, <code class="<%= framework_section_code_classes %>">--color-*</code>) or the framework's own paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>); the linter rejects both.</li>
+            <li>Pair the title bar's field with its own inks: <code class="<%= framework_section_code_classes %>">theme-slots.ink-slot/slot-icon/slot-stroke</code>.</li>
+            <li>Shape the screen's structure with factors, and its vector weight with one shift: <code class="<%= framework_section_code_classes %>">theme-slots.layout-factors</code> and <code class="<%= framework_section_code_classes %>">theme-slots.font-weight-shift</code>.</li>
+            <li>Declare nothing outside the contract namespaces (<code class="<%= framework_section_code_classes %>">--framework-*</code>, <code class="<%= framework_section_code_classes %>">--theme-*</code>, <code class="<%= framework_section_code_classes %>">--tn-text-stroke-*</code>). Raw paint, the root palette, geometry, and font metrics are engine- or device-owned; the linter rejects them all.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             The full list of channels, slots, and remaps lives on <%= render DocsRef.new(page: :theme_slots) %>.
@@ -101,8 +103,7 @@
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
             <li>The theme files on disk match the registry ids.</li>
-            <li>No framework-owned paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>).</li>
-            <li>No root palette overrides (<code class="<%= framework_section_code_classes %>">--white</code>, <code class="<%= framework_section_code_classes %>">--black</code>, <code class="<%= framework_section_code_classes %>">--gray-*</code>, <code class="<%= framework_section_code_classes %>">--color-*</code>).</li>
+            <li>Every declared variable lives in a contract namespace: <code class="<%= framework_section_code_classes %>">--framework-*</code>, <code class="<%= framework_section_code_classes %>">--theme-*</code>, or <code class="<%= framework_section_code_classes %>">--tn-text-stroke-*</code>. Paint internals, the root palette, geometry, and font metrics all fail.</li>
             <li>No calls to the deprecated <code class="<%= framework_section_code_classes %>">role-token</code> helper.</li>
           </ul>
         </div>
@@ -166,8 +167,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Expose Values to JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            A theme hands extra values to plugin code through CSS alone: set your own
-            <code class="<%= framework_section_code_classes %>">--*</code> variables on the screen,
+            A theme hands extra values to plugin code through CSS alone: set your own variables on the screen
+            inside the theme namespace (<code class="<%= framework_section_code_classes %>">--theme-&lt;id&gt;-*</code>),
             and JavaScript reads them back with <code class="<%= framework_section_code_classes %>">TRMNLPaint.cssVar()</code>.
             See <%= render DocsRef.new(page: :paint_api) %>.
           </p>

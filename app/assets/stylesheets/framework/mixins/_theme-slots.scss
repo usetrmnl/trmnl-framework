@@ -29,6 +29,46 @@ $chart-series-slots: 16;
     --framework-slot-#{$slot}-text-under: var(--text-#{$token}-under, transparent);
 }
 
+// A text slot whose consumer can only set `color` (the title bar and its
+// instance inherit their ink) needs the token's mode-correct solid beside the
+// four glyph fields, the same -solid companion semantic-text publishes.
+@mixin ink-slot($slot, $token, $fallback: transparent, $clip-fallback: border-box) {
+    @include text-slot($slot, $token, $fallback, $clip-fallback);
+    --framework-slot-#{$slot}-text-solid: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
+}
+
+// The halo outline a slot's consumers draw around their own glyphs and icons.
+// A filled title bar points this at its field tone so outlines separate the
+// ink from the fill instead of tracking the screen canvas.
+@mixin slot-stroke($slot, $token, $fallback: currentColor) {
+    --framework-slot-#{$slot}-stroke-color: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
+}
+
+// Paint for the mask-recolored adaptive icon inside a slot's component, ahead
+// of the screen-wide icon channel.
+@mixin slot-icon($slot, $token, $fallback: currentColor) {
+    --framework-slot-#{$slot}-icon-color: var(--text-#{$token}-color, var(--#{$token}, #{$fallback}));
+    --framework-slot-#{$slot}-icon-image: var(--text-#{$token}-image, none);
+    --framework-slot-#{$slot}-icon-under: var(--text-#{$token}-under, transparent);
+}
+
+// Structure factors: unitless multipliers over the unthemed geometry. Each
+// rides its own consumption chain (content scale + table rows, radii, bar and
+// icon heights, progress sizes), so 1 is always the unthemed screen.
+@mixin layout-factors($whitespace: null, $corners: null, $title-bar-height: null, $meters: null) {
+    @if $whitespace != null { --framework-layout-whitespace-factor: #{$whitespace}; }
+    @if $corners != null { --framework-layout-corner-factor: #{$corners}; }
+    @if $title-bar-height != null { --framework-layout-title-bar-height-factor: #{$title-bar-height}; }
+    @if $meters != null { --framework-layout-meter-factor: #{$meters}; }
+}
+
+// One signed shift over every vector-face role weight, clamped to renderable
+// weights at the consumption site. Bitmap bundles carry single-weight faces
+// and deliberately ignore it.
+@mixin font-weight-shift($shift) {
+    --framework-font-weight-shift: #{$shift};
+}
+
 // A level pointed at a slot, as the three background longhands its consumers
 // read. The theme layer comes first, the same order border-level-vars reads a
 // level in. A slot points at a level, so it has to follow that level wherever
