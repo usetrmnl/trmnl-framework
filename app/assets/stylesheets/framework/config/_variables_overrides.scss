@@ -203,6 +203,10 @@ $progress-size-vars: (
 // Vector font face: families, smoothing, and the Inter-tuned weights; sizes and
 // line heights stay with the caller (the active bundle, or the density metrics below).
 @mixin vector-font-face-variables {
+    // The shift only reaches faces with a weight axis, so the bundles publish
+    // whether it applies: a consumer can disable the control instead of
+    // offering one that does nothing.
+    --framework-font-weight-shift-applies: 1;
     --title-bar-font-family: "Inter Variable", Inter;
     --title-bar-font-smoothing: auto;
     --title-bar-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
@@ -424,6 +428,7 @@ $progress-size-vars: (
 // `screen--fonts-*` modifier is present. In 3.1.x and later, the density layer
 // overrides both pixel bundles to Inter on high-density screens.
 @mixin classic-fonts {
+    --framework-font-weight-shift-applies: 0;
     // Title bar
     --title-bar-font-size: calc(16px * var(--text-ui-scale));
     --title-bar-font-family: "NicoClean";
@@ -525,6 +530,7 @@ $progress-size-vars: (
 // `screen--fonts-trmnl` class and as the 3.1.x implicit default when no
 // `screen--fonts-*` modifier is present.
 @mixin trmnl-fonts {
+    --framework-font-weight-shift-applies: 0;
     // Title bar
     --title-bar-font-size: calc(16px * var(--text-ui-scale));
     --title-bar-font-family: "TRMNL16";

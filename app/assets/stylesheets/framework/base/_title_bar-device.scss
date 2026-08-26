@@ -27,8 +27,11 @@
                 font-size: var(--title-bar-font-size);
             }
 
+            // The bar ink sits between the instance slot and this rail's own
+            // secondary tone: without it a themed bar reads white on the
+            // preview and near-black on the device it renders to.
             .instance {
-                color: var(--framework-slot-title-bar-instance-text-solid, var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary))));
+                color: var(--framework-slot-title-bar-instance-text-solid, var(--framework-slot-title-bar-text-solid, var(--framework-semantic-text-secondary-text-solid, var(--framework-semantic-text-secondary-text-color, var(--framework-text-secondary)))));
             }
             
             &::before {

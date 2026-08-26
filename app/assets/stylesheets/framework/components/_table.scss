@@ -35,13 +35,21 @@
         }
 
         // The head row is the table's own label tier, so it takes its own case
-        // and tracking rather than following the label element's.
-        th {
+        // and tracking. Cell content is usually wrapped in a .title or .label,
+        // and those declare their own defaults, so the cell's children have to
+        // be named or the modifier never reaches the text a reader sees.
+        th,
+        th .title,
+        th .label,
+        th .description {
             text-transform: var(--framework-text-table-head-transform, none);
             letter-spacing: var(--framework-text-table-head-tracking, normal);
         }
 
-        td {
+        td,
+        td .title,
+        td .label,
+        td .description {
             letter-spacing: var(--framework-text-table-body-tracking, normal);
         }
 

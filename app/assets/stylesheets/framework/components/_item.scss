@@ -93,9 +93,9 @@ $_corner-bracket-thickness: vars.ui-scaled(2px);
             --framework-semantic-text-primary-text-clip: var(--framework-slot-item-text-clip, var(--framework-internal-item-ink-clip));
             --framework-semantic-text-primary-text-under: var(--framework-slot-item-text-under, var(--framework-internal-item-ink-under));
             --framework-semantic-text-primary-text-solid: var(--framework-slot-item-text-solid, var(--framework-internal-item-ink-solid));
-            // Bare text in the content box inherits its ink, exactly as .screen
-            // hands it down, so the slot reaches text no element class wraps.
-            color: var(--framework-semantic-text-primary-text-solid, var(--framework-semantic-text-primary-text-color, var(--framework-text-primary)));
+            // Unset falls through to `inherit`, not to the screen ink: naming the
+            // channel here would beat a text--* utility on an ancestor.
+            color: var(--framework-slot-item-text-solid, inherit);
         }
 
         .label {

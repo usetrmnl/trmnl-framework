@@ -57,12 +57,17 @@ $chart-series-slots: 16;
 // so a theme that darkens the fill cannot leave the text behind.
 @mixin item-fill($token) { @include bg-slot('item', $token); }
 
-// A generated ramp instead of a token tile: one strip that tiles down the card
-// at its own natural width, never stretched, so its decided pixels survive.
-@mixin item-fill-ramp($art: var(--framework-item-fill-ramp), $size: var(--framework-item-fill-ramp-size)) {
+// Art instead of a token tile. The default is the generated ramp: one strip
+// tiled down the card at its natural width, never stretched, so the pixels the
+// dither decided survive.
+@mixin item-fill-art(
+    $art: var(--framework-item-fill-ramp),
+    $size: var(--framework-item-fill-ramp-size),
+    $repeat: repeat-y
+) {
     --framework-slot-item-bg-image: #{$art};
     --framework-slot-item-bg-size: #{$size};
-    --framework-slot-item-bg-repeat: repeat-y;
+    --framework-slot-item-bg-repeat: #{$repeat};
 }
 @mixin item-ink($token) { @include ink-slot('item', $token); }
 

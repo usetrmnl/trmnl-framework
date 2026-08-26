@@ -45,9 +45,13 @@ RSpec.describe 'Framework extended theming contract' do
         .to include('background-color:var(--framework-slot-title-bar-instance-text-under, var(--framework-slot-title-bar-text-under,')
     end
 
-    it 'keeps the device text-secondary instance ink behind the instance slot' do
+    # The device rails carry their own secondary tone for the instance, but the
+    # bar ink has to come first: a theme that states one previews readable and
+    # renders near-black on the panel otherwise.
+    it 'reads the bar ink before the device text-secondary instance ink' do
       expect(css).to include(
         'color:var(--framework-slot-title-bar-instance-text-solid, ' \
+        'var(--framework-slot-title-bar-text-solid, ' \
         'var(--framework-semantic-text-secondary-text-solid,'
       )
     end
@@ -188,6 +192,33 @@ RSpec.describe 'Framework extended theming contract' do
 
     it 'never publishes a size or line-height modifier, which stay device axes' do
       expect(css).not_to match(/--framework-text-[a-z-]*(size|line-height)/)
+    end
+  end
+
+  # Two regressions the pre-release review caught: both looked correct in the
+  # builder's preview and broke on the screen the theme actually renders to.
+  describe 'regressions the contract must not reintroduce' do
+    it 'lets an inherited text utility through to bare item content' do
+      content = declarations_for(/\.item[^{]*\.content(?![\w-])/).join
+
+      expect(content).to include('color:var(--framework-slot-item-text-solid, inherit)')
+      expect(content).not_to include('color:var(--framework-semantic-text-primary-text-solid,')
+    end
+
+    # The cell text a reader sees is usually wrapped in a .title or .label, and
+    # those declare their own case and tracking defaults.
+    it 'reaches the elements table cells wrap their content in' do
+      head = declarations_for(/\.table[^{]*th \.title(?![\w-])/).join
+
+      expect(head).to include('text-transform:var(--framework-text-table-head-transform, none)')
+      expect(head).to include('letter-spacing:var(--framework-text-table-head-tracking, normal)')
+    end
+
+    # The shift only reaches faces with a weight axis, so a consumer needs to
+    # know whether the control it offers does anything on this screen.
+    it 'publishes whether the weight shift applies to the active bundle' do
+      expect(css).to include('--framework-font-weight-shift-applies: 1')
+      expect(css).to include('--framework-font-weight-shift-applies: 0')
     end
   end
 
