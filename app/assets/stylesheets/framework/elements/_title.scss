@@ -7,6 +7,8 @@
 
 @include mixins.trmnl-namespace {
     .title {
+        text-transform: var(--framework-text-title-transform, none);
+        letter-spacing: var(--framework-text-title-tracking, normal);
         font-family: var(--title-font-family);
         -webkit-font-smoothing: var(--title-font-smoothing);
         font-size: var(--title-font-size);

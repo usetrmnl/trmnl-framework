@@ -7,6 +7,7 @@
 @use 'sass:list';
 @use 'sass:map';
 @use 'sass:math';
+@use 'sass:meta';
 @use 'sass:string';
 @use '../config/tokens' as tokens;
 @use 'border-levels';
@@ -27,6 +28,117 @@ $chart-series-slots: 16;
     --framework-slot-#{$slot}-text-image: var(--text-#{$token}-image, none);
     --framework-slot-#{$slot}-text-clip: var(--text-#{$token}-clip, #{$clip-fallback});
     --framework-slot-#{$slot}-text-under: var(--text-#{$token}-under, transparent);
+}
+
+// A text slot whose consumer can only set `color` (the title bar and its
+// instance inherit their ink) needs the token's mode-correct solid beside the
+// four glyph fields, the same -solid companion semantic-text publishes.
+@mixin ink-slot($slot, $token, $fallback: transparent, $clip-fallback: border-box) {
+    @include text-slot($slot, $token, $fallback, $clip-fallback);
+    --framework-slot-#{$slot}-text-solid: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
+}
+
+// The halo outline a slot's consumers draw around their own glyphs and icons.
+// A filled title bar points this at its field tone so outlines separate the
+// ink from the fill instead of tracking the screen canvas.
+@mixin stroke-slot($slot, $token, $fallback: currentColor) {
+    --framework-slot-#{$slot}-stroke-color: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
+}
+
+// Paint for the mask-recolored adaptive icon inside a slot's component, ahead
+// of the screen-wide icon channel.
+@mixin icon-slot($slot, $token, $fallback: currentColor) {
+    --framework-slot-#{$slot}-icon-color: var(--text-#{$token}-color, var(--#{$token}, #{$fallback}));
+    --framework-slot-#{$slot}-icon-image: var(--text-#{$token}-image, none);
+    --framework-slot-#{$slot}-icon-under: var(--text-#{$token}-under, transparent);
+}
+
+// The card pair: a fill on the item and the ink its content takes on top of it,
+// so a theme that darkens the fill cannot leave the text behind.
+@mixin item-fill($token) { @include bg-slot('item', $token); }
+
+// Art instead of a token tile. The default is the generated ramp: one strip
+// tiled down the card at its natural width, never stretched, so the pixels the
+// dither decided survive.
+@mixin item-fill-art(
+    $art: var(--framework-item-fill-ramp),
+    $size: var(--framework-item-fill-ramp-size),
+    $repeat: repeat-y
+) {
+    --framework-slot-item-bg-image: #{$art};
+    --framework-slot-item-bg-size: #{$size};
+    --framework-slot-item-bg-repeat: #{$repeat};
+}
+@mixin item-ink($token) { @include ink-slot('item', $token); }
+
+// The art vars are published on .item, and a var() inside a custom property
+// resolves on the element that declares it, so the slot is set there too.
+@mixin item-border($art) {
+    .item { --framework-slot-item-border-art: #{$art}; }
+}
+
+// Structure factors: unitless multipliers over the unthemed geometry. Each
+// rides its own consumption chain (content scale + table rows, radii, bar and
+// icon heights, progress sizes), so 1 is always the unthemed screen.
+@mixin layout-factors($whitespace: null, $corners: null, $title-bar-height: null, $progress: null) {
+    @if $whitespace != null { --framework-layout-whitespace-factor: #{$whitespace}; }
+    @if $corners != null { --framework-layout-corner-factor: #{$corners}; }
+    @if $title-bar-height != null { --framework-layout-title-bar-height-factor: #{$title-bar-height}; }
+    @if $progress != null { --framework-layout-progress-factor: #{$progress}; }
+}
+
+// One signed shift over every vector-face role weight, clamped to renderable
+// weights at the consumption site. Bitmap bundles carry single-weight faces
+// and deliberately ignore it.
+@mixin font-weight-shift($shift) {
+    --framework-font-weight-shift: #{$shift};
+}
+
+// Case and tracking per text role; the @error below states the tracking rule.
+@mixin text-modifiers(
+    $label-transform: null, $label-tracking: null,
+    $value-transform: null, $value-tracking: null,
+    $title-transform: null, $title-tracking: null,
+    $description-transform: null, $description-tracking: null,
+    $table-head-transform: null, $table-head-tracking: null, $table-body-tracking: null,
+    $title-bar-transform: null, $title-bar-tracking: null,
+    $title-bar-instance-transform: null, $title-bar-instance-tracking: null
+) {
+    @each $name, $value in ('label': $label-tracking, 'value': $value-tracking,
+                            'title': $title-tracking, 'description': $description-tracking,
+                            'table head': $table-head-tracking, 'table body': $table-body-tracking,
+                            'title bar': $title-bar-tracking,
+                            'title bar instance': $title-bar-instance-tracking) {
+        @if $value != null and meta.type-of($value) == 'number' {
+            @if math.unit($value) != 'px' or $value < 0 or $value != math.round($value) {
+                @error '#{$name} tracking takes whole positive pixels, got #{$value}.';
+            }
+        }
+    }
+    @if $label-transform != null { --framework-text-label-transform: #{$label-transform}; }
+    @if $label-tracking != null { --framework-text-label-tracking: #{$label-tracking}; }
+    @if $value-transform != null { --framework-text-value-transform: #{$value-transform}; }
+    @if $value-tracking != null { --framework-text-value-tracking: #{$value-tracking}; }
+    @if $title-transform != null { --framework-text-title-transform: #{$title-transform}; }
+    @if $title-tracking != null { --framework-text-title-tracking: #{$title-tracking}; }
+    @if $description-transform != null { --framework-text-description-transform: #{$description-transform}; }
+    @if $description-tracking != null { --framework-text-description-tracking: #{$description-tracking}; }
+    @if $title-bar-transform != null { --framework-text-title-bar-transform: #{$title-bar-transform}; }
+    @if $title-bar-tracking != null { --framework-text-title-bar-tracking: #{$title-bar-tracking}; }
+    @if $title-bar-instance-transform != null { --framework-text-title-bar-instance-transform: #{$title-bar-instance-transform}; }
+    @if $title-bar-instance-tracking != null { --framework-text-title-bar-instance-tracking: #{$title-bar-instance-tracking}; }
+    @if $table-head-transform != null { --framework-text-table-head-transform: #{$table-head-transform}; }
+    @if $table-head-tracking != null { --framework-text-table-head-tracking: #{$table-head-tracking}; }
+    @if $table-body-tracking != null { --framework-text-table-body-tracking: #{$table-body-tracking}; }
+}
+
+// Padding a theme owns. The title bar rides a factor over the screen gap
+// (0 sits its content flush with the edge); the item takes literal lengths
+// because its unthemed padding is zero and a factor could never leave it.
+@mixin spacing-slots($title-bar-padding: null, $item-padding-x: null, $item-padding-y: null) {
+    @if $title-bar-padding != null { --framework-layout-title-bar-padding-factor: #{$title-bar-padding}; }
+    @if $item-padding-x != null { --framework-slot-item-padding-x: #{$item-padding-x}; }
+    @if $item-padding-y != null { --framework-slot-item-padding-y: #{$item-padding-y}; }
 }
 
 // A level pointed at a slot, as the three background longhands its consumers

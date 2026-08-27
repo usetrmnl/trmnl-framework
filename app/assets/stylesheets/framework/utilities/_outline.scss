@@ -55,7 +55,7 @@
         .outline::after {
             background: none;
             border: 1px solid var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
-            border-radius: vars.ui-scaled(7px);
+            border-radius: vars.corner-scaled(7px);
         }
     }
 }

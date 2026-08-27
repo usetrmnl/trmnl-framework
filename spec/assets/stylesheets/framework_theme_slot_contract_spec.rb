@@ -31,6 +31,12 @@ module ThemeSlotContract
     .level-restate { @include theme-slots.utility-border-level(4, v, 4); }
     .short-ramp { @include theme-slots.chart-series-ramp((white, red-70, red-40)); }
     .full-ramp { @include theme-slots.chart-series-ramp((#{FULL_RAMP.join(', ')}), $span: 11); }
+    .ink-slot { @include theme-slots.ink-slot('title-bar', 'red-75'); }
+    .icon-slot { @include theme-slots.icon-slot('title-bar', 'red-75'); }
+    .stroke-slot { @include theme-slots.stroke-slot('title-bar', 'black'); }
+    .layout-factors { @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0, $title-bar-height: 1.2, $progress: 1.5); }
+    .layout-partial { @include theme-slots.layout-factors($corners: 1.6); }
+    .weight-shift { @include theme-slots.font-weight-shift(-100); }
   SCSS
 
   module_function
@@ -151,6 +157,87 @@ RSpec.describe 'Framework theme slot contract' do
       expect(declarations['--theme-border-4-v-line-dark']).to eq('var(--border-line-dark, #000000)')
       expect(declarations['--theme-border-4-v-line-light']).to eq('var(--border-line-light, #FFFFFF)')
       expect(declarations['--theme-border-4-v-image']).to start_with('var(--border-4-v-image,')
+    end
+  end
+
+  describe 'the title-bar ink helpers' do
+    it 'publishes the solid companion beside the four glyph fields' do
+      declarations = probe.rule('.ink-slot')
+
+      %w[color image clip under].each do |field|
+        expect(declarations).to include("--framework-slot-title-bar-text-#{field}")
+      end
+      # The bar and instance inherit their ink through `color`, which cannot
+      # clip a tile, so the solid rides the same stroke chain semantic-text uses.
+      expect(declarations['--framework-slot-title-bar-text-solid'])
+        .to eq('var(--stroke-red-75-color, var(--red-75, transparent))')
+    end
+
+    it 'paints the slot icon through the token text triple' do
+      declarations = probe.rule('.icon-slot')
+
+      expect(declarations['--framework-slot-title-bar-icon-color'])
+        .to eq('var(--text-red-75-color, var(--red-75, currentColor))')
+      expect(declarations['--framework-slot-title-bar-icon-image']).to eq('var(--text-red-75-image, none)')
+      expect(declarations['--framework-slot-title-bar-icon-under']).to eq('var(--text-red-75-under, transparent)')
+    end
+
+    it 'resolves the slot stroke through the mode-correct solid chain' do
+      expect(probe.rule('.stroke-slot')['--framework-slot-title-bar-stroke-color'])
+        .to eq('var(--stroke-black-color, var(--black, currentColor))')
+    end
+  end
+
+  describe 'the structure and weight helpers' do
+    it 'emits every named factor, zero included' do
+      declarations = probe.rule('.layout-factors')
+
+      expect(declarations['--framework-layout-whitespace-factor']).to eq('1.35')
+      # A square-cornered theme passes 0, which must not read as "unset".
+      expect(declarations['--framework-layout-corner-factor']).to eq('0')
+      expect(declarations['--framework-layout-title-bar-height-factor']).to eq('1.2')
+      expect(declarations['--framework-layout-progress-factor']).to eq('1.5')
+    end
+
+    it 'leaves unnamed factors to the unthemed default' do
+      declarations = probe.rule('.layout-partial')
+
+      expect(declarations.keys).to eq(['--framework-layout-corner-factor'])
+    end
+
+    it 'publishes the vector weight shift' do
+      expect(probe.rule('.weight-shift')['--framework-font-weight-shift']).to eq('-100')
+    end
+
+    # The bitmap bundles are drawn on the pixel grid, so a fractional advance
+    # lands their glyphs off-grid and a negative one eats sidebearings that are
+    # part of the drawing. Both are refused at compile time rather than shipped.
+    it 'takes whole positive pixels of tracking' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".ok { @include theme-slots.text-modifiers($label-tracking: 2px); }\n"
+
+      expect(probe.compile(source)).to include('--framework-text-label-tracking: 2px')
+    end
+
+    it 'refuses fractional tracking' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".bad { @include theme-slots.text-modifiers($label-tracking: 1.5px); }\n"
+
+      expect { probe.compile(source) }.to raise_error(/whole positive pixels/)
+    end
+
+    it 'refuses negative tracking' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".bad { @include theme-slots.text-modifiers($value-tracking: -1px); }\n"
+
+      expect { probe.compile(source) }.to raise_error(/whole positive pixels/)
+    end
+
+    it 'refuses em tracking, which cannot stay on the pixel grid' do
+      source = "@use 'framework/mixins/theme-slots' as theme-slots;\n" \
+               ".bad { @include theme-slots.text-modifiers($title-tracking: 0.12em); }\n"
+
+      expect { probe.compile(source) }.to raise_error(/whole positive pixels/)
     end
   end
 

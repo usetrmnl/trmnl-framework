@@ -5,6 +5,12 @@
 // TRMNL Framework - List Component
 // ============================================
 
+// The strong border paint the framework's own .outline draws with, so a card's
+// marks track the same channel a theme already remaps.
+$_border-art-paint: var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
+$_corner-bracket-length: vars.ui-scaled(10px);
+$_corner-bracket-thickness: vars.ui-scaled(2px);
+
 @include mixins.trmnl-namespace {
     .list {
         display: flex;
@@ -21,6 +27,51 @@
         line-height: 0;
         align-items: stretch;
         width: 100%;
+        // Zero by default, so an unthemed item is laid out exactly as before.
+        // A card theme sets these to give the fill and border something to hold.
+        padding: var(--framework-slot-item-padding-y, 0) var(--framework-slot-item-padding-x, 0);
+        // The card fill. Transparent and imageless until a theme sets the pair,
+        // so an unthemed item still paints nothing at all.
+        background-color: var(--framework-slot-item-bg-color, transparent);
+        background-image: var(--framework-slot-item-bg-image, none);
+        // A tile fill repeats at the dither size; a ramp is one strip that
+        // tiles down the card only, so both fields take the slot first.
+        background-repeat: var(--framework-slot-item-bg-repeat, repeat);
+        background-size: var(--framework-slot-item-bg-size, var(--dither-bg-size, auto));
+        // Containing block for the border art below; nothing under an item was
+        // anchored above it (.meta and .label each carry their own).
+        position: relative;
+
+        // Values, not paint: a theme points the border slot at one of these.
+        @include mixins.outline-dots($property: '--framework-item-border-art-outline');
+        --framework-item-border-art-corner-brackets:
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 0 / #{$_corner-bracket-length} #{$_corner-bracket-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 0 / #{$_corner-bracket-thickness} #{$_corner-bracket-length} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 0 / #{$_corner-bracket-length} #{$_corner-bracket-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 0 / #{$_corner-bracket-thickness} #{$_corner-bracket-length} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 100% / #{$_corner-bracket-length} #{$_corner-bracket-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 100% / #{$_corner-bracket-thickness} #{$_corner-bracket-length} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 100% / #{$_corner-bracket-length} #{$_corner-bracket-thickness} no-repeat,
+            linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 100% 100% / #{$_corner-bracket-thickness} #{$_corner-bracket-length} no-repeat;
+
+        // var() in a custom property resolves where declared, so capture the
+        // screen ink above .content.
+        --framework-internal-item-ink-color: var(--framework-semantic-text-primary-text-color, var(--framework-text-primary));
+        --framework-internal-item-ink-image: var(--framework-semantic-text-primary-text-image, none);
+        --framework-internal-item-ink-clip: var(--framework-semantic-text-primary-text-clip, border-box);
+        --framework-internal-item-ink-under: var(--framework-semantic-text-primary-text-under, transparent);
+        --framework-internal-item-ink-solid: var(--framework-semantic-text-primary-text-solid, var(--framework-internal-item-ink-color));
+
+        // One slot read twice: whichever channel the art is invalid for drops out.
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: var(--framework-slot-item-border-art, none);
+            border: var(--framework-slot-item-border-art, none);
+            border-radius: vars.corner-scaled(7px);
+        }
 
         &--shrink {
             flex: 1 1 auto;
@@ -34,7 +85,19 @@
             justify-content: flex-end;
             overflow: hidden;
         }
-        
+
+        // Repointed, not restated per element: label modifiers keep their paint.
+        .content {
+            --framework-semantic-text-primary-text-color: var(--framework-slot-item-text-color, var(--framework-internal-item-ink-color));
+            --framework-semantic-text-primary-text-image: var(--framework-slot-item-text-image, var(--framework-internal-item-ink-image));
+            --framework-semantic-text-primary-text-clip: var(--framework-slot-item-text-clip, var(--framework-internal-item-ink-clip));
+            --framework-semantic-text-primary-text-under: var(--framework-slot-item-text-under, var(--framework-internal-item-ink-under));
+            --framework-semantic-text-primary-text-solid: var(--framework-slot-item-text-solid, var(--framework-internal-item-ink-solid));
+            // Unset falls through to `inherit`, not to the screen ink: naming the
+            // channel here would beat a text--* utility on an ancestor.
+            color: var(--framework-slot-item-text-solid, inherit);
+        }
+
         .label {
             &.label--small {
                 padding-top: vars.ui-scaled(2px);
@@ -57,7 +120,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            border-radius: vars.ui-scaled(3px);
+            border-radius: vars.corner-scaled(3px);
 
             .index {
                 @include mixins.shadow-text-stroke(vars.ui-scaled(3.5px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1.75px));
@@ -104,6 +167,13 @@
                     @include mixins.semantic-text-paint('text-inverse', var(--framework-text-inverse));
                 }
             }
+        }
+    }
+
+    // Same switch utilities/_outline.scss makes on the rails whose inks dither.
+    @include mixins.for-screen-modifier('2bit', '4bit', 'color-full') {
+        .item {
+            --framework-item-border-art-outline: 1px solid #{$_border-art-paint};
         }
     }
 

@@ -90,7 +90,7 @@ $_pill-label-exclusions: ();
             @include mixins.for-4bit {
                 background-color: var(--framework-slot-item-meta-bg-color, transparent);
                 background-image: none;
-                border-radius: vars.ui-scaled(4px);
+                border-radius: vars.corner-scaled(4px);
                 width: var(--item-meta-width);
                 margin-right: var(--gap-small);
             }

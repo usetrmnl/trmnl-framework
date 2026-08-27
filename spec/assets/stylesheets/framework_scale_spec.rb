@@ -20,7 +20,9 @@ RSpec.describe 'Framework scale styles' do
 
   it 'composes device density and modifier scale into the public outputs' do
     expect(css).to match(/\.trmnl \.screen\{[^}]*--ui-scale:\s*calc\(var\(--device-ui-scale\) \* var\(--modifier-scale\)\)/)
-    expect(css).to match(/\.trmnl \.screen\{[^}]*--content-scale:\s*var\(--modifier-scale\)/)
+    expect(css).to match(
+      /\.trmnl \.screen\{[^}]*--content-scale:\s*calc\(var\(--modifier-scale\) \* var\(--framework-layout-whitespace-factor, 1\)\)/
+    )
     expect(css).to match(/\.screen--amazon_kindle_2024\{[^}]*--device-ui-scale:\s*0?\.8/)
   end
 
@@ -50,8 +52,12 @@ RSpec.describe 'Framework scale styles' do
   end
 
   it 'scales rounded utilities, component geometry, and public strokes' do
-    expect(css).to match(/\.trmnl \.screen\{[^}]*--rounded:\s*calc\(10px \* var\(--content-scale\)\)/)
-    expect(css).to match(/\.trmnl \.screen\{[^}]*--progress-bar-height-xsmall:\s*calc\(6px\s*\*\s*var\(--ui-scale\)\)/)
+    expect(css).to match(
+      /\.trmnl \.screen\{[^}]*--rounded:\s*calc\(10px \* var\(--content-scale\) \* var\(--framework-layout-corner-factor, 1\)\)/
+    )
+    expect(css).to match(
+      /\.trmnl \.screen\{[^}]*--progress-bar-height-xsmall:\s*calc\(6px\s*\*\s*var\(--ui-scale\)\s*\*\s*var\(--framework-layout-progress-factor, 1\)\)/
+    )
     expect(css).to match(/\.rounded--\\\[10px\\\]\{border-radius:calc\(10px\s*\*\s*var\(--content-scale, 1\)\)/)
     expect(css).to match(/\.item\{[^}]*gap:calc\(2px\s*\*\s*var\(--ui-scale, 1\)\)/)
     expect(css).to match(/--tn-text-stroke-width:\s*calc\(3\.5px\s*\*\s*var\(--content-scale, 1\)\)/)

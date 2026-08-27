@@ -26,7 +26,10 @@
 //   Steep run: (1,4) [.5,5] [.5,6] [0,7] (0,8)
 // Parenthesized = 1x dots, bracketed = 2x fill-ins.
 
-@mixin outline-dots {
+// $property takes the drawing as a value instead of a painted background: the
+// item's border-art slot publishes it as a custom property, so the stack below
+// stays the one source both consumers read.
+@mixin outline-dots($property: 'background') {
     --_c: var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
     --_c2: var(--_outline-hdpi-color, transparent);
     --_pr: var(--dither-ratio, 1);
@@ -34,7 +37,7 @@
     --_dot: calc(1px / var(--_pr));
     --_gap3: calc(3px / var(--_pr));
     --_gap4: calc(4px / var(--_pr));
-    background:
+    #{$property}:
         // ── Edges (always visible) ──
         repeating-linear-gradient(to right, var(--_c) 0 var(--_dot), transparent var(--_dot) var(--_gap4))
             calc(12px * var(--_arc)) 0 / calc(100% - 24px * var(--_arc)) var(--_dot) no-repeat,

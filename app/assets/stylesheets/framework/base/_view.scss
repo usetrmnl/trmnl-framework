@@ -21,7 +21,7 @@
         &--quadrant,
         &--half_vertical,
         &--half_horizontal {
-            border-radius: vars.ui-scaled(7px);
+            border-radius: vars.corner-scaled(7px);
             background-color: var(--framework-semantic-surface-bg-color, var(--framework-surface-bg));
             background-image: var(--framework-semantic-surface-bg-image, none);
             background-repeat: repeat;
