@@ -241,7 +241,7 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.style.roadSource).toBe('geojson');
   expect(result.style.roadCasing).toBe('fill');
   expect(result.style.lineSpecs).toEqual(expect.arrayContaining(['roads-major', 'roads-minor', 'water-lines', 'rail', 'paths', 'boundaries', 'transit']));
-  // A dashed line cannot carry a pattern, so rail takes the tile's ink — the 1-bit
+  // A dashed line cannot carry a pattern, so rail takes the tile's ink: the 1-bit
   // tile's black, never its white under-field (which painted rails invisible once).
   // Dashed lines and stops are shapes too: a dashed shape in the ink, a point shape with a casing.
   expect(result.style.railType).toBe('fill');

@@ -8,7 +8,7 @@ fetches the tiles, and who pays, follows the source a map resolves:
   TRMNL pays; no key, no cost to the host. The `'osm'` preset stays as an
   explicit opt-in to the public OSMF Shortbread endpoint,
   `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt` (Shortbread
-  1.0, zoom 0 to 14) — light use only per the OSMF usage policy.
+  1.0, zoom 0 to 14). Light use only, per the OSMF usage policy.
 - **A plugin's own source:** `options({ tiles: { url, key } })`, a
   `{z}/{x}/{y}` template with `{key}` filled from the key. The plugin owner's
   account pays.
