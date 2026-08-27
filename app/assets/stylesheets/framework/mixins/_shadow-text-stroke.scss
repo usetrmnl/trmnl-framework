@@ -10,6 +10,7 @@
 @use 'sass:list';
 @use 'sass:string';
 @use 'utilities' as utilities;
+@use 'stroke-tokens' as stroke-tokens;
 
 @function _shadow-stroke-layer($radius-scale, $x, $y) {
     $scaled-x: $radius-scale * $x;
@@ -45,7 +46,7 @@
 
 @mixin shadow-text-stroke(
     $width: 3.5px,
-    $color: var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)),
+    $color: stroke-tokens.contrast-stroke-color(),
     // Native strokes were center-aligned (half the width painted outside the
     // glyph), so visual parity needs radius = width/2.
     $radius: clamp(0.85px, calc(#{$width} * 0.5), 3.75px)

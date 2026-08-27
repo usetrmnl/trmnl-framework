@@ -173,7 +173,9 @@ window.addEventListener("trmnl:terminalize:stats", function (event) {
         <%= framework_heading(4, 'Debug Logging') %>
         <p class="<%= framework_section_description_classes %>">Set <code class="<%= framework_section_code_classes %>">window.__TRMNL_DEBUG__ = true</code> before a pass to log what each engine decided. Renders are quiet by default. Engine failures always reach the console, debug flag or not.</p>
 
-        <p class="<%= framework_section_description_classes %>"><code class="<%= framework_section_code_classes %>">plugins.js</code> also puts <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> and <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> on <code class="<%= framework_section_code_classes %>">window</code>. Those are documented on <%= render DocsRef.new(page: :paint_api) %>.</p>
+        <p class="<%= framework_section_description_classes %>"><code class="<%= framework_section_code_classes %>">plugins.js</code> also puts <code class="<%= framework_section_code_classes %>">TRMNLPaint</code>, <code class="<%= framework_section_code_classes %>">TRMNLCharts</code> and <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> on <code class="<%= framework_section_code_classes %>">window</code>. Those are documented on <%= render DocsRef.new(page: :paint_api) %>.</p>
+
+        <p class="<%= framework_section_description_classes %>">A pass ends by waiting for every map <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> has attached to go idle, bounded by <code class="<%= framework_section_code_classes %>">TRMNLMaps.settle()</code> (6000 ms by default), so <code class="<%= framework_section_code_classes %>">window.TRMNL_PLUGINS_READY</code> flips after the tiles, the widened lines and the labels have drawn. A host that rescales the screen after the pass, the way a screenshot service sets its capture pixel ratio last, calls <code class="<%= framework_section_code_classes %>">TRMNLMaps.refresh()</code> and awaits it before it captures.</p>
       </section>
 
       <section class="space-y-6">

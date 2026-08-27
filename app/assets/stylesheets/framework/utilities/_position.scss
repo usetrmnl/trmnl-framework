@@ -1,0 +1,68 @@
+// ============================================
+// TRMNL Framework - Position Utilities
+// ============================================
+// Take one element out of flow and place it against a positioned ancestor:
+// a full-bleed map with a card floating over a corner of it, instead of a
+// screen split into columns.
+//
+// Out of flow also means out of budget. The terminalize engines (data-clamp,
+// data-value-fit, content-limiter, data-table-limit) measure boxes in flow to
+// decide what fits, so nothing here is auto-fitted; see the Map page.
+
+@use 'sass:map';
+@use '../config/tokens' as vars;
+@use '../mixins' as mixins;
+@use '../mixins/factorized_utilities' as fz;
+
+// Every class declares its property on the enumerated token class, the shape
+// utilities/_size.scss settled on. Nothing in this layer declares position, an
+// offset or a stacking level as its own default, so there is no tie for a
+// custom-property channel to resolve, and a token nothing binds (`top--999`) is
+// left without a rule instead of resolving an invalid variable and dropping the
+// property to its initial value from tn--utilities, the last cascade layer.
+$position-keywords: ('relative': relative, 'absolute': absolute);
+
+// Offsets ride the spacing scale, so `absolute top--3 left--3` insets a corner
+// by the step `p--3` pads by, at whatever content scale the device carries.
+$offset-scale: map.merge(vars.$size-scale, vars.$decimal-scale);
+
+$offset-properties: ('inset': inset, 'top': top, 'right': right, 'bottom': bottom, 'left': left);
+
+// components/_map.scss leaves MapLibre's containers at the bottom of the map and
+// puts the labels and attribution TRMNLMaps places at 1, so an overlay needs 2.
+// The scale stops short of the title bar's 10, which stays above the layout.
+$stacking-levels: 0, 1, 2, 3;
+
+@mixin declare-on-token($full-token, $property, $value, $screen-selectors) {
+    @include fz.emit-class-apply(fz.token-match-selectors($full-token), $screen-selectors) {
+        // Property names go through interpolation so the compressed compiler
+        // emits them without the post-`:` whitespace it preserves for literal
+        // custom-property declarations.
+        #{$property}: #{$value};
+    }
+}
+
+@include mixins.trmnl-namespace {
+    // Gates outer and classes inner, so a wider breakpoint is emitted after the
+    // narrower gates it outranks and wins the tie the two carry.
+    @include fz.each-size-orientation-gate using ($prefix, $screen-selectors) {
+        @each $keyword, $value in $position-keywords {
+            @include declare-on-token('#{$prefix}#{$keyword}', 'position', $value, $screen-selectors);
+        }
+
+        @each $level in $stacking-levels {
+            @include declare-on-token('#{$prefix}z--#{$level}', 'z-index', $level, $screen-selectors);
+        }
+
+        @each $edge, $property in $offset-properties {
+            @each $token, $value in $offset-scale {
+                @include declare-on-token(
+                    '#{$prefix}#{$edge}--#{$token}',
+                    $property,
+                    vars.content-scaled($value),
+                    $screen-selectors
+                );
+            }
+        }
+    }
+}

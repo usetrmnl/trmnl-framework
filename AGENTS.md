@@ -5,7 +5,7 @@ Rails app hosting the TRMNL design framework and its documentation site.
 - Docs pages: `app/views/framework/*.html.erb` (one page per framework feature)
 - Page intro paragraphs: centralized in `framework_intro_paragraphs` in `app/helpers/framework_helper.rb`
 - Framework CSS: `app/assets/stylesheets/framework/` (`base/`, `components/`, `utilities/`, `themes/`, `mixins/`)
-- Framework JS (paint API, charts, runtime): `app/javascript/`
+- Framework JS (paint API, charts, maps, runtime): `app/javascript/`
 
 ## Core mandates
 

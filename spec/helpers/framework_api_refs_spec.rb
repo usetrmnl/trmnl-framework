@@ -3,21 +3,21 @@
 require 'rails_helper'
 
 # Drift guard for the Related APIs registry: every key and target must be a
-# live 3.2 docs page, and every non-inline ref must name an excerpt partial
+# live current-track docs page, and every non-inline ref must name an excerpt partial
 # that exists. Keeps the central mapping honest as pages come and go.
 RSpec.describe 'FrameworkHelper::DOC_PAGE_API_REFS' do
   subject(:registry) { FrameworkHelper::DOC_PAGE_API_REFS }
 
-  let(:v3_2_pages) { FrameworkController::DOC_GROUPS_BY_VERSION.fetch('3.2').values.flatten }
+  let(:current_pages) { FrameworkController::DOC_GROUPS_BY_VERSION.fetch(FrameworkController::CURRENT_DOCS_VERSION).values.flatten }
   let(:excerpts_dir) { Framework::Engine.root.join('app/views/framework/related_apis') }
 
-  it 'keys every entry by a 3.2 docs page' do
-    expect(registry.keys - v3_2_pages).to be_empty
+  it 'keys every entry by a current-track docs page' do
+    expect(registry.keys - current_pages).to be_empty
   end
 
-  it 'targets only 3.2 docs pages' do
+  it 'targets only current-track docs pages' do
     targets = registry.values.flatten.map { |ref| ref[:page].to_s }
-    expect(targets.uniq - v3_2_pages).to be_empty
+    expect(targets.uniq - current_pages).to be_empty
   end
 
   it 'never points a page at itself' do

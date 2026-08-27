@@ -23,7 +23,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The v3 Color Foundation') %>
           <p class="<%= framework_section_description_classes %>">
-            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup.
+            3.3 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup.
           </p>
         </div>
       </section>
@@ -55,6 +55,21 @@
 
       <section class="space-y-6">
         <div class="space-y-1">
+          <%= framework_heading(3, 'Extended Theming') %>
+          <p class="<%= framework_section_description_classes %>">
+            3.3 widens what a theme can reach. The title bar's inks split into slots of their own, item cards gain a fill, a paired ink, padding and a border art, and dividers gain a slot, so a theme restyles those surfaces instead of leaving them on the screen's defaults.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Structure moves through unitless factors over the unthemed geometry, where 1 is always the unthemed screen: whitespace, corners, title bar height and progress. A signed weight shift moves every vector-face role, and text modifiers set case and tracking per text role. Size and line height stay out of it, because those belong to the device and the reader's own text scale.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Every slot and factor: <%= render DocsRef.new(page: :theme_slots) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
           <%= framework_heading(3, 'TRMNLPaint: the JavaScript Paint API') %>
           <p class="<%= framework_section_description_classes %>">
             Read any framework color, border, text style, or size from JavaScript. <code class="<%= framework_section_code_classes %>">TRMNLPaint</code> returns what CSS would paint right now, with the device, scale, and theme already applied, so your JavaScript never hardcodes a color.
@@ -64,6 +79,7 @@
             <li>Painters: <code class="<%= framework_section_code_classes %>">apply()</code>, <code class="<%= framework_section_code_classes %>">applyBorder()</code>, <code class="<%= framework_section_code_classes %>">applyType()</code> write resolved paint onto nodes.</li>
             <li><code class="<%= framework_section_code_classes %>">watch()</code> re-runs your build function whenever the screen's device, scale, mode, dark mode, or theme changes.</li>
             <li><code class="<%= framework_section_code_classes %>">cssVar()</code> reads any public <code class="<%= framework_section_code_classes %>">--*</code> variable, which is how a theme hands values to plugin code.</li>
+            <li><code class="<%= framework_section_code_classes %>">slot()</code> returns what any component slot paints with, and <code class="<%= framework_section_code_classes %>">toMapLibre()</code> shapes a Fill for MapLibre GL JS.</li>
             <li><code class="<%= framework_section_code_classes %>">scale()</code> reads the current scale factor, and <code class="<%= framework_section_code_classes %>">px()</code> converts pixel numbers with it.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -106,6 +122,33 @@
 
       <section class="space-y-6">
         <div class="space-y-1">
+          <%= framework_heading(3, 'Adaptive Maps') %>
+          <p class="<%= framework_section_description_classes %>">
+            Maps join charts on TRMNLPaint. The runtime bundles <code class="<%= framework_section_code_classes %>">TRMNLMaps</code>, a MapLibre GL JS adapter that composes the map style from the framework's map slots over OpenStreetMap vector tiles, so a plotted map takes dither tiles on 1-bit, solids on 4-bit, hues on a color panel, and a theme's own tokens. Maps render as one still frame, with no interaction and no animation.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A map with no source of its own fetches OpenStreetMap's public Shortbread tiles directly. A plugin names its own source and key instead, and a host can hand one to a single plugin instance, so a key never sits in the markup.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Usage and live examples, including a Strava activity: <%= render DocsRef.new(page: :map) %>. The resolvers and adapter behind it: <%= render DocsRef.new(page: :paint_maps) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Positioned Content') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">relative</code> and <code class="<%= framework_section_code_classes %>">absolute</code> put one element over another instead of beside it, so a full-bleed panel can take the whole layout and carry a compact card in one corner of it. Offsets run on the spacing scale, and a short stacking scale settles which of two overlapping elements is drawn on top.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            An element out of flow is not measured by the fitting engines, so it carries its own size and clamps. The classes, the scale, and what an overlay needs to stay readable on 1-bit: <%= render DocsRef.new(page: :position) %>.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
           <%= framework_heading(3, 'Adaptive Icons') %>
           <p class="<%= framework_section_description_classes %>">
             Add <code class="<%= framework_section_code_classes %>">image--adaptive</code> to a monochrome icon and the framework recolors it the way it colors text: it follows the device, Raw/Preview, and the active theme. One set of icons works everywhere, as long as they are same-origin or CORS-readable. See <%= render DocsRef.new(page: :image) %>.
@@ -121,7 +164,7 @@
           </p>
           <ul class="list-disc pl-6 <%= framework_section_description_classes %>">
             <li><strong>Borders:</strong> <code class="<%= framework_section_code_classes %>">border--h-{step}</code> and <code class="<%= framework_section_code_classes %>">border--v-{step}</code> now use the same 10 to 75 shade scale as backgrounds, plus <code class="<%= framework_section_code_classes %>">border--h-black</code> and <code class="<%= framework_section_code_classes %>">border--h-white</code>. Lines render as generated gradients instead of PNG tiles, so a bordered screen fetches no images. The numbered levels <code class="<%= framework_section_code_classes %>">border--h-1</code> through <code class="<%= framework_section_code_classes %>">border--h-7</code> still work but are deprecated. See <%= render DocsRef.new(page: :border) %>.</li>
-            <li><strong>Outline:</strong> draws a pixel-perfect dotted rounded border on 1-bit, and a solid rounded border on 2-bit and 4-bit. See <%= render DocsRef.new(page: :outline) %>.</li>
+            <li><strong>Outline:</strong> draws a pixel-perfect dotted rounded border on 1-bit, and a solid rounded border on 2-bit and 4-bit. 3.3 rounds the element itself on the same 8px curve, so a card with its own background ends where the outline does, and adds <code class="<%= framework_section_code_classes %>">outline--muted</code> for an edge in a mid gray that still prints on 1-bit. See <%= render DocsRef.new(page: :outline) %>.</li>
             <li><strong>Text Stroke:</strong> renders as stacked drop shadows instead of native <code class="<%= framework_section_code_classes %>">-webkit-text-stroke</code>, so the stroke sits behind the letters in every browser, even when the text is filled with a pattern. Sizes run <code class="<%= framework_section_code_classes %>">text-stroke--small</code> to <code class="<%= framework_section_code_classes %>">text-stroke--xlarge</code>. See <%= render DocsRef.new(page: :text_stroke) %>.</li>
             <li><strong>Image Stroke:</strong> outlines transparent images with the same size and color variants. See <%= render DocsRef.new(page: :image_stroke) %>.</li>
           </ul>

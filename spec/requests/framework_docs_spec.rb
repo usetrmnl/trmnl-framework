@@ -75,7 +75,7 @@ RSpec.describe 'Framework docs routing', type: :request do
   end
 
   describe 'Text Scale availability' do
-    %w[3.1 3.2].each do |version|
+    ['3.1', FrameworkController::CURRENT_DOCS_VERSION].each do |version|
       it "serves Text Scale on #{version}" do
         get "/framework/docs/#{version}/text_scale"
         expect(response).to have_http_status(:ok)
@@ -107,7 +107,7 @@ RSpec.describe 'Framework docs routing', type: :request do
   end
 
   describe 'Inverse availability' do
-    %w[3.1 3.2].each do |version|
+    ['3.1', FrameworkController::CURRENT_DOCS_VERSION].each do |version|
       it "serves Inverse on #{version}" do
         get "/framework/docs/#{version}/inverse"
         expect(response).to have_http_status(:ok)
@@ -222,8 +222,8 @@ RSpec.describe 'Framework docs routing', type: :request do
       end
     end
 
-    it 'keeps the complete 3.2 scale token reference' do
-      get '/framework/docs/3.2/tokens'
+    it 'keeps the complete scale token reference on the current track' do
+      get "/framework/docs/#{FrameworkController::CURRENT_DOCS_VERSION}/tokens"
       aggregate_failures do
         expect(response.body).to include('id="token-device-ui-scale"')
         expect(response.body).to include('id="token-modifier-scale"')

@@ -34,14 +34,17 @@ class FrameworkController < Framework.parent_controller_class
 
   layout -> { params[:_raw].present? ? false : 'framework' }
 
-  CURRENT_DOCS_VERSION = '3.2'.freeze
-  SUPPORTED_DOCS_VERSIONS = %w[1.2 2.3 3.0 3.1 3.2].freeze
+  CURRENT_DOCS_VERSION = '3.3'.freeze
+  SUPPORTED_DOCS_VERSIONS = %w[1.2 2.3 3.0 3.1 3.3].freeze
+  # 3.2 never had a docs generation of its own: its pages moved to 3.3 with the release,
+  # so every 3.2 URL redirects to its 3.3 twin the way the v1/v2/v3 aliases do.
   LEGACY_DOCS_VERSION_ALIASES = {
     'v1' => '1.2',
     'v2' => '2.3',
-    'v3' => CURRENT_DOCS_VERSION
+    'v3' => CURRENT_DOCS_VERSION,
+    '3.2' => CURRENT_DOCS_VERSION
   }.freeze
-  DOCS_VERSION_MENU = %w[3.2 3.1 3.0 2.3 1.2].freeze
+  DOCS_VERSION_MENU = %w[3.3 3.1 3.0 2.3 1.2].freeze
   CACHED_PAGE_TTL = 12.hours
 
   V3_DOC_GROUPS = {
@@ -76,15 +79,28 @@ class FrameworkController < Framework.parent_controller_class
   # Inverse from 3.1.7.
   #
   # :foundation gains Devices and Rendering Modes behind Screen: the two things a
-  # screen states about its hardware before any content goes in it. Both are
-  # 3.2-only, like every other page added to this hash rather than to V3_DOC_GROUPS.
-  V3_2_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
+  # screen states about its hardware before any content goes in it. Both belong to
+  # the current track only, like every other page added to this hash rather than to
+  # V3_DOC_GROUPS.
+  #
+  # :components gains Map behind Chart, and :paint gains Painting Maps behind
+  # Painting Charts: TRMNLMaps ships in the 3.3 runtime, so both pages are current-only.
+  #
+  # :arrangement gains Position behind Spacing: the position keywords, offsets and
+  # stacking levels are 3.3 utilities, and offsets ride the spacing scale.
+  CURRENT_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
     case group
     when :guides
       groups[:guides] = pages + %w[open_source contributing]
+    when :arrangement
+      spacing_index = pages.index('spacing') || -1
+      groups[:arrangement] = pages.dup.insert(spacing_index + 1, 'position')
     when :foundation
       screen_index = pages.index('screen') || -1
       groups[:foundation] = pages.dup.insert(screen_index + 1, 'devices', 'rendering_modes')
+    when :components
+      chart_index = pages.index('chart') || -1
+      groups[:components] = pages.dup.insert(chart_index + 1, 'map')
     when :styling
       groups[:styling] = (pages - %w[colors tokens]) + %w[inverse]
     when :typography
@@ -92,7 +108,7 @@ class FrameworkController < Framework.parent_controller_class
       groups[:typography] = pages.dup.insert(text_size_index + 1, 'text_scale')
     when :modulations
       groups[:runtime] = %w[framework_runtime] + (pages - %w[framework_runtime])
-      groups[:paint] = %w[paint_api paint_colors paint_charts paint_borders paint_typography]
+      groups[:paint] = %w[paint_api paint_colors paint_charts paint_maps paint_borders paint_typography]
       groups[:sass] = %w[sass_api sass_build sass_devices sass_mixins]
       groups[:themes] = %w[themes theme_authoring theme_slots]
       groups[:variables] = %w[variables_api colors color_palettes tokens]
@@ -121,7 +137,7 @@ class FrameworkController < Framework.parent_controller_class
     }.freeze,
     '3.0' => V3_DOC_GROUPS,
     '3.1' => V3_1_DOC_GROUPS,
-    CURRENT_DOCS_VERSION => V3_2_DOC_GROUPS
+    CURRENT_DOCS_VERSION => CURRENT_DOC_GROUPS
   }.freeze
 
   # 3.0/3.1 share the current v3 templates; framework_v3_1 holds only the
@@ -187,6 +203,7 @@ class FrameworkController < Framework.parent_controller_class
   def paint_api; end
   def paint_colors; end
   def paint_charts; end
+  def paint_maps; end
   def paint_borders; end
   def paint_typography; end
   def sass_api; end
@@ -215,6 +232,7 @@ class FrameworkController < Framework.parent_controller_class
   def table; end
   def table_overflow; end
   def chart; end
+  def map; end
   def item; end
   def gap; end
   def clamp; end
@@ -231,6 +249,7 @@ class FrameworkController < Framework.parent_controller_class
   def text_color; end
   def text_alignment; end
   def spacing; end
+  def position; end
   def rich_text; end
   def mashup; end
   def content_limiter; end

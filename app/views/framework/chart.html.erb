@@ -79,6 +79,12 @@
           </p>
 
           <p class="<%= framework_section_description_classes %>">
+            Maps follow the same pattern: <code class="<%= framework_section_code_classes %>">TRMNLMaps</code> composes
+            MapLibre GL JS styles from framework paint over OpenStreetMap vector tiles. See
+            <%= render DocsRef.new(page: :map) %>.
+          </p>
+
+          <p class="<%= framework_section_description_classes %>">
             Highcharts takes sizes as plain numbers, so they do not follow the device scale on their own. Pass heights, spacing, line widths, and label offsets through <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code> inside <code class="<%= framework_section_code_classes %>">TRMNLCharts.watch()</code>. The watcher rebuilds the chart after a scale change, and the paint API supplies the new numbers.
           </p>
 

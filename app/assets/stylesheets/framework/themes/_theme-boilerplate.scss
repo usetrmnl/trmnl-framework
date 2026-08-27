@@ -4,16 +4,14 @@
 // Safe theme authoring rules:
 // 1) Theme files may set framework semantic channel + slot token refs via
 //    @include theme-slots.* mixins.
-// 2) Theme files must NOT set framework-owned paint variables:
-//    - --bg-* (mode/palette-controlled backgrounds)
-//    - --text-* (mode/palette-controlled text rendering)
-//    - --border-* (mode/palette-controlled border rendering)
-// 3) Theme files must NOT set root palette variables:
-//    - --white / --black
-//    - --gray-*
-//    - --color-*
-// 4) Keep selectors scoped to `.trmnl .screen--theme-<name>`.
-// 5) Emit the framework layer order (`@include layers.order;`) above the
+// 2) A theme declares contract variables only (--framework-*, --theme-*,
+//    --tn-text-stroke-*), which the mixins emit for you. Raw paint (--bg-*,
+//    --text-*, --border-*), the root palette (--white/--black, --gray-*,
+//    --color-*), geometry (--rounded-*, --gap-*, --table-*, --title-bar-*,
+//    --progress-*), and font metrics are engine- or device-owned; structure
+//    goes through layout-factors and weight through font-weight-shift instead.
+// 3) Keep selectors scoped to `.trmnl .screen--theme-<name>`.
+// 4) Emit the framework layer order (`@include layers.order;`) above the
 //    theme's own `@layer tn--themes` block. A theme file is loaded as its own
 //    <link>, and cascade layer order is fixed by the first stylesheet that
 //    names the layers, so without it a theme parsed before plugins.css loses
@@ -53,6 +51,32 @@
         @include theme-slots.text-slot('label-gray', 'gray-30');
         @include theme-slots.border-level-slot('table-head-row', 4);
         @include theme-slots.border-token-slot('label-underline', 'gray-30');
+        // Map slots (safe): every one is a bg slot, lines included.
+        // Land follows the canvas channel and labels the text channels; the
+        // full token-bound list is _map-slot-defaults in base/_screen.scss.
+        @include theme-slots.bg-slot('map-water', 'blue-65');
+        @include theme-slots.bg-slot('map-green', 'green-70');
+        @include theme-slots.bg-slot('map-road', 'gray-35');
+        @include theme-slots.bg-slot('map-road-minor', 'gray-50');
+
+        // Title-bar inks (optional): pair a filled bar with contrasting title,
+        // instance, and icon inks without moving the screen-wide channels.
+        // Point the stroke at the bar's own field tone so halos separate ink
+        // from fill instead of tracking the canvas.
+        // @include theme-slots.bg-slot('title-bar', 'black');
+        // @include theme-slots.ink-slot('title-bar', 'white');
+        // @include theme-slots.ink-slot('title-bar-instance', 'gray-60');
+        // @include theme-slots.icon-slot('title-bar', 'white');
+        // @include theme-slots.stroke-slot('title-bar', 'black');
+
+        // Structure (optional): unitless multipliers over unthemed geometry.
+        // Whitespace drives gaps, pads, and table rows; corners drive every
+        // radius; the rest are the bar and the progress meters. 1 = unthemed.
+        // @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0);
+
+        // Vector weight (optional): one signed shift over every Inter role
+        // weight, clamped at consumption. Bitmap bundles ignore it.
+        // @include theme-slots.font-weight-shift(100);
 
         // Utility token remaps (safe): remap raw palette utility classes.
         // Makes bg--<from> render as bg--<to>, text--<from> as text--<to>, etc.

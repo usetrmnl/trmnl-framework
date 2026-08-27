@@ -90,14 +90,14 @@ $_pill-label-exclusions: ();
             @include mixins.for-4bit {
                 background-color: var(--framework-slot-item-meta-bg-color, transparent);
                 background-image: none;
-                border-radius: vars.ui-scaled(4px);
+                border-radius: vars.corner-scaled(4px);
                 width: var(--item-meta-width);
                 margin-right: var(--gap-small);
             }
 
             .index {
                 @include mixins.for-screen-modifier('2bit', '4bit') {
-                    @include mixins.shadow-text-stroke(vars.ui-scaled(2px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1px));
+                    @include mixins.shadow-text-stroke(vars.ui-scaled(2px), mixins.contrast-stroke-color(), vars.ui-scaled(1px));
                     font-family: var(--item-index-font-family);
                     font-weight: var(--item-index-font-weight);
                     -webkit-font-smoothing: var(--item-index-font-smoothing);

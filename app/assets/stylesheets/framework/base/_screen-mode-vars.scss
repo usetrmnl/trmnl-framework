@@ -764,12 +764,33 @@ $_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
     }
 }
 
-// Preview mode mutes bg/text through the -preview image families; strokes are
-// the only solid-color chain, so remap chromatic tokens to their preview
-// solids. White stays on var(--white); screen--preview-white-limited mutes it.
-@mixin _preview-stroke-vars {
-    @each $token, $hex in vars.$preview-color-palette {
-        @include _stroke-hex($token, $hex);
+// Limited palettes paint chromatic strokes with the panel accent their dither
+// art already uses, so a theme hue cannot leak color onto a panel that has no
+// such ink: violet-30 on a black/white/red/yellow rail is red-30. Preview mode
+// swaps in the accent's preview hex. Gray tokens keep the base rule's grays,
+// which is what the 1-bit rails do.
+@mixin _palette-stroke-vars($palette-id, $preview: false, $dark: false) {
+    $accents: map.get(vars.$palette-hue-accents, 'color-#{$palette-id}');
+
+    @each $hue in vars.$color-hues {
+        $hue-str: '' + $hue;
+        $accent: map.get($accents, $hue-str);
+        @include _palette-stroke-token($hue-str, $accent, $preview, $dark);
+
+        @each $step in vars.$color-shade-steps {
+            @include _palette-stroke-token('#{$hue-str}-#{$step}', '#{$accent}-#{$step}', $preview, $dark);
+        }
+    }
+}
+
+@mixin _palette-stroke-token($token, $accent-token, $preview, $dark) {
+    $target: if($dark, bg.dark-remap-token($accent-token), $accent-token);
+    $preview-hex: if($preview, map.get(vars.$preview-color-palette, $target), null);
+
+    @if $preview-hex {
+        @include _stroke-hex($token, $preview-hex);
+    } @else {
+        @include _stroke-color($token, $target);
     }
 }
 
@@ -853,6 +874,28 @@ $_limited-palette-paint-depth: 4;
     }
 }
 
+// Map slots on the color rails. The defaults in base/_screen.scss are grays
+// tuned for 1-bit; a panel that can print a hue gets water, greens, fields and
+// sand in their own hue and lines a step back from the ink, the way the chart
+// ramp trades its shade ladder for a categorical ramp. Limited palettes take
+// the same tokens and resolve them through their own rails.
+@mixin _map-slot-color-defaults {
+    @include theme-slots.bg-slot('map-water', 'blue-70');
+    @include theme-slots.bg-slot('map-green', 'green-70');
+    @include theme-slots.bg-slot('map-farmland', 'yellow-75');
+    @include theme-slots.bg-slot('map-sand', 'yellow-70');
+    @include theme-slots.bg-slot('map-area', 'gray-70');
+    @include theme-slots.bg-slot('map-site', 'orange-75');
+    @include theme-slots.bg-slot('map-building', 'gray-65');
+    @include theme-slots.bg-slot('map-transit', 'gray-30');
+    @include theme-slots.bg-slot('map-road', 'gray-35');
+    @include theme-slots.bg-slot('map-road-minor', 'gray-50');
+    @include theme-slots.bg-slot('map-path', 'gray-45');
+    @include theme-slots.bg-slot('map-rail', 'gray-30');
+    @include theme-slots.bg-slot('map-boundary', 'purple-40');
+    @include theme-slots.bg-slot('map-water-line', 'blue-40');
+}
+
 // ============================================
 // CSS Output: Mode variable declarations
 // ============================================
@@ -897,6 +940,19 @@ $_limited-palette-paint-depth: 4;
     .screen.screen--1bit.screen--dark-mode#{helpers.$theme-exempt},
     .screen.screen--1bit#{helpers.$theme-exempt}:not(.screen--dark-mode) .inverse {
         @include theme-slots.bg-slot('screen-backdrop', 'gray-75');
+    }
+
+    // The map's residential field (map-area, gray-75 by default) is a sparse
+    // speckle on the 1-bit rail: texture over every built-up block with nothing
+    // to say on a panel that cannot print a light gray. So the 1-bit rail folds
+    // the slot into the canvas, the channel map-land already follows (and the
+    // inverse subtree flips with it), and the parks, water and buildings stay
+    // the tones that separate them from it. 2-bit and up keep the light field;
+    // themes restate the slot themselves.
+    .screen.screen--1bit#{helpers.$theme-exempt},
+    .screen.screen--1bit#{helpers.$theme-exempt} .inverse {
+        --framework-slot-map-area-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
+        --framework-slot-map-area-bg-image: var(--framework-semantic-canvas-bg-image, none);
     }
 
     // ── 2-bit mode: grayscale--2bit dither patterns ──
@@ -951,6 +1007,7 @@ $_limited-palette-paint-depth: 4;
             vars.$color-full-chart-series,
             $span: vars.$color-full-chart-series-span
         );
+        @include _map-slot-color-defaults;
     }
 
     // ── Limited color palettes (actual + preview) ──
@@ -959,11 +1016,19 @@ $_limited-palette-paint-depth: 4;
         .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
             @include _palette-bg-vars($palette-id);
             @include _palette-text-vars($palette-id);
+            @include _palette-stroke-vars($palette-id);
             @include _border-level-pattern-vars('borders--1bit');
             // Palette paint below replaces every chromatic token in this rule;
             // emit only the grayscale rail here to avoid 900 dead declarations.
             @include _border-token-pattern-vars('borders-token', $chromatic: false);
             @include _border-token-palette-vars($palette-id);
+        }
+
+        // Themeable, unlike the paint vars above, so it rides its own
+        // theme-exempt rule like the color-full chart ramp.
+        .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _map-slot-color-defaults;
         }
 
         .screen.screen--preview-colors.screen--color-#{$palette-id},
@@ -973,7 +1038,7 @@ $_limited-palette-paint-depth: 4;
         .screen--preview-colors .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
             @include _palette-bg-vars($palette-id, $preview: true);
             @include _palette-text-vars($palette-id, $preview: true);
-            @include _preview-stroke-vars;
+            @include _palette-stroke-vars($palette-id, $preview: true);
             @include _border-level-pattern-vars('borders--1bit-preview');
             @include _border-token-pattern-vars('borders-token-preview', $chromatic: false);
             @include _border-token-palette-vars($palette-id, $preview: true);
@@ -1121,6 +1186,7 @@ $_limited-palette-paint-depth: 4;
             @include _palette-bg-vars($palette-id, $dark: true);
             @include _palette-text-vars($palette-id, $dark: true);
             @include _stroke-vars($dark: true);
+            @include _palette-stroke-vars($palette-id, $dark: true);
             @include _border-level-pattern-vars('borders--1bit', $dark: true);
             @include _border-token-pattern-vars('borders-token', $dark: true, $chromatic: false);
             @include _border-token-palette-vars($palette-id, $dark: true);
@@ -1132,7 +1198,7 @@ $_limited-palette-paint-depth: 4;
         .screen--preview-colors .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
             @include _palette-bg-vars($palette-id, $preview: true, $dark: true);
             @include _palette-text-vars($palette-id, $preview: true, $dark: true);
-            @include _preview-stroke-vars;
+            @include _palette-stroke-vars($palette-id, $preview: true, $dark: true);
             @include _border-level-pattern-vars('borders--1bit-preview', $dark: true);
             @include _border-token-pattern-vars('borders-token-preview', $dark: true, $chromatic: false);
             @include _border-token-palette-vars($palette-id, $preview: true, $dark: true);

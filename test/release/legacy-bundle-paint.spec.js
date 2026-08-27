@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 // The released versions that carry the composed bg--/text-- rule. They are frozen, so this list
 // only grows when a release is cut; the rspec parity spec is what watches the rule's size.
-const VERSIONS = ['3.0.5', '3.1.1', '3.1.2', '3.1.3', '3.1.4', '3.1.5', '3.1.6', '3.1.7', '3.1.8', '3.2.0'];
+const VERSIONS = ['3.0.5', '3.1.1', '3.1.2', '3.1.3', '3.1.4', '3.1.5', '3.1.6', '3.1.7', '3.1.8', '3.2.0', '3.3.0'];
 
 // A palette per family, because each reaches the rule through a different set of tokens, plus a
 // variant-prefixed pair, which is where most of the rule's selectors live.

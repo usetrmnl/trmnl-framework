@@ -7,6 +7,8 @@
 
 @include mixins.trmnl-namespace {
     .description {
+        text-transform: var(--framework-text-description-transform, none);
+        letter-spacing: var(--framework-text-description-tracking, normal);
         font-family: var(--description-font-family);
         font-size: var(--description-font-size);
         font-weight: var(--description-font-weight);

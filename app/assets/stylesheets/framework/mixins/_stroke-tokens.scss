@@ -22,6 +22,12 @@ $stroke-sizes: ('base', 'small', 'medium', 'large', 'xlarge');
     @return $items;
 }
 
+// --framework-stroke-contrast leads the chain: plugin markup repaints that name, and
+// an override below the screen never reaches the semantic one (stroke-contrast-override.spec.js).
+@function contrast-stroke-color() {
+    @return var(--framework-stroke-contrast, var(--framework-semantic-stroke-contrast-stroke-color));
+}
+
 // Every color token a stroke modifier can name, in emission order. The two
 // shade palettes share black and white, so the list is deduped by name.
 @function stroke-token-names() {

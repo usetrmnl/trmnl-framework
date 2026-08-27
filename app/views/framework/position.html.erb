@@ -1,0 +1,267 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :position %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:position) %>
+
+    <div class="<%= message_sage_classes %>">
+      <div class="flex items-center w-full">
+        <div class="flex-shrink-0 items-center">
+          <%= render 'shared/icons/info' %>
+        </div>
+        <div class="w-full flex items-center justify-between ml-3">
+          <p class="leading-none text-sm font-medium">
+            Available offset sizes and their pixel values
+          </p>
+          <p class="text-sm md:mt-0 md:ml-6">
+            <%= link_to framework_docs_size_path, class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
+              View Size Documentation
+              <%= render 'shared/icons/arrow_right' %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Relative and Absolute') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">relative</code> marks an element as a container
+            that positioned children are placed against.
+            <code class="<%= framework_section_code_classes %>">absolute</code> takes a child out of the normal
+            flow, and the offsets below then measure from that container's edges.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">relative</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">The container the offsets below measure from</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">absolute</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Takes the element out of flow</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Offsets') %>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">top--</code>, <code class="<%= framework_section_code_classes %>">right--</code>,
+            <code class="<%= framework_section_code_classes %>">bottom--</code> and
+            <code class="<%= framework_section_code_classes %>">left--</code> each set the distance from one edge, and
+            <code class="<%= framework_section_code_classes %>">inset--</code> sets all four. The numbers come from the
+            spacing scale <%= render DocsRef.new(page: :spacing) %>, where one step is 4px, so
+            <code class="<%= framework_section_code_classes %>">top--3</code> is 12px.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            There are half steps at the small end, where 0.5, 1.5, 2.5 and 3.5 give 2px, 6px, 10px and 14px, and the
+            scale runs from 0 to 96, or 384px. Nothing outside those steps is a class, so
+            <code class="<%= framework_section_code_classes %>">top--[Npx]</code> has no effect.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Those pixel values describe a standard device. On one with a larger interface scale the offsets grow with
+            it, the same way padding does <%= render DocsRef.new(page: :scale) %>.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">top--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the top edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">right--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the right edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">bottom--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the bottom edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">left--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the left edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">inset--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">All four edges at once; <code class="<%= framework_section_code_classes %>">inset--0</code> is full bleed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Layers') %>
+          <p class="<%= framework_section_description_classes %>">
+            Where two positioned elements overlap, <code class="<%= framework_section_code_classes %>">z--0</code> through
+            <code class="<%= framework_section_code_classes %>">z--3</code> say which of them is drawn on top. The scale
+            ends at 3, so nothing a screen positions can cover the title bar.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">z--{0-3}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Which positioned element draws on top</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Responsive') %>
+          <p class="<%= framework_section_description_classes %>">
+            Every class on this page takes a prefix for <strong>Size</strong>
+            <%= render DocsRef.new(page: :size) %>, <strong>Orientation</strong>, or both
+            <%= render DocsRef.new(page: :responsive) %>. Bit-depth prefixes are not part of the set, because these
+            classes place an element rather than paint it.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">md:top--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">portrait:inset--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Orientation-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">lg:portrait:left--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size + Orientation example</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(2, 'Out of Flow') %>
+          <p class="<%= framework_section_description_classes %>">
+            Once an element leaves the flow, three things about it change: what measures its text, what decides its
+            width, and what it needs behind it.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  <%= render DocsRef.new(page: :clamp) %>, <%= render DocsRef.new(page: :fit_value) %>,
+                  <%= render DocsRef.new(page: :content_limiter) %> and <%= render DocsRef.new(page: :table_overflow) %>
+                  measure elements in normal flow, so they pass a positioned one by. Give it a size, clamp its own
+                  text, and read it back on the smallest screen you support.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  An element with only <code class="<%= framework_section_code_classes %>">left--</code> or only
+                  <code class="<%= framework_section_code_classes %>">right--</code> is as wide as its contents. Name
+                  both edges and it stretches from one to the other.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  An element drawn over other content needs a solid fill:
+                  <code class="<%= framework_section_code_classes %>">bg--canvas</code> or
+                  <code class="<%= framework_section_code_classes %>">bg--white</code>. Every shade between them is a
+                  dither pattern on a 1-bit screen, and small text over one is hard to read. Draw its edge with
+                  <%= render DocsRef.new(page: :outline) %> rather than a shadow, which ePaper renders as a band of dither.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(3, 'Card over a full-bleed panel') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              A panel takes the whole layout here, with one card in its top left corner and another in its bottom
+              right. Each card names a vertical edge and a horizontal edge, and with no second horizontal edge to
+              stretch to, it comes out as wide as its own label.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="relative stretch w--full bg--gray-45 2bit:bg--gray-55 4bit:bg--gray-50 rounded--medium">
+                        <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
+                          <span class="label label--small">Depot</span>
+                          <span class="value value--xsmall value--tnums">12 min</span>
+                        </div>
+                        <div class="absolute bottom--3 right--3 z--2 p--2 bg--white outline">
+                          <span class="label label--small">Updated 17:04</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Position</span>
+                      <span class="instance">Card over a panel</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col">
+  <div class="relative stretch w--full bg--gray-45">
+    <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
+      <span class="label label--small">Depot</span>
+      <span class="value value--xsmall value--tnums">12 min</span>
+    </div>
+    <div class="absolute bottom--3 right--3 z--2 p--2 bg--white outline">
+      <span class="label label--small">Updated 17:04</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>

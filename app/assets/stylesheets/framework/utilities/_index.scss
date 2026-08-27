@@ -21,6 +21,12 @@
 @forward 'pixel_ratio';
 @forward 'font';
 
+// After 'outline' and 'border', which declare `position: relative` for the
+// pseudo-elements that draw them. Those are container defaults at the same
+// weight as `.absolute`, so `class="absolute outline"` only stays out of flow
+// because this line comes later.
+@forward 'position';
+
 // Box model last. Every utility here sits in one layer at one class of weight,
 // so the file order decides who wins a tie, and the layout containers declare
 // the same properties as their defaults: `.grid` and `.col` set width and

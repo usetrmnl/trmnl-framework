@@ -181,10 +181,10 @@ RSpec.describe 'Framework docs serving mode', type: :request do
       assets = linked_assets
 
       aggregate_failures do
-        expect(assets).to include('/css/3.2.0/plugins.min.css')
-        expect(assets).to include('/css/3.2.0/framework/responsive_test.css')
+        expect(assets).to include('/css/3.3.0/plugins.min.css')
+        expect(assets).to include('/css/3.3.0/framework/responsive_test.css')
         Framework::Themes.ids.each do |id|
-          expect(assets).to include("/css/3.2.0/themes/#{id}-theme.css")
+          expect(assets).to include("/css/3.3.0/themes/#{id}-theme.css")
         end
         expect(assets).not_to include(a_string_matching(%r{\A/assets/plugins-}))
       end
@@ -193,7 +193,7 @@ RSpec.describe 'Framework docs serving mode', type: :request do
     it 'says so on the badge' do
       get_docs(current_version)
 
-      expect(badge).to eq(['Released 3.2.0', Framework::DocsServingMode.current.explanation])
+      expect(badge).to eq(['Released 3.3.0', Framework::DocsServingMode.current.explanation])
     end
   end
 
@@ -215,8 +215,8 @@ RSpec.describe 'Framework docs serving mode', type: :request do
       assets = linked_assets
 
       aggregate_failures do
-        expect(assets).to include('/css/3.2.0/plugins.min.css')
-        expect(assets).to include('/css/3.2.0/framework/responsive_test.css')
+        expect(assets).to include('/css/3.3.0/plugins.min.css')
+        expect(assets).to include('/css/3.3.0/framework/responsive_test.css')
         expect(assets).not_to include(a_string_matching(%r{\A/assets/plugins-}))
       end
     end
@@ -226,7 +226,7 @@ RSpec.describe 'Framework docs serving mode', type: :request do
       label, title = badge
 
       aggregate_failures do
-        expect(label).to eq('Released 3.2.0')
+        expect(label).to eq('Released 3.3.0')
         expect(title).to include('framework/responsive_test.css')
         expect(title).to include('bin/dev')
       end
@@ -267,7 +267,7 @@ RSpec.describe 'Framework docs serving mode', type: :request do
 
       get_docs(current_version)
 
-      expect(linked_assets).to include('/css/3.2.0/plugins.min.css')
+      expect(linked_assets).to include('/css/3.3.0/plugins.min.css')
     end
 
     it 'serves the live build once the marker is written' do
@@ -306,12 +306,12 @@ RSpec.describe 'Framework docs serving mode', type: :request do
   # serving they have today.
   describe 'outside development' do
     it 'serves released assets for every supported version' do
-      expected = { '3.2' => '3.2.0', '3.1' => '3.1.8', '3.0' => '3.0.5', '2.3' => '2.3.7', '1.2' => '1.2.0' }
+      expected = { '3.3' => '3.3.0', '3.1' => '3.1.8', '3.0' => '3.0.5', '2.3' => '2.3.7', '1.2' => '1.2.0' }
 
       aggregate_failures do
         expected.each do |version, semver|
           get_docs(version)
-          bundle = semver == '3.2.0' ? 'plugins.min.css' : 'plugins.css'
+          bundle = semver == '3.3.0' ? 'plugins.min.css' : 'plugins.css'
           expect(linked_assets).to include("/css/#{semver}/#{bundle}")
         end
       end

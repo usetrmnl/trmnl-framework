@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { openDocsPage } from '../support/docs-page.js';
 
 test('sizes runtime examples from the selected device on initial page load', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/overflow');
+  await openDocsPage(page, '/framework/docs/3.3/overflow');
 
   await expect.poll(() => page.evaluate(() => {
     const element = document.querySelector('[data-controller~="fancy-screen-picker"]');
@@ -31,7 +31,7 @@ test('sizes runtime examples from the selected device on initial page load', asy
 });
 
 test('preserves Text Scale modifiers when the picker rewrites example screens', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/text_scale');
+  await openDocsPage(page, '/framework/docs/3.3/text_scale');
 
   const iframes = page.locator('iframe[data-trmnl-example="true"]');
   await expect.poll(() => iframes.count()).toBeGreaterThan(0);
@@ -90,7 +90,7 @@ test('preserves Text Scale modifiers when the picker rewrites example screens', 
 });
 
 test('applies the picker Text Scale select to every example screen and resets it', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/overflow');
+  await openDocsPage(page, '/framework/docs/3.3/overflow');
 
   const iframes = page.locator('iframe[data-trmnl-example="true"]');
   await expect.poll(() => iframes.count()).toBeGreaterThan(1);
@@ -150,7 +150,7 @@ test('applies the picker Text Scale select to every example screen and resets it
 });
 
 test('seeds the picker Text Scale from the text_scale URL param', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/overflow?text_scale=large');
+  await openDocsPage(page, '/framework/docs/3.3/overflow?text_scale=large');
 
   const iframes = page.locator('iframe[data-trmnl-example="true"]');
   await expect.poll(() => iframes.count()).toBeGreaterThan(1);
@@ -164,7 +164,7 @@ test('seeds the picker Text Scale from the text_scale URL param', async ({ page 
 });
 
 test('refreshes runtime examples without reloading the docs page or losing the active example', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/overflow');
+  await openDocsPage(page, '/framework/docs/3.3/overflow');
 
   const iframes = page.locator('iframe[data-trmnl-example="true"]');
   await expect.poll(() => iframes.count()).toBeGreaterThan(1);
@@ -244,8 +244,8 @@ test('does not let iframe state requests rewrite the picker from another tab', a
   const otherPage = await context.newPage();
 
   await Promise.all([
-    openDocsPage(page, '/framework/docs/3.2/overflow'),
-    openDocsPage(otherPage, '/framework/docs/3.2/overflow'),
+    openDocsPage(page, '/framework/docs/3.3/overflow'),
+    openDocsPage(otherPage, '/framework/docs/3.3/overflow'),
   ]);
 
   for (const currentPage of [page, otherPage]) {

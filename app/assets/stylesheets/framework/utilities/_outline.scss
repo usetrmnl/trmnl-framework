@@ -15,7 +15,11 @@
 @include mixins.trmnl-namespace {
     .outline {
         position: relative;
-        
+        // The corner dots turn on an 8px curve (mixins/_outline-dots.scss), and
+        // nothing else clips the element, so a card with a fill of its own
+        // squares off outside its own outline without this.
+        border-radius: vars.corner-scaled(8px);
+
         &::after {
             content: "";
             position: absolute;
@@ -24,14 +28,25 @@
             @include mixins.outline-dots;
         }
     }
-    
+
+    // A quieter edge, for a card sitting over busy art. Not the muted border
+    // token: it resolves to #CCCCCC at every depth, which thresholds to white on
+    // 1-bit and leaves the card with no edge at all.
+    .outline--muted {
+        --framework-semantic-border-strong-border-color: var(--stroke-gray-35-color, var(--gray-35));
+    }
+
     // The 2x fill-ins interleave the 1x arc at half-pixel steps, so they key
     // on the ratio the dot geometry scales with (dither-pixel-ratio), not the
     // preview upscale factor: TRMNL X previews at pixel-ratio 1.8 and still
     // renders its art at double density.
+    //
+    // A custom property resolves where it is declared, on the screen, so the
+    // muted card declares it again or keeps dark 2x corners around a muted arc.
     @each $device-name, $device-config in custom.$all-devices {
         @if map.get($device-config, 'dither-pixel-ratio') >= 2 {
-            .screen--#{$device-name} {
+            .screen--#{$device-name},
+            .screen--#{$device-name} .outline--muted {
                 --_outline-hdpi-color: var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
             }
         }
@@ -41,21 +56,22 @@
     // (see base/_screen.scss), so the fill-ins between the 1x dots switch off
     // with it: at 1x cadence they would crowd the arc into a blob.
     @media (max-resolution: 1.99dppx) {
-        .screen--preview.screen--density-2x {
+        .screen--preview.screen--density-2x,
+        .screen--preview.screen--density-2x .outline--muted {
             --_outline-hdpi-color: transparent;
         }
     }
-    
+
     // The solid fallback, on every rail that paints a 1px gray line as a clean
     // solid. The limited palettes keep the dotted arc: their inks dither, so a
-    // solid border would dither too. The radius rides --ui-scale, the space the
-    // dotted arc traces its corners in (mixins/_outline-dots.scss), so the two
-    // treatments round the same corner on a device with a ui-scale of its own.
+    // solid border would dither too. It reads the same ink and rounds the same
+    // 8px curve as the dots, so a card looks the same on either treatment and
+    // .outline--muted reaches it with no rule of its own.
     @include mixins.for-screen-modifier('2bit', '4bit', 'color-full') {
         .outline::after {
             background: none;
             border: 1px solid var(--framework-semantic-border-strong-border-color, var(--framework-outline-strong, var(--framework-border-strong)));
-            border-radius: vars.ui-scaled(7px);
+            border-radius: vars.corner-scaled(8px);
         }
     }
 }

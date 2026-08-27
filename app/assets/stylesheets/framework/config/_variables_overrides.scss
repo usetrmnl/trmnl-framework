@@ -10,10 +10,16 @@
 
 // Emit CSS custom properties from a map.
 // When $scale is true, px values are wrapped in calc(… * var(--ui-scale)).
-@mixin emit-sized-vars($vars, $scale: false) {
+// $factor-variable names a theme factor multiplied in after the scale, so a
+// component family rides its contract knob without restating every entry.
+@mixin emit-sized-vars($vars, $scale: false, $factor-variable: null) {
     @each $prop, $value in $vars {
         @if $scale and meta.type-of($value) == 'number' and math.unit($value) == 'px' and $value != 0px {
-            #{$prop}: calc(#{$value} * var(--ui-scale));
+            @if $factor-variable {
+                #{$prop}: calc(#{$value} * var(--ui-scale) * var(#{$factor-variable}, 1));
+            } @else {
+                #{$prop}: calc(#{$value} * var(--ui-scale));
+            }
         } @else {
             #{$prop}: #{$value};
         }
@@ -39,31 +45,41 @@ $table-size-vars: (
     '--table-xsmall-tbody-height': 22px,
 );
 
+// The radius lives apart from the sizes: it rides the corner factor while the
+// heights and dots ride the meter factor.
 $progress-size-vars: (
     '--progress-bar-height': 24px,
     '--progress-bar-height-small': 12px,
     '--progress-bar-height-xsmall': 6px,
     '--progress-bar-height-large': 32px,
-    '--progress-bar-radius': 10px,
     '--progress-dot-size': 16px,
     '--progress-dot-size-small': 12px,
     '--progress-dot-size-xsmall': 8px,
     '--progress-dot-size-large': 20px,
 );
 
+@mixin progress-component-variables {
+    @include emit-sized-vars($progress-size-vars, $scale: true, $factor-variable: '--framework-layout-progress-factor');
+    --progress-bar-radius: calc(10px * var(--ui-scale) * var(--framework-layout-corner-factor, 1));
+}
+
+@mixin table-component-variables {
+    @include emit-sized-vars($table-size-vars, $scale: true, $factor-variable: '--framework-layout-whitespace-factor');
+}
+
 // Bind every base component dimension on `.screen`, where --ui-scale is
 // resolved. Values inherited from :root would otherwise resolve against the
 // root's scale of 1 before a device or modifier can participate.
 @mixin base-scaled-display-variables {
-    // Title bar
-    --title-bar-height: calc(40px * var(--ui-scale));
-    --title-bar-small-height: calc(32px * var(--ui-scale));
+    // Title bar: heights ride the theme's height factor; type metrics stay put.
+    --title-bar-height: calc(40px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-small-height: calc(32px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
     --title-bar-font-size: calc(16px * var(--text-ui-scale));
     --title-bar-padding-top: calc(5px * var(--ui-scale));
     --title-bar-text-stroke-width: calc(3.5px * var(--ui-scale));
-    --title-bar-image-height: calc(28px * var(--ui-scale));
-    --title-bar-small-image-height: calc(24px * var(--ui-scale));
-    --title-bar-border-radius: calc(10px * var(--ui-scale));
+    --title-bar-image-height: calc(28px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-border-radius: calc(10px * var(--ui-scale) * var(--framework-layout-corner-factor, 1));
     --title-bar-small-font-size: calc(16px * var(--text-ui-scale));
 
     // Labels, descriptions, and titles
@@ -120,10 +136,10 @@ $progress-size-vars: (
     --richtext-xxxlarge-font-size: calc(40px * var(--text-ui-scale));
 
     // Table, item, and progress components
-    @include emit-sized-vars($table-size-vars, $scale: true);
+    @include table-component-variables;
     --item-meta-width: calc(10px * var(--ui-scale));
     --item-index-font-size: calc(16px * var(--text-ui-scale));
-    @include emit-sized-vars($progress-size-vars, $scale: true);
+    @include progress-component-variables;
 
     // Font utilities
     --font-small-font-size: calc(16px * var(--text-ui-scale));
@@ -187,89 +203,93 @@ $progress-size-vars: (
 // Vector font face: families, smoothing, and the Inter-tuned weights; sizes and
 // line heights stay with the caller (the active bundle, or the density metrics below).
 @mixin vector-font-face-variables {
+    // The shift only reaches faces with a weight axis, so the bundles publish
+    // whether it applies: a consumer can disable the control instead of
+    // offering one that does nothing.
+    --framework-font-weight-shift-applies: 1;
     --title-bar-font-family: "Inter Variable", Inter;
     --title-bar-font-smoothing: auto;
-    --title-bar-font-weight: 700;
+    --title-bar-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
     --title-bar-padding-top: 0px;
     --label-font-family: "Inter Variable", Inter;
     --label-font-smoothing: auto;
-    --label-font-weight: 500;
+    --label-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --label-small-font-family: "Inter Variable", Inter;
     --label-small-font-smoothing: auto;
-    --label-small-font-weight: 500;
+    --label-small-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --label-large-font-family: "Inter Variable", Inter;
     --label-large-font-smoothing: auto;
-    --label-large-font-weight: 500;
+    --label-large-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --label-xlarge-font-family: "Inter Variable", Inter;
     --label-xlarge-font-smoothing: auto;
-    --label-xlarge-font-weight: 475;
+    --label-xlarge-font-weight: clamp(100, calc(475 + var(--framework-font-weight-shift, 0)), 900);
     --label-xxlarge-font-family: "Inter Variable", Inter;
     --label-xxlarge-font-smoothing: auto;
-    --label-xxlarge-font-weight: 450;
+    --label-xxlarge-font-weight: clamp(100, calc(450 + var(--framework-font-weight-shift, 0)), 900);
     --description-font-family: "Inter Variable", Inter;
     --description-font-smoothing: auto;
-    --description-font-weight: 400;
+    --description-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
     --description-large-font-family: "Inter Variable", Inter;
     --description-large-font-smoothing: auto;
-    --description-large-font-weight: 700;
+    --description-large-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
     --description-xlarge-font-family: "Inter Variable", Inter;
     --description-xlarge-font-smoothing: auto;
-    --description-xlarge-font-weight: 500;
+    --description-xlarge-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --description-xxlarge-font-family: "Inter Variable", Inter;
     --description-xxlarge-font-smoothing: auto;
-    --description-xxlarge-font-weight: 475;
+    --description-xxlarge-font-weight: clamp(100, calc(475 + var(--framework-font-weight-shift, 0)), 900);
     --title-font-family: "Inter Variable", Inter;
     --title-font-smoothing: auto;
-    --title-font-weight: 400;
+    --title-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
     --title-small-font-family: "Inter Variable", Inter;
     --title-small-font-smoothing: auto;
-    --title-small-font-weight: 700;
+    --title-small-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
     --title-large-font-family: "Inter Variable", Inter;
     --title-large-font-smoothing: auto;
-    --title-large-font-weight: 425;
+    --title-large-font-weight: clamp(100, calc(425 + var(--framework-font-weight-shift, 0)), 900);
     --title-xlarge-font-family: "Inter Variable", Inter;
     --title-xlarge-font-smoothing: auto;
-    --title-xlarge-font-weight: 400;
+    --title-xlarge-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
     --title-xxlarge-font-family: "Inter Variable", Inter;
     --title-xxlarge-font-smoothing: auto;
-    --title-xxlarge-font-weight: 375;
+    --title-xxlarge-font-weight: clamp(100, calc(375 + var(--framework-font-weight-shift, 0)), 900);
     --value-font-family: "Inter Variable", Inter;
-    --value-font-weight: 450;
+    --value-font-weight: clamp(100, calc(450 + var(--framework-font-weight-shift, 0)), 900);
     --value-font-smoothing: auto;
     --value-xxsmall-font-family: "Inter Variable", Inter;
-    --value-xxsmall-font-weight: 700;
+    --value-xxsmall-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
     --value-xxsmall-font-smoothing: auto;
-    --value-xsmall-font-weight: 600;
-    --value-small-font-weight: 475;
-    --value-large-font-weight: 400;
-    --value-xlarge-font-weight: 375;
-    --value-xxlarge-font-weight: 350;
-    --value-xxxlarge-font-weight: 300;
-    --value-mega-font-weight: 275;
-    --value-giga-font-weight: 250;
-    --value-tera-font-weight: 225;
-    --value-peta-font-weight: 200;
+    --value-xsmall-font-weight: clamp(100, calc(600 + var(--framework-font-weight-shift, 0)), 900);
+    --value-small-font-weight: clamp(100, calc(475 + var(--framework-font-weight-shift, 0)), 900);
+    --value-large-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
+    --value-xlarge-font-weight: clamp(100, calc(375 + var(--framework-font-weight-shift, 0)), 900);
+    --value-xxlarge-font-weight: clamp(100, calc(350 + var(--framework-font-weight-shift, 0)), 900);
+    --value-xxxlarge-font-weight: clamp(100, calc(300 + var(--framework-font-weight-shift, 0)), 900);
+    --value-mega-font-weight: clamp(100, calc(275 + var(--framework-font-weight-shift, 0)), 900);
+    --value-giga-font-weight: clamp(100, calc(250 + var(--framework-font-weight-shift, 0)), 900);
+    --value-tera-font-weight: clamp(100, calc(225 + var(--framework-font-weight-shift, 0)), 900);
+    --value-peta-font-weight: clamp(100, calc(200 + var(--framework-font-weight-shift, 0)), 900);
     --richtext-font-family: "Inter Variable", Inter;
     --richtext-font-smoothing: auto;
-    --richtext-font-weight: 500;
+    --richtext-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --richtext-large-font-family: "Inter Variable", Inter;
     --richtext-large-font-smoothing: auto;
-    --richtext-large-font-weight: 500;
+    --richtext-large-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --richtext-small-font-family: "Inter Variable", Inter;
     --richtext-small-font-smoothing: auto;
-    --richtext-small-font-weight: 500;
+    --richtext-small-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
     --richtext-xlarge-font-family: "Inter Variable", Inter;
     --richtext-xlarge-font-smoothing: auto;
-    --richtext-xlarge-font-weight: 425;
+    --richtext-xlarge-font-weight: clamp(100, calc(425 + var(--framework-font-weight-shift, 0)), 900);
     --richtext-xxlarge-font-family: "Inter Variable", Inter;
     --richtext-xxlarge-font-smoothing: auto;
-    --richtext-xxlarge-font-weight: 400;
+    --richtext-xxlarge-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
     --richtext-xxxlarge-font-family: "Inter Variable", Inter;
     --richtext-xxxlarge-font-smoothing: auto;
-    --richtext-xxxlarge-font-weight: 375;
+    --richtext-xxxlarge-font-weight: clamp(100, calc(375 + var(--framework-font-weight-shift, 0)), 900);
     --item-index-font-family: "Inter Variable", Inter;
     --item-index-font-smoothing: auto;
-    --item-index-font-weight: 600;
+    --item-index-font-weight: clamp(100, calc(600 + var(--framework-font-weight-shift, 0)), 900);
     --font-small-font-family: "Inter Variable", Inter;
     --font-small-font-smoothing: auto;
     --font-base-font-family: "Inter Variable", Inter;
@@ -386,21 +406,21 @@ $progress-size-vars: (
 // bundle plus the density layer; bit depth only changes visual/layout affordances.
 @mixin two-bit-display-variables {
     // Title bar component variables
-    --title-bar-height: calc(40px * var(--ui-scale));
-    --title-bar-small-height: calc(32px * var(--ui-scale));
+    --title-bar-height: calc(40px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-small-height: calc(32px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
     --title-bar-text-stroke-width: calc(3.5px * var(--ui-scale));
-    --title-bar-image-height: calc(28px * var(--ui-scale));
-    --title-bar-small-image-height: calc(24px * var(--ui-scale));
-    --title-bar-border-radius: calc(10px * var(--ui-scale));
+    --title-bar-image-height: calc(28px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-border-radius: calc(10px * var(--ui-scale) * var(--framework-layout-corner-factor, 1));
 
     // Table component variables
-    @include emit-sized-vars($table-size-vars, $scale: true);
+    @include table-component-variables;
 
     // Item meta width (font properties handled per family)
     --item-meta-width: calc(10px * var(--ui-scale));
 
     // Progress component variables
-    @include emit-sized-vars($progress-size-vars, $scale: true);
+    @include progress-component-variables;
 }
 
 // Classic font bundle (NicoClean / NicoPups / BlockKie). Activated by the
@@ -408,6 +428,7 @@ $progress-size-vars: (
 // `screen--fonts-*` modifier is present. In 3.1.x and later, the density layer
 // overrides both pixel bundles to Inter on high-density screens.
 @mixin classic-fonts {
+    --framework-font-weight-shift-applies: 0;
     // Title bar
     --title-bar-font-size: calc(16px * var(--text-ui-scale));
     --title-bar-font-family: "NicoClean";
@@ -509,6 +530,7 @@ $progress-size-vars: (
 // `screen--fonts-trmnl` class and as the 3.1.x implicit default when no
 // `screen--fonts-*` modifier is present.
 @mixin trmnl-fonts {
+    --framework-font-weight-shift-applies: 0;
     // Title bar
     --title-bar-font-size: calc(16px * var(--text-ui-scale));
     --title-bar-font-family: "TRMNL16";
@@ -607,18 +629,18 @@ $progress-size-vars: (
     --title-bar-padding-top: 0px;
     --title-bar-text-stroke-width: calc(2px * var(--ui-scale));
 
-    --title-bar-height: calc(40px * var(--ui-scale));
-    --title-bar-small-height: calc(32px * var(--ui-scale));
-    --title-bar-image-height: calc(28px * var(--ui-scale));
-    --title-bar-small-image-height: calc(24px * var(--ui-scale));
-    --title-bar-border-radius: calc(10px * var(--ui-scale));
+    --title-bar-height: calc(40px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-small-height: calc(32px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-image-height: calc(28px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-small-image-height: calc(24px * var(--ui-scale) * var(--framework-layout-title-bar-height-factor, 1));
+    --title-bar-border-radius: calc(10px * var(--ui-scale) * var(--framework-layout-corner-factor, 1));
 
     // Table component variables
-    @include emit-sized-vars($table-size-vars, $scale: true);
+    @include table-component-variables;
 
     // Item component variables
     --item-meta-width: calc(10px * var(--ui-scale));
 
     // Progress component variables
-    @include emit-sized-vars($progress-size-vars, $scale: true);
+    @include progress-component-variables;
 }

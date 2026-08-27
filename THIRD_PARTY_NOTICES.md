@@ -24,6 +24,17 @@ Version 1.1, reproduced in full at the end of this file.
 The copies here are Illustrator exports that carry no license header of their own. Each
 one keeps the file name it has in the upstream `svg/` directory.
 
+## MapLibre GL JS
+
+`vendor/javascript/maplibre-gl-5.24.0.js` and `vendor/javascript/maplibre-gl-5.24.0.css`
+are the unmodified `dist/maplibre-gl.js` and `dist/maplibre-gl.css` of MapLibre GL JS
+5.24.0, <https://maplibre.org/>, redistributed under the 3-Clause BSD License. The
+JavaScript file carries the license notice and the notices of the libraries it bundles in
+its header; the full text is at <https://github.com/maplibre/maplibre-gl-js/blob/main/LICENSE.txt>.
+The engine serves both at `/framework-docs/` for the map docs and for `TRMNLMaps`.
+
+Copyright (c) 2023, MapLibre contributors. Copyright (c) 2020, Mapbox. All rights reserved.
+
 ## Brand marks
 
 These files reproduce the logo of the service each example plugin renders. They identify

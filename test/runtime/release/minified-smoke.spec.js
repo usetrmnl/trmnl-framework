@@ -49,11 +49,13 @@ test('runs representative lifecycle, layout, and paint behavior from the minifie
     const fill = window.TRMNLPaint.bg('black', { el: paintTarget });
     const scale = window.TRMNLPaint.scale({ el: paintTarget });
     const chartFill = window.TRMNLCharts.paint('black', { el: paintTarget });
+    const mapStyle = window.TRMNLMaps.style('streets', { el: paintTarget });
     return {
       globals: {
         terminalize: typeof window.terminalize,
         paint: typeof window.TRMNLPaint,
         charts: typeof window.TRMNLCharts,
+        maps: typeof window.TRMNLMaps,
         scale: typeof window.TRMNLPaint.scale,
         px: typeof window.TRMNLPaint.px,
       },
@@ -75,6 +77,8 @@ test('runs representative lifecycle, layout, and paint behavior from the minifie
       paint: {
         hasFill: Boolean(fill.color || fill.url),
         chartShape: chartFill == null ? 'null' : typeof chartFill,
+        mapLayers: mapStyle.layers.length,
+        mapSource: mapStyle.sources.osm.tiles[0],
         scale: scale.content,
         pixels: window.TRMNLPaint.px(40, { el: paintTarget }),
         textScale: scale.textModifier,
@@ -84,7 +88,7 @@ test('runs representative lifecycle, layout, and paint behavior from the minifie
   });
 
   expect(result.globals).toEqual({
-    terminalize: 'function', paint: 'object', charts: 'object', scale: 'function', px: 'function',
+    terminalize: 'function', paint: 'object', charts: 'object', maps: 'object', scale: 'function', px: 'function',
   });
   expect(result.overflow.columns).toBe(2);
   expect(result.overflow.ids).toEqual(Array.from({ length: 6 }, (_, index) => `release-item-${index + 1}`));
@@ -97,6 +101,8 @@ test('runs representative lifecycle, layout, and paint behavior from the minifie
   expect(result.value).toBe('€1.234,56');
   expect(result.paint.hasFill).toBe(true);
   expect(result.paint.chartShape).not.toBe('null');
+  expect(result.paint.mapLayers).toBeGreaterThan(5);
+  expect(result.paint.mapSource).toContain('maps.trmnl.com');
   expect(result.paint.scale).toBe(1);
   expect(result.paint.pixels).toBe(40);
   expect(result.paint.textScale).toBe(1.25);

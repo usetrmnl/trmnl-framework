@@ -105,6 +105,21 @@ RSpec.describe 'the processed bundle contract' do
     end
   end
 
+  # border-token-slot and the line remap resolve these names for whatever token a
+  # theme maps, shipped or not, so the release preserve files cannot enumerate them.
+  # The private-pattern lookahead is what keeps them, and this is where losing it
+  # would surface: an unlisted token's slot falling back to a flat line.
+  it 'keeps every border token and line-ink name a theme can resolve' do
+    aggregate_failures do
+      %w[--border-token- --border-line-].each do |family|
+        emitted = custom_properties.call(source_path).select { |name| name.start_with?(family) }
+
+        expect(emitted).not_to be_empty
+        expect(names.select { |name| name.start_with?(family) }).to match_array(emitted)
+      end
+    end
+  end
+
   # The other half of the contract: whatever the rename map says moved is really gone.
   # A half-applied rename (declaration renamed, one reference left behind) resolves to
   # nothing at paint time and is silent everywhere else.

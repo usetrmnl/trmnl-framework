@@ -24,7 +24,9 @@ RSpec.describe 'Framework scaled typography' do
   end
 
   it 'adopts the Inter-tuned weights with the face' do
-    expect(css).to match(/\.screen--text-scale-xlarge[^{]*\{[^}]*--label-font-weight:\s*500/)
+    expect(css).to match(
+      /\.screen--text-scale-xlarge[^{]*\{[^}]*--label-font-weight:\s*clamp\(100, calc\(500 \+ var\(--framework-font-weight-shift, 0\)\), 900\)/
+    )
   end
 
   it 'keeps bitmap typography at regular scale' do

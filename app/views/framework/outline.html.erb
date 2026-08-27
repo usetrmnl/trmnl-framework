@@ -19,6 +19,10 @@
               Add the <code class="<%= framework_section_code_classes %>">outline</code> class to any element
               to give it a pixel-perfect rounded border.
             </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              The class rounds the element itself to 8px, the same curve the dots trace. A card with a background
+              of its own ends on that curve rather than squaring off around the outline.
+            </p>
           </div>
 
           <div class="<%= framework_example_classes %>">
@@ -53,6 +57,53 @@
               demo_code: '<!-- Add outline to any element -->
 <div class="outline">
   Content with pixel-perfect rounded border
+</div>'
+            ) %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Muted Outline') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              <code class="<%= framework_section_code_classes %>">outline--muted</code> draws the same edge in a mid
+              gray, quiet enough to sit over detailed content. The gray is dark enough to still print on a 1-bit
+              screen, so the element keeps its edge on every device.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col layout--stretch gap--large">
+                      <div class="flex flex--row flex--stretch gap">
+                        <div class="flex flex--center-x flex--center-y bg--white outline stretch">
+                          <span class="label">outline</span>
+                        </div>
+                        <div class="flex flex--center-x flex--center-y bg--white outline outline--muted stretch">
+                          <span class="label">outline--muted</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Outline Utility</span>
+                      <span class="instance">Muted</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<!-- A quieter edge for a card over busy art -->
+<div class="outline outline--muted">
+  Content with a mid-gray border
 </div>'
             ) %>
           </div>
@@ -133,7 +184,7 @@
             <%= framework_heading(4, '2-bit, 4-bit, and Full-Color Displays') %>
             <p class="<%= framework_subsection_description_classes %>">
               Draws a standard 1px solid border instead: with real grays or full color available, a smooth
-              line beats dots. The corner radius is 7px, scaled by the content scale.
+              line beats dots. Both treatments round on the same 8px curve, scaled by the UI scale.
             </p>
           </div>
 
@@ -151,7 +202,7 @@
     background: none;
     border: 1px solid var(--framework-semantic-border-strong-border-color,
         var(--framework-outline-strong, var(--framework-border-strong)));
-    border-radius: calc(7px * var(--content-scale, 1));
+    border-radius: calc(8px * var(--ui-scale, 1));
 }'
             ) %>
           </div>

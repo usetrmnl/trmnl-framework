@@ -43,6 +43,9 @@
           <p class="<%= framework_section_description_classes %>">
             Layout is the main content wrapper inside a View. It defines the available space: its height is calculated from the device type, the orientation, and whether a title bar is present. Its direct children are usually Columns, Grid, or Flex.
           </p>
+          <p class="<%= framework_section_description_classes %>">
+            A direct child can also sit over the layout instead of inside it, with its distance measured from the layout's own edges <%= render DocsRef.new(page: :position) %>.
+          </p>
 
         </div>
 

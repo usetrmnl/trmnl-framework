@@ -34,12 +34,12 @@
         .progress-bar {
             .track {
                 background-image: none;
-                border-radius: vars.ui-scaled(4px);
+                border-radius: vars.corner-scaled(4px);
                 border-color: var(--framework-semantic-border-muted-border-color, var(--framework-border-muted));
             }
 
             &--xsmall .track {
-                border-radius: vars.ui-scaled(2px);
+                border-radius: vars.corner-scaled(2px);
             }
 
             .fill {

@@ -34,6 +34,12 @@
   @return -scale-value($value, '--ui-scale');
 }
 
+// A ui-scaled radius that also rides the theme corner factor, so themes round
+// or sharpen hard-coded component corners without scoped rules of their own.
+@function corner-scaled($value) {
+  @return calc(#{$value} * var(--ui-scale, 1) * var(--framework-layout-corner-factor, 1));
+}
+
 @function text-ui-scaled($value) {
   @return -scale-value($value, '--text-ui-scale');
 }

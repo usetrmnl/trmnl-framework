@@ -14,9 +14,10 @@ namespace :framework do
         raise "Theme registry out of sync with #{themes_dir}: registry=#{Framework::Themes.ids.sort} files=#{file_ids}"
       end
 
-      protected_prefixes = %w[--bg- --text- --border-].freeze
-      root_palette_prefixes = %w[--gray- --color-].freeze
-      root_palette_names = %w[--white --black].freeze
+      # The whole theme contract lives in three namespaces. Anything else a theme
+      # declares - paint internals, root palette, geometry, font metrics - is
+      # engine- or device-owned and belongs behind a contract slot or factor.
+      contract_namespaces = /\A--(framework-|theme-|tn-text-stroke-)/
       violations = []
       engine_root = Framework::Engine.root
 
@@ -37,28 +38,13 @@ namespace :framework do
           end
 
           next unless stripped.start_with?('--')
-
-          protected_prefix = protected_prefixes.find { |prefix| stripped.start_with?(prefix) }
-          if protected_prefix
-            violations << {
-              file: Pathname.new(path).relative_path_from(engine_root).to_s,
-              line: index + 1,
-              category: 'protected-paint-var',
-              prefix: protected_prefix,
-              source: stripped
-            }
-            next
-          end
-
-          root_name = root_palette_names.find { |name| stripped.start_with?("#{name}:") }
-          root_prefix = root_palette_prefixes.find { |prefix| stripped.start_with?(prefix) }
-          next unless root_name || root_prefix
+          next if stripped.match?(contract_namespaces)
 
           violations << {
             file: Pathname.new(path).relative_path_from(engine_root).to_s,
             line: index + 1,
-            category: 'root-palette-var',
-            prefix: root_name || root_prefix,
+            category: 'non-contract-var',
+            prefix: stripped[/\A--[a-z0-9-]+/],
             source: stripped
           }
         end
@@ -70,9 +56,10 @@ namespace :framework do
       end
 
       puts '✗ framework:themes:lint failed'
-      puts 'Theme files must use engine-input theming only.'
-      puts 'Disallowed: protected paint vars (--bg-*, --text-*, --border-*) and root palette vars (--white/--black, --gray-*, --color-*).'
-      puts 'Allowed: semantic/slot mixins (theme-slots.semantic-*, bg-slot, text-slot, border-level-slot, border-token-slot).'
+      puts 'Theme files may declare contract variables only: --framework-*, --theme-*, --tn-text-stroke-*.'
+      puts 'Use the theme-slots mixins for paint, the --framework-layout-* factors for structure,'
+      puts 'and --framework-font-weight-shift for weight. Raw paint, palette, geometry, and font'
+      puts 'metric variables are engine- or device-owned.'
       puts 'Disallowed: deprecated theme-slots.role-token helper.'
       puts
 

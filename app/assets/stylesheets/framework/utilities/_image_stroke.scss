@@ -30,7 +30,7 @@ $image-stroke-sizes: (
 
 @mixin image-stroke-default-vars {
     --tn-image-stroke-width: #{vars.content-scaled(1.5px)};
-    --tn-image-stroke-color: var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast));
+    --tn-image-stroke-color: #{mixins.contrast-stroke-color()};
 }
 
 // Four corner shadows at the bound offset. Long filter chains are expensive, so
@@ -38,7 +38,7 @@ $image-stroke-sizes: (
 @mixin image-stroke-apply-from-vars {
     $offset: var(--tn-image-stroke-width, 1.5px);
     $back: calc(var(--tn-image-stroke-width, 1.5px) * -1);
-    $color: var(--tn-image-stroke-color, var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)));
+    $color: var(--tn-image-stroke-color, #{mixins.contrast-stroke-color()});
 
     --tn-image-stroke: drop-shadow(#{$offset} #{$offset} 0 #{$color}) drop-shadow(#{$back} #{$back} 0 #{$color}) drop-shadow(#{$back} #{$offset} 0 #{$color}) drop-shadow(#{$offset} #{$back} 0 #{$color});
     @include mixins.filter-from-vars;

@@ -49,13 +49,14 @@ RSpec.describe 'Framework asset hosting docs' do
     # paints through --framework-slot-progress-*, like every other palette, so
     # fonts are the only asset the stylesheet asks a host for.
     it 'reaches outside the stylesheet for fonts alone' do
-      root = Framework::Engine.root.join('app/assets/stylesheets/framework')
-      callers = Dir[root.join('**/*.scss').to_s].select do |path|
-        File.read(path, encoding: 'UTF-8').include?('url(')
-      end
+      # Read the built bundle, not the Sass: both tile emitters write their
+      # data URIs through `url("#{$uri}")`, so the source cannot tell an inline
+      # asset from a fetch. A data URI carries its asset with it and asks no
+      # host for anything, which leaves the fonts as the only real request.
+      fetched = FrameworkBuild.plugins_css.scan(/url\(\s*["']?([^"')]+)/).flatten
+                              .reject { |reference| reference.start_with?('data:') }
 
-      expect(callers.map { |path| File.basename(path) })
-        .to contain_exactly('_fonts.scss', '_screen-mode-vars.scss')
+      expect(fetched.map { |reference| reference[%r{\A/[^/]+/}] }.uniq).to eq(['/fonts/'])
     end
 
     it 'inlines every dither tile as a data URI' do

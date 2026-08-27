@@ -20,6 +20,8 @@ module Framework
     config.trmnl_framework.parent_controller = "::ApplicationController"
     config.trmnl_framework.docs_base_url = nil
     config.trmnl_framework.font_family_options = nil
+    config.trmnl_framework.tile_source_url = nil
+    config.trmnl_framework.tile_source_user_agent = nil
 
     # Zeitwerk-load lib/framework/* (and friends). Engines do not get Application#autoload_lib.
     config.autoload_paths << root.join("lib")

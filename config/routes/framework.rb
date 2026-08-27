@@ -2,8 +2,8 @@ framework_v1_components = %w[background image border view layout title_bar colum
                              label value table chart item gap clamp overflow format_value fit_value content_limiter flex size text spacing mashup pixel_perfect rich_text text_stroke image_stroke]
 framework_v2_components = %w[v2_overview upgrade_guide enhancement_guide troubleshooting_guide trmnl_x_guide]
 framework_v3_components = %w[structure screen background image border rounded outline view layout title_bar columns grid title description
-                             label value table table_overflow chart item progress gap clamp overflow format_value fit_value content_limiter flex size responsive text_size text_scale font_weight font_family font_glyphs text_color text_alignment spacing mashup pixel_perfect rich_text text_stroke image_stroke visibility divider scale aspect_ratio responsive_test framework_runtime
-                             v3_overview v3_upgrade_guide v3_enhancement_guide open_source contributing colors color_palettes tokens themes paint_api paint_colors paint_charts paint_borders paint_typography sass_api sass_build sass_devices sass_mixins theme_authoring theme_slots variables_api inverse
+                             label value table table_overflow chart map item progress gap clamp overflow format_value fit_value content_limiter flex size responsive text_size text_scale font_weight font_family font_glyphs text_color text_alignment spacing position mashup pixel_perfect rich_text text_stroke image_stroke visibility divider scale aspect_ratio responsive_test framework_runtime
+                             v3_overview v3_upgrade_guide v3_enhancement_guide open_source contributing colors color_palettes tokens themes paint_api paint_colors paint_charts paint_maps paint_borders paint_typography sass_api sass_build sass_devices sass_mixins theme_authoring theme_slots variables_api inverse
                              devices rendering_modes]
 framework_docs_components = (framework_v1_components + framework_v2_components + framework_v3_components).uniq
 
@@ -35,6 +35,11 @@ end
 scope :framework do
   get '/', to: 'framework#index', as: :framework
 
+  # The vector tiles behind TRMNLMaps, fetched from the source the host configures
+  # (Framework::Tiles); the runtime resolves this path from the page's own origin.
+  get '/tiles/:z/:x/:y', to: 'framework_tiles#show', as: :framework_tiles,
+                         constraints: { z: /\d{1,2}/, x: /\d+/, y: /\d+/, format: /mvt/ }, defaults: { format: 'mvt' }
+
   if draw_test_harness
     scope :test do
       get "/overflow", to: 'framework_tests#overflow', as: :framework_test_overflow
@@ -65,7 +70,8 @@ scope :framework do
 
       framework_docs_components.each do |component|
         canonical_component = legacy_version == 'v3' && component == 'text' ? 'text_color' : component
-        get "/#{legacy_version}/#{component}", to: redirect("/framework/docs/#{canonical_version}/#{canonical_component}"), as: "framework_docs_alias_#{legacy_version}_#{component}_redirect"
+        # A route name takes no dot: the 3.2 alias names its redirects framework_docs_alias_3_2_*.
+        get "/#{legacy_version}/#{component}", to: redirect("/framework/docs/#{canonical_version}/#{canonical_component}"), as: "framework_docs_alias_#{legacy_version.tr('.', '_')}_#{component}_redirect"
       end
     end
 

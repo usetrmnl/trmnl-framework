@@ -72,7 +72,7 @@
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-1">
             <li>Background slots: <code class="<%= framework_section_code_classes %>">screen-backdrop</code>, <code class="<%= framework_section_code_classes %>">title-bar</code>, <code class="<%= framework_section_code_classes %>">item-meta</code>, <code class="<%= framework_section_code_classes %>">item-meta-emphasis-2</code>, <code class="<%= framework_section_code_classes %>">item-meta-emphasis-3</code>, <code class="<%= framework_section_code_classes %>">progress-track</code>, <code class="<%= framework_section_code_classes %>">progress-fill</code>, <code class="<%= framework_section_code_classes %>">progress-fill-emphasis-2</code>, <code class="<%= framework_section_code_classes %>">progress-fill-emphasis-3</code>, <code class="<%= framework_section_code_classes %>">progress-dot</code>, <code class="<%= framework_section_code_classes %>">progress-dot-current</code>, <code class="<%= framework_section_code_classes %>">table-meta</code>, <code class="<%= framework_section_code_classes %>">table-meta-device</code>, <code class="<%= framework_section_code_classes %>">chip</code></li>
-            <li>Text slots: <code class="<%= framework_section_code_classes %>">label-gray</code>, <code class="<%= framework_section_code_classes %>">chip</code></li>
+            <li>Text slots: <code class="<%= framework_section_code_classes %>">label-gray</code>, <code class="<%= framework_section_code_classes %>">chip</code>, <code class="<%= framework_section_code_classes %>">title-bar</code>, <code class="<%= framework_section_code_classes %>">title-bar-instance</code></li>
             <li>Border slots: <code class="<%= framework_section_code_classes %>">table-head-row</code>, <code class="<%= framework_section_code_classes %>">table-body-row</code>, <code class="<%= framework_section_code_classes %>">label-underline</code></li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -123,6 +123,153 @@
 .screen--theme-example .inverse {
     @include theme-slots.bg-slot("progress-fill", "yellow-20");
 }',
+            language: 'scss'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Title-Bar Inks') %>
+          <p class="<%= framework_section_description_classes %>">
+            The title bar is a paired surface like the chip: a field with inks on it. Its background is the
+            <code class="<%= framework_section_code_classes %>">title-bar</code> background slot above; four more
+            slots recolor what sits on the field without moving the screen-wide channels. Unset, each falls back to
+            exactly what the bar read before: the title follows
+            <code class="<%= framework_section_code_classes %>">text-primary</code>, the instance follows the title
+            (then <code class="<%= framework_section_code_classes %>">text-secondary</code> on 2-bit and up), the
+            icon follows the icon channel, and halos follow
+            <code class="<%= framework_section_code_classes %>">stroke-contrast</code>.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">ink-slot($slot, $token)</code>: a text slot plus
+              the solid companion inherited <code class="<%= framework_section_code_classes %>">color</code> needs;
+              use it for <code class="<%= framework_section_code_classes %>">title-bar</code> and
+              <code class="<%= framework_section_code_classes %>">title-bar-instance</code>.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">icon-slot($slot, $token)</code>: paint for the
+              bar's mask-recolored icon, ahead of the global icon channel.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">stroke-slot($slot, $token)</code>: the halo
+              outline around the bar's glyphs and icon. Point it at the bar's own field tone so outlines separate
+              ink from fill instead of tracking the canvas.
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '// A black bar with white title and icon.
+@include theme-slots.bg-slot("title-bar", "black");
+@include theme-slots.ink-slot("title-bar", "white");
+@include theme-slots.ink-slot("title-bar-instance", "gray-60");
+@include theme-slots.icon-slot("title-bar", "white");
+@include theme-slots.stroke-slot("title-bar", "black");',
+            language: 'scss'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Item Cards') %>
+          <p class="<%= framework_section_description_classes %>">
+            An item is a paired surface, a fill on the card and the ink its content takes over that fill. Set the
+            two together so a theme that darkens the card carries its text with it.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-fill($token)</code>: the card's background, from a palette token.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-ink($token)</code>: the color the card's content takes. It repoints the
+              primary text channel inside the card rather than restating each element, so
+              <code class="<%= framework_section_code_classes %>">label--gray</code> and its siblings keep working.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-fill-art($art, $size, $repeat)</code>: art in place of a token tile.
+              Unset, it takes the generated ordered-dither ramp for the current rail, tiled down the card at its
+              own width. Never scale a ramp: stretching it re-blurs the pixels the dither already decided.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-border($art)</code>: the card's edge. Two arts ship,
+              <code class="<%= framework_section_code_classes %>">--framework-item-border-art-outline</code>, the same drawing
+              <%= render DocsRef.new(page: :outline) %> uses, and
+              <code class="<%= framework_section_code_classes %>">--framework-item-border-art-corner-brackets</code>.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The border art is declared on <code class="<%= framework_section_code_classes %>">.item</code> itself, because a
+            <code class="<%= framework_section_code_classes %>">var()</code> inside a custom property resolves on the element that declares it.
+            The card reads it as both a background and a border, and whichever one the art is invalid for drops out,
+            which is how one value covers every bit depth.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '// A dithered card with light text and a dotted edge.
+@include theme-slots.item-fill("gray-20");
+@include theme-slots.item-ink("white");
+@include theme-slots.item-fill-art();
+@include theme-slots.item-border(var(--framework-item-border-art-outline));
+@include theme-slots.spacing-slots($item-padding-x: 12px, $item-padding-y: 8px);',
+            language: 'scss'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Structure and Weight') %>
+          <p class="<%= framework_section_description_classes %>">
+            Structure moves through factors: unitless multipliers over the unthemed geometry, so 1 is always the
+            unthemed screen and every device density stays correct underneath.
+            <code class="<%= framework_section_code_classes %>">layout-factors($whitespace, $corners, $title-bar-height, $progress)</code>
+            takes any subset. Whitespace rides the content scale, so gaps, pads, and table rows breathe together;
+            corners ride every radius, named and component-owned alike (0 squares the screen off); the other two
+            size the title bar with its icon, and the progress bars and dots.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">font-weight-shift($shift)</code> moves every vector
+            role weight by one signed amount, clamped to renderable weights where it lands. The bitmap bundles
+            carry single-weight faces and ignore it. Explicit utilities
+            (<code class="<%= framework_section_code_classes %>">text--bold</code>, numeric
+            <code class="<%= framework_section_code_classes %>">rounded--*</code> values) stay literal: they are a
+            plugin author's stated intent, not a theme default.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">text-modifiers(...)</code> sets case and tracking per
+            text role, as a <code class="<%= framework_section_code_classes %>">$&lt;role&gt;-transform</code> and a
+            <code class="<%= framework_section_code_classes %>">$&lt;role&gt;-tracking</code> pair. The roles are title, value, label and
+            description, the title bar's own title and instance, and table heads and bodies, with table bodies
+            taking tracking alone. Sizes and line heights are deliberately not part of it: those are the device and
+            reader scale axes, and a theme that moved them would fight the reader's own text-scale setting.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">spacing-slots($title-bar-padding, $item-padding-x, $item-padding-y)</code> sets the
+            padding a theme owns. The title bar takes a factor over the screen gap, where 0 sits its content flush
+            with the edge. The item pair takes literal lengths, because an item pads by nothing unthemed and no
+            factor lifts a value off zero.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Tracking takes whole positive pixels, and the mixin refuses anything else. The bitmap bundles are drawn
+            on the pixel grid, so a fractional advance from an
+            <code class="<%= framework_section_code_classes %>">em</code> value puts their glyphs off-grid, and a
+            negative one eats sidebearings that are part of the drawing. Adding a whole pixel between letters is the
+            one move that stays on the grid.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '// Airy, square-cornered, slightly bolder, editorial labels.
+@include theme-slots.layout-factors($whitespace: 1.35, $corners: 0);
+@include theme-slots.font-weight-shift(100);
+@include theme-slots.text-modifiers($label-transform: uppercase, $label-tracking: 1px);',
             language: 'scss'
           ) %>
         </div>
