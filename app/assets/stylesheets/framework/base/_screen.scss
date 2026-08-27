@@ -96,7 +96,8 @@
     @include theme-slots.bg-slot('map-path', 'gray-45');
     @include theme-slots.bg-slot('map-rail', 'gray-30');
     @include theme-slots.bg-slot('map-boundary', 'gray-40');
-    @include theme-slots.bg-slot('map-water-line', 'gray-55');
+    // gray-40, not a step off the water fill: 2-bit posterization folds gray-55 into gray-60's level, sinking rivers into lakes.
+    @include theme-slots.bg-slot('map-water-line', 'gray-40');
     // Labels ride the primary text channel, so a theme's ink reaches the map
     // without a slot of their own. One ink for every tier: a map is busy, and
     // a small label in a dithered secondary tone would not survive it.

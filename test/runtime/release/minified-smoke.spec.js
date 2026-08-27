@@ -102,7 +102,7 @@ test('runs representative lifecycle, layout, and paint behavior from the minifie
   expect(result.paint.hasFill).toBe(true);
   expect(result.paint.chartShape).not.toBe('null');
   expect(result.paint.mapLayers).toBeGreaterThan(5);
-  expect(result.paint.mapSource).toContain('shortbread_v1');
+  expect(result.paint.mapSource).toContain('maps.trmnl.com');
   expect(result.paint.scale).toBe(1);
   expect(result.paint.pixels).toBe(40);
   expect(result.paint.textScale).toBe(1.25);

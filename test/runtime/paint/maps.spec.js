@@ -151,6 +151,15 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         symbols: style.layers.filter((entry) => entry.type === 'symbol').length,
         labels: style.metadata['trmnl:labels'],
         transitInk: layer('transit').paint['fill-color'],
+        // Dark mode flips the land; a dash or stop takes the tile's under-field there.
+        dark: (() => {
+          const screen = document.querySelector('[data-runtime-test-screen]');
+          screen.classList.add('screen--dark-mode');
+          const darkStyle = maps.style('streets', { el: target });
+          screen.classList.remove('screen--dark-mode');
+          const darkLayer = (id) => darkStyle.layers.find((entry) => entry.id === id);
+          return { railInk: darkLayer('rail').paint['fill-color'], transitInk: darkLayer('transit').paint['fill-color'] };
+        })(),
       },
       presets: {
         outline: maps.style('outline', { el: target }).layers.map((entry) => entry.id),
@@ -215,14 +224,14 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
     antialias: false,
   });
   expect(result.style.version).toBe(8);
-  // The default source is the public endpoint, fetched by the page itself.
-  expect(result.style.source).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
+  // The default source is TRMNL's own endpoint.
+  expect(result.style.source).toBe('https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}');
   expect(result.style.glyphs).toBeUndefined();
   expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-farmland', 'land-green', 'land-sand', 'sites', 'water', 'ferries', 'buildings', 'roads-minor', 'paths', 'roads-major', 'rail', 'transit', 'boundaries']));
   // Labels are framework elements the runtime places, never MapLibre glyph text.
   expect(result.style.symbols).toBe(0);
   expect(result.style.labels).toEqual({ major: true, minor: true, water: true });
-  expect(result.style.transitInk).toMatch(/^(rgb|#)/);
+  expect(result.style.transitInk).toBe('#000000');
   // 1-bit: gray-60 water is a dither tile, so the layer paints with a pattern.
   expect(result.style.waterPaint['fill-pattern']).toMatch(/^trmnl-tile-\d+$/);
   expect(result.style.waterMatches).toBe(true);
@@ -232,10 +241,13 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.style.roadSource).toBe('geojson');
   expect(result.style.roadCasing).toBe('fill');
   expect(result.style.lineSpecs).toEqual(expect.arrayContaining(['roads-major', 'roads-minor', 'water-lines', 'rail', 'paths', 'boundaries', 'transit']));
-  // A dashed line cannot carry a pattern, so rail takes the tile's ink.
+  // A dashed line cannot carry a pattern, so rail takes the tile's ink — the 1-bit
+  // tile's black, never its white under-field (which painted rails invisible once).
   // Dashed lines and stops are shapes too: a dashed shape in the ink, a point shape with a casing.
   expect(result.style.railType).toBe('fill');
-  expect(result.style.railInk).toMatch(/^(rgb|#)/);
+  expect(result.style.railInk).toBe('#000000');
+  expect(result.style.dark.railInk).toBe('rgb(255, 255, 255)');
+  expect(result.style.dark.transitInk).toBe('rgb(255, 255, 255)');
   expect(result.style.railSpec).toMatchObject({ kind: 'line', dash: [3, 2] });
   expect(result.style.transitSpec).toMatchObject({ kind: 'point', casing: 'trmnl-shape-transit-casing' });
   // Nothing MapLibre draws itself: no line, circle or symbol layer anywhere.
@@ -258,8 +270,8 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.overlays.setData).toEqual(expect.arrayContaining(['trmnl-route-route:1/3/1', 'trmnl-route-route-casing:1/3/1', 'trmnl-dot-start:1/1/1', 'trmnl-dot-end-core:1/1/1']));
   expect(result.tiles.url).toBe('x');
   expect(result.tiles.glyphs).toBeUndefined();
-  // Source order: the argument, then the host's per-instance source, then the public default.
-  expect(result.tileSources.byDefault).toBe('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt');
+  // Source order: the argument, then the host's per-instance source, then TRMNL's own endpoint.
+  expect(result.tileSources.byDefault).toBe('https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}');
   expect(result.tileSources.trmnl).toBe('https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}');
   expect(result.tileSources.keyed).toBe('https://tiles.example.com/{z}/{x}/{y}.pbf?key=a%20b');
   expect(result.tileSources.keyIgnored).toBe('https://tiles.example.com/{z}/{x}/{y}.pbf');

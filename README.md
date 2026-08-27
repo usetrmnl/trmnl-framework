@@ -317,13 +317,13 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
     example fixture: those charts render empty. See the License section.
   - opentype.js from jsDelivr on the font glyphs page: the glyph tables stay empty.
 - The framework CSS and JS bundles themselves reference one external host: a map that
-  names no tile source fetches OpenStreetMap's public Shortbread tiles
-  (`vector.openstreetmap.org`) directly, on the free tier, so a plugin costs the host
+  names no tile source fetches TRMNL's own tiles
+  (`https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`) directly, so a plugin costs the host
   nothing. Everything else they fetch (pattern images, fonts) is served from the same
   origin as the bundle. A plugin names its own source and key with
   `options({ tiles: { url, key } })`, a host injects one per plugin instance as
-  `window.__TRMNL_MAPS__`, and the `'trmnl'` preset names TRMNL's own planet at
-  `https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`. The engine also serves
+  `window.__TRMNL_MAPS__`, and the `'osm'` preset opts into OpenStreetMap's public
+  Shortbread endpoint (`vector.openstreetmap.org`, light use only per the OSMF policy). The engine also serves
   `/framework/tiles/{z}/{x}/{y}.mvt` for a host proxying its own source (a pass-through from
   `Framework.tile_source_url`; no tile data is stored anywhere). The public default's usage
   policy allows light use and forbids a fleet; see [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).

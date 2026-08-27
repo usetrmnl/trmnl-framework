@@ -868,11 +868,11 @@ $_limited-palette-paint-depth: 4;
     @include theme-slots.bg-slot('map-building', 'gray-65');
     @include theme-slots.bg-slot('map-transit', 'gray-30');
     @include theme-slots.bg-slot('map-road', 'gray-35');
-    @include theme-slots.bg-slot('map-road-minor', 'gray-55');
-    @include theme-slots.bg-slot('map-path', 'gray-50');
+    @include theme-slots.bg-slot('map-road-minor', 'gray-50');
+    @include theme-slots.bg-slot('map-path', 'gray-45');
     @include theme-slots.bg-slot('map-rail', 'gray-30');
     @include theme-slots.bg-slot('map-boundary', 'purple-40');
-    @include theme-slots.bg-slot('map-water-line', 'blue-60');
+    @include theme-slots.bg-slot('map-water-line', 'blue-40');
 }
 
 // ============================================

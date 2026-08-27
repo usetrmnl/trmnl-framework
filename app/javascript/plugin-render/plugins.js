@@ -4284,8 +4284,9 @@ window.markFrameworkReady = markFrameworkReady;
     let source = String(uri);
     try { source = decodeURIComponent(source); } catch (_) {}
     const match = /\bfill\s*=\s*(['"])([^'"]+)\1/i.exec(source);
-    if (!match || !isOpaqueColor(match[2])) return null;
-    return match[2];
+    if (match) return isOpaqueColor(match[2]) ? match[2] : null;
+    // The bg dither tiles carry no fill attribute: their paths paint the SVG default, black.
+    return /<path\b/i.test(source) ? '#000000' : null;
   }
 
   function textFillInk(fill) {
@@ -4995,6 +4996,8 @@ window.markFrameworkReady = markFrameworkReady;
         return out;
       }
       out.ink = imageInk(fill.url) || solid;
+      // The under-field the tile composites over, kept for contrast picks (mapContrastInk).
+      out.under = solid;
       const fieldHex = normalizeHex(fill.color);
       const image = fieldHex ? compositeFieldIntoTile(fill.url, fieldHex) : fill.url;
       const width = svgExtent(fill.url, 'width');
@@ -5472,17 +5475,15 @@ window.markFrameworkReady = markFrameworkReady;
   // to the pixel grid, a polyline decoder, and the readiness wait terminalize
   // calls.
 
-  // Tile sources, and who pays for them. `osm` is the default: the public
-  // OSMF Shortbread endpoint, fetched by the page itself, so a plugin that
-  // names no source costs its host nothing and rides the free tier. `trmnl`
-  // is TRMNL's own planet on the edge, named absolutely rather than against
-  // the page's origin: a render writes its document into about:blank, which
-  // has no origin to build a relative url from, and a plugin running on
-  // someone else's engine should not route its tiles through their server.
-  // The docs site and TRMNL's own plugins use it, third-party plugins do not
-  // by default, and the engine's own /framework/tiles/ endpoint stays for a
-  // host proxying the source it configures (Framework::Tiles;
-  // docs/MAPS_GO_LIVE.md). A plugin names its own source with
+  // Tile sources, and who pays for them. `trmnl` is the default: TRMNL's own
+  // planet on the edge, named absolutely rather than against the page's
+  // origin, because a render writes its document into about:blank, which has
+  // no origin to build a relative url from. `osm` is the public OSMF
+  // Shortbread endpoint, kept as an explicit opt-in and as the base every
+  // source merges over (zoom range, attribution); its usage policy forbids
+  // fleet traffic, so nothing falls through to it silently. The engine's own
+  // /framework/tiles/ endpoint stays for a host proxying the source it
+  // configures (Framework::Tiles; docs/MAPS_GO_LIVE.md). A plugin names its own source with
   // tiles({ url, key }) or options({ tiles }), where the url template may
   // carry {key}; and the host injects one per plugin instance as
   // window.__TRMNL_MAPS__.tiles (a preset name or the same object), which is
@@ -5583,6 +5584,33 @@ window.markFrameworkReady = markFrameworkReady;
 
   function mapHalo(el) {
     return mapInk(TRMNLPaint.semantic('stroke-contrast', { el: el }));
+  }
+
+  function mapLuminance(color) {
+    if (typeof color !== 'string') return null;
+    let match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim());
+    if (match) {
+      let hex = match[1];
+      if (hex.length === 3) hex = hex.replace(/./g, (ch) => ch + ch);
+      const n = parseInt(hex, 16);
+      return Math.round(0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255));
+    }
+    match = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(color.trim());
+    if (match) return Math.round(0.2126 * match[1] + 0.7152 * match[2] + 0.0722 * match[3]);
+    return null;
+  }
+
+  // One flat color for a dash or a stop: of the tile's painted ink and its
+  // under-field, the one the land cannot swallow. A light mode's tile is dark
+  // ink over a white under on white land, so the ink wins; dark mode mirrors
+  // the tile, and the under is the one that survives on the black land.
+  function mapContrastInk(paint, land) {
+    const candidates = [paint.ink, paint.under != null ? paint.under : paint.color].filter((c) => c != null && mapLuminance(c) != null);
+    if (candidates.length < 2) return candidates[0] || paint.ink || paint.color || null;
+    const landLuminance = mapLuminance(land && land.color);
+    if (landLuminance == null) return candidates[0];
+    const away = (c) => Math.abs(mapLuminance(c) - landLuminance);
+    return away(candidates[0]) >= away(candidates[1]) ? candidates[0] : candidates[1];
   }
 
   // Whole device pixels for MapLibre widths: px() of a base width, rounded, and
@@ -6298,8 +6326,8 @@ window.markFrameworkReady = markFrameworkReady;
      * attribution. Resolved in this order: the argument (a preset name, 'osm'
      * or 'trmnl', or an object with url, key and preset that merges over the
      * preset), then the host's per-instance window.__TRMNL_MAPS__.tiles, then
-     * 'osm', the public endpoint. A url may carry {key}, filled from key. No
-     * glyph endpoint: labels are framework elements.
+     * 'trmnl', TRMNL's own endpoint. A url may carry {key}, filled from key.
+     * No glyph endpoint: labels are framework elements.
      *
      * @param {(string|object)} [preset]
      * @returns {{id, url, minzoom, maxzoom, attribution, workerUrl, key}}
@@ -6309,7 +6337,7 @@ window.markFrameworkReady = markFrameworkReady;
       let source;
       if (typeof pick === 'string') source = deepMerge(MAP_TILE_PRESETS.osm, mapTilePreset(pick));
       else if (isPlainObject(pick)) source = deepMerge(deepMerge(MAP_TILE_PRESETS.osm, mapTilePreset(pick.preset)), pick);
-      else source = deepMerge(MAP_TILE_PRESETS.osm, {});
+      else source = deepMerge(MAP_TILE_PRESETS.osm, mapTilePreset('trmnl'));
       delete source.preset;
       return mapTilesWithKey(source);
     },
@@ -6479,6 +6507,11 @@ window.markFrameworkReady = markFrameworkReady;
       // after the tiles load (see paintShapes), never an anti-aliased MapLibre line.
       const addLine = (id, sourceLayer, filter, paint, width, extra) => {
         const e = extra || {};
+        // A dashed line is one flat color; resolve it against the land here,
+        // where both are known, so mapShapeSpec keeps its ink-first pick.
+        if (e.dash && paint && typeof paint === 'object') {
+          paint = { color: paint.color, ink: mapContrastInk(paint, land), pattern: paint.pattern };
+        }
         mapShapeSpec(id, paint, {
           kind: 'line', sourceLayer: sourceLayer, filter: filter, kinds: e.kinds,
           widths: e.widths != null ? e.widths : width, zoomStep: e.zoomStep, minzoom: e.minzoom, dash: e.dash, casing: e.casing,
@@ -6540,7 +6573,7 @@ window.markFrameworkReady = markFrameworkReady;
       }
       if (groups.transit) {
         // A stop is a dot in the transit slot's ink with a contrast ring.
-        mapShapeSpec('transit', transit.color || transit.ink, {
+        mapShapeSpec('transit', mapContrastInk(transit, land), {
           kind: 'point', sourceLayer: 'public_transport', filter: mapKindFilter(MAP_TRANSIT_KINDS), widths: ui(2), minzoom: 13, casing: true,
         }, halo, sources, layers, shapeSpecs);
       }

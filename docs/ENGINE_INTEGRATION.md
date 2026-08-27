@@ -159,19 +159,18 @@ setting that turns them off.
 
 ### Map tiles
 
-A map names no tile host by default: `TRMNLMaps` fetches OpenStreetMap's public
-Shortbread endpoint (`vector.openstreetmap.org`) from the page itself, so a
-plugin with no source of its own costs the host nothing and `connect-src`
-needs that origin. A plugin names its own source with `options({ tiles: { url,
+A map that names no tile source fetches TRMNL's own endpoint
+(`https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`) from the page itself, so
+`connect-src` needs `https://maps.trmnl.com` by default; the `'osm'` preset
+(OpenStreetMap's public Shortbread endpoint, `vector.openstreetmap.org`) stays
+as an explicit opt-in and needs that origin instead. A plugin names its own source with `options({ tiles: { url,
 key } })` (a `{z}/{x}/{y}` template, `{key}` filled from the key), and the host
 injects one per plugin instance as `window.__TRMNL_MAPS__ = { tiles: { url, key } }`
 (or a preset name), which is how a plugin author's key or a user's key from the
 plugin settings reaches a map; a source named in code wins over the injected
 one. Keys never live in the framework.
 
-The `'trmnl'` preset is TRMNL's own planet on the edge,
-`https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`, so a page offering it needs
-`connect-src https://maps.trmnl.com` rather than `'self'`.
+The `'trmnl'` preset names the same TRMNL endpoint explicitly.
 
 The engine also serves `/framework/tiles/{z}/{x}/{y}.mvt` on the page's host
 (`connect-src 'self'`) for a host proxying a source of its own.

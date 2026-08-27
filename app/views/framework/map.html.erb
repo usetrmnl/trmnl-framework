@@ -72,8 +72,8 @@
 
           <%= framework_heading(4, 'Tiles and keys') %>
           <p class="<%= framework_section_description_classes %>">
-            A map names no tile host by default: it fetches OpenStreetMap's public Shortbread tiles itself, on the
-            free tier, and whoever renders the plugin pays nothing. Name a source when you have one:
+            A map that names no tile source fetches TRMNL's own tiles (<code>maps.trmnl.com</code>) itself, and
+            whoever renders the plugin pays nothing. Name a source when you have one:
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
             <li>
@@ -578,6 +578,124 @@ TRMNLMaps.watch(el, function () {
 // A theme re-points a map slot like any other component slot (SCSS):
 // @include theme-slots.bg-slot("map-water", "blue-65");
 // @include theme-slots.bg-slot("map-road-minor", "gray-50");', language: 'javascript') %>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Floating card') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The map takes the whole layout and a card floats over one corner of it, so no space goes to a column of
+              labels. The card is a child of the same <code class="<%= framework_section_code_classes %>">map</code>
+              container, which is already a positioning context, so
+              <code class="<%= framework_section_code_classes %>">top--3 left--3</code> measures from the map corner
+              (<%= render DocsRef.new(page: :layout) %> carries the full class list).
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              One corner is spoken for: the data credit sits bottom right and has to stay visible. Place names are
+              positioned without knowing the card is there, so keep the card small and off the credit.
+            </p>
+          </div>
+
+          <div class="<%= message_warning_classes %>">
+            <div class="flex items-center w-full">
+              <div class="flex-shrink-0 items-center">
+                <%= render 'shared/icons/info' %>
+              </div>
+              <div class="w-full flex items-center justify-between ml-3">
+                <p class="text-sm font-medium">
+                  A card over a map takes <code class="<%= framework_section_code_classes %>">bg--white</code> or
+                  <code class="<%= framework_section_code_classes %>">bg--black</code> and never a mid-rail token: the ends of
+                  the rail are the only solid fills on 1-bit, and small text over a dither tile is unreadable.
+                  <code class="<%= framework_section_code_classes %>">outline</code> gives it the hairline that separates it
+                  from light and dark map alike. No shadow: ePaper has no soft edges, so a box-shadow renders as a smear of
+                  dither instead of depth. And a positioned card is invisible to <%= render DocsRef.new(page: :clamp) %> and
+                  <%= render DocsRef.new(page: :content_limiter) %>, so size it and clamp its text yourself.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <script data-trmnl-src="/framework-docs/maplibre-gl-5.24.0.js"></script>
+                  <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
+
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div id="map-overlay" class="map stretch w--full">
+                        <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
+                          <span class="label label--small">Shoreditch</span>
+                          <span class="value value--xsmall value--tnums">4 min</span>
+                        </div>
+                        <div class="absolute bottom--3 left--3 z--2 p--2 bg--white outline">
+                          <span class="label label--small">Next bus 17:12</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="title_bar">
+                      <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+                      <span class="title">Map</span>
+                      <span class="instance">Floating card</span>
+                    </div>
+                  </div>
+
+                  <script type="text/trmnl-example">
+                    function whenReady(cb) {
+                      var tries = 0;
+                      (function attempt() {
+                        if (window.TRMNLMaps && window.maplibregl) return cb();
+                        if (++tries > 200) return;
+                        setTimeout(attempt, 50);
+                      })();
+                    }
+
+                    whenReady(function () {
+                      var el = "map-overlay";
+                      TRMNLMaps.watch(el, function () {
+                        return new maplibregl.Map(TRMNLMaps.options({
+                          el: el, preset: "streets", center: [-0.0779, 51.5252], zoom: 14
+                        }));
+                      });
+                    });
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(demo_code: '<!-- The map fills the layout; the cards are its positioned children. -->
+<div class="view view--full">
+  <div class="layout layout--col">
+    <div id="map-overlay" class="map stretch w--full">
+      <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
+        <span class="label label--small">Shoreditch</span>
+        <span class="value value--xsmall value--tnums">4 min</span>
+      </div>
+      <div class="absolute bottom--3 left--3 z--2 p--2 bg--white outline">
+        <span class="label label--small">Next bus 17:12</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="title_bar">
+    <img class="image image--adaptive" src="https://usetrmnl.com/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
+    <span class="title">Map</span>
+    <span class="instance">Floating card</span>
+  </div>
+</div>
+
+<script type="text/javascript">
+  TRMNLMaps.watch("map-overlay", function () {
+    return new maplibregl.Map(TRMNLMaps.options({
+      el: "map-overlay", preset: "streets", center: [-0.0779, 51.5252], zoom: 14
+    }));
+  });
+</script>') %>
           </div>
         </div>
       </section>

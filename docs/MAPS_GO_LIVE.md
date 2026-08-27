@@ -3,10 +3,12 @@
 `TRMNLMaps` renders OpenStreetMap vector tiles through MapLibre GL JS. Who
 fetches the tiles, and who pays, follows the source a map resolves:
 
-- **Default (no source named):** the public OSMF Shortbread endpoint,
+- **Default (no source named):** TRMNL's own endpoint, the `'trmnl'` preset
+  (`https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`), fetched by the page itself.
+  TRMNL pays; no key, no cost to the host. The `'osm'` preset stays as an
+  explicit opt-in to the public OSMF Shortbread endpoint,
   `https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt` (Shortbread
-  1.0, zoom 0 to 14), fetched by the page itself. Free tier, no key, no cost to
-  the host.
+  1.0, zoom 0 to 14) — light use only per the OSMF usage policy.
 - **A plugin's own source:** `options({ tiles: { url, key } })`, a
   `{z}/{x}/{y}` template with `{key}` filled from the key. The plugin owner's
   account pays.
@@ -14,9 +16,8 @@ fetches the tiles, and who pays, follows the source a map resolves:
   per plugin instance, which is how the platform hands a plugin author's key
   (plugin configuration) or a user's key (plugin settings) to the map; core
   decides which of the two it injects. A source named in code wins over it.
-- **TRMNL's own source:** the `'trmnl'` preset,
-  `https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`, TRMNL's own Shortbread planet
-  behind a CDN. The engine's own `/framework/tiles/{z}/{x}/{y}.mvt` route stays
+- **TRMNL's own source:** the same `'trmnl'` preset named explicitly, TRMNL's
+  own Shortbread planet behind a CDN. The engine's own `/framework/tiles/{z}/{x}/{y}.mvt` route stays
   for a host that wants to proxy a source of its own from
   `Framework.tile_source_url` (a pass-through: nothing is stored in the gem, on
   disk or in a database). The
