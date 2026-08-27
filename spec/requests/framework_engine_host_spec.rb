@@ -143,7 +143,7 @@ RSpec.describe 'Engine host contract' do
 
     # The two controls the fork was missing, named the way the picker labels them.
     it 'reaches the page with the Style and Text Scale controls on it', type: :request do
-      get '/framework/docs/3.2'
+      get "/framework/docs/#{FrameworkController::CURRENT_DOCS_VERSION}"
 
       aggregate_failures do
         expect(response.body).to include('>Style</span>')
@@ -478,10 +478,10 @@ RSpec.describe 'Engine host contract' do
                              "disclose #{undisclosed.join(', ')} in ENGINE_INTEGRATION.md, the Open Source page and the README"
     end
 
-    # Named rather than derived: the chart and font glyphs pages carry these script tags
-    # both as live loads and inside code examples, and sass_api.html.erb shows a
+    # Named rather than derived: the chart, map and font glyphs pages carry these script
+    # tags both as live loads and inside code examples, and sass_api.html.erb shows a
     # trmnl.com snippet it never fetches, so scanning the view tree reads copy as loads.
-    it 'discloses the two demo origins as well' do
+    it 'discloses the demo origins as well' do
       aggregate_failures do
         %w[trmnl.com cdn.jsdelivr.net].each do |origin|
           expect(integration_doc).to include(origin)
@@ -490,11 +490,28 @@ RSpec.describe 'Engine host contract' do
       end
     end
 
+    # The map tiles: a map names no source by default and fetches the public OSMF endpoint
+    # itself, the trmnl preset fetches TRMNL's own planet from the edge, and the engine serves
+    # /framework/tiles/ from Framework.tile_source_url for a host proxying its own. Each carries
+    # a usage policy, so every disclosure names all three.
+    it 'discloses the public tile default, TRMNL\'s own source and the engine tile endpoint' do
+      aggregate_failures do
+        expect([integration_doc, open_source_page, readme]).to all(include('vector.openstreetmap.org').and(include('/framework/tiles/')))
+        expect(Framework::DEFAULT_TILE_SOURCE_URL).to include('vector.openstreetmap.org')
+        runtime = root.join('app/javascript/plugin-render/plugins.js').read
+        expect(runtime).to include('https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}')
+        expect(runtime).to include('https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt')
+      end
+    end
+
     it 'still loads them where the disclosure says it does' do
       aggregate_failures do
         expect(chrome_origins).to contain_exactly('fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com')
         expect(root.join('app/views/framework/font_glyphs.html.erb').read).to include('cdn.jsdelivr.net')
         expect(root.join('app/views/framework/chart.html.erb').read).to include('https://trmnl.com/js/highcharts')
+        # The map demos load the engine's own copy; the snippets teach the trmnl.com mirror.
+        expect(root.join('app/views/framework/map.html.erb').read).to include('/framework-docs/maplibre-gl-5.24.0.js')
+        expect(root.join('app/views/framework/map.html.erb').read).to include('https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.js')
       end
     end
   end

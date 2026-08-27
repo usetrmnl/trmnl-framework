@@ -51,4 +51,26 @@ module Framework
     Rails.application.credentials.framework_docs_url.presence ||
       (Rails.env.development? ? "http://localhost:3001" : "https://trmnl.com")
   end
+
+  # Where /framework/tiles/{z}/{x}/{y}.mvt fetches its vector tiles from: a URL template with
+  # {z}, {x} and {y}. Prefer config.trmnl_framework.tile_source_url, then the
+  # TRMNL_FRAMEWORK_TILE_SOURCE_URL environment variable, then the OSMF Shortbread endpoint.
+  # The default is a community server whose usage policy allows light use (the docs) and forbids
+  # a fleet, so a host that renders map plugins for devices points this at its own tile archive
+  # before the first one ships; docs/MAPS_GO_LIVE.md is the checklist.
+  DEFAULT_TILE_SOURCE_URL = "https://vector.openstreetmap.org/shortbread_v1/{z}/{x}/{y}.mvt"
+  DEFAULT_TILE_SOURCE_USER_AGENT = "TRMNL Framework tiles (+https://trmnl.com)"
+
+  def self.tile_source_url
+    configured = Rails.application.config.trmnl_framework.tile_source_url
+    return configured if configured.present?
+
+    ENV["TRMNL_FRAMEWORK_TILE_SOURCE_URL"].presence || DEFAULT_TILE_SOURCE_URL
+  end
+
+  # The User-Agent the tile fetch sends: the OSMF policy asks for an identifying one, and a
+  # host names itself here.
+  def self.tile_source_user_agent
+    Rails.application.config.trmnl_framework.tile_source_user_agent.presence || DEFAULT_TILE_SOURCE_USER_AGENT
+  end
 end

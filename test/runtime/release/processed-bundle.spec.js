@@ -32,7 +32,7 @@ test('the runtime page serves the bundle and runtime this mode names', async ({ 
 });
 
 test('the docs bundle URLs serve the bundle and runtime this mode names', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/overflow');
+  await openDocsPage(page, '/framework/docs/3.3/overflow');
 
   const served = await page.evaluate(async () => {
     const { dataset } = document.body;

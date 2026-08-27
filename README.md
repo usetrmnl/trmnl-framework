@@ -93,7 +93,7 @@ before opening a pull request.
 | Script contracts | `npm run test:scripts` | Runtime syntax, minification, public API names, and the CSS to JavaScript paint boundary |
 | Rule diff | `npm run test:rulediff` | The bundle comparison tool that proves a processed bundle resolves to the same values |
 | Rails specs | `bundle exec rspec` | Every framework documentation route, versioned bundle selection, examples, and generated endpoints |
-| Runtime behavior | `npm run test:runtime` | `terminalize()`, layout engines, readiness, idempotence, `TRMNLPaint`, `TRMNLCharts`, and the minified runtime in Chromium |
+| Runtime behavior | `npm run test:runtime` | `terminalize()`, layout engines, readiness, idempotence, `TRMNLPaint`, `TRMNLCharts`, `TRMNLMaps`, and the minified runtime in Chromium |
 | Visual regression | `npm run test:visual` | Paint, borders, components, and representative compositions against platform-specific PNG baselines |
 
 The browser suites need Chromium once per machine:
@@ -316,8 +316,17 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   - Highcharts and Chartkick from `trmnl.com`, on the chart page and in the Shopify
     example fixture: those charts render empty. See the License section.
   - opentype.js from jsDelivr on the font glyphs page: the glyph tables stay empty.
-- The framework CSS and JS bundles themselves reference no external host. Everything they
-  fetch (pattern images, fonts) is served from the same origin as the bundle.
+- The framework CSS and JS bundles themselves reference one external host: a map that
+  names no tile source fetches TRMNL's own tiles
+  (`https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}`) directly, so a plugin costs the host
+  nothing. Everything else they fetch (pattern images, fonts) is served from the same
+  origin as the bundle. A plugin names its own source and key with
+  `options({ tiles: { url, key } })`, a host injects one per plugin instance as
+  `window.__TRMNL_MAPS__`, and the `'osm'` preset opts into OpenStreetMap's public
+  Shortbread endpoint (`vector.openstreetmap.org`, light use only per the OSMF policy). The engine also serves
+  `/framework/tiles/{z}/{x}/{y}.mvt` for a host proxying its own source (a pass-through from
+  `Framework.tile_source_url`; no tile data is stored anywhere). The public default's usage
+  policy allows light use and forbids a fleet; see [docs/MAPS_GO_LIVE.md](docs/MAPS_GO_LIVE.md).
 - A host mounting the engine inherits all four. The table in
   [docs/ENGINE_INTEGRATION.md](docs/ENGINE_INTEGRATION.md) names each origin, what loads
   from it, and the CSP directive it needs; the Open Source docs page carries the same list
@@ -362,3 +371,9 @@ chart docs page and the Shopify example fixture load it from `trmnl.com`, where 
 serves it under its own license. That license does not come with this repo:
 `TRMNLCharts` is an adapter, so a fork or a custom stack brings its own charting library
 and its own license.
+
+MapLibre GL JS is BSD licensed and vendored under `vendor/javascript/`, served by the
+engine next to the runtime and mirrored for plugins at `trmnl.com/js/maplibre-gl/5.24.0/`;
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) carries its notice. The map data is © OpenStreetMap contributors under the ODbL, which is why every
+map keeps its attribution visible. `TRMNLMaps` is an adapter, so a fork brings its own
+tile source and keeps the credit.

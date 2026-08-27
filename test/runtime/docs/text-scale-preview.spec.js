@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { openDocsPage } from '../support/docs-page.js';
 
 test('rebuilds the Weather preview at every Text Scale level without reloading the docs page', async ({ page }) => {
-  await openDocsPage(page, '/framework/docs/3.2/text_scale');
+  await openDocsPage(page, '/framework/docs/3.3/text_scale');
 
   const preview = page.locator('[data-controller~="text-scale-preview"]');
   const slider = preview.locator('input[type="range"]');
@@ -70,7 +70,7 @@ test('rebuilds the Weather preview at every Text Scale level without reloading t
   }
 
   expect(await page.evaluate(() => window.scrollY)).toBe(initialScrollY);
-  expect(page.url()).toContain('/framework/docs/3.2/text_scale');
+  expect(page.url()).toContain('/framework/docs/3.3/text_scale');
   expect(await iframe.evaluate((frame) => Array.from(document.querySelectorAll('iframe[data-trmnl-example="true"]'))
     .filter(candidate => candidate !== frame)
     .every((candidate, index) => candidate.contentDocument === window.__textScaleOtherDocuments[index]))).toBe(true);

@@ -1,0 +1,573 @@
+{
+  "color_palette": {
+    "red": "#FF0000",
+    "orange": "#FF8000",
+    "yellow": "#FFFF00",
+    "lime": "#80FF00",
+    "green": "#00FF00",
+    "cyan": "#00FFFF",
+    "blue": "#0000FF",
+    "violet": "#8000FF",
+    "purple": "#FF00FF",
+    "pink": "#FF0080",
+    "red-10": "#220000",
+    "red-15": "#440000",
+    "red-20": "#660000",
+    "red-25": "#880000",
+    "red-30": "#AA0000",
+    "red-35": "#CC0000",
+    "red-40": "#EE0000",
+    "red-45": "#FF1111",
+    "red-50": "#FF3333",
+    "red-55": "#FF5555",
+    "red-60": "#FF7777",
+    "red-65": "#FF9999",
+    "red-70": "#FFBBBB",
+    "red-75": "#FFDDDD",
+    "orange-10": "#221100",
+    "orange-15": "#442200",
+    "orange-20": "#663300",
+    "orange-25": "#884400",
+    "orange-30": "#AA5500",
+    "orange-35": "#CC6600",
+    "orange-40": "#EE7700",
+    "orange-45": "#FF8811",
+    "orange-50": "#FF9933",
+    "orange-55": "#FFAA55",
+    "orange-60": "#FFBB77",
+    "orange-65": "#FFCC99",
+    "orange-70": "#FFDDBB",
+    "orange-75": "#FFEEDD",
+    "yellow-10": "#222200",
+    "yellow-15": "#444400",
+    "yellow-20": "#666600",
+    "yellow-25": "#888800",
+    "yellow-30": "#AAAA00",
+    "yellow-35": "#CCCC00",
+    "yellow-40": "#EEEE00",
+    "yellow-45": "#FFFF11",
+    "yellow-50": "#FFFF33",
+    "yellow-55": "#FFFF55",
+    "yellow-60": "#FFFF77",
+    "yellow-65": "#FFFF99",
+    "yellow-70": "#FFFFBB",
+    "yellow-75": "#FFFFDD",
+    "lime-10": "#112200",
+    "lime-15": "#224400",
+    "lime-20": "#336600",
+    "lime-25": "#448800",
+    "lime-30": "#55AA00",
+    "lime-35": "#66CC00",
+    "lime-40": "#77EE00",
+    "lime-45": "#88FF11",
+    "lime-50": "#99FF33",
+    "lime-55": "#AAFF55",
+    "lime-60": "#BBFF77",
+    "lime-65": "#CCFF99",
+    "lime-70": "#DDFFBB",
+    "lime-75": "#EEFFDD",
+    "green-10": "#002200",
+    "green-15": "#004400",
+    "green-20": "#006600",
+    "green-25": "#008800",
+    "green-30": "#00AA00",
+    "green-35": "#00CC00",
+    "green-40": "#00EE00",
+    "green-45": "#11FF11",
+    "green-50": "#33FF33",
+    "green-55": "#55FF55",
+    "green-60": "#77FF77",
+    "green-65": "#99FF99",
+    "green-70": "#BBFFBB",
+    "green-75": "#DDFFDD",
+    "cyan-10": "#002222",
+    "cyan-15": "#004444",
+    "cyan-20": "#006666",
+    "cyan-25": "#008888",
+    "cyan-30": "#00AAAA",
+    "cyan-35": "#00CCCC",
+    "cyan-40": "#00EEEE",
+    "cyan-45": "#11FFFF",
+    "cyan-50": "#33FFFF",
+    "cyan-55": "#55FFFF",
+    "cyan-60": "#77FFFF",
+    "cyan-65": "#99FFFF",
+    "cyan-70": "#BBFFFF",
+    "cyan-75": "#DDFFFF",
+    "blue-10": "#000022",
+    "blue-15": "#000044",
+    "blue-20": "#000066",
+    "blue-25": "#000088",
+    "blue-30": "#0000AA",
+    "blue-35": "#0000CC",
+    "blue-40": "#0000EE",
+    "blue-45": "#1111FF",
+    "blue-50": "#3333FF",
+    "blue-55": "#5555FF",
+    "blue-60": "#7777FF",
+    "blue-65": "#9999FF",
+    "blue-70": "#BBBBFF",
+    "blue-75": "#DDDDFF",
+    "violet-10": "#110022",
+    "violet-15": "#220044",
+    "violet-20": "#330066",
+    "violet-25": "#440088",
+    "violet-30": "#5500AA",
+    "violet-35": "#6600CC",
+    "violet-40": "#7700EE",
+    "violet-45": "#8811FF",
+    "violet-50": "#9933FF",
+    "violet-55": "#AA55FF",
+    "violet-60": "#BB77FF",
+    "violet-65": "#CC99FF",
+    "violet-70": "#DDBBFF",
+    "violet-75": "#EEDDFF",
+    "purple-10": "#220022",
+    "purple-15": "#440044",
+    "purple-20": "#660066",
+    "purple-25": "#880088",
+    "purple-30": "#AA00AA",
+    "purple-35": "#CC00CC",
+    "purple-40": "#EE00EE",
+    "purple-45": "#FF11FF",
+    "purple-50": "#FF33FF",
+    "purple-55": "#FF55FF",
+    "purple-60": "#FF77FF",
+    "purple-65": "#FF99FF",
+    "purple-70": "#FFBBFF",
+    "purple-75": "#FFDDFF",
+    "pink-10": "#220011",
+    "pink-15": "#440022",
+    "pink-20": "#660033",
+    "pink-25": "#880044",
+    "pink-30": "#AA0055",
+    "pink-35": "#CC0066",
+    "pink-40": "#EE0077",
+    "pink-45": "#FF1188",
+    "pink-50": "#FF3399",
+    "pink-55": "#FF55AA",
+    "pink-60": "#FF77BB",
+    "pink-65": "#FF99CC",
+    "pink-70": "#FFBBDD",
+    "pink-75": "#FFDDEE"
+  },
+  "color_hues": [
+    "red",
+    "orange",
+    "yellow",
+    "lime",
+    "green",
+    "cyan",
+    "blue",
+    "violet",
+    "purple",
+    "pink"
+  ],
+  "color_shade_steps": [
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75
+  ],
+  "color_palette_limited_ids": [
+    "3bwr",
+    "3bwy",
+    "4bwry",
+    "6a",
+    "7a"
+  ],
+  "limited_palette_grayscale_1bit_ids": [
+    "3bwr",
+    "3bwy",
+    "4bwry",
+    "6a",
+    "7a"
+  ],
+  "color_to_gray_fallback": {
+    "red": "gray-40",
+    "orange": "gray-55",
+    "yellow": "gray-60",
+    "lime": "gray-60",
+    "green": "gray-60",
+    "cyan": "gray-60",
+    "blue": "gray-25",
+    "violet": "gray-35",
+    "purple": "gray-45",
+    "pink": "gray-40",
+    "red-10": "gray-10",
+    "red-15": "gray-15",
+    "red-20": "gray-20",
+    "red-25": "gray-25",
+    "red-30": "gray-30",
+    "red-35": "gray-35",
+    "red-40": "gray-40",
+    "red-45": "gray-45",
+    "red-50": "gray-45",
+    "red-55": "gray-50",
+    "red-60": "gray-50",
+    "red-65": "gray-60",
+    "red-70": "gray-65",
+    "red-75": "gray-70",
+    "orange-10": "gray-10",
+    "orange-15": "gray-20",
+    "orange-20": "gray-25",
+    "orange-25": "gray-30",
+    "orange-30": "gray-35",
+    "orange-35": "gray-45",
+    "orange-40": "gray-50",
+    "orange-45": "gray-55",
+    "orange-50": "gray-60",
+    "orange-55": "gray-60",
+    "orange-60": "gray-65",
+    "orange-65": "gray-70",
+    "orange-70": "gray-70",
+    "orange-75": "gray-75",
+    "yellow-10": "gray-15",
+    "yellow-15": "gray-25",
+    "yellow-20": "gray-35",
+    "yellow-25": "gray-45",
+    "yellow-30": "gray-50",
+    "yellow-35": "gray-55",
+    "yellow-40": "gray-55",
+    "yellow-45": "gray-60",
+    "yellow-50": "gray-65",
+    "yellow-55": "gray-65",
+    "yellow-60": "gray-70",
+    "yellow-65": "gray-70",
+    "yellow-70": "gray-75",
+    "yellow-75": "gray-75",
+    "lime-10": "gray-15",
+    "lime-15": "gray-25",
+    "lime-20": "gray-30",
+    "lime-25": "gray-40",
+    "lime-30": "gray-50",
+    "lime-35": "gray-55",
+    "lime-40": "gray-55",
+    "lime-45": "gray-60",
+    "lime-50": "gray-65",
+    "lime-55": "gray-65",
+    "lime-60": "gray-70",
+    "lime-65": "gray-70",
+    "lime-70": "gray-75",
+    "lime-75": "gray-75",
+    "green-10": "gray-15",
+    "green-15": "gray-20",
+    "green-20": "gray-30",
+    "green-25": "gray-40",
+    "green-30": "gray-50",
+    "green-35": "gray-55",
+    "green-40": "gray-55",
+    "green-45": "gray-60",
+    "green-50": "gray-65",
+    "green-55": "gray-65",
+    "green-60": "gray-70",
+    "green-65": "gray-70",
+    "green-70": "gray-75",
+    "green-75": "gray-75",
+    "cyan-10": "gray-15",
+    "cyan-15": "gray-25",
+    "cyan-20": "gray-30",
+    "cyan-25": "gray-40",
+    "cyan-30": "gray-50",
+    "cyan-35": "gray-55",
+    "cyan-40": "gray-55",
+    "cyan-45": "gray-60",
+    "cyan-50": "gray-65",
+    "cyan-55": "gray-65",
+    "cyan-60": "gray-70",
+    "cyan-65": "gray-70",
+    "cyan-70": "gray-75",
+    "cyan-75": "gray-75",
+    "blue-10": "gray-10",
+    "blue-15": "gray-10",
+    "blue-20": "gray-15",
+    "blue-25": "gray-15",
+    "blue-30": "gray-20",
+    "blue-35": "gray-20",
+    "blue-40": "gray-25",
+    "blue-45": "gray-30",
+    "blue-50": "gray-30",
+    "blue-55": "gray-35",
+    "blue-60": "gray-45",
+    "blue-65": "gray-55",
+    "blue-70": "gray-60",
+    "blue-75": "gray-70",
+    "violet-10": "gray-10",
+    "violet-15": "gray-10",
+    "violet-20": "gray-15",
+    "violet-25": "gray-20",
+    "violet-30": "gray-25",
+    "violet-35": "gray-25",
+    "violet-40": "gray-30",
+    "violet-45": "gray-35",
+    "violet-50": "gray-40",
+    "violet-55": "gray-45",
+    "violet-60": "gray-50",
+    "violet-65": "gray-55",
+    "violet-70": "gray-65",
+    "violet-75": "gray-70",
+    "purple-10": "gray-10",
+    "purple-15": "gray-15",
+    "purple-20": "gray-20",
+    "purple-25": "gray-25",
+    "purple-30": "gray-35",
+    "purple-35": "gray-40",
+    "purple-40": "gray-45",
+    "purple-45": "gray-50",
+    "purple-50": "gray-50",
+    "purple-55": "gray-55",
+    "purple-60": "gray-55",
+    "purple-65": "gray-60",
+    "purple-70": "gray-65",
+    "purple-75": "gray-75",
+    "pink-10": "gray-10",
+    "pink-15": "gray-15",
+    "pink-20": "gray-20",
+    "pink-25": "gray-25",
+    "pink-30": "gray-30",
+    "pink-35": "gray-35",
+    "pink-40": "gray-40",
+    "pink-45": "gray-45",
+    "pink-50": "gray-45",
+    "pink-55": "gray-50",
+    "pink-60": "gray-55",
+    "pink-65": "gray-60",
+    "pink-70": "gray-65",
+    "pink-75": "gray-75"
+  },
+  "limited_palettes": {
+    "color-3bwr": [
+      "#000000",
+      "#FF0000",
+      "#FFFFFF"
+    ],
+    "color-3bwy": [
+      "#000000",
+      "#FFFF00",
+      "#FFFFFF"
+    ],
+    "color-4bwry": [
+      "#000000",
+      "#FF0000",
+      "#FFFFFF",
+      "#FFFF00"
+    ],
+    "color-6a": [
+      "#FF0000",
+      "#00FF00",
+      "#0000FF",
+      "#FFFF00",
+      "#000000",
+      "#FFFFFF"
+    ],
+    "color-7a": [
+      "#000000",
+      "#FFFFFF",
+      "#FF0000",
+      "#00FF00",
+      "#0000FF",
+      "#FFFF00",
+      "#FFA500"
+    ]
+  },
+  "hue_to_accents": {
+    "color-3bwr": {
+      "red": [
+        "#FF0000"
+      ],
+      "orange": [
+        "#FF0000"
+      ],
+      "yellow": [
+        "#FF0000"
+      ],
+      "lime": [
+        "#FF0000"
+      ],
+      "green": [
+        "#FF0000"
+      ],
+      "cyan": [
+        "#FF0000"
+      ],
+      "blue": [
+        "#FF0000"
+      ],
+      "violet": [
+        "#FF0000"
+      ],
+      "purple": [
+        "#FF0000"
+      ],
+      "pink": [
+        "#FF0000"
+      ]
+    },
+    "color-3bwy": {
+      "red": [
+        "#FFFF00"
+      ],
+      "orange": [
+        "#FFFF00"
+      ],
+      "yellow": [
+        "#FFFF00"
+      ],
+      "lime": [
+        "#FFFF00"
+      ],
+      "green": [
+        "#FFFF00"
+      ],
+      "cyan": [
+        "#FFFF00"
+      ],
+      "blue": [
+        "#FFFF00"
+      ],
+      "violet": [
+        "#FFFF00"
+      ],
+      "purple": [
+        "#FFFF00"
+      ],
+      "pink": [
+        "#FFFF00"
+      ]
+    },
+    "color-4bwry": {
+      "red": [
+        "#FF0000"
+      ],
+      "orange": [
+        "#FF0000",
+        "#FFFF00"
+      ],
+      "yellow": [
+        "#FFFF00"
+      ],
+      "lime": [
+        "#FFFF00"
+      ],
+      "green": [
+        "#FFFF00"
+      ],
+      "cyan": [
+        "#FFFF00"
+      ],
+      "blue": [
+        "#FF0000"
+      ],
+      "violet": [
+        "#FF0000"
+      ],
+      "purple": [
+        "#FF0000"
+      ],
+      "pink": [
+        "#FF0000",
+        "#FFFFFF"
+      ]
+    },
+    "color-6a": {
+      "red": [
+        "#FF0000"
+      ],
+      "orange": [
+        "#FF0000",
+        "#FFFF00"
+      ],
+      "yellow": [
+        "#FFFF00"
+      ],
+      "lime": [
+        "#00FF00",
+        "#FFFF00"
+      ],
+      "green": [
+        "#00FF00"
+      ],
+      "cyan": [
+        "#00FF00",
+        "#0000FF"
+      ],
+      "blue": [
+        "#0000FF"
+      ],
+      "violet": [
+        "#0000FF",
+        "#FF0000"
+      ],
+      "purple": [
+        "#0000FF",
+        "#FF0000"
+      ],
+      "pink": [
+        "#FF0000",
+        "#FFFFFF"
+      ]
+    },
+    "color-7a": {
+      "red": [
+        "#FF0000"
+      ],
+      "orange": [
+        "#FFA500"
+      ],
+      "yellow": [
+        "#FFFF00"
+      ],
+      "lime": [
+        "#00FF00",
+        "#FFFF00"
+      ],
+      "green": [
+        "#00FF00"
+      ],
+      "cyan": [
+        "#00FF00",
+        "#0000FF"
+      ],
+      "blue": [
+        "#0000FF"
+      ],
+      "violet": [
+        "#0000FF",
+        "#FF0000"
+      ],
+      "purple": [
+        "#0000FF",
+        "#FF0000"
+      ],
+      "pink": [
+        "#FF0000",
+        "#FFFFFF"
+      ]
+    }
+  },
+  "preview_color_map": {
+    "red": "#A02020",
+    "yellow": "#F0E050",
+    "green": "#608050",
+    "blue": "#5080B8",
+    "white": "#FFFFFF"
+  },
+  "preview_palette_ids": [
+    "3bwr",
+    "3bwy",
+    "4bwry",
+    "6a",
+    "7a"
+  ],
+  "preview_limited_palette_white_hex": "#DBDBDB"
+}

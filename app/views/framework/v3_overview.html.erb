@@ -23,7 +23,7 @@
         <div class="space-y-1">
           <%= framework_heading(3, 'The v3 Color Foundation') %>
           <p class="<%= framework_section_description_classes %>">
-            3.2 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup.
+            3.3 builds on the color system introduced in v3.0: 10 hues with 14 lightness steps, semantic roles (primary, success, error, warning), and a 14-step grayscale, listed in full on <%= render DocsRef.new(page: :colors) %>. Every color adapts to the device's palette and bit depth on its own, with no per-device markup.
           </p>
         </div>
       </section>
@@ -100,6 +100,18 @@
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Usage and live examples: <%= render DocsRef.new(page: :chart) %>. For charting beyond Highcharts, use <%= render DocsRef.new(page: :paint_api) %> directly.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="space-y-1">
+          <%= framework_heading(3, 'Adaptive Maps') %>
+          <p class="<%= framework_section_description_classes %>">
+            Maps join charts on TRMNLPaint. The runtime bundles <code class="<%= framework_section_code_classes %>">TRMNLMaps</code>, a MapLibre GL JS adapter that composes the map style from the framework's map slots over OpenStreetMap vector tiles, so a plotted map takes dither tiles on 1-bit, solids on 4-bit, hues on a color panel, and a theme's own tokens. Maps render as one still frame, with no interaction and no animation.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            Usage and live examples, including a Strava activity: <%= render DocsRef.new(page: :map) %>. The resolvers and adapter behind it: <%= render DocsRef.new(page: :paint_maps) %>.
           </p>
         </div>
       </section>

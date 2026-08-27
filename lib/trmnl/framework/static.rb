@@ -53,6 +53,13 @@ module Framework
       # tokenizer the theme next to it was never matched against.
       "prism-1.29.0.min.js" => ->(root) { root.join("vendor/javascript/prism-1.29.0.min.js") },
       "jquery-3.6.0.min.js" => ->(root) { root.join("vendor/javascript/jquery-3.6.0.min.js") },
+      # MapLibre GL JS (BSD), the library behind TRMNLMaps. Vendored and served off the
+      # engine tree so the map docs and a plugin on a host that mounts the engine load it
+      # from the same origin as the runtime; docs/MAPS_GO_LIVE.md is where that URL would
+      # move to a CDN. 5.24.0 is the last UMD build (6.x ships ESM only), and a plugin
+      # loads it with a classic script tag and reads window.maplibregl.
+      "maplibre-gl-5.24.0.js" => ->(root) { root.join("vendor/javascript/maplibre-gl-5.24.0.js") },
+      "maplibre-gl-5.24.0.css" => ->(root) { root.join("vendor/javascript/maplibre-gl-5.24.0.css") },
       # Framework.server_builds is the only live-build candidate any of these chains has.
       # dartsass and Tailwind write to the host's Rails.root, which in this repo is server/,
       # so the engine root's own app/assets/builds/ is never a build target. It was listed

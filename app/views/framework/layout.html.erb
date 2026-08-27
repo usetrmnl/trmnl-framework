@@ -737,6 +737,135 @@
         </div>
       </section>
 
+      <section class="space-y-8" id="positioned-content">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Positioned Content') %>
+          <p class="<%= framework_section_description_classes %>">
+            Position lifts one element out of flow and places it against the nearest positioned ancestor. Put <code class="<%= framework_section_code_classes %>">relative</code> on the container and <code class="<%= framework_section_code_classes %>">absolute</code> on the child, then name the edges with the same size tokens <%= render DocsRef.new(page: :spacing) %> uses.
+            Reach for it when content should sit over a full-bleed element, such as a card over a <%= render DocsRef.new(page: :map) %>, rather than beside it in a column.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">relative</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Positioning context for the children below</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">absolute</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Takes the element out of flow</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">inset--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">All four edges at once; <code class="<%= framework_section_code_classes %>">inset--0</code> is full bleed</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">top--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the top edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">right--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the right edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">bottom--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the bottom edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">left--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Distance from the left edge</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">z--{0-3}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Stacking order; <code class="<%= framework_section_code_classes %>">z--2</code> clears a map canvas and its labels</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">md:top--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">portrait:inset--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Orientation-based example</span>
+            </div>
+            <div class="flex items-start">
+              <code class="<%= framework_section_code_classes %>">lg:portrait:left--{size}</code>
+              <span class="ml-2 text-sm text-gray-600 dark:text-gray-500">Size + Orientation example</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="<%= message_warning_classes %>">
+          <div class="flex items-center w-full">
+            <div class="flex-shrink-0 items-center">
+              <%= render 'shared/icons/info' %>
+            </div>
+            <div class="w-full flex items-center justify-between ml-3">
+              <p class="text-sm font-medium">
+                Out of flow means out of budget. <%= render DocsRef.new(page: :clamp) %>, <%= render DocsRef.new(page: :fit_value) %>,
+                <%= render DocsRef.new(page: :content_limiter) %> and <%= render DocsRef.new(page: :table_overflow) %> measure boxes in flow to
+                decide what fits, and a positioned element is invisible to all four. Size it yourself, clamp its own text, and write copy that
+                fits the smallest screen you support.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <%= framework_heading(4, 'Card over a full-bleed panel') %>
+            <p class="<%= framework_subsection_description_classes %>">
+              The panel takes the whole layout and the cards float over its corners, so nothing is spent on a column of
+              labels. Each card carries a solid fill and an outline, because dithered fill behind small text is
+              unreadable on 1-bit.
+            </p>
+          </div>
+
+          <div class="<%= framework_example_classes %>">
+            <div class="<%= framework_example_inner_classes %>">
+              <div class="<%= framework_example_wrapper_classes %>">
+                <div class="screen">
+                  <div class="view view--full">
+                    <div class="layout layout--col">
+                      <div class="relative stretch w--full bg--gray-45 2bit:bg--gray-55 4bit:bg--gray-50 rounded--medium">
+                        <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
+                          <span class="label label--small">Depot</span>
+                          <span class="value value--xsmall value--tnums">12 min</span>
+                        </div>
+                        <div class="absolute bottom--3 right--3 z--2 p--2 bg--white outline">
+                          <span class="label label--small">Updated 17:04</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title_bar">
+                      <%= image_tag plugin_image_path("trmnl--render.svg"), class: "image image--adaptive", alt: "TRMNL Logo" %>
+                      <span class="title">Layout</span>
+                      <span class="instance">Positioned</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <%= render CodeExampleComponent.new(
+              demo_code: '<div class="layout layout--col">
+  <div class="relative stretch w--full bg--gray-45">
+    <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
+      <span class="label label--small">Depot</span>
+      <span class="value value--xsmall value--tnums">12 min</span>
+    </div>
+    <div class="absolute bottom--3 right--3 z--2 p--2 bg--white outline">
+      <span class="label label--small">Updated 17:04</span>
+    </div>
+  </div>
+</div>'
+            ) %>
+          </div>
+        </div>
+      </section>
+
       <%= render 'framework/page_navigation' %>
     </div>
   </div>

@@ -18,7 +18,7 @@ RSpec.describe 'Framework runtime API docs' do
   flags = %w[TRMNL_PLUGINS_READY frameworkReady __TRMNL_BUILD__].freeze
   events = %w[trmnl:terminalize:stats trmnl:framework:ready].freeze
   # Assigned by plugins.js, documented on the Paint API pages instead.
-  paint_globals = %w[TRMNLPaint TRMNLCharts].freeze
+  paint_globals = %w[TRMNLPaint TRMNLCharts TRMNLMaps].freeze
 
   describe 'plugins.js' do
     it 'exposes every documented entry point on window' do

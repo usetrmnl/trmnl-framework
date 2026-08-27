@@ -15,6 +15,7 @@ module FrameworkHelper
     'paint_api' => 'Paint API',
     'paint_colors' => 'Painting Colors',
     'paint_charts' => 'Painting Charts',
+    'paint_maps' => 'Painting Maps',
     'paint_borders' => 'Painting Borders',
     'paint_typography' => 'Painting Typography',
     'sass_api' => 'Sass API',
@@ -53,6 +54,7 @@ module FrameworkHelper
     'table' => 'Table',
     'table_overflow' => 'Table Overflow',
     'chart' => 'Chart',
+    'map' => 'Map',
     'overflow' => 'Overflow',
     'format_value' => 'Format Value',
     'fit_value' => 'Fit Value',
@@ -77,9 +79,9 @@ module FrameworkHelper
     'enhancement_guide' => 'V2 Enhancement Guide',
     'troubleshooting_guide' => 'V2 Troubleshooting',
     'trmnl_x_guide' => 'TRMNL X Guide',
-    'v3_overview' => 'V3.2 Overview',
-    'v3_upgrade_guide' => 'V3.2 Upgrade Guide',
-    'v3_enhancement_guide' => 'V3.2 Enhancement Guide',
+    'v3_overview' => 'V3.3 Overview',
+    'v3_upgrade_guide' => 'V3.3 Upgrade Guide',
+    'v3_enhancement_guide' => 'V3.3 Enhancement Guide',
     'open_source' => 'Open Source',
     'contributing' => 'Contributing',
     'layout_examples' => 'Layout Examples'
@@ -114,6 +116,7 @@ module FrameworkHelper
     'paint_api' => 'TRMNLPaint: read the exact colors and patterns CSS paints right now, from JavaScript',
     'paint_colors' => 'Read background, text, stroke, and semantic colors from JavaScript as Fill objects',
     'paint_charts' => 'Chart series colors for the current device, mode, and theme, with Highcharts adapters',
+    'paint_maps' => 'Map slot colors for the current device, mode, and theme, with MapLibre GL JS adapters',
     'paint_borders' => 'Read framework border lines as BorderFill objects, for your own lines and Highcharts axes',
     'paint_typography' => 'Read text roles as TypeSpec objects for custom text and chart labels',
     'sass_api' => 'The framework SCSS source: architecture, cascade layers, and what a custom stack can build from it',
@@ -152,6 +155,7 @@ module FrameworkHelper
     'table' => 'Create data tables optimized for 1-bit rendering',
     'table_overflow' => 'Handle table rows overflow',
     'chart' => 'Visualize data with charts that adapt to the device and theme',
+    'map' => 'Plot locations and routes on a vector map that adapts to the device and theme',
     'overflow' => 'Handle column items overflow',
     'format_value' => 'Format numbers and values with consistent styling',
     'fit_value' => 'Automatically resize numbers and values to fit within their containers',
@@ -176,8 +180,8 @@ module FrameworkHelper
     'enhancement_guide' => 'Device, bit-depth, and orientation-responsive patterns for plugins',
     'troubleshooting_guide' => "Resolve issues surfaced by v2's stricter markup requirements",
     'trmnl_x_guide' => 'Framework changes for TRMNL X compatibility',
-    'v3_overview' => "What's new in Framework 3.2: themes, the TRMNLPaint JS API, adaptive charts and icons, and theme-driven borders",
-    'v3_upgrade_guide' => 'Compatibility notes for upgrading plugins to Framework 3.2',
+    'v3_overview' => "What's new in Framework 3.3: themes, the TRMNLPaint JS API, adaptive charts, maps and icons, and theme-driven borders",
+    'v3_upgrade_guide' => 'Compatibility notes for upgrading plugins to Framework 3.3',
     'v3_enhancement_guide' => 'Make your plugin theme-ready and adopt adaptive charts, icons, and JS paint',
     'open_source' => 'What this repository is, how it fits together, and the paint mandate that shapes it',
     'contributing' => 'Run the framework locally, find your way around, run the tests, and open a good pull request'
@@ -326,6 +330,9 @@ module FrameworkHelper
     'chart' => [
       { page: :paint_charts, inline: true }
     ],
+    'map' => [
+      { page: :paint_maps, inline: true }
+    ],
     'responsive' => [
       { page: :sass_mixins, partial: 'sass_mixins' }
     ],
@@ -346,9 +353,10 @@ module FrameworkHelper
       'color_palettes' => 'A palette tells a screen which inks its panel can print. Grayscale panels pick from four grayscale palettes, and five limited color palettes dither every framework color down to the panel\'s fixed inks. On 12-bit and 24-bit panels, screen--color-full paints every color exactly as defined.',
       'tokens' => "The Tokens reference lists every Framework CSS variable from <code>_variables_root.scss</code> and display overrides in <code>_variables_overrides.scss</code>. Use it to understand defaults, 2-bit visual/layout behavior, high-density typography, and 4-bit-and-up scaling.",
       'themes' => 'Themes are a simple way to visually customize any TRMNL plugin. A theme adjusts the framework\'s colors (backgrounds, text, borders, chart colors) without touching plugin markup, and gracefully adapts to every supported device, from 1-bit ePaper to full color.',
-      'paint_api' => 'TRMNLPaint is the framework\'s JavaScript API for its paint: colors, border lines, and text styles. Ask it for any framework color and it returns what CSS would actually paint right now, with the device and the active theme already applied. Use it wherever JavaScript draws: charts, canvases, or your own rendering.',
+      'paint_api' => 'TRMNLPaint is the framework\'s JavaScript API for its paint: colors, border lines, and text styles. Ask it for any framework color and it returns what CSS would actually paint right now, with the device and the active theme already applied. Use it wherever JavaScript draws: charts, maps, canvases, or your own rendering.',
       'paint_colors' => 'These functions tell you the exact color a CSS class paints right now: a background, a text color, a stroke, or a semantic color like error. Use them when something you draw in JavaScript has to match.',
       'paint_charts' => 'These functions pick the colors for a chart. Ask for series 2 of 5 and you get its paint, correct for the current device, mode, and theme. Adapters then turn each answer into the exact option Highcharts expects.',
+      'paint_maps' => 'These functions give you the color of every part of a map: land, water, roads, parks, buildings, and labels, correct for the current device, mode, and theme. Adapters turn each answer into a MapLibre GL JS paint property, and TRMNLMaps assembles whole map styles out of them.',
       'paint_borders' => 'These functions tell you exactly how the framework draws a border line. Use them so lines you draw yourself, or Highcharts axes and grid lines, match the borders around them.',
       'paint_typography' => 'These functions read everything a text class sets: font, size, weight, color, and optional stroke. Apply the result to text you draw yourself, or convert it for Highcharts labels.',
       'sass_api' => 'The Sass API is the framework\'s SCSS source, open since 3.2. These pages cover the build-your-own path: compiling from source, adding device profiles, and using the mixins in your own SCSS. A custom stack can also skip the build entirely and serve an official released build, which is what the TRMNL Platform always does.',
@@ -373,6 +381,7 @@ module FrameworkHelper
       'table' => 'Tabular data with optional row indexes. Five size variants, and the Overflow and Clamp engines drop rows and truncate cells that do not fit the space available.',
       'table_overflow' => 'When a table has more rows than can fit within the available vertical space, it constrains its height and appends a trailing "and X more" row to indicate the hidden entries.',
       'chart' => 'Plugins can draw charts with any JavaScript charting library. The TRMNLCharts helper supplies the framework\'s colors, so a chart adapts to the device and themes like the rest of the screen.',
+      'map' => 'Maps render OpenStreetMap vector tiles through MapLibre GL JS, with every layer painted by the framework. The TRMNLMaps helper composes the map style from the live screen, so a map adapts to the device and themes like the rest of the screen. Maps are plotted, never satellite, and never interactive.',
       'item' => 'A row for lists, schedules, and other repeating content, with optional meta text, an index, or an icon. Stack items in a Layout and let the Overflow engine handle the ones that do not fit.',
       'progress' => 'Progress bars and step dots for completion state. The fill renders as a bitmap pattern on 1-bit displays and as a solid color on 4-bit+ displays.',
       'flex' => 'Utility classes for Flexbox layouts. Row and column directions with alignment, centering, and stretching modifiers.',
@@ -414,9 +423,9 @@ module FrameworkHelper
       'text_scale' => 'Text Scale adjusts every framework font size and pixel line height from one screen modifier. It composes with Scale, so you can change text readability without applying the same factor to interface geometry or text strokes.',
       'troubleshooting_guide' => "When upgrading to v2, validate markup against intended usage. This guide lists common issues surfaced by v2's more precise behavior.",
       'trmnl_x_guide' => 'TRMNL X is a larger, 4-bit ePaper display. This guide covers what changed in the Framework to support it: new size modifiers, container query units, responsive overflow columns, and layout improvements. Existing plugins keep working; adopt these features to use the larger screen, portrait orientation, and expanded grayscale.',
-      'v3_overview' => 'Framework 3.2 goes open source and adds themes, adaptive charts and icons, a JavaScript paint API, rebuilt borders and strokes, Text Scale, complete Scale modifiers, and Fluid Mashups. Existing markup keeps working; every 3.2 feature is opt-in.',
-      'v3_upgrade_guide' => 'Framework 3.2 is fully backward compatible with 3.0 and 3.1. Existing class names render unchanged, and every new feature is opt-in. This guide lists the few things worth reviewing when you upgrade.',
-      'v3_enhancement_guide' => 'Framework 3.2 lets an existing plugin follow themes and device modes everywhere: in markup, in charts, in icons, and in outlined text and images. This guide walks through the enhancements one at a time; adopt them in any order.',
+      'v3_overview' => 'Framework 3.3 adds adaptive maps on top of the 3.2 open-source release: themes, adaptive charts and icons, a JavaScript paint API, rebuilt borders and strokes, Text Scale, complete Scale modifiers, and Fluid Mashups. Existing markup keeps working; every 3.2 and 3.3 feature is opt-in.',
+      'v3_upgrade_guide' => 'Framework 3.3 is fully backward compatible with 3.0, 3.1, and 3.2. Existing class names render unchanged, and every new feature (themes, the paint API, adaptive charts, maps, and icons) is opt-in. This guide lists the few things worth reviewing when you upgrade.',
+      'v3_enhancement_guide' => 'Framework 3.3 lets an existing plugin follow themes and device modes everywhere: in markup, in charts, in icons, and in outlined text and images. This guide walks through the enhancements one at a time; adopt them in any order.',
       'open_source' => 'The TRMNL Framework is open source as of version 3.2. It is the design system TRMNL plugin screens are built with, tuned for 1-bit, 2-bit, 4-bit, and limited-color ePaper displays. This repository holds the CSS, the JavaScript runtime, the design tokens, and the documentation site you are reading.',
       'contributing' => 'Everything you need to make your first contribution to the TRMNL Framework: run it locally, find your way around the code, run the test suites, and open a pull request that lands. Start here, then read CONTRIBUTING.md for the fine print.',
       'font_family' => 'The Framework ships two pixel font bundles: Classic (NicoPups, NicoClean, BlockKie) and TRMNL (TRMNL12, TRMNL16, TRMNL21). Low-density displays use the selected bundle; high-density displays use Inter Variable for legibility.',
@@ -641,6 +650,7 @@ module FrameworkHelper
     'color_palettes' => 'colors',
     'paint_colors' => 'colors',
     'paint_charts' => 'chart',
+    'paint_maps' => 'map',
     'paint_borders' => 'border',
     'paint_typography' => 'text',
     'sass_api' => 'curly_brackets',
@@ -771,7 +781,7 @@ module FrameworkHelper
       typography: 'Font families, glyphs, text size and scale, weight, color, alignment, and stroke utilities for controlling how text appears across devices and orientations.',
       modulations: 'Engines and systems that adapt content at render time: overflow, clamping, value formatting and fitting, content limiting, pixel-perfect text, and the Framework Runtime.',
       runtime: 'The Framework Runtime and the engines it drives at render time: overflow, clamping, value formatting and fitting, content limiting, and pixel-perfect text.',
-      paint: 'TRMNLPaint, the JavaScript paint API. Read the live CSS cascade to resolve framework colors, borders, and typography for canvases, SVGs, and charts.',
+      paint: 'TRMNLPaint, the JavaScript paint API. Read the live CSS cascade to resolve framework colors, borders, and typography for canvases, SVGs, charts, and maps.',
       sass: 'The framework SCSS source for custom stacks. Compile your own build, add custom device profiles, and author device-aware styles with the framework mixins.',
       themes: 'Opt-in stylesheets that re-theme screens while preserving device-capability rendering: usage, the authoring contract, and every themable slot.',
       variables: 'The public CSS variable surface: the palette, every token with its per-mode values, and the contract for who reads, changes, and generates them.',
@@ -790,7 +800,7 @@ module FrameworkHelper
                                          when '3.1'
                                            'Framework 3.1 guides for color system, migration, font bundle defaults, enhancement workflows, and TRMNL X compatibility.'
                                          else
-                                           'Framework 3.2 guides for migration, enhancement workflows, and TRMNL X compatibility, plus how the open-source repository is built and how to contribute.'
+                                           'Framework 3.3 guides for migration, enhancement workflows, and TRMNL X compatibility, plus how the open-source repository is built and how to contribute.'
                                          end
 
     base_descriptions.merge(guides: version_specific_guide_description).with_indifferent_access

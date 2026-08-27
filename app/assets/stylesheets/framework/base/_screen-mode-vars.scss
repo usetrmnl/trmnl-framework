@@ -853,6 +853,28 @@ $_limited-palette-paint-depth: 4;
     }
 }
 
+// Map slots on the color rails. The defaults in base/_screen.scss are grays
+// tuned for 1-bit; a panel that can print a hue gets water, greens, fields and
+// sand in their own hue and lines a step back from the ink, the way the chart
+// ramp trades its shade ladder for a categorical ramp. Limited palettes take
+// the same tokens and resolve them through their own rails.
+@mixin _map-slot-color-defaults {
+    @include theme-slots.bg-slot('map-water', 'blue-70');
+    @include theme-slots.bg-slot('map-green', 'green-70');
+    @include theme-slots.bg-slot('map-farmland', 'yellow-75');
+    @include theme-slots.bg-slot('map-sand', 'yellow-70');
+    @include theme-slots.bg-slot('map-area', 'gray-70');
+    @include theme-slots.bg-slot('map-site', 'orange-75');
+    @include theme-slots.bg-slot('map-building', 'gray-65');
+    @include theme-slots.bg-slot('map-transit', 'gray-30');
+    @include theme-slots.bg-slot('map-road', 'gray-35');
+    @include theme-slots.bg-slot('map-road-minor', 'gray-50');
+    @include theme-slots.bg-slot('map-path', 'gray-45');
+    @include theme-slots.bg-slot('map-rail', 'gray-30');
+    @include theme-slots.bg-slot('map-boundary', 'purple-40');
+    @include theme-slots.bg-slot('map-water-line', 'blue-40');
+}
+
 // ============================================
 // CSS Output: Mode variable declarations
 // ============================================
@@ -897,6 +919,19 @@ $_limited-palette-paint-depth: 4;
     .screen.screen--1bit.screen--dark-mode#{helpers.$theme-exempt},
     .screen.screen--1bit#{helpers.$theme-exempt}:not(.screen--dark-mode) .inverse {
         @include theme-slots.bg-slot('screen-backdrop', 'gray-75');
+    }
+
+    // The map's residential field (map-area, gray-75 by default) is a sparse
+    // speckle on the 1-bit rail: texture over every built-up block with nothing
+    // to say on a panel that cannot print a light gray. So the 1-bit rail folds
+    // the slot into the canvas, the channel map-land already follows (and the
+    // inverse subtree flips with it), and the parks, water and buildings stay
+    // the tones that separate them from it. 2-bit and up keep the light field;
+    // themes restate the slot themselves.
+    .screen.screen--1bit#{helpers.$theme-exempt},
+    .screen.screen--1bit#{helpers.$theme-exempt} .inverse {
+        --framework-slot-map-area-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
+        --framework-slot-map-area-bg-image: var(--framework-semantic-canvas-bg-image, none);
     }
 
     // ── 2-bit mode: grayscale--2bit dither patterns ──
@@ -951,6 +986,7 @@ $_limited-palette-paint-depth: 4;
             vars.$color-full-chart-series,
             $span: vars.$color-full-chart-series-span
         );
+        @include _map-slot-color-defaults;
     }
 
     // ── Limited color palettes (actual + preview) ──
@@ -964,6 +1000,13 @@ $_limited-palette-paint-depth: 4;
             // emit only the grayscale rail here to avoid 900 dead declarations.
             @include _border-token-pattern-vars('borders-token', $chromatic: false);
             @include _border-token-palette-vars($palette-id);
+        }
+
+        // Themeable, unlike the paint vars above, so it rides its own
+        // theme-exempt rule like the color-full chart ramp.
+        .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt},
+        .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
+            @include _map-slot-color-defaults;
         }
 
         .screen.screen--preview-colors.screen--color-#{$palette-id},

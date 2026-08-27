@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 // Skips openDocsPage: it polls for example iframes, which the docs index has none of.
-const DOCS_INDEX = '/framework/docs/3.2';
+const DOCS_INDEX = '/framework/docs/3.3';
 
 const palette = (page) => page.locator('[data-controller="command-palette"]');
 
@@ -37,5 +37,5 @@ test('searches the docs index and opens the page it lands on', async ({ page }) 
   await expect(chart.first()).toBeVisible();
   await page.keyboard.press('Enter');
 
-  await expect(page).toHaveURL(/\/framework\/docs\/3\.2\/chart$/);
+  await expect(page).toHaveURL(/\/framework\/docs\/3\.3\/chart$/);
 });

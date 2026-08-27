@@ -66,6 +66,26 @@
         // Border levels anchor level 4 to the base hue (yellow-on-yellow on
         // this canvas), so the underline needs its own contrasting token.
         @include theme-slots.border-token-slot('label-underline', 'yellow-30');
+        // Map slots on the yellow canvas. Land and the labels follow the canvas
+        // and text channels above, the residential field is the canvas itself
+        // (a tint of the canvas under every block is noise, not information),
+        // the other areas sit on the dark side of the scale like the progress
+        // paint, and every line is a dark tint short of the black ink, so a
+        // plotted route in the ink stays on top.
+        @include theme-slots.bg-slot('map-water', 'yellow-30');
+        @include theme-slots.bg-slot('map-water-line', 'yellow-25');
+        @include theme-slots.bg-slot('map-green', 'yellow-35');
+        @include theme-slots.bg-slot('map-farmland', 'yellow-45');
+        @include theme-slots.bg-slot('map-sand', 'yellow-45');
+        @include theme-slots.bg-slot('map-area', 'yellow');
+        @include theme-slots.bg-slot('map-site', 'yellow-35');
+        @include theme-slots.bg-slot('map-building', 'yellow-20');
+        @include theme-slots.bg-slot('map-transit', 'yellow-15');
+        @include theme-slots.bg-slot('map-road', 'yellow-15');
+        @include theme-slots.bg-slot('map-road-minor', 'yellow-25');
+        @include theme-slots.bg-slot('map-path', 'yellow-25');
+        @include theme-slots.bg-slot('map-rail', 'yellow-15');
+        @include theme-slots.bg-slot('map-boundary', 'yellow-20');
 
         // Utility palette remaps (all grays + white → yellow)
         @include theme-slots.utility-remap-grayscale('yellow');
@@ -129,6 +149,22 @@
         // The underline is the contrasting accent: light on the black ground,
         // mirroring the screen block's dark yellow-30 on yellow.
         @include theme-slots.border-token-slot('label-underline', 'yellow-55');
+        // Map areas on the black ground: dark yellow-forward fields like the
+        // component slots above, lines a light tint short of the yellow ink.
+        @include theme-slots.bg-slot('map-water', 'yellow-20');
+        @include theme-slots.bg-slot('map-water-line', 'yellow-25');
+        @include theme-slots.bg-slot('map-green', 'yellow-15');
+        @include theme-slots.bg-slot('map-farmland', 'yellow-10');
+        @include theme-slots.bg-slot('map-sand', 'yellow-10');
+        @include theme-slots.bg-slot('map-area', 'black');
+        @include theme-slots.bg-slot('map-site', 'yellow-15');
+        @include theme-slots.bg-slot('map-building', 'yellow-30');
+        @include theme-slots.bg-slot('map-transit', 'yellow-55');
+        @include theme-slots.bg-slot('map-road', 'yellow-55');
+        @include theme-slots.bg-slot('map-road-minor', 'yellow-40');
+        @include theme-slots.bg-slot('map-path', 'yellow-40');
+        @include theme-slots.bg-slot('map-rail', 'yellow-55');
+        @include theme-slots.bg-slot('map-boundary', 'yellow-45');
 
         @include theme-slots.utility-remap-grayscale('yellow');
         // Filled labels use the black background utility. In inverse contexts
