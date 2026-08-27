@@ -175,6 +175,55 @@
 
       <section class="space-y-8">
         <div class="space-y-4">
+          <%= framework_heading(3, 'Item Cards') %>
+          <p class="<%= framework_section_description_classes %>">
+            An item is a paired surface, a fill on the card and the ink its content takes over that fill. Set the
+            two together so a theme that darkens the card carries its text with it.
+          </p>
+          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-fill($token)</code>: the card's background, from a palette token.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-ink($token)</code>: the color the card's content takes. It repoints the
+              primary text channel inside the card rather than restating each element, so
+              <code class="<%= framework_section_code_classes %>">label--gray</code> and its siblings keep working.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-fill-art($art, $size, $repeat)</code>: art in place of a token tile.
+              Unset, it takes the generated ordered-dither ramp for the current rail, tiled down the card at its
+              own width. Never scale a ramp: stretching it re-blurs the pixels the dither already decided.
+            </li>
+            <li>
+              <code class="<%= framework_section_code_classes %>">item-border($art)</code>: the card's edge. Two arts ship,
+              <code class="<%= framework_section_code_classes %>">--framework-item-border-art-outline</code>, the same drawing
+              <%= render DocsRef.new(page: :outline) %> uses, and
+              <code class="<%= framework_section_code_classes %>">--framework-item-border-art-corner-brackets</code>.
+            </li>
+          </ul>
+          <p class="<%= framework_section_description_classes %>">
+            The border art is declared on <code class="<%= framework_section_code_classes %>">.item</code> itself, because a
+            <code class="<%= framework_section_code_classes %>">var()</code> inside a custom property resolves on the element that declares it.
+            The card reads it as both a background and a border, and whichever one the art is invalid for drops out,
+            which is how one value covers every bit depth.
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <%= render CodeExampleComponent.new(
+            demo_code: '// A dithered card with light text and a dotted edge.
+@include theme-slots.item-fill("gray-20");
+@include theme-slots.item-ink("white");
+@include theme-slots.item-fill-art();
+@include theme-slots.item-border(var(--framework-item-border-art-outline));
+@include theme-slots.spacing-slots($item-padding-x: 12px, $item-padding-y: 8px);',
+            language: 'scss'
+          ) %>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
           <%= framework_heading(3, 'Structure and Weight') %>
           <p class="<%= framework_section_description_classes %>">
             Structure moves through factors: unitless multipliers over the unthemed geometry, so 1 is always the
@@ -194,15 +243,17 @@
           </p>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">text-modifiers(...)</code> sets case and tracking per
-            text role: <code class="<%= framework_section_code_classes %>">$label-transform</code>,
-            <code class="<%= framework_section_code_classes %>">$label-tracking</code>,
-            <code class="<%= framework_section_code_classes %>">$value-transform</code>,
-            <code class="<%= framework_section_code_classes %>">$value-tracking</code>,
-            <code class="<%= framework_section_code_classes %>">$title-transform</code>,
-            <code class="<%= framework_section_code_classes %>">$title-tracking</code>, and
-            <code class="<%= framework_section_code_classes %>">$description-tracking</code>. Sizes and line heights
-            are deliberately not part of it: those are the device and reader scale axes, and a theme that moved them
-            would fight the reader's own text-scale setting.
+            text role, as a <code class="<%= framework_section_code_classes %>">$&lt;role&gt;-transform</code> and a
+            <code class="<%= framework_section_code_classes %>">$&lt;role&gt;-tracking</code> pair. The roles are title, value, label and
+            description, the title bar's own title and instance, and table heads and bodies, with table bodies
+            taking tracking alone. Sizes and line heights are deliberately not part of it: those are the device and
+            reader scale axes, and a theme that moved them would fight the reader's own text-scale setting.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            <code class="<%= framework_section_code_classes %>">spacing-slots($title-bar-padding, $item-padding-x, $item-padding-y)</code> sets the
+            padding a theme owns. The title bar takes a factor over the screen gap, where 0 sits its content flush
+            with the edge. The item pair takes literal lengths, because an item pads by nothing unthemed and no
+            factor lifts a value off zero.
           </p>
           <p class="<%= framework_section_description_classes %>">
             Tracking takes whole positive pixels, and the mixin refuses anything else. The bitmap bundles are drawn
