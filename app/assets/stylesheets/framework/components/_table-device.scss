@@ -33,7 +33,7 @@
 
         @include mixins.for-screen-modifier('2bit', '4bit') {
             tbody tr td .meta .index {
-                @include mixins.shadow-text-stroke(vars.ui-scaled(2px), var(--framework-semantic-stroke-contrast-stroke-color, var(--framework-stroke-contrast)), vars.ui-scaled(1px));
+                @include mixins.shadow-text-stroke(vars.ui-scaled(2px), mixins.contrast-stroke-color(), vars.ui-scaled(1px));
                 font-family: var(--item-index-font-family);
                 font-weight: var(--item-index-font-weight);
                 -webkit-font-smoothing: var(--item-index-font-smoothing);

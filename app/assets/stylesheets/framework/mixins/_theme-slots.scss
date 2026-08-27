@@ -230,6 +230,11 @@ $chart-series-slots: 16;
     } @else {
         --framework-semantic-#{$semantic}-stroke-color: var(--stroke-#{$token}-color, var(--#{$token}, #{$fallback}));
     }
+
+    // Republish the alias in the same scope: contrast-stroke-color() reads it first.
+    @if $semantic == 'stroke-contrast' {
+        --framework-stroke-contrast: var(--framework-semantic-stroke-contrast-stroke-color);
+    }
 }
 
 @mixin semantic-border($semantic, $token, $fallback: transparent, $raw: false) {
