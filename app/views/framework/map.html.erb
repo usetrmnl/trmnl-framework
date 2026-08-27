@@ -585,15 +585,20 @@ TRMNLMaps.watch(el, function () {
           <div class="space-y-2">
             <%= framework_heading(4, 'Floating card') %>
             <p class="<%= framework_subsection_description_classes %>">
-              The map takes the whole layout and a card floats over one corner of it, so no space goes to a column of
-              labels. The card is a child of the same <code class="<%= framework_section_code_classes %>">map</code>
-              container, which is already a positioning context, so
-              <code class="<%= framework_section_code_classes %>">top--3 left--3</code> measures from the map corner
-              (<%= render DocsRef.new(page: :layout) %> carries the full class list).
+              A card belongs inside the <code class="<%= framework_section_code_classes %>">map</code> container, which
+              positions its children already, so
+              <code class="<%= framework_section_code_classes %>">top--3 left--3</code> measures from the map's own
+              corner. Give the card a size and clamp its text, since nothing measures an element that is out of flow.
+              <%= render DocsRef.new(page: :position) %> has the offset and stacking classes.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
-              One corner is spoken for: the data credit sits bottom right and has to stay visible. Place names are
-              positioned without knowing the card is there, so keep the card small and off the credit.
+              The bottom right corner belongs to the data credit, which has to stay visible. Place names land wherever
+              the map data puts them, so a smaller card leaves more of them legible.
+            </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              Over a detailed map, <code class="<%= framework_section_code_classes %>">outline--muted</code>
+              <%= render DocsRef.new(page: :outline) %> draws that edge in a mid gray. It still separates the card from the
+              map, with a quieter line across whatever it covers.
             </p>
           </div>
 
@@ -605,12 +610,10 @@ TRMNLMaps.watch(el, function () {
               <div class="w-full flex items-center justify-between ml-3">
                 <p class="text-sm font-medium">
                   A card over a map takes <code class="<%= framework_section_code_classes %>">bg--white</code> or
-                  <code class="<%= framework_section_code_classes %>">bg--black</code> and never a mid-rail token: the ends of
-                  the rail are the only solid fills on 1-bit, and small text over a dither tile is unreadable.
-                  <code class="<%= framework_section_code_classes %>">outline</code> gives it the hairline that separates it
-                  from light and dark map alike. No shadow: ePaper has no soft edges, so a box-shadow renders as a smear of
-                  dither instead of depth. And a positioned card is invisible to <%= render DocsRef.new(page: :clamp) %> and
-                  <%= render DocsRef.new(page: :content_limiter) %>, so size it and clamp its text yourself.
+                  <code class="<%= framework_section_code_classes %>">bg--black</code> and no shade in between: those two
+                  are the only solid fills on 1-bit, and small text over a dither tile is unreadable. Its edge comes from
+                  <code class="<%= framework_section_code_classes %>">outline</code>, which reads against a light and a dark
+                  map alike, and never from a box-shadow, which ePaper renders as a smear of dither.
                 </p>
               </div>
             </div>

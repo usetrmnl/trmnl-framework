@@ -85,10 +85,16 @@ class FrameworkController < Framework.parent_controller_class
   #
   # :components gains Map behind Chart, and :paint gains Painting Maps behind
   # Painting Charts: TRMNLMaps ships in the 3.3 runtime, so both pages are current-only.
+  #
+  # :arrangement gains Position behind Spacing: the position keywords, offsets and
+  # stacking levels are 3.3 utilities, and offsets ride the spacing scale.
   CURRENT_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
     case group
     when :guides
       groups[:guides] = pages + %w[open_source contributing]
+    when :arrangement
+      spacing_index = pages.index('spacing') || -1
+      groups[:arrangement] = pages.dup.insert(spacing_index + 1, 'position')
     when :foundation
       screen_index = pages.index('screen') || -1
       groups[:foundation] = pages.dup.insert(screen_index + 1, 'devices', 'rendering_modes')
@@ -243,6 +249,7 @@ class FrameworkController < Framework.parent_controller_class
   def text_color; end
   def text_alignment; end
   def spacing; end
+  def position; end
   def rich_text; end
   def mashup; end
   def content_limiter; end

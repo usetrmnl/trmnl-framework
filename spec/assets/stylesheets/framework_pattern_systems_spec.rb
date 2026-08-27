@@ -15,6 +15,10 @@ require 'rails_helper'
 #     the edge insets ride --ui-scale, the space of the ui-scaled(7px) rounded
 #     clip on mashup views. Dividing the arc by the dither ratio shrank it
 #     inside that clip on 2x devices and overflow: hidden erased the corners.
+#     The same drawing states its corner radius twice (the element's own box and
+#     the solid fallback) and its ink three times (the arc, that fallback, and
+#     the 2x fill-ins), so a radius or a variant that lands on one of them
+#     leaves the rest behind.
 #   * Three progress device rules declared `background-image` twice, the first
 #     value dead.
 #
@@ -45,6 +49,10 @@ RSpec.describe 'Framework pattern systems' do
   def border_tokens(body)
     body.scan(/--border-token-([a-z0-9-]+)-([hv])-(image|size|color):\s*([^;}]+)/)
   end
+
+  # The one rule the solid rails draw the outline from, for the radius and the
+  # ink alike.
+  def solid_outline = block_starting_with('.trmnl .screen--2bit .outline::after,')
 
   let(:grayscale_rail) { %w[black] + steps.map { |step| "gray-#{step}" } + %w[white] }
   let(:two_bit_tones) { %w[#000000 #555555 #AAAAAA #FFFFFF] }
@@ -160,6 +168,51 @@ RSpec.describe 'Framework pattern systems' do
 
       expect(unscaled).to be_empty,
                           "these outline lengths do not ride the arc scale: #{unscaled.uniq.inspect}"
+    end
+  end
+
+  describe 'the outline corner radius' do
+    # The dots turn the corner on an 8px curve: the edge runs stop there and the
+    # corner layers place (8,0) (4,1) (1,4) (0,8) around it. Nothing else clips
+    # the element, so a card with a fill of its own squares off outside its own
+    # outline unless the box rounds on that curve, and the solid fallback draws
+    # its border on it.
+    def outline_corner_radius = 'calc(8px*var(--ui-scale, 1)*var(--framework-layout-corner-factor, 1))'
+
+    it 'rounds the element on the curve the corner dots trace' do
+      expect(css).to include(".trmnl .outline{position:relative;border-radius:#{outline_corner_radius}}")
+    end
+
+    it 'rounds the solid fallback on the same curve' do
+      expect(solid_outline).to include("border-radius:#{outline_corner_radius}")
+    end
+  end
+
+  describe 'the muted outline variant' do
+    # Not the muted border token: it resolves to #CCCCCC at every depth, which
+    # thresholds to white on 1-bit and takes the whole outline with it. This
+    # mid-gray stroke sits below the threshold and stays a gray on 4-bit.
+    def muted_ink = 'var(--stroke-gray-35-color, var(--gray-35))'
+
+    it 'takes an ink the 1-bit threshold keeps' do
+      expect(css).to include(".trmnl .outline--muted{--framework-semantic-border-strong-border-color: #{muted_ink}}")
+    end
+
+    # The fallback reads the ink rather than restating it, so the variant reaches
+    # the solid rails by inheritance and has no rule of its own there.
+    it 'reaches the solid fallback through the ink both treatments read' do
+      expect(solid_outline).to include('border:1px solid var(--framework-semantic-border-strong-border-color,')
+    end
+
+    # A fill-in color resolves where it is declared, on the screen, so a card
+    # that recolors its ink needs the fill-ins resolved against its own or the
+    # 2x corners stay dark around a muted arc.
+    it 'mutes the 2x fill-ins wherever a rule turns them on' do
+      unmuted = css.scan(/(?:[{}]|\A)([^{}]*)\{--_outline-hdpi-color[^{}]*\}/).flatten
+                   .reject { |selectors| selectors.include?('.outline--muted') }
+
+      expect(unmuted).to be_empty,
+                         "these leave the fill-ins on the unmuted ink:\n  #{unmuted.first(3).join("\n  ")}"
     end
   end
 

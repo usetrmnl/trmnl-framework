@@ -45,8 +45,17 @@ async function renderScreen(page, { themed }) {
   return page.evaluate(() => Object.fromEntries(
     [...document.querySelectorAll('[data-probe]')].map((element) => {
       const style = getComputedStyle(element);
+      // The released bundle is minified, and cssnano shortens every hex it contains, so the
+      // same token reads #FFFFFF from the live build and #fff from the processed one. The
+      // assertion is about which color won, not how many characters it was spelled with.
+      const longHex = (value) => {
+        const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(value);
+        if (!match) return value;
+        const digits = match[1].length === 3 ? match[1].replace(/./g, (c) => c + c) : match[1];
+        return `#${digits.toUpperCase()}`;
+      };
       return [element.dataset.probe, {
-        strokeColor: style.getPropertyValue('--tn-text-stroke-color').trim(),
+        strokeColor: longHex(style.getPropertyValue('--tn-text-stroke-color').trim()),
         ring: (style.textShadow.match(/^rgba?\([^)]+\)/) || [''])[0],
       }];
     })
