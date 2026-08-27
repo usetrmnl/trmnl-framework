@@ -355,6 +355,20 @@ namespace :framework do
       ["'#{hue}': #{preview_hex.gsub('"', '')}"] + step_entries
     end
     preview_color_palette_scss = preview_palette_entries.join(",\n  ")
+
+    # Strokes are the only paint chain that has to be a single solid, so a limited
+    # palette resolves each hue to the framework hue nearest the panel accent its
+    # dither art already uses. Two-ink blends collapse to the primary accent.
+    base_hue_channels = manifest['color_hues'].index_with { |hue| hex_channels.call(manifest['color_palette'].fetch(hue)) }
+    nearest_base_hue = lambda do |hex|
+      accent = hex_channels.call(hex)
+      base_hue_channels.min_by { |_hue, channels| channels.zip(accent).sum { |channel, ink| (channel - ink)**2 } }.first
+    end
+    palette_hue_accents_scss = (manifest['hue_to_accents'] || {}).map do |palette_id, hue_accents|
+      body = hue_accents.map { |hue, accents| "'#{hue}': '#{nearest_base_hue.call(Array(accents).first)}'" }.join(",\n    ")
+      "'#{palette_id}': (\n    #{body}\n  )"
+    end.join(",\n  ")
+
     hues_scss = manifest['color_hues'].join(', ')
     steps_scss = manifest['color_shade_steps'].join(', ')
     color_fallback_content = manifest['color_to_gray_fallback'].map { |token, gray| "'#{token}': '#{gray}'" }.join(",\n  ")
@@ -384,6 +398,10 @@ namespace :framework do
 
       $preview-color-palette: (
         #{preview_color_palette_scss}
+      );
+
+      $palette-hue-accents: (
+        #{palette_hue_accents_scss}
       );
 
       $border-token-lines: (

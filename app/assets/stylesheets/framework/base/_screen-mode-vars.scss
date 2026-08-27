@@ -764,12 +764,33 @@ $_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
     }
 }
 
-// Preview mode mutes bg/text through the -preview image families; strokes are
-// the only solid-color chain, so remap chromatic tokens to their preview
-// solids. White stays on var(--white); screen--preview-white-limited mutes it.
-@mixin _preview-stroke-vars {
-    @each $token, $hex in vars.$preview-color-palette {
-        @include _stroke-hex($token, $hex);
+// Limited palettes paint chromatic strokes with the panel accent their dither
+// art already uses, so a theme hue cannot leak color onto a panel that has no
+// such ink: violet-30 on a black/white/red/yellow rail is red-30. Preview mode
+// swaps in the accent's preview hex. Gray tokens keep the base rule's grays,
+// which is what the 1-bit rails do.
+@mixin _palette-stroke-vars($palette-id, $preview: false, $dark: false) {
+    $accents: map.get(vars.$palette-hue-accents, 'color-#{$palette-id}');
+
+    @each $hue in vars.$color-hues {
+        $hue-str: '' + $hue;
+        $accent: map.get($accents, $hue-str);
+        @include _palette-stroke-token($hue-str, $accent, $preview, $dark);
+
+        @each $step in vars.$color-shade-steps {
+            @include _palette-stroke-token('#{$hue-str}-#{$step}', '#{$accent}-#{$step}', $preview, $dark);
+        }
+    }
+}
+
+@mixin _palette-stroke-token($token, $accent-token, $preview, $dark) {
+    $target: if($dark, bg.dark-remap-token($accent-token), $accent-token);
+    $preview-hex: if($preview, map.get(vars.$preview-color-palette, $target), null);
+
+    @if $preview-hex {
+        @include _stroke-hex($token, $preview-hex);
+    } @else {
+        @include _stroke-color($token, $target);
     }
 }
 
@@ -995,6 +1016,7 @@ $_limited-palette-paint-depth: 4;
         .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
             @include _palette-bg-vars($palette-id);
             @include _palette-text-vars($palette-id);
+            @include _palette-stroke-vars($palette-id);
             @include _border-level-pattern-vars('borders--1bit');
             // Palette paint below replaces every chromatic token in this rule;
             // emit only the grayscale rail here to avoid 900 dead declarations.
@@ -1016,7 +1038,7 @@ $_limited-palette-paint-depth: 4;
         .screen--preview-colors .screen.screen--dark-mode.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
             @include _palette-bg-vars($palette-id, $preview: true);
             @include _palette-text-vars($palette-id, $preview: true);
-            @include _preview-stroke-vars;
+            @include _palette-stroke-vars($palette-id, $preview: true);
             @include _border-level-pattern-vars('borders--1bit-preview');
             @include _border-token-pattern-vars('borders-token-preview', $chromatic: false);
             @include _border-token-palette-vars($palette-id, $preview: true);
@@ -1164,6 +1186,7 @@ $_limited-palette-paint-depth: 4;
             @include _palette-bg-vars($palette-id, $dark: true);
             @include _palette-text-vars($palette-id, $dark: true);
             @include _stroke-vars($dark: true);
+            @include _palette-stroke-vars($palette-id, $dark: true);
             @include _border-level-pattern-vars('borders--1bit', $dark: true);
             @include _border-token-pattern-vars('borders-token', $dark: true, $chromatic: false);
             @include _border-token-palette-vars($palette-id, $dark: true);
@@ -1175,7 +1198,7 @@ $_limited-palette-paint-depth: 4;
         .screen--preview-colors .screen.screen--color-#{$palette-id}#{helpers.$theme-exempt} .inverse {
             @include _palette-bg-vars($palette-id, $preview: true, $dark: true);
             @include _palette-text-vars($palette-id, $preview: true, $dark: true);
-            @include _preview-stroke-vars;
+            @include _palette-stroke-vars($palette-id, $preview: true, $dark: true);
             @include _border-level-pattern-vars('borders--1bit-preview', $dark: true);
             @include _border-token-pattern-vars('borders-token-preview', $dark: true, $chromatic: false);
             @include _border-token-palette-vars($palette-id, $preview: true, $dark: true);
