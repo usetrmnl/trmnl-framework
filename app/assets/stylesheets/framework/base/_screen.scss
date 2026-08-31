@@ -94,10 +94,12 @@
     // and sand, farmland and a school site) share one. That spacing costs
     // gray-55: taking it would put woodland one step off the open green.
     //
-    // Water is the one area fill below the halfway mark. It has to survive the
-    // whole chain land, rock, open green, woodland, water at that spacing,
-    // which lands it on gray-40 and nowhere lighter.
-    @include theme-slots.bg-slot('map-water', 'gray-40');
+    // Water is the darkest area fill, and the whole chain land, rock, open
+    // green, woodland, water has to fit above it at that spacing: four steps,
+    // fifty ink points, so water sits there and nowhere lighter. gray-45 is the
+    // token at fifty on the solid rails; the 1-bit rail has none, so it
+    // re-points the slot at the checkerboard (base/_screen-mode-vars.scss).
+    @include theme-slots.bg-slot('map-water', 'gray-45');
     @include theme-slots.bg-slot('map-forest', 'gray-50');
     @include theme-slots.bg-slot('map-green', 'gray-60');
     @include theme-slots.bg-slot('map-farmland', 'gray-70');

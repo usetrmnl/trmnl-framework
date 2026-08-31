@@ -184,7 +184,7 @@
     // The map areas and lines, each the framework default read through the
     // mirror. Land and the labels follow the canvas and text channels, so the
     // semantic set below carries them.
-    @include theme-slots.bg-slot('map-water', 'gray-45');
+    @include theme-slots.bg-slot('map-water', 'gray-40');
     @include theme-slots.bg-slot('map-water-line', 'gray-55');
     @include theme-slots.bg-slot('map-forest', 'gray-35');
     @include theme-slots.bg-slot('map-green', 'gray-25');
@@ -390,8 +390,14 @@
     // base/_screen-mode-vars.scss). gray-45's dither reads as a busy stipple
     // at backdrop scale; gray-10's dense tile is the near-black field with a
     // sparse white lattice a dark 1-bit screen paints.
+    //
+    // Water takes the checkerboard for the reason the framework's own 1-bit
+    // rail does: the mirror asks for a fill at fifty ink points and the rail's
+    // tokens step over it. The tone is its own mirror, so the inverse subtree
+    // inherits this statement rather than needing its own.
     .trmnl .screen--theme-dark.screen--1bit {
         @include theme-slots.bg-slot('screen-backdrop', 'gray-10');
+        @include theme-slots.bg-slot('map-water', 'checker');
     }
 
     // An inverse subtree is a light screen inside this dark one. The framework

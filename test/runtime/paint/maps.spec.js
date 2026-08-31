@@ -232,7 +232,7 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expect(result.style.symbols).toBe(0);
   expect(result.style.labels).toEqual({ major: true, minor: true, water: true });
   expect(result.style.transitInk).toBe('#000000');
-  // 1-bit: gray-40 water is a dither tile, so the layer paints with a pattern.
+  // 1-bit: the water tone is a tile, so the layer paints with a pattern.
   expect(result.style.waterPaint['fill-pattern']).toMatch(/^trmnl-tile-\d+$/);
   expect(result.style.waterMatches).toBe(true);
   expect(result.style.roadType).toBe('fill');
@@ -301,7 +301,7 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
     const roadLine = paint.slot('map-road', { el: target, kind: 'border' });
     window.TRMNLMaps.applySwatches({ el: target });
     return {
-      water: { tile: Boolean(water.url), size: water.size, color: water.color, sameAsGray40: water.url === paint.bg('gray-40', { el: target }).url && water.color === paint.bg('gray-40', { el: target }).color },
+      water: { tile: Boolean(water.url), size: water.size, color: water.color, sameAsBackdrop: water.url === paint.slot('screen-backdrop', { el: target }).url },
       waterBlue: water.color === paint.bg('blue-55', { el: target }).color && water.url === paint.bg('blue-55', { el: target }).url,
       label: { color: label.color, tile: Boolean(label.url) },
       road: { tile: Boolean(road.url), color: road.color },
@@ -323,7 +323,8 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   const oneBit = await read();
   expect(oneBit.water.tile).toBe(true);
   expect(oneBit.water.size).toBe(16);
-  expect(oneBit.water.sameAsGray40).toBe(true);
+  // The rail's checkerboard, the flat fifty percent the backdrop slot takes too.
+  expect(oneBit.water.sameAsBackdrop).toBe(true);
   expect(oneBit.label.color).toMatch(/^rgb/);
   // Lines are bg slots: on 1-bit a gray road is the token's tile, never a hex,
   // and the border kind finds no rail on a map slot.
@@ -347,11 +348,13 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   });
   const fourBit = await read();
   expect(fourBit.water.tile).toBe(false);
-  expect(fourBit.water.color).toBe('rgb(119, 119, 119)');
+  expect(fourBit.water.color).toBe('rgb(136, 136, 136)');
   expect(fourBit.road.tile).toBe(false);
   expect(fourBit.road.color).toBe('rgb(102, 102, 102)');
+  // The minor road shares the water's tone on the solid rails: a line over a
+  // fill, separated by the contrast casing it carries.
   expect(fourBit.minor.color).toBe('rgb(136, 136, 136)');
-  expect(fourBit.adapter.water).toEqual({ color: 'rgb(119, 119, 119)', ink: 'rgb(119, 119, 119)', pattern: null });
+  expect(fourBit.adapter.water).toEqual({ color: 'rgb(136, 136, 136)', ink: 'rgb(136, 136, 136)', pattern: null });
 
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => {
     screen.classList.remove('screen--4bit');

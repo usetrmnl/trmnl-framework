@@ -457,13 +457,11 @@ $_border-line-defs: ();
 $_one-bit-tile-families: ('grayscale', 'grayscale-preview');
 $_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
 
-// The 1-bit rail's checkerboard tone, the field the screen-backdrop slot paints
-// on light 1-bit screens. Light paint only: dark 1-bit repoints that slot to
-// gray-75, so the dark rails would carry three declarations nothing reads.
-@mixin _checker-bg-var($specs, $dark) {
-    @if not $dark {
-        @include _bg-tile('checker', map.get($specs, 'checker'));
-    }
+// The 1-bit rail's checkerboard tone, the field the screen-backdrop and map
+// water slots paint from. A checkerboard is its own complement, so the dark
+// rails take the same art rather than a mirrored one.
+@mixin _checker-bg-var($specs) {
+    @include _bg-tile('checker', map.get($specs, 'checker'));
 }
 
 @mixin _grayscale-bg-vars($family, $dark: false) {
@@ -477,7 +475,7 @@ $_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
             $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
             @include _bg-tile($legacy, map.get($specs, $img-shade));
         }
-        @include _checker-bg-var($specs, $dark);
+        @include _checker-bg-var($specs);
     } @else if list.index($_two-bit-tile-families, $family) {
         @each $legacy, $enhanced in vars.$deprecated-to-enhanced-mapping {
             $img-shade: if($dark, bg.dark-remap-token($enhanced), $enhanced);
@@ -705,7 +703,7 @@ $_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
             $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
             @include _bg-tile($legacy, map.get($specs, $img-shade));
         }
-        @include _checker-bg-var($specs, $dark);
+        @include _checker-bg-var($specs);
     }
 
     @each $token, $_ in vars.$color-palette-framework {
@@ -951,10 +949,17 @@ $_limited-palette-paint-depth: 4;
     // inverse subtree flips with it), and the parks, water and buildings stay
     // the tones that separate them from it. 2-bit and up keep the light field;
     // themes restate the slot themselves.
+    //
+    // Water takes the checkerboard on this rail. The area ramp asks for fifty
+    // ink points between the canvas and the sea (base/_screen.scss) and the
+    // rail's tokens step over fifty, from gray-45's 43.75% to gray-40's 56.25%;
+    // the checkerboard is the tone that lands on it, and it is its own mirror,
+    // so one statement covers the dark ground and the inverse subtree too.
     .screen.screen--1bit#{helpers.$theme-exempt},
     .screen.screen--1bit#{helpers.$theme-exempt} .inverse {
         --framework-slot-map-area-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
         --framework-slot-map-area-bg-image: var(--framework-semantic-canvas-bg-image, none);
+        @include theme-slots.bg-slot('map-water', 'checker');
     }
 
     // ── 2-bit mode: grayscale--2bit dither patterns ──

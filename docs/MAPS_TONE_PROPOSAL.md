@@ -11,6 +11,11 @@ Two complaints from the product owner:
 This document is the whole area-fill ramp re-derived as one design, plus the
 patch that implements it, targeted at 3.3.1.
 
+A second round of feedback on that pass moved two more things. The sea it drew
+read as too heavy, so water sits one step lighter, on fifty ink points; and
+plotted routes and markers did not stand out on a busy map, so their casing and
+their default sizes grew (see Markers and routes).
+
 ## Read this first: what this does not fix
 
 **It gives landcover differentiation. It does not give relief.**
@@ -25,7 +30,7 @@ a mountain until a second tile source exists.
 So, concretely, for the Hallstatt-Dachstein render after this change:
 
 - **What it will look like.** Four separated massings instead of two: the lake
-  as a dark field, woodland as a distinctly darker gray than the meadow and
+  as a flat mid field, woodland as a distinctly darker gray than the meadow and
   scrub around it, bare rock and scree as their own light tone rather than as
   beach sand, and the unmapped high ground still white. It will read as a
   landcover map of an alpine valley, the way a national park paper map does.
@@ -62,9 +67,12 @@ per rail. Larger is better.
 | land / rock | 6.25 pts (15.9) | **12.5 (31.9)** | 21.2 | **31.9** | 17 | **34** |
 | rock / open green | 12.5 (31.9) | **12.5 (31.9)** | 21.2 | 21.2 | 34 | 34 |
 | open green / woodland | **0 (0)** | **12.5 (31.9)** | **0** | **53.1** | **0** | **34** |
-| woodland / water | 6.25 (15.9) | **18.75 (47.8)** | 10.6 | **31.9** | 17 | **34** |
-| land / water | 25 (63.8) | **56.25 (143.4)** | 53.1 | **138.1** | 68 | **136** |
-| open green / water | 6.25 (15.9) | **31.25 (79.7)** | 10.6 | **85.0** | 17 | **68** |
+| woodland / water | 6.25 (15.9) | **12.5 (31.9)** | 10.6 | 10.6 | 17 | 17 |
+| land / water | 25 (63.8) | **50 (127.5)** | 53.1 | **116.9** | 68 | **119** |
+| open green / water | 6.25 (15.9) | **25 (63.8)** | 10.6 | **63.8** | 17 | **51** |
+
+The chain is even: every gap on the rail that sets the spacing is exactly one
+step of twelve and a half points, with none spent and none to spare.
 
 In 3.3.0 woodland and open green were the same slot, hence the zeros.
 
@@ -81,13 +89,14 @@ In 3.3.0 woodland and open green were the same slot, hence the zeros.
 | `map-building` | gray-65 | 18.75% | 207.2 | 212.5 | 204 |
 | `map-green` | gray-60 | 25% | 191.2 | 201.9 | 187 |
 | `map-forest` | gray-50 | 37.5% | 159.4 | 148.8 | 153 |
-| `map-water` | gray-40 | 56.25% | 111.6 | 116.9 | 119 |
+| `map-water` | gray-45 (checker on 1-bit) | 50% | 127.5 | 138.1 | 136 |
 | `map-path` | gray-55 (dashed) | n/a | n/a | n/a | 170 |
 | `map-road-minor` | gray-45 | 43.75% | 143.4 | 138.1 | 136 |
 | `map-road` | gray-35 | 62.5% | 95.6 | 106.2 | 102 |
 | `map-water-line` | gray-30 | 68.75% | 79.7 | 85.0 (solid) | 85 |
 
-Moved: `map-water` gray-60 to gray-40, `map-green` gray-65 to gray-60,
+Moved: `map-water` gray-60 to gray-45 (the checkerboard on the 1-bit rail),
+`map-green` gray-65 to gray-60,
 `map-water-line` gray-40 to gray-30, `map-road-minor` gray-50 to gray-45,
 `map-path` gray-45 to gray-55. Added: `map-forest` gray-50, `map-rock` gray-70.
 Everything else holds still.
@@ -100,11 +109,19 @@ of gray-60's sixteen, so two fills one step apart differ by four cells in
 sixty-four and read as a single field. Twelve and a half ink points is the
 smallest step that separates. Everything else follows from that.
 
-**Water lands on gray-40 and nowhere lighter.** The chain land, rock, open
-green, woodland, water needs four gaps. At 12.5 points each that is fifty ink
-points, and the only tokens at or past that are gray-40, gray-35 and gray-30.
-gray-35 and gray-30 are the major road and the darkest line, so water is gray-40.
-This is forced, not chosen.
+**Water lands on fifty ink points, not past them.** The chain land, rock, open
+green, woodland, water needs four gaps, which is fifty points exactly, so water
+sits there and nowhere lighter. An earlier pass took gray-40 instead, the first
+token at or past fifty, and on a panel that read as too heavy a sea. Fifty is
+the value the chain asks for, and the extra 6.25 points bought nothing.
+
+**Fifty is the checkerboard on the 1-bit rail and gray-45 on the others.** The
+solid rails print gray-45 at 136 and 138.1, so the slot names it. On the 1-bit
+rail gray-45 is 43.75%, one step off the woodland, so that rail re-points the
+slot at the checkerboard: a Bayer threshold at half the matrix, which the rail
+already publishes for the screen backdrop and which is the one tone on it that
+does not clump. A checkerboard is its own complement, so the dark ground and
+the inverse subtree take the same statement rather than a mirrored one.
 
 **Woodland does not take gray-55, even though gray-55 is the one solid mid level
 on 2-bit and would be the prettiest woodland there.** gray-55 is 31.25% on
@@ -147,8 +164,8 @@ block. The alpine chain holds at 12.5 points or better in every one.
 
 | theme block | land / rock | rock / green | green / woodland | woodland / water |
 | --- | --- | --- | --- | --- |
-| base | 12.5 | 12.5 | 12.5 | 18.75 |
-| dark | 12.5 | 12.5 | 12.5 | 18.75 |
+| base | 12.5 | 12.5 | 12.5 | 12.5 |
+| dark | 12.5 | 12.5 | 12.5 | 12.5 |
 | black-and-yellow, yellow canvas | 12.5 | 25 | 25 | 12.5 |
 | black-and-yellow, black ground | 12.5 | 25 | 18.75 | 12.5 |
 | white-and-red, red canvas | 43.75 | 12.5 | 18.75 | 25 |
@@ -160,10 +177,22 @@ mirror for the dark axis.
 
 **Dark is now a strict mirror.** Every dark map slot is `85 - base`, so its
 separation matrix equals the base's by construction. That required moving
-`map-building` from gray-45 to gray-20, the mirror value, because gray-45 is
-where water now lands and the two would have been identical. This makes
-dark-theme buildings dimmer than they are today, and it removes the file's one
-deviation from the mirror its own comment claims. **Wants a human eye.**
+`map-building` from gray-45 to gray-20, the mirror value, which makes dark-theme
+buildings dimmer than they are today and removes the file's one deviation from
+the mirror its own comment claims. Water mirrors gray-45 onto gray-40 and takes
+the checkerboard on the 1-bit rail, where the mirror of fifty points is fifty
+points. **Wants a human eye.**
+
+**The two hued themes keep the sea they have**, because neither ramp has a step
+to give. On the yellow canvas water is yellow-15, gray-25 on a grayscale panel,
+and the next lighter yellow step prints as gray-35, which is the woodland
+exactly; on the black ground yellow-35 and yellow-40 print as the same gray, so
+a step there is not a step. On the red canvas water is the fill furthest from a
+red land that itself prints as gray-40, and one step lighter leaves 6.25 points
+between the sea and the shore. On white-and-red's white ground the step lands on
+gray-45, 6.25 off its woodland, and the rail's tone at fifty is a gray
+checkerboard that would drop the theme's hue on a color panel. The base ramp is
+the one with room.
 
 **The yellow ramp is the compressed one.** `$color-to-gray-fallback` gives
 yellow about eight distinct grayscale levels for fourteen map roles, so
@@ -221,6 +250,24 @@ policy in `RELEASE.md`, `CONTRIBUTING.md` or `AGENTS.md` to contradict it.
 The one thing the release notes must say plainly: **if your theme overrides
 `map-green`, add `map-forest`; if it overrides `map-sand`, add `map-rock`.**
 
+## Markers and routes
+
+The second complaint: `TRMNLMaps.dot()` and `TRMNLMaps.route()` do not stand out
+on a busy map. A map label survives any ground because it carries a contrast
+outline; a route and a dot are polygons rather than glyphs, so theirs is the
+casing `mapShapeSpec` already builds from `semantic('stroke-contrast')`. The fix
+is to give that casing room, not to add a second mechanism.
+
+- The casing was one CSS pixel a side for every shape in the style. A shape spec
+  now carries a `casingWidth`, and `route()` and `dot()` pass two, so a style
+  line keeps the hairline it had while author content gets a ring that survives
+  a dithered ground. A label takes `text-stroke--large`, a three pixel halo on a
+  six pixel stroke, which is the proportion two on four keeps.
+- A route's default width goes from 3 to 4 and a dot's default radius from 4 to
+  5, both still through `px()`, so a scaled screen scales them.
+- Width 4 puts a plotted route a step above the widest road the style draws
+  (`motorway` at 3), which is where an author's own line belongs.
+
 ## Verification
 
 Source-only. Nothing under `public/` changes, so bundle parity is untouched.
@@ -230,11 +277,13 @@ Source-only. Nothing under `public/` changes, so bundle parity is untouched.
   compiled-cascade contract, which pins the token each slot resolves to on the
   screen, the inverse subtree, the 1-bit rail and every color rail, and which
   fails when any shipped theme leaves a themed slot unrestated. Both new slots
-  were added to its `AREA_SLOTS` list, so the theme check covers them.
+  were added to its `AREA_SLOTS` list, so the theme check covers them, and it
+  now pins the 1-bit rail's water to the checkerboard as well.
 - `npx playwright test --config test/runtime/playwright.config.js`: **104
   passed.** `test/runtime/paint/maps.spec.js` resolves the slots through the
   live cascade in a browser, shapes them for MapLibre, and now asserts the
-  `land-forest` and `land-rock` layers exist.
+  `land-forest` and `land-rock` layers exist, that 1-bit water resolves to the
+  same tile the screen backdrop takes, and that 4-bit water prints `#888888`.
 - `PROCESSED_BUNDLE=1 npx playwright test --config test/runtime/playwright.config.js`:
   **104 passed**, after `bin/rails framework:processed_bundle`. This is the suite
   that matters for a tile change. The procss minifier rewrites the tile SVGs, and
@@ -257,21 +306,24 @@ rasterizes a tile, and no visual baseline contains a map. Core has no pixel test
 either. The evidence for this change is numeric and structural. Get a device
 render of Hallstatt, Cinque Terre and Sydney Harbour before tagging.
 
-**A major road over water is the new tight pair.** Water and `map-road` are 6.25
-ink points apart on 1-bit, 10.6 on 2-bit, 17 on 4-bit, where in 3.3.0 they were
-37.5 / 95.6 / 85. This is the old water-against-forest collision, moved
-deliberately onto a line, where the contrast casing every major and minor road
-carries is the mitigation, and where bridge decks paint from `map-building` at
-18.75% and give the crossing a light band underneath. Sydney Harbour is the
-render that proves or disproves it. In the black-and-yellow theme the same pair
-is at zero and rests on the casing alone.
+**A minor road over water is the new tight pair.** Water and `map-road-minor`
+are 6.25 ink points apart on 1-bit and share gray-45 outright on 2-bit and
+4-bit. This is the old water-against-forest collision, moved deliberately onto a
+line: a minor road carries a contrast casing, and a road that crosses water is a
+bridge, which paints a `map-building` deck at 18.75% under the crossing first.
+Pier and dam lines take the same slot with no casing and sit straight on the
+water, so a harbour with piers is the render that proves or disproves it.
+Raising the sea to fifty points settles the two pairs the gray-40 pass left
+tight: a major road over water goes from 6.25 / 10.6 / 17 to 12.5 / 31.9 / 34,
+and the admin boundary, which shared gray-40 with water exactly, comes up to
+6.25 / 21.2 / 17. In the black-and-yellow theme water and `map-road` are still
+at zero and rest on the casing alone.
 
-**Rivers against lakes lose separation but stay clear.** Water against
-`map-water-line` goes from 31.25 / 79.7 / 85.0 / 68 to 12.5 / 31.9 / 31.9 / 34.
-On 2-bit the river is now a flat solid 85 against a dithered field rather than
-two dithers of one pair, which reads better than the ratio suggests. This is the
-hazard the 2026-08-27 fix was written for, so it wants a river-through-a-lake
-render.
+**Rivers against lakes hold.** Water against `map-water-line` goes from
+31.25 / 79.7 / 85.0 / 68 to 18.75 / 47.8 / 53.1 / 51. On 2-bit the river is a
+flat solid 85 against a dithered field rather than two dithers of one pair,
+which reads better than the ratio suggests. This is the hazard the 2026-08-27
+fix was written for, so it wants a river-through-a-lake render.
 
 **A minor road through woodland** is 6.25 points, casing-mitigated. It was
 placed there on purpose: `map-road-minor` moved off gray-50 precisely so it
@@ -287,12 +339,15 @@ and wetland, and woodland falls to the framework grayscale default, which on a
 hued canvas will read as a gray patch. The boilerplate is updated; the release
 note has to say it.
 
-**Water at 56.25% ink on 1-bit is dense.** The framework's own note elsewhere
-calls gray-40 "a harsh, busy stipple at backdrop scale". Behind text that is a
-fault; as a sea it is the point, and water labels carry `text-stroke--large`
-halos. It is still the single value most worth judging on a real panel.
+**Water is the flattest tone on the 1-bit rail, and the closest to woodland.**
+The checkerboard does not clump the way the curated dithers do, so a large sea
+reads as one field rather than as stipple, which is what a sea should do. The
+cost is that woodland is now one step away rather than one and a half, so a
+wooded coast is the case to judge on a real panel. On 2-bit and 4-bit the pair
+is 10.6 and 17, the same tightness `map-building` against open green already
+carries.
 
-**4-bit and full color.** 4-bit water moves from `#BBBBBB` to `#777777`, four
+**4-bit and full color.** 4-bit water moves from `#BBBBBB` to `#888888`, three
 output levels darker. On the full-color rail water moves from blue-70 to blue-55
 and woodland arrives as green-55 against open green at green-70. On the limited
 palettes both resolve to an ink tile over white at the named density (on 4bwry,

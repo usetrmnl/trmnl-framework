@@ -61,7 +61,7 @@ RSpec.describe 'Framework map slot contract' do
   it 'binds the grayscale defaults: land to the canvas, areas to gray tiles, every line to a gray short of the ink' do
     aggregate_failures do
       expect_declared(screen, '--framework-slot-map-land-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
-      expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-40-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-45-color, transparent)')
       expect_declared(screen, '--framework-slot-map-forest-bg-color', 'var(--bg-gray-50-color, transparent)')
       expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-60-color, transparent)')
       expect_declared(screen, '--framework-slot-map-rock-bg-color', 'var(--bg-gray-70-color, transparent)')
@@ -75,6 +75,9 @@ RSpec.describe 'Framework map slot contract' do
       expect_declared(screen, '--framework-slot-map-area-bg-color', 'var(--bg-gray-75-color, transparent)')
       expect_declared(one_bit, '--framework-slot-map-area-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
       expect_declared(one_bit, '--framework-slot-map-area-bg-image', 'var(--framework-semantic-canvas-bg-image, none)')
+      # The area ramp puts the sea fifty ink points off the canvas, and the
+      # 1-bit rail steps over fifty: the checkerboard is its tone there.
+      expect_declared(one_bit, '--framework-slot-map-water-bg-color', 'var(--bg-checker-color, transparent)')
     end
   end
 

@@ -5667,6 +5667,10 @@ window.markFrameworkReady = markFrameworkReady;
   const MAP_SHAPE_CAP = 6000;
   const MAP_SHAPE_MARGIN = 8;
   const MAP_DOT_SIDES = 16;
+  // A route or a dot is author content over ground it cannot predict, so its
+  // casing is two pixels where a style line takes one, the way a map label
+  // takes text-stroke--large rather than the default ring.
+  const MAP_AUTHOR_CASING = 2;
   // Joins are cheaper dots, and only where a line really bends (the cosine of
   // a ten degree turn); consecutive quads already overlap where it barely does.
   const MAP_JOIN_SIDES = 8;
@@ -5894,9 +5898,10 @@ window.markFrameworkReady = markFrameworkReady;
       if (budget <= 0) break;
       const kind = feature.properties && feature.properties.kind;
       // Whole device pixels: the spec's width is CSS pixels, the canvas is not.
-      // A casing adds one CSS pixel of contrast on each side.
+      // A casing adds its own width in CSS pixels of contrast on each side, one
+      // by default.
       const w = Math.max(1, Math.round(mapShapeWidth(spec, kind, zoom) * pr));
-      const ring = Math.max(1, Math.round(pr));
+      const ring = Math.max(1, Math.round((spec.casingWidth || 1) * pr));
       if (spec.kind === 'point') {
         for (const lngLat of mapPointCoordinates(feature.geometry)) {
           let p;
@@ -6374,11 +6379,11 @@ window.markFrameworkReady = markFrameworkReady;
 
     /**
      * Plot a route: the coordinates become the polygon of a stroke `width`
-     * (default 3, through px()) filled with the paint of series `i` of `n`
-     * from the chart-series ramp, over a contrast casing, rasterized without
-     * anti-aliasing and re-widened for every camera. Call it once the map has
-     * loaded; `id` tells routes apart (default 'route'). {casing:false} drops
-     * the casing.
+     * (default 4, through px()) filled with the paint of series `i` of `n` from
+     * the chart-series ramp, over a two pixel contrast casing that carries it
+     * across any ground, rasterized without anti-aliasing and re-widened for
+     * every camera. Call it once the map has loaded; `id` tells routes apart
+     * (default 'route'). {casing:false} drops the casing.
      *
      * @param {object} map
      * @param {Array<Array<number>>} coords - [lng, lat] pairs
@@ -6396,21 +6401,23 @@ window.markFrameworkReady = markFrameworkReady;
         source: id,
         kind: 'line',
         features: [{ properties: {}, geometry: { type: 'LineString', coordinates: coords } }],
-        widths: mapPx(Number.isFinite(o.width) ? o.width : 3, el),
+        widths: mapPx(Number.isFinite(o.width) ? o.width : 4, el),
         zoomStep: false,
         minzoom: 0,
         dash: null,
         casing: o.casing === false || !halo ? null : id + '-casing',
+        casingWidth: mapPx(MAP_AUTHOR_CASING, el),
       };
       addMapShape(map, el, spec, TRMNLMaps.series(o.i || 0, o.n || 1, { el: el }), halo);
       return map;
     },
 
     /**
-     * Plot a dot: a disc of `radius` (default 4, through px()) in the paint of
-     * series `i` of `n`, ringed in the contrast color; {hollow:true} makes it
-     * a ring around a contrast core, so a start dot and an end ring read apart
-     * on one ink. Call it once the map has loaded; `id` tells dots apart.
+     * Plot a dot: a disc of `radius` (default 5, through px()) in the paint of
+     * series `i` of `n`, ringed in two pixels of the contrast color so it reads
+     * over any ground; {hollow:true} makes it a ring around a contrast core, so
+     * a start dot and an end ring read apart on one ink. Call it once the map
+     * has loaded; `id` tells dots apart.
      *
      * @param {object} map
      * @param {Array<number>} lngLat
@@ -6422,13 +6429,13 @@ window.markFrameworkReady = markFrameworkReady;
       const el = o.el;
       if (!map || !Array.isArray(lngLat)) return map;
       const id = 'trmnl-dot-' + (o.id != null ? String(o.id) : 'dot');
-      const radius = mapPx(Number.isFinite(o.radius) ? o.radius : 4, el);
+      const radius = mapPx(Number.isFinite(o.radius) ? o.radius : 5, el);
       const halo = mapHalo(el);
       const point = [{ properties: {}, geometry: { type: 'Point', coordinates: lngLat } }];
       const series = TRMNLMaps.series(o.i || 0, o.n || 1, { el: el });
       addMapShape(map, el, {
         id: id, source: id, kind: 'point', features: point, widths: radius, zoomStep: false, minzoom: 0, dash: null,
-        casing: halo ? id + '-casing' : null,
+        casing: halo ? id + '-casing' : null, casingWidth: mapPx(MAP_AUTHOR_CASING, el),
       }, series, halo);
       if (o.hollow && halo) {
         addMapShape(map, el, {
