@@ -161,32 +161,8 @@
                   <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                   <div class="view view--full">
-                    <div class="layout layout--col gap--small">
-                      <div class="grid grid--cols-3">
-                        <div class="item">
-                          <div class="meta"></div>
-                          <div class="content">
-                            <span class="value value--small value--tnums">14&deg;C</span>
-                            <span class="label">South Bank</span>
-                          </div>
-                        </div>
-                        <div class="item">
-                          <div class="meta"></div>
-                          <div class="content">
-                            <span class="value value--small value--tnums">17:53</span>
-                            <span class="label">Sunset</span>
-                          </div>
-                        </div>
-                        <div class="item">
-                          <div class="meta"></div>
-                          <div class="content">
-                            <span class="value value--small value--tnums">2.1 km</span>
-                            <span class="label">To the office</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div id="map-streets" class="map stretch w--full"></div>
+                    <div class="layout layout--col">
+                      <div id="map-streets" class="map stretch w--full rounded--base"></div>
                     </div>
 
                     <div class="title_bar">
@@ -214,7 +190,7 @@
                       // the style for the preset, painted from the live screen.
                       TRMNLMaps.watch(el, function () {
                         return new maplibregl.Map(TRMNLMaps.options({
-                          el: el, preset: "streets", center: [-0.1276, 51.5072], zoom: 13
+                          el: el, preset: "streets", center: [-84.3885, 33.7554], zoom: 13
                         }));
                       });
                     });
@@ -231,32 +207,8 @@
 
 <!-- markup with an empty, ID\'d .map container for the canvas -->
 <div class="view view--full">
-  <div class="layout layout--col gap--small">
-    <div class="grid grid--cols-3">
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums">14&deg;C</span>
-          <span class="label">South Bank</span>
-        </div>
-      </div>
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums">17:53</span>
-          <span class="label">Sunset</span>
-        </div>
-      </div>
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums">2.1 km</span>
-          <span class="label">To the office</span>
-        </div>
-      </div>
-    </div>
-
-    <div id="map-streets" class="map stretch w--full"></div>
+  <div class="layout layout--col">
+    <div id="map-streets" class="map stretch w--full rounded--base"></div>
   </div>
 
   <div class="title_bar">
@@ -284,7 +236,7 @@
     // the style for the preset, painted from the live screen.
     TRMNLMaps.watch(el, function () {
       return new maplibregl.Map(TRMNLMaps.options({
-        el: el, preset: "streets", center: [-0.1276, 51.5072], zoom: 13
+        el: el, preset: "streets", center: [-84.3885, 33.7554], zoom: 13
       }));
     });
   });
@@ -317,19 +269,31 @@
                       <div class="columns stretch">
                         <div class="column stretch">
                           <div class="layout layout--col gap--xsmall stretch">
-                            <div id="map-style-streets" class="map stretch w--full"></div>
+                            <div id="map-style-streets" class="map stretch w--full rounded--base">
+                              <div class="absolute top--2 left--2 z--2 p--2 bg--canvas outline outline--muted">
+                                <span class="label label--small">Leibnizstraße 62</span>
+                              </div>
+                            </div>
                             <span class="label label--small">streets</span>
                           </div>
                         </div>
                         <div class="column stretch">
                           <div class="layout layout--col gap--xsmall stretch">
-                            <div id="map-style-minimal" class="map stretch w--full"></div>
+                            <div id="map-style-minimal" class="map stretch w--full rounded--base">
+                              <div class="absolute top--2 left--2 z--2 p--2 bg--canvas outline outline--muted">
+                                <span class="label label--small">Leibnizstraße 62</span>
+                              </div>
+                            </div>
                             <span class="label label--small">minimal</span>
                           </div>
                         </div>
                         <div class="column stretch">
                           <div class="layout layout--col gap--xsmall stretch">
-                            <div id="map-style-outline" class="map stretch w--full"></div>
+                            <div id="map-style-outline" class="map stretch w--full rounded--base">
+                              <div class="absolute top--2 left--2 z--2 p--2 bg--canvas outline outline--muted">
+                                <span class="label label--small">Leibnizstraße 62</span>
+                              </div>
+                            </div>
                             <span class="label label--small">outline</span>
                           </div>
                         </div>
@@ -354,12 +318,17 @@
                     }
 
                     whenReady(function () {
+                      var office = [13.3133, 52.5038];
                       ["streets", "minimal", "outline"].forEach(function (preset) {
                         var el = "map-style-" + preset;
                         TRMNLMaps.watch(el, function () {
-                          return new maplibregl.Map(TRMNLMaps.options({
-                            el: el, preset: preset, center: [2.3522, 48.8566], zoom: 14
+                          var map = new maplibregl.Map(TRMNLMaps.options({
+                            el: el, preset: preset, center: office, zoom: 14
                           }));
+                          // The label engine only names tile features, so a place of your own is a
+                          // dot plus your own markup over the map.
+                          map.on("load", function () { TRMNLMaps.dot(map, office, { el: el }); });
+                          return map;
                         });
                       });
                     });
@@ -371,12 +340,17 @@
 
           <div class="mt-4">
             <%= render CodeExampleComponent.new(demo_code: '// One watch() per container; only the preset changes.
+var office = [13.3133, 52.5038];
 ["streets", "minimal", "outline"].forEach(function (preset) {
   var el = "map-style-" + preset;
   TRMNLMaps.watch(el, function () {
-    return new maplibregl.Map(TRMNLMaps.options({
-      el: el, preset: preset, center: [2.3522, 48.8566], zoom: 14
+    var map = new maplibregl.Map(TRMNLMaps.options({
+      el: el, preset: preset, center: office, zoom: 14
     }));
+    // The label engine only names tile features, so a place of your own is a
+    // dot plus your own markup over the map.
+    map.on("load", function () { TRMNLMaps.dot(map, office, { el: el }); });
+    return map;
   });
 });', language: 'javascript') %>
           </div>
@@ -388,7 +362,7 @@
             <p class="<%= framework_subsection_description_classes %>">
               Plot your own data. route() and dot() draw it as crisp fills painted from the screen's chart-series
               ramp, and fit() frames it on an integer zoom. A second route takes the next step of the ramp (a dither
-              on 1-bit), so the ride in and the ride home read apart.
+              on 1-bit), so the walk out and the walk back read apart.
             </p>
           </div>
 
@@ -405,44 +379,49 @@
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums">6.8 km</span>
+                            <span class="value value--small value--tnums">4.4 km</span>
                             <span class="label">Distance</span>
                           </div>
                         </div>
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums">24 min</span>
-                            <span class="label">Ride</span>
+                            <span class="value value--small value--tnums">55 min</span>
+                            <span class="label">Walk</span>
                           </div>
                         </div>
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums">+41 m</span>
+                            <span class="value value--small value--tnums">+12 m</span>
                             <span class="label">Climb</span>
                           </div>
                         </div>
                       </div>
 
-                      <div id="map-commute" class="map stretch w--full"></div>
+                      <div id="map-walk" class="map stretch w--full rounded--base"></div>
                     </div>
 
                     <div class="title_bar">
                       <img class="image image--adaptive" src="/images/plugins/trmnl--render.svg" alt="TRMNL Logo">
                       <span class="title">Map</span>
-                      <span class="instance">Commute</span>
+                      <span class="instance">Tiergarten walk</span>
                     </div>
                   </div>
 
                   <script type="text/trmnl-example">
+                    // Brandenburger Tor west through the woods, back through the north of the park.
                     var route = [
-                      [13.4240, 52.5390], [13.4205, 52.5352], [13.4150, 52.5310], [13.4088, 52.5265],
-                      [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
+                      [13.3778, 52.5163], [13.3766, 52.5160], [13.3769, 52.5158], [13.3763, 52.5154],
+                      [13.3765, 52.5138], [13.3755, 52.5131], [13.3741, 52.5127], [13.3723, 52.5129],
+                      [13.3712, 52.5128], [13.3691, 52.5120], [13.3637, 52.5137], [13.3631, 52.5133],
+                      [13.3614, 52.5130], [13.3579, 52.5133], [13.3570, 52.5132], [13.3545, 52.5144],
+                      [13.3527, 52.5143], [13.3519, 52.5144], [13.3519, 52.5146], [13.3508, 52.5146]
                     ];
-                    var home = [
-                      [13.3759, 52.5096], [13.3850, 52.5150], [13.3960, 52.5232], [13.4060, 52.5290],
-                      [13.4150, 52.5345], [13.4240, 52.5390]
+                    var back = [
+                      [13.3508, 52.5146], [13.3518, 52.5149], [13.3518, 52.5155], [13.3524, 52.5158],
+                      [13.3617, 52.5176], [13.3690, 52.5174], [13.3700, 52.5179], [13.3741, 52.5177],
+                      [13.3768, 52.5166], [13.3778, 52.5163]
                     ];
 
                     function whenReady(cb) {
@@ -455,19 +434,19 @@
                     }
 
                     whenReady(function () {
-                      var el = "map-commute";
+                      var el = "map-walk";
                       TRMNLMaps.watch(el, function () {
                         var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
                         map.on("load", function () {
                           // route() and dot() draw crisp fills from the chart-series ramp:
-                          // the ride in takes step 0 of 2, the ride home step 1.
-                          TRMNLMaps.route(map, route, { el: el, width: 3, i: 0, n: 2 });
-                          TRMNLMaps.route(map, home, { el: el, id: "home", width: 3, i: 1, n: 2 });
-                          TRMNLMaps.dot(map, route[0], { el: el, id: "start", radius: 5 });
-                          TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", radius: 5, hollow: true });
+                          // the walk out takes step 0 of 2, the walk back step 1.
+                          TRMNLMaps.route(map, route, { el: el, i: 0, n: 2 });
+                          TRMNLMaps.route(map, back, { el: el, id: "back", i: 1, n: 2 });
+                          TRMNLMaps.dot(map, route[0], { el: el, id: "start" });
+                          TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", hollow: true });
                         });
                         // fit() frames both routes on an integer zoom, no animation.
-                        TRMNLMaps.fit(map, route.concat(home), { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
+                        TRMNLMaps.fit(map, route.concat(back), { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
                         return map;
                       });
                     });
@@ -478,29 +457,34 @@
           </div>
 
           <div class="mt-4">
-            <%= render CodeExampleComponent.new(demo_code: 'var route = [
-  [13.4240, 52.5390], [13.4205, 52.5352], [13.4150, 52.5310], [13.4088, 52.5265],
-  [13.4010, 52.5210], [13.3930, 52.5170], [13.3840, 52.5125], [13.3759, 52.5096]
+            <%= render CodeExampleComponent.new(demo_code: '// Brandenburger Tor west through the woods, back through the north of the park.
+var route = [
+  [13.3778, 52.5163], [13.3766, 52.5160], [13.3769, 52.5158], [13.3763, 52.5154],
+  [13.3765, 52.5138], [13.3755, 52.5131], [13.3741, 52.5127], [13.3723, 52.5129],
+  [13.3712, 52.5128], [13.3691, 52.5120], [13.3637, 52.5137], [13.3631, 52.5133],
+  [13.3614, 52.5130], [13.3579, 52.5133], [13.3570, 52.5132], [13.3545, 52.5144],
+  [13.3527, 52.5143], [13.3519, 52.5144], [13.3519, 52.5146], [13.3508, 52.5146]
 ];
-var home = [
-  [13.3759, 52.5096], [13.3850, 52.5150], [13.3960, 52.5232], [13.4060, 52.5290],
-  [13.4150, 52.5345], [13.4240, 52.5390]
+var back = [
+  [13.3508, 52.5146], [13.3518, 52.5149], [13.3518, 52.5155], [13.3524, 52.5158],
+  [13.3617, 52.5176], [13.3690, 52.5174], [13.3700, 52.5179], [13.3741, 52.5177],
+  [13.3768, 52.5166], [13.3778, 52.5163]
 ];
 
 whenReady(function () {
-  var el = "map-commute";
+  var el = "map-walk";
   TRMNLMaps.watch(el, function () {
     var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
     map.on("load", function () {
       // route() and dot() draw crisp fills from the chart-series ramp:
-      // the ride in takes step 0 of 2, the ride home step 1.
-      TRMNLMaps.route(map, route, { el: el, width: 3, i: 0, n: 2 });
-      TRMNLMaps.route(map, home, { el: el, id: "home", width: 3, i: 1, n: 2 });
-      TRMNLMaps.dot(map, route[0], { el: el, id: "start", radius: 5 });
-      TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", radius: 5, hollow: true });
+      // the walk out takes step 0 of 2, the walk back step 1.
+      TRMNLMaps.route(map, route, { el: el, i: 0, n: 2 });
+      TRMNLMaps.route(map, back, { el: el, id: "back", i: 1, n: 2 });
+      TRMNLMaps.dot(map, route[0], { el: el, id: "start" });
+      TRMNLMaps.dot(map, route[route.length - 1], { el: el, id: "end", hollow: true });
     });
     // fit() frames both routes on an integer zoom, no animation.
-    TRMNLMaps.fit(map, route.concat(home), { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
+    TRMNLMaps.fit(map, route.concat(back), { padding: TRMNLPaint.px(24, { el: el }), maxZoom: 14 });
     return map;
   });
 });', language: 'javascript') %>
@@ -537,7 +521,7 @@ whenReady(function () {
 
                   <div class="view view--full">
                     <div class="layout layout--col gap--small">
-                      <div id="map-color" class="map stretch w--full"></div>
+                      <div id="map-color" class="map stretch w--full rounded--base"></div>
                     </div>
 
                     <div class="title_bar">
@@ -637,7 +621,7 @@ TRMNLMaps.watch(el, function () {
 
                   <div class="view view--full">
                     <div class="layout layout--col">
-                      <div id="map-overlay" class="map stretch w--full">
+                      <div id="map-overlay" class="map stretch w--full rounded--base">
                         <div class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
                           <div class="flex flex--col gap--small">
                             <div class="item">
@@ -704,7 +688,7 @@ TRMNLMaps.watch(el, function () {
                           el: el, preset: "streets", center: stadium, zoom: 15
                         }));
                         map.on("load", function () {
-                          TRMNLMaps.dot(map, stadium, { el: el, id: "venue", radius: 5 });
+                          TRMNLMaps.dot(map, stadium, { el: el, id: "venue" });
                         });
                         return map;
                       });
@@ -719,7 +703,7 @@ TRMNLMaps.watch(el, function () {
             <%= render CodeExampleComponent.new(demo_code: '<!-- The map fills the layout; the card is its positioned child. -->
 <div class="view view--full">
   <div class="layout layout--col">
-    <div id="map-overlay" class="map stretch w--full">
+    <div id="map-overlay" class="map stretch w--full rounded--base">
       <div class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
         <div class="flex flex--col gap--small">
           <div class="item">
@@ -776,7 +760,7 @@ TRMNLMaps.watch(el, function () {
       el: "map-overlay", preset: "streets", center: stadium, zoom: 15
     }));
     map.on("load", function () {
-      TRMNLMaps.dot(map, stadium, { el: "map-overlay", id: "venue", radius: 5 });
+      TRMNLMaps.dot(map, stadium, { el: "map-overlay", id: "venue" });
     });
     return map;
   });
@@ -810,7 +794,7 @@ TRMNLMaps.watch(el, function () {
                 <div class="view view--full">
                   <div class="layout layout--col">
                     <div class="grid grid--cols-4 gap--small stretch">
-                      <div id="map-strava" class="map col--span-3 stretch w--full">
+                      <div id="map-strava" class="map col--span-3 stretch w--full rounded--base">
                         <div id="strava-card"
                              class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
                           <div class="item">
@@ -925,9 +909,9 @@ TRMNLMaps.watch(el, function () {
                     TRMNLMaps.watch(el, function () {
                       var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
                       map.on("load", function () {
-                        TRMNLMaps.route(map, coords, { el: el, width: 4 });
-                        TRMNLMaps.dot(map, coords[0], { el: el, id: "start", radius: 5 });
-                        TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", radius: 5, hollow: true });
+                        TRMNLMaps.route(map, coords, { el: el });
+                        TRMNLMaps.dot(map, coords[0], { el: el, id: "start" });
+                        TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", hollow: true });
                       });
                       // Padding only frames the camera it computes, so more of it on the
                       // side the card covers leaves the route in the strip that is left.
@@ -955,7 +939,7 @@ TRMNLMaps.watch(el, function () {
   <div class="layout layout--col">
     <div class="grid grid--cols-4 gap--small stretch">
       <!-- The card is a positioned child of the map, so it floats over the route. -->
-      <div id="map-strava" class="map col--span-3 stretch w--full">
+      <div id="map-strava" class="map col--span-3 stretch w--full rounded--base">
         <div id="strava-card" class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
           <div class="item">
             <div class="meta"></div>
@@ -1070,9 +1054,9 @@ TRMNLMaps.watch(el, function () {
     TRMNLMaps.watch(el, function () {
       var map = new maplibregl.Map(TRMNLMaps.options({ el: el, preset: "minimal" }));
       map.on("load", function () {
-        TRMNLMaps.route(map, coords, { el: el, width: 4 });
-        TRMNLMaps.dot(map, coords[0], { el: el, id: "start", radius: 5 });
-        TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", radius: 5, hollow: true });
+        TRMNLMaps.route(map, coords, { el: el });
+        TRMNLMaps.dot(map, coords[0], { el: el, id: "start" });
+        TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", hollow: true });
       });
       // fit() frames the run on an integer zoom, no animation. Padding only frames
       // the camera it computes, so more of it on the side the card covers leaves
