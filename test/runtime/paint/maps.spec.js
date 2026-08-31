@@ -295,6 +295,40 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
 });
 
+test('sizes an attached map canvas to whole device pixels', async ({ page }) => {
+  const browserSignals = await openRuntimePage(page);
+  await mountFixture(page, { html: '<div id="grid-map" class="map" style="width:300px;height:711px"></div>' });
+  await installFakeMap(page);
+
+  // MapLibre's own sizing: the container's rounded CSS box, floored against the
+  // device ratio. At 1.8 a 711px box wants 1279.8 rows and gets 1279.
+  const sized = await page.evaluate(() => {
+    const build = (ratio) => {
+      const container = document.querySelector('#grid-map');
+      const box = { width: 300, height: 711 };
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(box.width * ratio);
+      canvas.height = Math.floor(box.height * ratio);
+      canvas.style.width = box.width + 'px';
+      canvas.style.height = box.height + 'px';
+      const fake = window.__TRMNL_FAKE_MAP__(container, { getCanvas: () => canvas, getPixelRatio: () => ratio });
+      window.TRMNLMaps.attach(fake, { el: container });
+      return { store: canvas.height, css: parseFloat(canvas.style.height), width: parseFloat(canvas.style.width) };
+    };
+    return { fractional: build(1.8), whole: build(1) };
+  });
+
+  // One texel to one device pixel: the box the CSS size covers is the store, give or
+  // take the thousandth of a pixel a serialized CSS length rounds away.
+  expect(sized.fractional.store).toBe(1279);
+  expect(sized.fractional.css * 1.8).toBeCloseTo(1279, 2);
+  // 300px at 1.8 is already whole, so the width is the one it was given.
+  expect(sized.fractional.width).toBe(300);
+  // A whole ratio floors to the size it started from, so nothing moves.
+  expect(sized.whole).toEqual({ store: 711, css: 711, width: 300 });
+  expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
+});
+
 test('resolves map slots per mode and shapes them for MapLibre', async ({ page }) => {
   const browserSignals = await openRuntimePage(page);
   const html = `
