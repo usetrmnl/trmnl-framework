@@ -95,9 +95,24 @@ module Framework
       }
     }.freeze
 
+    # A host in development mode symlinks public/framework-dev at the developer's own
+    # framework checkout (rake framework:development:enable). Prefer that when it is
+    # there. The engine tree is whatever the pinned release shipped, so serving it would
+    # hand back released bytes under a URL whose cache-buster already tracks the
+    # developer's file (Framework::Version.development_asset_url reads that mtime first) --
+    # a framework JS change would then be invisible to the very host meant to be testing it.
+    def self.host_dev_file(name)
+      return nil unless defined?(Rails) && Rails.respond_to?(:public_path)
+
+      path = Rails.public_path.join("framework-dev", name)
+      path if path.exist?
+    rescue StandardError
+      nil
+    end
+
     DEV_FILES = {
-      "plugins.css" => ->(_root) { Framework.server_builds.join("plugins.css") },
-      "plugins.js" => ->(root) { root.join("app/javascript/plugin-render/plugins.js") }
+      "plugins.css" => ->(_root) { host_dev_file("plugins.css") || Framework.server_builds.join("plugins.css") },
+      "plugins.js" => ->(root) { host_dev_file("plugins.js") || root.join("app/javascript/plugin-render/plugins.js") }
     }.freeze
 
     # Where /framework-docs/<name> resolves on this host right now, or nil when

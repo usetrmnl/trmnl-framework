@@ -279,6 +279,28 @@ RSpec.describe 'Engine host contract' do
       end
     end
 
+    # A host in development mode symlinks public/framework-dev at the developer's own
+    # checkout. Framework::Version already stamps that file's mtime onto the URL, so the
+    # bytes have to come from there too; serving the engine tree instead handed back the
+    # pinned release under a cache-buster that tracked the developer's file, which made a
+    # framework JS change invisible to the host rendering against it.
+    %w[plugins.js plugins.css].each do |name|
+      it "resolves /framework-dev/#{name} to the host symlink ahead of the engine tree" do
+        with_stale_engine_builds do |root|
+          Dir.mktmpdir do |host|
+            host_dev = Pathname(host).join('public/framework-dev')
+            FileUtils.mkdir_p(host_dev)
+            host_dev.join(name).write('/* from the host checkout */')
+            allow(Rails).to receive(:public_path).and_return(Pathname(host).join('public'))
+
+            resolved = Framework::Static::DEV_FILES.fetch(name).call(root)
+
+            expect(resolved&.read).to eq('/* from the host checkout */')
+          end
+        end
+      end
+    end
+
     # Framework::Version stamps the mtime of whatever /framework-dev/ will serve onto the
     # URL, so it has to agree with DEV_FILES about which file that is.
     it 'stamps no live mtime when the only build left is the stale engine-root one' do
