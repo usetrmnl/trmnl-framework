@@ -827,29 +827,44 @@ TRMNLMaps.watch(el, function () {
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums" id="strava-distance">9.7 km</span>
+                            <span class="value value--base value--tnums" id="strava-distance">9.7 km</span>
                             <span class="label">Distance</span>
                           </div>
                         </div>
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums" id="strava-time">49:58</span>
+                            <span class="value value--base value--tnums" id="strava-time">49:58</span>
                             <span class="label">Time</span>
                           </div>
                         </div>
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums" id="strava-pace">5:09 /km</span>
+                            <span class="value value--base value--tnums" id="strava-pace">5:09 /km</span>
                             <span class="label">Pace</span>
+                          </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xsmall lg:value--small value--tnums" id="strava-elevation">+78 m</span>
+                            <span class="label label--small">Elev Gain</span>
                           </div>
                         </div>
                         <div class="item">
                           <div class="meta"></div>
                           <div class="content">
-                            <span class="value value--small value--tnums" id="strava-elevation">+94 m</span>
-                            <span class="label">Elev Gain</span>
+                            <span class="value value--xsmall lg:value--small value--tnums" id="strava-heartrate">152 bpm</span>
+                            <span class="label label--small">Avg Heart Rate</span>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--xsmall lg:value--small value--tnums" id="strava-calories">683 cal</span>
+                            <span class="label label--small">Calories</span>
                           </div>
                         </div>
                       </div>
@@ -869,7 +884,9 @@ TRMNLMaps.watch(el, function () {
                     name: "Morning Run",
                     distance: 9705,
                     moving_time: 2998,
-                    total_elevation_gain: 94,
+                    total_elevation_gain: 78,
+                    average_heartrate: 152,
+                    calories: 683,
                     map: { summary_polyline: "sxywFnunbMiAyCoEuC{BaFeAiAcEsAiDdA_BK}BsBcCgF}CI}GqBgDuBgE_FiGiDgAwAu@yCQaBTkFq@wBa^sUeJk@_DdBeBKkEoCqGuHuDBeGcAuA{A_AqC}@i@_AXa@jAJ`BjAnCCfAc@p@aAD{EmEuDeA}BfBcB`EcA~JTjAl@x@rA^~@Yf@y@`@mC~@aAjFu@xAVnBdCvAvF|DnCvAdGlAvBlKdGvBfE~@`AhAV|BItAh@bDvJnCbDfBbAdBXzGuAzAH|DzCzDlG|Hn@lAfApDbGnEtEvEfIxBn@hH]jB`@r@|@l@dDp@dAvCnB|IrDpIhLzBjBdBb@jBy@rBsClB}EZyDG{@o@_AiImEiCaDQaD`AeDFoB" }
                   };
 
@@ -890,10 +907,17 @@ TRMNLMaps.watch(el, function () {
                   whenReady(function () {
                     var el = "map-strava";
                     var km = activity.distance / 1000;
-                    document.getElementById("strava-distance").textContent = km.toFixed(1) + " km";
-                    document.getElementById("strava-time").textContent = clock(activity.moving_time);
-                    document.getElementById("strava-pace").textContent = clock(activity.moving_time / km) + " /km";
-                    document.getElementById("strava-elevation").textContent = "+" + Math.round(activity.total_elevation_gain) + " m";
+                    var stats = {
+                      distance: km.toFixed(1) + " km",
+                      time: clock(activity.moving_time),
+                      pace: clock(activity.moving_time / km) + " /km",
+                      elevation: "+" + Math.round(activity.total_elevation_gain) + " m",
+                      heartrate: Math.round(activity.average_heartrate) + " bpm",
+                      calories: Math.round(activity.calories) + " cal"
+                    };
+                    Object.keys(stats).forEach(function (key) {
+                      document.getElementById("strava-" + key).textContent = stats[key];
+                    });
 
                     // decodePolyline() returns [lng, lat] pairs, ready for GeoJSON.
                     var coords = TRMNLMaps.decodePolyline(activity.map.summary_polyline);
@@ -947,29 +971,44 @@ TRMNLMaps.watch(el, function () {
         <div class="item">
           <div class="meta"></div>
           <div class="content">
-            <span class="value value--small value--tnums" id="strava-distance"></span>
+            <span class="value value--base value--tnums" id="strava-distance"></span>
             <span class="label">Distance</span>
           </div>
         </div>
         <div class="item">
           <div class="meta"></div>
           <div class="content">
-            <span class="value value--small value--tnums" id="strava-time"></span>
+            <span class="value value--base value--tnums" id="strava-time"></span>
             <span class="label">Time</span>
           </div>
         </div>
         <div class="item">
           <div class="meta"></div>
           <div class="content">
-            <span class="value value--small value--tnums" id="strava-pace"></span>
+            <span class="value value--base value--tnums" id="strava-pace"></span>
             <span class="label">Pace</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xsmall lg:value--small value--tnums" id="strava-elevation"></span>
+            <span class="label label--small">Elev Gain</span>
           </div>
         </div>
         <div class="item">
           <div class="meta"></div>
           <div class="content">
-            <span class="value value--small value--tnums" id="strava-elevation"></span>
-            <span class="label">Elev Gain</span>
+            <span class="value value--xsmall lg:value--small value--tnums" id="strava-heartrate"></span>
+            <span class="label label--small">Avg Heart Rate</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--xsmall lg:value--small value--tnums" id="strava-calories"></span>
+            <span class="label label--small">Calories</span>
           </div>
         </div>
       </div>
@@ -990,7 +1029,9 @@ TRMNLMaps.watch(el, function () {
     name: "Morning Run",
     distance: 9705,
     moving_time: 2998,
-    total_elevation_gain: 94,
+    total_elevation_gain: 78,
+    average_heartrate: 152,
+    calories: 683,
     map: { summary_polyline: "sxywFnunbMiAyCoEuC{BaFeAiAcEsAiDdA_BK}BsBcCgF}CI}GqBgDuBgE_FiGiDgAwAu@yCQaBTkFq@wBa^sUeJk@_DdBeBKkEoCqGuHuDBeGcAuA{A_AqC}@i@_AXa@jAJ`BjAnCCfAc@p@aAD{EmEuDeA}BfBcB`EcA~JTjAl@x@rA^~@Yf@y@`@mC~@aAjFu@xAVnBdCvAvF|DnCvAdGlAvBlKdGvBfE~@`AhAV|BItAh@bDvJnCbDfBbAdBXzGuAzAH|DzCzDlG|Hn@lAfApDbGnEtEvEfIxBn@hH]jB`@r@|@l@dDp@dAvCnB|IrDpIhLzBjBdBb@jBy@rBsClB}EZyDG{@o@_AiImEiCaDQaD`AeDFoB" }
   };
 
@@ -1011,10 +1052,17 @@ TRMNLMaps.watch(el, function () {
   whenReady(function () {
     var el = "map-strava";
     var km = activity.distance / 1000;
-    document.getElementById("strava-distance").textContent = km.toFixed(1) + " km";
-    document.getElementById("strava-time").textContent = clock(activity.moving_time);
-    document.getElementById("strava-pace").textContent = clock(activity.moving_time / km) + " /km";
-    document.getElementById("strava-elevation").textContent = "+" + Math.round(activity.total_elevation_gain) + " m";
+    var stats = {
+      distance: km.toFixed(1) + " km",
+      time: clock(activity.moving_time),
+      pace: clock(activity.moving_time / km) + " /km",
+      elevation: "+" + Math.round(activity.total_elevation_gain) + " m",
+      heartrate: Math.round(activity.average_heartrate) + " bpm",
+      calories: Math.round(activity.calories) + " cal"
+    };
+    Object.keys(stats).forEach(function (key) {
+      document.getElementById("strava-" + key).textContent = stats[key];
+    });
 
     // decodePolyline() returns [lng, lat] pairs, ready for GeoJSON.
     var coords = TRMNLMaps.decodePolyline(activity.map.summary_polyline);
