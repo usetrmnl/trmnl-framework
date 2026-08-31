@@ -6342,6 +6342,21 @@ window.markFrameworkReady = markFrameworkReady;
     } catch (_) {}
   }
 
+  // Give the canvas the CSS size its own backing store covers, so one texel is one
+  // device pixel. MapLibre floors the store against the device ratio, which at a
+  // fractional one leaves it shorter than the box it paints into (on TRMNL X, 1279
+  // rows over 1279.8 device pixels), and the stretch that closes the gap smears a
+  // dither into bands. A whole ratio floors to the size it started from.
+  function snapMapCanvasToDevicePixels(map) {
+    try {
+      const canvas = map.getCanvas && map.getCanvas();
+      const ratio = (map.getPixelRatio && map.getPixelRatio()) || 1;
+      if (!canvas || !(ratio > 0) || !(canvas.width > 0) || !(canvas.height > 0)) return;
+      canvas.style.width = (canvas.width / ratio) + 'px';
+      canvas.style.height = (canvas.height / ratio) + 'px';
+    } catch (_) {}
+  }
+
   // Decode a registered tile image to ImageData and hand it to the map. Runs
   // from styleimagemissing (lazy) and from style.load (eager, for every pattern
   // the style names), tracked in the map's pending set so ready() waits for it.
@@ -6418,8 +6433,10 @@ window.markFrameworkReady = markFrameworkReady;
     }
     if (layer.width !== canvas.width) layer.width = canvas.width;
     if (layer.height !== canvas.height) layer.height = canvas.height;
-    layer.style.width = canvas.clientWidth + 'px';
-    layer.style.height = canvas.clientHeight + 'px';
+    // The map canvas' own CSS size, not its rounded clientWidth: the two differ at a
+    // fractional device ratio, and a layer that rounds would be the one stretched.
+    layer.style.width = canvas.style.width || (canvas.clientWidth + 'px');
+    layer.style.height = canvas.style.height || (canvas.clientHeight + 'px');
     if (canvas.parentNode && layer.parentNode !== canvas.parentNode) canvas.parentNode.appendChild(layer);
     return layer;
   }
@@ -6927,6 +6944,8 @@ window.markFrameworkReady = markFrameworkReady;
       if (!el) { try { el = map.getContainer(); } catch (_) { el = null; } }
       const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0, shapes: [], shapeSignature: null, labelSignature: null, ditherLayer: null };
       liveMaps.set(map, rec);
+      // MapLibre has sized the canvas by now, and no frame has been drawn yet.
+      snapMapCanvasToDevicePixels(map);
       try {
         map.on('styleimagemissing', (event) => {
           const id = event && event.id;
