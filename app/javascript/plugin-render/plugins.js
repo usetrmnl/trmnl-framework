@@ -5535,13 +5535,20 @@ window.markFrameworkReady = markFrameworkReady;
   // Shortbread 1.0 `kind` groups per source-layer, the only schema knowledge
   // the style needs. Paint still comes from the slots.
   const MAP_AREA_KINDS = ['residential', 'commercial', 'industrial', 'retail', 'garages', 'railway', 'brownfield', 'greenfield', 'landfill', 'quarry'];
+  // Woodland is its own group, not a shade of the open green: it is the cover
+  // that carries a natural landscape, and one tone over every vegetated kind
+  // left an alpine valley as a single flat field. Bare rock and scree leave the
+  // beach group for the same reason, a mountain face being neither sand nor a
+  // shingle shore.
+  const MAP_FOREST_KINDS = ['forest', 'wood'];
   const MAP_GREEN_KINDS = [
-    'forest', 'wood', 'grass', 'grassland', 'meadow', 'wet_meadow', 'park', 'garden', 'cemetery', 'grave_yard',
+    'grass', 'grassland', 'meadow', 'wet_meadow', 'park', 'garden', 'cemetery', 'grave_yard',
     'orchard', 'vineyard', 'allotments', 'village_green', 'recreation_ground', 'golf_course', 'playground',
     'heath', 'scrub', 'wetland', 'swamp', 'bog', 'string_bog', 'marsh',
   ];
   const MAP_FARMLAND_KINDS = ['farmland', 'farmyard', 'greenhouse_horticulture', 'plant_nursery'];
-  const MAP_SAND_KINDS = ['sand', 'beach', 'bare_rock', 'scree', 'shingle'];
+  const MAP_ROCK_KINDS = ['bare_rock', 'scree'];
+  const MAP_SAND_KINDS = ['sand', 'beach', 'shingle'];
   const MAP_MAJOR_ROADS = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary'];
   const MAP_MINOR_ROADS = ['residential', 'living_street', 'unclassified', 'service', 'pedestrian', 'busway', 'bus_guideway'];
   const MAP_PATHS = ['track', 'path', 'footway', 'cycleway', 'steps'];
@@ -6484,8 +6491,10 @@ window.markFrameworkReady = markFrameworkReady;
       // Resolve every framework spec ONCE per call.
       const land = slot('map-land');
       const water = slot('map-water');
+      const forest = slot('map-forest');
       const green = slot('map-green');
       const farmland = slot('map-farmland');
+      const rock = slot('map-rock');
       const sand = slot('map-sand');
       const area = slot('map-area');
       const site = slot('map-site');
@@ -6527,7 +6536,12 @@ window.markFrameworkReady = markFrameworkReady;
       if (groups.area) push(mapFillLayer('land-area', 'land', mapKindFilter(MAP_AREA_KINDS), area));
       if (groups.farmland) push(mapFillLayer('land-farmland', 'land', mapKindFilter(MAP_FARMLAND_KINDS), farmland));
       if (groups.green) push(mapFillLayer('land-green', 'land', mapKindFilter(MAP_GREEN_KINDS), green));
+      // Woodland rides the green group and rock the sand group: each is a
+      // refinement of a cover the preset already asked for, not a tier a
+      // preset chooses.
+      if (groups.green) push(mapFillLayer('land-forest', 'land', mapKindFilter(MAP_FOREST_KINDS), forest));
       if (groups.sand) push(mapFillLayer('land-sand', 'land', mapKindFilter(MAP_SAND_KINDS), sand));
+      if (groups.sand) push(mapFillLayer('land-rock', 'land', mapKindFilter(MAP_ROCK_KINDS), rock));
       if (groups.sites) push(mapFillLayer('sites', 'sites', null, site, 14));
       if (groups.water) push(mapFillLayer('water', 'water_polygons', ['!=', ['get', 'kind'], 'glacier'], water));
       if (groups.waterLines) {

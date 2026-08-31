@@ -880,9 +880,11 @@ $_limited-palette-paint-depth: 4;
 // ramp trades its shade ladder for a categorical ramp. Limited palettes take
 // the same tokens and resolve them through their own rails.
 @mixin _map-slot-color-defaults {
-    @include theme-slots.bg-slot('map-water', 'blue-70');
+    @include theme-slots.bg-slot('map-water', 'blue-55');
+    @include theme-slots.bg-slot('map-forest', 'green-55');
     @include theme-slots.bg-slot('map-green', 'green-70');
     @include theme-slots.bg-slot('map-farmland', 'yellow-75');
+    @include theme-slots.bg-slot('map-rock', 'gray-70');
     @include theme-slots.bg-slot('map-sand', 'yellow-70');
     @include theme-slots.bg-slot('map-area', 'gray-70');
     @include theme-slots.bg-slot('map-site', 'orange-75');

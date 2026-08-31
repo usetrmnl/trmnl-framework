@@ -9,7 +9,7 @@ require 'rails_helper'
 # the color rails re-point the areas at hues, and every shipped theme states
 # the slots it is expected to restate.
 module MapSlotContract
-  AREA_SLOTS = %w[map-land map-water map-green map-farmland map-sand map-area map-site map-building map-transit].freeze
+  AREA_SLOTS = %w[map-land map-water map-forest map-green map-farmland map-rock map-sand map-area map-site map-building map-transit].freeze
   LINE_SLOTS = %w[map-road map-road-minor map-path map-rail map-boundary map-water-line].freeze
   TEXT_SLOTS = %w[map-label].freeze
   # The token-bound slots a theme has to restate; land and the labels follow
@@ -61,12 +61,14 @@ RSpec.describe 'Framework map slot contract' do
   it 'binds the grayscale defaults: land to the canvas, areas to gray tiles, every line to a gray short of the ink' do
     aggregate_failures do
       expect_declared(screen, '--framework-slot-map-land-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
-      expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-60-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-65-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-water-bg-color', 'var(--bg-gray-40-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-forest-bg-color', 'var(--bg-gray-50-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-green-bg-color', 'var(--bg-gray-60-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-rock-bg-color', 'var(--bg-gray-70-color, transparent)')
       expect_declared(screen, '--framework-slot-map-building-bg-color', 'var(--bg-gray-65-color, transparent)')
       expect_declared(screen, '--framework-slot-map-road-bg-color', 'var(--bg-gray-35-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-road-minor-bg-color', 'var(--bg-gray-50-color, transparent)')
-      expect_declared(screen, '--framework-slot-map-path-bg-color', 'var(--bg-gray-45-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-road-minor-bg-color', 'var(--bg-gray-45-color, transparent)')
+      expect_declared(screen, '--framework-slot-map-path-bg-color', 'var(--bg-gray-55-color, transparent)')
       expect_declared(screen, '--framework-slot-map-label-text-color', 'var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))')
       # The 1-bit rail folds the residential field into the canvas: a light
       # gray is a sparse speckle there, texture over every built-up block.
@@ -94,14 +96,15 @@ RSpec.describe 'Framework map slot contract' do
   it 're-points the areas and minor lines at chromatic tokens on the color-full and limited-palette rails' do
     expect(color_full).not_to be_empty
     aggregate_failures do
-      expect_declared(color_full, '--framework-slot-map-water-bg-color', 'var(--bg-blue-70-color, transparent)')
+      expect_declared(color_full, '--framework-slot-map-water-bg-color', 'var(--bg-blue-55-color, transparent)')
+      expect_declared(color_full, '--framework-slot-map-forest-bg-color', 'var(--bg-green-55-color, transparent)')
       expect_declared(color_full, '--framework-slot-map-green-bg-color', 'var(--bg-green-70-color, transparent)')
       expect_declared(color_full, '--framework-slot-map-boundary-bg-color', 'var(--bg-purple-40-color, transparent)')
       palette_ids = css.scan(/\.screen\.screen--color-([a-z0-9]+):where/).flatten.uniq - %w[full]
       expect(palette_ids).not_to be_empty
       palette_ids.each do |palette_id|
         palette = declarations_on(/\A\.trmnl \.screen\.screen--color-#{Regexp.escape(palette_id)}:where/)
-        expect(palette).to include('--framework-slot-map-water-bg-color: var(--bg-blue-70-color, transparent)'),
+        expect(palette).to include('--framework-slot-map-water-bg-color: var(--bg-blue-55-color, transparent)'),
                            "palette #{palette_id} does not re-point map-water"
       end
     end
