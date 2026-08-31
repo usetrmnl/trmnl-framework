@@ -299,6 +299,10 @@
               The same view through three presets. Streets is the full map, minimal keeps the shapes a route sits
               on, and outline is coast, water, main roads and the big names for the smallest views.
             </p>
+            <p class="<%= framework_subsection_description_classes %>">
+              The small detail waits for the zoom that has room for it. Buildings, sites, minor roads, paths and
+              transit stops start at zoom 13 and 14, so below that streets and minimal draw close to the same map.
+            </p>
           </div>
 
           <div class="<%= framework_example_classes %>">
@@ -354,7 +358,7 @@
                         var el = "map-style-" + preset;
                         TRMNLMaps.watch(el, function () {
                           return new maplibregl.Map(TRMNLMaps.options({
-                            el: el, preset: preset, center: [2.3522, 48.8566], zoom: 12
+                            el: el, preset: preset, center: [2.3522, 48.8566], zoom: 14
                           }));
                         });
                       });
@@ -371,7 +375,7 @@
   var el = "map-style-" + preset;
   TRMNLMaps.watch(el, function () {
     return new maplibregl.Map(TRMNLMaps.options({
-      el: el, preset: preset, center: [2.3522, 48.8566], zoom: 12
+      el: el, preset: preset, center: [2.3522, 48.8566], zoom: 14
     }));
   });
 });', language: 'javascript') %>
