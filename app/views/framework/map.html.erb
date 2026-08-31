@@ -587,13 +587,16 @@ TRMNLMaps.watch(el, function () {
             <p class="<%= framework_subsection_description_classes %>">
               A card belongs inside the <code class="<%= framework_section_code_classes %>">map</code> container, which
               positions its children already, so
-              <code class="<%= framework_section_code_classes %>">top--3 left--3</code> measures from the map's own
-              corner. Give the card a size and clamp its text, since nothing measures an element that is out of flow.
-              <%= render DocsRef.new(page: :position) %> has the offset and stacking classes.
+              <code class="<%= framework_section_code_classes %>">top--2 left--2</code> measures from the map's own
+              corner. Give the card a width and lay its contents out yourself, since nothing sizes or arranges an
+              element that is out of flow. <%= render DocsRef.new(page: :position) %> has the offset and stacking
+              classes.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
               The bottom right corner belongs to the data credit, which has to stay visible. Place names land wherever
-              the map data puts them, so a smaller card leaves more of them legible.
+              the map data puts them, so a smaller card leaves more of them legible. A route map has a lever a fixed
+              center does not: more padding on the card's side of
+              <code class="<%= framework_section_code_classes %>">fit()</code> frames the route in what is left.
             </p>
             <p class="<%= framework_subsection_description_classes %>">
               Over a detailed map, <code class="<%= framework_section_code_classes %>">outline--muted</code>
@@ -609,9 +612,11 @@ TRMNLMaps.watch(el, function () {
               </div>
               <div class="w-full flex items-center justify-between ml-3">
                 <p class="text-sm font-medium">
-                  A card over a map takes <code class="<%= framework_section_code_classes %>">bg--white</code> or
-                  <code class="<%= framework_section_code_classes %>">bg--black</code> and no shade in between: those two
-                  are the only solid fills on 1-bit, and small text over a dither tile is unreadable. Its edge comes from
+                  A card over a map takes a solid fill and no shade in between:
+                  <code class="<%= framework_section_code_classes %>">bg--canvas</code> follows the screen's own
+                  background, <code class="<%= framework_section_code_classes %>">bg--white</code> and
+                  <code class="<%= framework_section_code_classes %>">bg--black</code> pin it, and every gray between
+                  them is a dither tile that small text cannot survive on 1-bit. Its edge comes from
                   <code class="<%= framework_section_code_classes %>">outline</code>, which reads against a light and a dark
                   map alike, and never from a box-shadow, which ePaper renders as a smear of dither.
                 </p>
@@ -629,12 +634,43 @@ TRMNLMaps.watch(el, function () {
                   <div class="view view--full">
                     <div class="layout layout--col">
                       <div id="map-overlay" class="map stretch w--full">
-                        <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
-                          <span class="label label--small">Shoreditch</span>
-                          <span class="value value--xsmall value--tnums">4 min</span>
-                        </div>
-                        <div class="absolute bottom--3 left--3 z--2 p--2 bg--white outline">
-                          <span class="label label--small">Next bus 17:12</span>
+                        <div class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
+                          <div class="flex flex--col gap--small">
+                            <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="value value--small">Atlanta United</span>
+                                <span class="label">Mercedes-Benz Stadium</span>
+                              </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <table class="table table--condensed">
+                              <tbody>
+                                <tr>
+                                  <td><span class="label label--small">Opponent</span></td>
+                                  <td><span class="label label--small">Orlando City</span></td>
+                                </tr>
+                                <tr>
+                                  <td><span class="label label--small">Kickoff</span></td>
+                                  <td><span class="label label--small">7:30 PM</span></td>
+                                </tr>
+                                <tr>
+                                  <td><span class="label label--small">Gates</span></td>
+                                  <td><span class="label label--small">5:30 PM</span></td>
+                                </tr>
+                                <tr>
+                                  <td><span class="label label--small">Seats</span></td>
+                                  <td><span class="label label--small">118, Row 12</span></td>
+                                </tr>
+                                <tr>
+                                  <td><span class="label label--small">MARTA</span></td>
+                                  <td><span class="label label--small">GWCC/CNN Center</span></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -658,10 +694,15 @@ TRMNLMaps.watch(el, function () {
 
                     whenReady(function () {
                       var el = "map-overlay";
+                      var stadium = [-84.4008, 33.7554];
                       TRMNLMaps.watch(el, function () {
-                        return new maplibregl.Map(TRMNLMaps.options({
-                          el: el, preset: "streets", center: [-0.0779, 51.5252], zoom: 14
+                        var map = new maplibregl.Map(TRMNLMaps.options({
+                          el: el, preset: "streets", center: stadium, zoom: 15
                         }));
+                        map.on("load", function () {
+                          TRMNLMaps.dot(map, stadium, { el: el, id: "venue", radius: 5 });
+                        });
+                        return map;
                       });
                     });
                   </script>
@@ -671,16 +712,47 @@ TRMNLMaps.watch(el, function () {
           </div>
 
           <div class="mt-4">
-            <%= render CodeExampleComponent.new(demo_code: '<!-- The map fills the layout; the cards are its positioned children. -->
+            <%= render CodeExampleComponent.new(demo_code: '<!-- The map fills the layout; the card is its positioned child. -->
 <div class="view view--full">
   <div class="layout layout--col">
     <div id="map-overlay" class="map stretch w--full">
-      <div class="absolute top--3 left--3 z--2 p--2 bg--white outline">
-        <span class="label label--small">Shoreditch</span>
-        <span class="value value--xsmall value--tnums">4 min</span>
-      </div>
-      <div class="absolute bottom--3 left--3 z--2 p--2 bg--white outline">
-        <span class="label label--small">Next bus 17:12</span>
+      <div class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
+        <div class="flex flex--col gap--small">
+          <div class="item">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--small">Atlanta United</span>
+              <span class="label">Mercedes-Benz Stadium</span>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <table class="table table--condensed">
+            <tbody>
+              <tr>
+                <td><span class="label label--small">Opponent</span></td>
+                <td><span class="label label--small">Orlando City</span></td>
+              </tr>
+              <tr>
+                <td><span class="label label--small">Kickoff</span></td>
+                <td><span class="label label--small">7:30 PM</span></td>
+              </tr>
+              <tr>
+                <td><span class="label label--small">Gates</span></td>
+                <td><span class="label label--small">5:30 PM</span></td>
+              </tr>
+              <tr>
+                <td><span class="label label--small">Seats</span></td>
+                <td><span class="label label--small">118, Row 12</span></td>
+              </tr>
+              <tr>
+                <td><span class="label label--small">MARTA</span></td>
+                <td><span class="label label--small">GWCC/CNN Center</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -693,10 +765,16 @@ TRMNLMaps.watch(el, function () {
 </div>
 
 <script type="text/javascript">
+  var stadium = [-84.4008, 33.7554];
+
   TRMNLMaps.watch("map-overlay", function () {
-    return new maplibregl.Map(TRMNLMaps.options({
-      el: "map-overlay", preset: "streets", center: [-0.0779, 51.5252], zoom: 14
+    var map = new maplibregl.Map(TRMNLMaps.options({
+      el: "map-overlay", preset: "streets", center: stadium, zoom: 15
     }));
+    map.on("load", function () {
+      TRMNLMaps.dot(map, stadium, { el: "map-overlay", id: "venue", radius: 5 });
+    });
+    return map;
   });
 </script>') %>
           </div>
@@ -726,41 +804,49 @@ TRMNLMaps.watch(el, function () {
                 <link data-trmnl-href="/framework-docs/maplibre-gl-5.24.0.css" rel="stylesheet">
 
                 <div class="view view--full">
-                  <div class="layout layout--col gap--small">
-                    <div class="flex flex--col">
-                      <span class="title title--small">Morning Run</span>
-                      <span class="description">Golden Gate Park, San Francisco</span>
-                    </div>
+                  <div class="layout layout--col">
+                    <div class="grid grid--cols-4 gap--small stretch">
+                      <div id="map-strava" class="map col--span-3 stretch w--full">
+                        <div id="strava-card"
+                             class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
+                          <div class="item">
+                            <div class="meta"></div>
+                            <div class="content">
+                              <span class="value value--small">Morning Run</span>
+                              <span class="label">Central Park, New York</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-                    <div id="map-strava" class="map stretch w--full"></div>
-
-                    <div class="grid grid--cols-4">
-                      <div class="item">
-                        <div class="meta"></div>
-                        <div class="content">
-                          <span class="value value--small value--tnums" id="strava-distance">9.2 km</span>
-                          <span class="label">Distance</span>
+                      <div class="flex flex--col flex--between">
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" id="strava-distance">9.7 km</span>
+                            <span class="label">Distance</span>
+                          </div>
                         </div>
-                      </div>
-                      <div class="item">
-                        <div class="meta"></div>
-                        <div class="content">
-                          <span class="value value--small value--tnums" id="strava-time">47:36</span>
-                          <span class="label">Time</span>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" id="strava-time">49:58</span>
+                            <span class="label">Time</span>
+                          </div>
                         </div>
-                      </div>
-                      <div class="item">
-                        <div class="meta"></div>
-                        <div class="content">
-                          <span class="value value--small value--tnums" id="strava-pace">5:09 /km</span>
-                          <span class="label">Pace</span>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" id="strava-pace">5:09 /km</span>
+                            <span class="label">Pace</span>
+                          </div>
                         </div>
-                      </div>
-                      <div class="item">
-                        <div class="meta"></div>
-                        <div class="content">
-                          <span class="value value--small value--tnums" id="strava-elevation">+94 m</span>
-                          <span class="label">Elev Gain</span>
+                        <div class="item">
+                          <div class="meta"></div>
+                          <div class="content">
+                            <span class="value value--small value--tnums" id="strava-elevation">+94 m</span>
+                            <span class="label">Elev Gain</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -777,10 +863,10 @@ TRMNLMaps.watch(el, function () {
                   // One activity as the Strava API returns it (metres and seconds).
                   var activity = {
                     name: "Morning Run",
-                    distance: 9247,
-                    moving_time: 2856,
+                    distance: 9705,
+                    moving_time: 2998,
                     total_elevation_gain: 94,
-                    map: { summary_polyline: "{lpeFz_mjVNtHt@tHNtHt@tHf@tKnAvKz@tKf@`FnAbFz@`F{@xFSxF{@xFSxFg@nK?nKSnKMpLZnLDpL?dIf@bI?bIf@dI?xRf@vRRxRvBR~CRjCR`AsIfBsI`AsIfBsIDqLn@oLXqLg@sN?sNSsNR}Iz@}IR}Iz@}IMkHZkHDkHwBqLoAoLcBqLcDuC}BuCeDuC{BuCwBkHoAkHcBkH}AuEs@sEqAuE" }
+                    map: { summary_polyline: "sxywFnunbMiAyCoEuC{BaFeAiAcEsAiDdA_BK}BsBcCgF}CI}GqBgDuBgE_FiGiDgAwAu@yCQaBTkFq@wBa^sUeJk@_DdBeBKkEoCqGuHuDBeGcAuA{A_AqC}@i@_AXa@jAJ`BjAnCCfAc@p@aAD{EmEuDeA}BfBcB`EcA~JTjAl@x@rA^~@Yf@y@`@mC~@aAjFu@xAVnBdCvAvF|DnCvAdGlAvBlKdGvBfE~@`AhAV|BItAh@bDvJnCbDfBbAdBXzGuAzAH|DzCzDlG|Hn@lAfApDbGnEtEvEfIxBn@hH]jB`@r@|@l@dDp@dAvCnB|IrDpIhLzBjBdBb@jBy@rBsClB}EZyDG{@o@_AiImEiCaDQaD`AeDFoB" }
                   };
 
                   function whenReady(cb) {
@@ -815,7 +901,14 @@ TRMNLMaps.watch(el, function () {
                         TRMNLMaps.dot(map, coords[0], { el: el, id: "start", radius: 5 });
                         TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", radius: 5, hollow: true });
                       });
-                      TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
+                      // Padding only frames the camera it computes, so more of it on the
+                      // side the card covers leaves the route in the strip that is left.
+                      var gutter = TRMNLPaint.px(20, { el: el });
+                      var card = document.getElementById("strava-card");
+                      TRMNLMaps.fit(map, coords, {
+                        padding: { top: gutter, right: gutter, bottom: gutter, left: card.offsetLeft + card.offsetWidth + gutter },
+                        maxZoom: 15
+                      });
                       return map;
                     });
                   });
@@ -831,41 +924,49 @@ TRMNLMaps.watch(el, function () {
 <link href="https://trmnl.com/js/maplibre-gl/5.24.0/maplibre-gl.css" rel="stylesheet">
 
 <div class="view view--full">
-  <div class="layout layout--col gap--small">
-    <div class="flex flex--col">
-      <span class="title title--small">{{ activity.name }}</span>
-      <span class="description">Golden Gate Park, San Francisco</span>
-    </div>
+  <div class="layout layout--col">
+    <div class="grid grid--cols-4 gap--small stretch">
+      <!-- The card is a positioned child of the map, so it floats over the route. -->
+      <div id="map-strava" class="map col--span-3 stretch w--full">
+        <div id="strava-card" class="absolute top--2 left--2 z--2 p--4 w--max-60 bg--canvas outline outline--muted">
+          <div class="item">
+            <div class="meta"></div>
+            <div class="content">
+              <span class="value value--small">{{ activity.name }}</span>
+              <span class="label">Central Park, New York</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <div id="map-strava" class="map stretch w--full"></div>
-
-    <div class="grid grid--cols-4">
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums" id="strava-distance"></span>
-          <span class="label">Distance</span>
+      <div class="flex flex--col flex--between">
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--small value--tnums" id="strava-distance"></span>
+            <span class="label">Distance</span>
+          </div>
         </div>
-      </div>
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums" id="strava-time"></span>
-          <span class="label">Time</span>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--small value--tnums" id="strava-time"></span>
+            <span class="label">Time</span>
+          </div>
         </div>
-      </div>
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums" id="strava-pace"></span>
-          <span class="label">Pace</span>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--small value--tnums" id="strava-pace"></span>
+            <span class="label">Pace</span>
+          </div>
         </div>
-      </div>
-      <div class="item">
-        <div class="meta"></div>
-        <div class="content">
-          <span class="value value--small value--tnums" id="strava-elevation"></span>
-          <span class="label">Elev Gain</span>
+        <div class="item">
+          <div class="meta"></div>
+          <div class="content">
+            <span class="value value--small value--tnums" id="strava-elevation"></span>
+            <span class="label">Elev Gain</span>
+          </div>
         </div>
       </div>
     </div>
@@ -883,10 +984,10 @@ TRMNLMaps.watch(el, function () {
   // plugin this is your polling data: {{ activity | json }}.
   var activity = {
     name: "Morning Run",
-    distance: 9247,
-    moving_time: 2856,
+    distance: 9705,
+    moving_time: 2998,
     total_elevation_gain: 94,
-    map: { summary_polyline: "{lpeFz_mjVNtHt@tHNtHt@tHf@tKnAvKz@tKf@`FnAbFz@`F{@xFSxF{@xFSxFg@nK?nKSnKMpLZnLDpL?dIf@bI?bIf@dI?xRf@vRRxRvBR~CRjCR`AsIfBsI`AsIfBsIDqLn@oLXqLg@sN?sNSsNR}Iz@}IR}Iz@}IMkHZkHDkHwBqLoAoLcBqLcDuC}BuCeDuC{BuCwBkHoAkHcBkH}AuEs@sEqAuE" }
+    map: { summary_polyline: "sxywFnunbMiAyCoEuC{BaFeAiAcEsAiDdA_BK}BsBcCgF}CI}GqBgDuBgE_FiGiDgAwAu@yCQaBTkFq@wBa^sUeJk@_DdBeBKkEoCqGuHuDBeGcAuA{A_AqC}@i@_AXa@jAJ`BjAnCCfAc@p@aAD{EmEuDeA}BfBcB`EcA~JTjAl@x@rA^~@Yf@y@`@mC~@aAjFu@xAVnBdCvAvF|DnCvAdGlAvBlKdGvBfE~@`AhAV|BItAh@bDvJnCbDfBbAdBXzGuAzAH|DzCzDlG|Hn@lAfApDbGnEtEvEfIxBn@hH]jB`@r@|@l@dDp@dAvCnB|IrDpIhLzBjBdBb@jBy@rBsClB}EZyDG{@o@_AiImEiCaDQaD`AeDFoB" }
   };
 
   function whenReady(cb) {
@@ -921,8 +1022,15 @@ TRMNLMaps.watch(el, function () {
         TRMNLMaps.dot(map, coords[0], { el: el, id: "start", radius: 5 });
         TRMNLMaps.dot(map, coords[coords.length - 1], { el: el, id: "end", radius: 5, hollow: true });
       });
-      // fit() frames the run on an integer zoom, no animation.
-      TRMNLMaps.fit(map, coords, { padding: TRMNLPaint.px(20, { el: el }), maxZoom: 15 });
+      // fit() frames the run on an integer zoom, no animation. Padding only frames
+      // the camera it computes, so more of it on the side the card covers leaves
+      // the route in the strip that is left.
+      var gutter = TRMNLPaint.px(20, { el: el });
+      var card = document.getElementById("strava-card");
+      TRMNLMaps.fit(map, coords, {
+        padding: { top: gutter, right: gutter, bottom: gutter, left: card.offsetLeft + card.offsetWidth + gutter },
+        maxZoom: 15
+      });
       return map;
     });
   });
