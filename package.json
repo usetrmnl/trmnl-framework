@@ -1,6 +1,6 @@
 {
   "name": "trmnl-framework",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": true,
   "description": "Build tooling for the TRMNL ePaper design framework: CSS/JS minifiers and the Playwright runtime and visual suites. The framework itself ships as the trmnl-framework Ruby gem.",
   "license": "MIT",

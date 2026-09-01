@@ -71,8 +71,9 @@
 // mixin it uses for every other component. A line painted from a tile is drawn
 // as the polygon of its stroke filled with that tile: the 1-bit gray of a road
 // is the same screen-aligned dither its area would be, never a hex the panel
-// cannot print. The defaults are chosen for the grayscale rails: areas are
-// light tiles, buildings a light gray under the dark roads, and every line is a
+// cannot print. The defaults are chosen for the grayscale rails: the land
+// covers are light tiles over the canvas, water is the one fill on the dark
+// half, buildings a light gray under the dark roads, and every line is a
 // gray rather than the ink, so a plotted route drawn in the ink (the
 // chart-series ramp) reads on top of the roads. base/_screen-mode-vars.scss
 // folds the residential field into the canvas on the 1-bit rail and re-points
@@ -84,21 +85,46 @@
 @mixin _map-slot-defaults {
     --framework-slot-map-land-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
     --framework-slot-map-land-bg-image: var(--framework-semantic-canvas-bg-image, none);
-    @include theme-slots.bg-slot('map-water', 'gray-60');
-    @include theme-slots.bg-slot('map-green', 'gray-65');
+    // The area ramp is spaced on the 1-bit rail, which has the coarsest usable
+    // resolution of the three: its tones are one Bayer tile at nested
+    // densities, so two fills a single step apart differ by four cells in
+    // sixty-four and read as one field. Twelve and a half ink points is the
+    // smallest step that separates, so every pair of fills that can meet on
+    // the ground is at least two steps apart, and fills that never meet (rock
+    // and sand, farmland and a school site) share one. That spacing costs
+    // gray-55: taking it would put woodland one step off the open green.
+    //
+    // Water is the darkest area fill, and the whole chain land, rock, open
+    // green, woodland, water has to fit above it at that spacing: four steps,
+    // fifty ink points, so water sits there and nowhere lighter. gray-45 is the
+    // token at fifty on the solid rails; the 1-bit rail has none, so it
+    // re-points the slot at the checkerboard (base/_screen-mode-vars.scss).
+    @include theme-slots.bg-slot('map-water', 'gray-45');
+    @include theme-slots.bg-slot('map-forest', 'gray-50');
+    @include theme-slots.bg-slot('map-green', 'gray-60');
     @include theme-slots.bg-slot('map-farmland', 'gray-70');
+    @include theme-slots.bg-slot('map-rock', 'gray-70');
+    // Sand and the built-up field share the lightest tile even though a coastal
+    // town puts them side by side. Nothing lighter exists to separate them, and
+    // both alternatives are worse: the 1-bit rail folded the field into the
+    // canvas until a settlement read as missing content, and the next step up
+    // collides with farmland and a school site, which it meets far more often.
     @include theme-slots.bg-slot('map-sand', 'gray-75');
     @include theme-slots.bg-slot('map-area', 'gray-75');
     @include theme-slots.bg-slot('map-site', 'gray-70');
     @include theme-slots.bg-slot('map-building', 'gray-65');
     @include theme-slots.bg-slot('map-transit', 'gray-30');
     @include theme-slots.bg-slot('map-road', 'gray-35');
-    @include theme-slots.bg-slot('map-road-minor', 'gray-50');
-    @include theme-slots.bg-slot('map-path', 'gray-45');
+    // gray-45 and gray-55, the two steps the area ramp gives up: a minor road
+    // would otherwise sit exactly on the woodland fill, and a path is dashed,
+    // so its 1-bit density never renders and only the solid rails see it.
+    @include theme-slots.bg-slot('map-road-minor', 'gray-45');
+    @include theme-slots.bg-slot('map-path', 'gray-55');
     @include theme-slots.bg-slot('map-rail', 'gray-30');
     @include theme-slots.bg-slot('map-boundary', 'gray-40');
-    // gray-40, not a step off the water fill: 2-bit posterization folds gray-55 into gray-60's level, sinking rivers into lakes.
-    @include theme-slots.bg-slot('map-water-line', 'gray-40');
+    // The darkest line token, so a river stays a step off the water it runs
+    // into now that the water fill has moved down the ramp.
+    @include theme-slots.bg-slot('map-water-line', 'gray-30');
     // Labels ride the primary text channel, so a theme's ink reaches the map
     // without a slot of their own. One ink for every tier: a map is busy, and
     // a small label in a dithered secondary tone would not survive it.

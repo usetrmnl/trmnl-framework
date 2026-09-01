@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    trmnl-framework (3.3.0)
+    trmnl-framework (3.3.1)
       actionpack (~> 8.1)
       actionview (~> 8.1)
       activesupport (~> 8.1)
@@ -352,7 +352,7 @@ CHECKSUMS
   tailwindcss-ruby (4.3.2-x86_64-linux-gnu) sha256=47d30e115b518baccf81113e0ceef081df851a6feee457a24c06d7c1d4394183
   thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
   tone (2.6.0) sha256=b788ac6e863b4484d3319adcfcfec8304d9837f708fe3997c0b09158adde8011
-  trmnl-framework (3.3.0)
+  trmnl-framework (3.3.1)
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
   turbo-rails (2.0.23) sha256=ee0d90733aafff056cf51ff11e803d65e43cae258cc55f6492020ec1f9f9315f
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b

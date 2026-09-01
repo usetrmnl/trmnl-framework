@@ -132,14 +132,20 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
         glyphs: style.glyphs,
         ids: style.layers.map((entry) => entry.id),
         waterPaint: layer('water').paint,
+        waterOpaque: Boolean(waterFill.pattern && waterFill.pattern.opaque),
         waterMatches: waterFill.pattern
-          ? layer('water').paint['fill-pattern'] === waterFill.pattern.id
+          ? (waterFill.pattern.opaque
+            ? layer('water').paint['fill-color'] === waterFill.pattern.keyColor
+            : layer('water').paint['fill-pattern'] === waterFill.pattern.id)
           : layer('water').paint['fill-color'] === waterFill.color,
         // 1-bit: the road slot is a tile, so the road is a fill over a tile-line source
         // that the runtime widens after the tiles load, not a MapLibre line.
         roadType: layer('roads-major').type,
         roadPattern: layer('roads-major').paint['fill-pattern'],
-        roadPatternFromSlot: Boolean(roadFill.pattern) && layer('roads-major').paint['fill-pattern'] === roadFill.pattern.id,
+        roadFlat: layer('roads-major').paint['fill-color'],
+        roadPatternFromSlot: Boolean(roadFill.pattern) && (roadFill.pattern.opaque
+          ? layer('roads-major').paint['fill-color'] === roadFill.pattern.keyColor
+          : layer('roads-major').paint['fill-pattern'] === roadFill.pattern.id),
         roadSource: style.sources[layer('roads-major').source] && style.sources[layer('roads-major').source].type,
         roadCasing: layer('roads-major-casing') && layer('roads-major-casing').type,
         lineSpecs: style.metadata['trmnl:shapes'].map((spec) => spec.id),
@@ -227,16 +233,21 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   // The default source is TRMNL's own endpoint.
   expect(result.style.source).toBe('https://maps.trmnl.com/tiles/osm/{z}/{x}/{y}');
   expect(result.style.glyphs).toBeUndefined();
-  expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-farmland', 'land-green', 'land-sand', 'sites', 'water', 'ferries', 'buildings', 'roads-minor', 'paths', 'roads-major', 'rail', 'transit', 'boundaries']));
+  expect(result.style.ids).toEqual(expect.arrayContaining(['background', 'ocean', 'land-farmland', 'land-green', 'land-forest', 'land-sand', 'land-rock', 'sites', 'water', 'ferries', 'buildings', 'roads-minor', 'paths', 'roads-major', 'rail', 'transit', 'boundaries']));
   // Labels are framework elements the runtime places, never MapLibre glyph text.
   expect(result.style.symbols).toBe(0);
   expect(result.style.labels).toEqual({ major: true, minor: true, water: true });
   expect(result.style.transitInk).toBe('#000000');
-  // 1-bit: gray-60 water is a dither tile, so the layer paints with a pattern.
-  expect(result.style.waterPaint['fill-pattern']).toMatch(/^trmnl-tile-\d+$/);
+  // 1-bit: the water tone is a tile, and an opaque tile paints as its flat key
+  // color for the dither pass to repaint, so the layer names no MapLibre pattern.
+  // MapLibre cannot sample one onto the pixel grid at a fractional device ratio.
+  expect(result.style.waterOpaque).toBe(true);
+  expect(result.style.waterPaint['fill-pattern']).toBeUndefined();
+  expect(result.style.waterPaint['fill-color']).toMatch(/^rgb\(/);
   expect(result.style.waterMatches).toBe(true);
   expect(result.style.roadType).toBe('fill');
-  expect(result.style.roadPattern).toMatch(/^trmnl-tile-\d+$/);
+  expect(result.style.roadPattern).toBeUndefined();
+  expect(result.style.roadFlat).toMatch(/^rgb\(/);
   expect(result.style.roadPatternFromSlot).toBe(true);
   expect(result.style.roadSource).toBe('geojson');
   expect(result.style.roadCasing).toBe('fill');
@@ -284,6 +295,40 @@ test('builds still-map options and a slot-painted style without MapLibre loaded'
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
 });
 
+test('sizes an attached map canvas to whole device pixels', async ({ page }) => {
+  const browserSignals = await openRuntimePage(page);
+  await mountFixture(page, { html: '<div id="grid-map" class="map" style="width:300px;height:711px"></div>' });
+  await installFakeMap(page);
+
+  // MapLibre's own sizing: the container's rounded CSS box, floored against the
+  // device ratio. At 1.8 a 711px box wants 1279.8 rows and gets 1279.
+  const sized = await page.evaluate(() => {
+    const build = (ratio) => {
+      const container = document.querySelector('#grid-map');
+      const box = { width: 300, height: 711 };
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(box.width * ratio);
+      canvas.height = Math.floor(box.height * ratio);
+      canvas.style.width = box.width + 'px';
+      canvas.style.height = box.height + 'px';
+      const fake = window.__TRMNL_FAKE_MAP__(container, { getCanvas: () => canvas, getPixelRatio: () => ratio });
+      window.TRMNLMaps.attach(fake, { el: container });
+      return { store: canvas.height, css: parseFloat(canvas.style.height), width: parseFloat(canvas.style.width) };
+    };
+    return { fractional: build(1.8), whole: build(1) };
+  });
+
+  // One texel to one device pixel: the box the CSS size covers is the store, give or
+  // take the thousandth of a pixel a serialized CSS length rounds away.
+  expect(sized.fractional.store).toBe(1279);
+  expect(sized.fractional.css * 1.8).toBeCloseTo(1279, 2);
+  // 300px at 1.8 is already whole, so the width is the one it was given.
+  expect(sized.fractional.width).toBe(300);
+  // A whole ratio floors to the size it started from, so nothing moves.
+  expect(sized.whole).toEqual({ store: 711, css: 711, width: 300 });
+  expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
+});
+
 test('resolves map slots per mode and shapes them for MapLibre', async ({ page }) => {
   const browserSignals = await openRuntimePage(page);
   const html = `
@@ -301,8 +346,8 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
     const roadLine = paint.slot('map-road', { el: target, kind: 'border' });
     window.TRMNLMaps.applySwatches({ el: target });
     return {
-      water: { tile: Boolean(water.url), size: water.size, color: water.color, sameAsGray60: water.url === paint.bg('gray-60', { el: target }).url && water.color === paint.bg('gray-60', { el: target }).color },
-      waterBlue: water.color === paint.bg('blue-70', { el: target }).color && water.url === paint.bg('blue-70', { el: target }).url,
+      water: { tile: Boolean(water.url), size: water.size, color: water.color, sameAsBackdrop: water.url === paint.slot('screen-backdrop', { el: target }).url },
+      waterBlue: water.color === paint.bg('blue-55', { el: target }).color && water.url === paint.bg('blue-55', { el: target }).url,
       label: { color: label.color, tile: Boolean(label.url) },
       road: { tile: Boolean(road.url), color: road.color },
       minor: { tile: Boolean(minor.url), color: minor.color },
@@ -323,7 +368,8 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   const oneBit = await read();
   expect(oneBit.water.tile).toBe(true);
   expect(oneBit.water.size).toBe(16);
-  expect(oneBit.water.sameAsGray60).toBe(true);
+  // The rail's checkerboard, the flat fifty percent the backdrop slot takes too.
+  expect(oneBit.water.sameAsBackdrop).toBe(true);
   expect(oneBit.label.color).toMatch(/^rgb/);
   // Lines are bg slots: on 1-bit a gray road is the token's tile, never a hex,
   // and the border kind finds no rail on a map slot.
@@ -347,11 +393,13 @@ test('resolves map slots per mode and shapes them for MapLibre', async ({ page }
   });
   const fourBit = await read();
   expect(fourBit.water.tile).toBe(false);
-  expect(fourBit.water.color).toBe('rgb(187, 187, 187)');
+  expect(fourBit.water.color).toBe('rgb(136, 136, 136)');
   expect(fourBit.road.tile).toBe(false);
   expect(fourBit.road.color).toBe('rgb(102, 102, 102)');
-  expect(fourBit.minor.color).toBe('rgb(153, 153, 153)');
-  expect(fourBit.adapter.water).toEqual({ color: 'rgb(187, 187, 187)', ink: 'rgb(187, 187, 187)', pattern: null });
+  // The minor road shares the water's tone on the solid rails: a line over a
+  // fill, separated by the contrast casing it carries.
+  expect(fourBit.minor.color).toBe('rgb(136, 136, 136)');
+  expect(fourBit.adapter.water).toEqual({ color: 'rgb(136, 136, 136)', ink: 'rgb(136, 136, 136)', pattern: null });
 
   await page.locator('[data-runtime-test-screen]').evaluate((screen) => {
     screen.classList.remove('screen--4bit');
@@ -397,6 +445,7 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
       jumpTo: fake.calls.jumpTo,
       addImage: fake.calls.addImage,
       waterId: water && water.id,
+      waterOpaque: Boolean(water && water.opaque),
       twice: maps.attach(fake, { el: container }) === fake && container.querySelectorAll('.map__attribution').length,
     };
   });
@@ -417,8 +466,10 @@ test('attaches, fits, readies and settles maps, and rebuilds watched maps on a s
   expect(attached.fit.center[0]).toBeCloseTo(1.23, 2);
   expect(attached.fit.center[1]).toBeCloseTo(4.56, 2);
   expect(attached.jumpTo[0]).toMatchObject({ zoom: 12, bearing: 0, pitch: 0 });
-  expect(attached.addImage.length).toBeGreaterThan(0);
-  expect(attached.addImage.find((call) => call.id === attached.waterId)).toMatchObject({ width: 16, height: 16, opts: { pixelRatio: 1 } });
+  // An opaque tile never reaches MapLibre as an image: the dither pass paints it
+  // from the decoded art, so addImage is left for a tile with transparent gaps.
+  expect(attached.addImage).toEqual([]);
+  expect(attached.waterOpaque).toBe(true);
   expect(attached.twice).toBe(1);
 
   // settle(): a map that never goes idle times out, and terminalize reports it.

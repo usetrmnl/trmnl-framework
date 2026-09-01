@@ -36,9 +36,11 @@
           <p class="<%= framework_section_description_classes %>">
             The area slots are <code class="<%= framework_section_code_classes %>">map-land</code> (the canvas),
             <code class="<%= framework_section_code_classes %>">map-water</code>,
-            <code class="<%= framework_section_code_classes %>">map-green</code> (parks, forest, grass, wetland),
+            <code class="<%= framework_section_code_classes %>">map-forest</code> (forest, wood),
+            <code class="<%= framework_section_code_classes %>">map-green</code> (parks, grass, meadow, heath, scrub, wetland),
             <code class="<%= framework_section_code_classes %>">map-farmland</code>,
-            <code class="<%= framework_section_code_classes %>">map-sand</code> (beach, sand, bare rock),
+            <code class="<%= framework_section_code_classes %>">map-rock</code> (bare rock, scree),
+            <code class="<%= framework_section_code_classes %>">map-sand</code> (beach, sand, shingle),
             <code class="<%= framework_section_code_classes %>">map-area</code> (residential, commercial, industrial; the
             canvas itself on 1-bit),
             <code class="<%= framework_section_code_classes %>">map-site</code> (schools, hospitals, parking),
@@ -157,14 +159,14 @@ var linePaint = { "line-color": road.color || road.ink, "line-width": TRMNLPaint
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">route(map, coords, { el, i, n, width, id, casing })</code>:
-                plots a route as the polygon of its stroke (default width 3, through
+                plots a route as the polygon of its stroke (default width 4, through
                 <code class="<%= framework_section_code_classes %>">TRMNLPaint.px()</code>) filled with series
-                <em>i</em> of <em>n</em> over a contrast casing, crisp and re-widened for every camera. Call it once
-                the map has loaded.
+                <em>i</em> of <em>n</em> over a two pixel contrast casing, crisp and re-widened for every camera. Call
+                it once the map has loaded.
               </li>
               <li>
                 <code class="<%= framework_section_code_classes %>">dot(map, lngLat, { el, i, n, radius, hollow, id })</code>:
-                plots a disc (default radius 4) in that series paint with a contrast ring;
+                plots a disc (default radius 5) in that series paint with a two pixel contrast ring;
                 <code class="<%= framework_section_code_classes %>">hollow: true</code> makes it a ring around a
                 contrast core, so a start dot and an end ring read apart on one ink.
               </li>

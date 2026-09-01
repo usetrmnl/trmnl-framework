@@ -55,7 +55,9 @@
         // Land follows the canvas channel and labels the text channels; the
         // full token-bound list is _map-slot-defaults in base/_screen.scss.
         @include theme-slots.bg-slot('map-water', 'blue-65');
+        @include theme-slots.bg-slot('map-forest', 'green-55');
         @include theme-slots.bg-slot('map-green', 'green-70');
+        @include theme-slots.bg-slot('map-rock', 'gray-70');
         @include theme-slots.bg-slot('map-road', 'gray-35');
         @include theme-slots.bg-slot('map-road-minor', 'gray-50');
 

@@ -4559,15 +4559,104 @@ window.markFrameworkReady = markFrameworkReady;
   // and TRMNLMaps.attach() can answer MapLibre's styleimagemissing by id.
   const tileImages = new Map();
   const tileImagesById = new Map();
+  const flatKeyTiles = new Map();
+
+  // A map paints an opaque tile fill as a flat key color, and the dither pass
+  // (ditherCanvasKeys) swaps that color for the tile art once the map settles,
+  // so MapLibre never samples a pattern. It cannot sample one onto the pixel
+  // grid at a fractional device ratio: a 16px tile displays at 16/ratio CSS px
+  // and the pattern phase is that size modulo a 512px vector tile origin, so at
+  // 1.8 every vector tile lands on its own sub-texel phase. Nothing tunes that
+  // away -- a size would have to divide both 512 and the device grid, and 5n
+  // never divides 4608 -- and the atlas' linear filter turns each phase into a
+  // different blend of the art.
+  //
+  // A key is a light neutral with a blue notch: red and green hold one level and
+  // blue drops a step per tile. No framework paint emits that, because map paint
+  // on every dithered rail is r == g == b, so no gray can be read as a key. The
+  // steps are spaced wider than twice the read-back slack, which is there so the
+  // match never depends on a flat fill surviving the GPU byte-exact. An unrun
+  // pass leaves flat neutrals rather than garish sentinels.
+  const FLAT_KEY_LEVEL = 220;
+  const FLAT_KEY_STEP = 6;
+  const FLAT_KEY_SLACK = 2;
+  // null once the blue channel runs out of steps. A style names a dozen or so
+  // tiles, so this is unreachable in practice, but a wrapped key would silently
+  // paint one fill with another's art; without a key the tile keeps MapLibre's
+  // own pattern instead, which is the pre-3.3.1 behaviour rather than a wrong one.
+  function flatKeyChannels(index) {
+    const blue = FLAT_KEY_LEVEL - FLAT_KEY_STEP * (index + 1);
+    return blue > 0 ? [FLAT_KEY_LEVEL, FLAT_KEY_LEVEL, blue] : null;
+  }
   function registerTileImage(image, width, height, pixelRatio) {
     const key = image + '@' + pixelRatio;
     let record = tileImages.get(key);
     if (!record) {
-      record = { id: 'trmnl-tile-' + (tileImages.size + 1), image: image, width: width, height: height, pixelRatio: pixelRatio };
+      const channels = flatKeyChannels(tileImages.size);
+      record = {
+        id: 'trmnl-tile-' + (tileImages.size + 1), image: image, width: width, height: height,
+        pixelRatio: pixelRatio, keyChannels: channels,
+        keyColor: channels ? 'rgb(' + channels[0] + ', ' + channels[1] + ', ' + channels[2] + ')' : null,
+        art: null,
+      };
       tileImages.set(key, record);
       tileImagesById.set(record.id, record);
+      if (record.keyColor) flatKeyTiles.set(record.keyColor, record);
     }
     return record;
+  }
+
+  // Replace every flat key color in `source` with its tile art, writing the
+  // result into `target`. `originX/originY` are the map viewport's world origin
+  // in device pixels: MapLibre's own texel coordinate at device pixel x is
+  // originX + x, so anchoring here puts the art exactly where a correctly
+  // sampled fill-pattern would, leaving a 1.0-ratio screen bit-identical.
+  // A color that is not a key is left untouched rather than guessed at.
+  function ditherCanvasKeys(source, target, originX, originY) {
+    const width = source.width, height = source.height;
+    if (!(width > 0) || !(height > 0)) return false;
+    const records = [];
+    for (const record of tileImages.values()) if (record.art && record.keyChannels) records.push(record);
+    if (!records.length) return false;
+    // (red << 8) | blue identifies a key; -1 is "not a key". Every channel pair
+    // within the rounding slack maps to the same tile, and the slack windows
+    // cannot overlap because the steps are wider than twice the slack.
+    const lookup = new Int16Array(65536).fill(-1);
+    for (let i = 0; i < records.length; i += 1) {
+      const channels = records[i].keyChannels;
+      for (let red = channels[0] - FLAT_KEY_SLACK; red <= channels[0] + FLAT_KEY_SLACK; red += 1) {
+        for (let blue = channels[2] - FLAT_KEY_SLACK; blue <= channels[2] + FLAT_KEY_SLACK; blue += 1) {
+          if (red >= 0 && red < 256 && blue >= 0 && blue < 256) lookup[(red << 8) | blue] = i;
+        }
+      }
+    }
+    const ctx = target.getContext('2d', { willReadFrequently: true });
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(source, 0, 0);
+    const frame = ctx.getImageData(0, 0, width, height);
+    const pixels = frame.data;
+    let painted = false;
+    for (let y = 0; y < height; y += 1) {
+      const rowStart = y * width * 4;
+      for (let x = 0; x < width; x += 1) {
+        const i = rowStart + x * 4;
+        const red = pixels[i];
+        const green = pixels[i + 1];
+        if (green > red + FLAT_KEY_SLACK || green < red - FLAT_KEY_SLACK) continue;
+        const slot = lookup[(red << 8) | pixels[i + 2]];
+        if (slot < 0) continue;
+        const art = records[slot].art;
+        const ax = (x + originX) % art.width;
+        const ay = (y + originY) % art.height;
+        const a = (((ay < 0 ? ay + art.height : ay) * art.width) + (ax < 0 ? ax + art.width : ax)) * 4;
+        pixels[i] = art.data[a];
+        pixels[i + 1] = art.data[a + 1];
+        pixels[i + 2] = art.data[a + 2];
+        painted = true;
+      }
+    }
+    if (painted) ctx.putImageData(frame, 0, 0);
+    return painted;
   }
 
   const TRMNLPaint = {
@@ -5008,6 +5097,10 @@ window.markFrameworkReady = markFrameworkReady;
         return out;
       }
       out.pattern = registerTileImage(image, width, height, width / size);
+      // Only a tile with its field composited in is opaque enough to repaint
+      // from a flat fill; a bare tile keeps its transparent gaps, and the land
+      // under them would be lost to the flat color. Those keep fill-pattern.
+      out.pattern.opaque = !!fieldHex && !!out.pattern.keyColor;
       return out;
     },
 
@@ -5535,13 +5628,20 @@ window.markFrameworkReady = markFrameworkReady;
   // Shortbread 1.0 `kind` groups per source-layer, the only schema knowledge
   // the style needs. Paint still comes from the slots.
   const MAP_AREA_KINDS = ['residential', 'commercial', 'industrial', 'retail', 'garages', 'railway', 'brownfield', 'greenfield', 'landfill', 'quarry'];
+  // Woodland is its own group, not a shade of the open green: it is the cover
+  // that carries a natural landscape, and one tone over every vegetated kind
+  // left an alpine valley as a single flat field. Bare rock and scree leave the
+  // beach group for the same reason, a mountain face being neither sand nor a
+  // shingle shore.
+  const MAP_FOREST_KINDS = ['forest', 'wood'];
   const MAP_GREEN_KINDS = [
-    'forest', 'wood', 'grass', 'grassland', 'meadow', 'wet_meadow', 'park', 'garden', 'cemetery', 'grave_yard',
+    'grass', 'grassland', 'meadow', 'wet_meadow', 'park', 'garden', 'cemetery', 'grave_yard',
     'orchard', 'vineyard', 'allotments', 'village_green', 'recreation_ground', 'golf_course', 'playground',
     'heath', 'scrub', 'wetland', 'swamp', 'bog', 'string_bog', 'marsh',
   ];
   const MAP_FARMLAND_KINDS = ['farmland', 'farmyard', 'greenhouse_horticulture', 'plant_nursery'];
-  const MAP_SAND_KINDS = ['sand', 'beach', 'bare_rock', 'scree', 'shingle'];
+  const MAP_ROCK_KINDS = ['bare_rock', 'scree'];
+  const MAP_SAND_KINDS = ['sand', 'beach', 'shingle'];
   const MAP_MAJOR_ROADS = ['motorway', 'trunk', 'primary', 'secondary', 'tertiary'];
   const MAP_MINOR_ROADS = ['residential', 'living_street', 'unclassified', 'service', 'pedestrian', 'busway', 'bus_guideway'];
   const MAP_PATHS = ['track', 'path', 'footway', 'cycleway', 'steps'];
@@ -5620,9 +5720,29 @@ window.markFrameworkReady = markFrameworkReady;
     return Number.isFinite(scaled) ? Math.max(1, Math.round(scaled)) : 1;
   }
 
+  // A tile fill paints as its flat key color and the dither pass repaints it
+  // from the art once the map settles, so MapLibre never samples a pattern.
+  // Only a tile with transparent gaps still needs MapLibre's own sampling:
+  // a flat color would bury the land showing through them.
+  function mapTileFillPaint(pattern) {
+    if (pattern.opaque) return { 'fill-color': pattern.keyColor, 'fill-antialias': false };
+    return { 'fill-pattern': pattern.id, 'fill-antialias': false };
+  }
+
+  // The registered tile ids behind a style's flat fills, in layer order.
+  function mapFlatKeyIds(layers) {
+    const ids = [];
+    for (const layer of layers) {
+      const color = layer && layer.paint && layer.paint['fill-color'];
+      const record = typeof color === 'string' ? flatKeyTiles.get(color) : null;
+      if (record && ids.indexOf(record.id) === -1) ids.push(record.id);
+    }
+    return ids;
+  }
+
   function mapFillPaint(paint) {
     if (!paint) return null;
-    if (paint.pattern) return { 'fill-pattern': paint.pattern.id, 'fill-antialias': false };
+    if (paint.pattern) return mapTileFillPaint(paint.pattern);
     if (paint.color) return { 'fill-color': paint.color, 'fill-antialias': false };
     return null;
   }
@@ -5660,6 +5780,10 @@ window.markFrameworkReady = markFrameworkReady;
   const MAP_SHAPE_CAP = 6000;
   const MAP_SHAPE_MARGIN = 8;
   const MAP_DOT_SIDES = 16;
+  // A route or a dot is author content over ground it cannot predict, so its
+  // casing is two pixels where a style line takes one, the way a map label
+  // takes text-stroke--large rather than the default ring.
+  const MAP_AUTHOR_CASING = 2;
   // Joins are cheaper dots, and only where a line really bends (the cosine of
   // a ten degree turn); consecutive quads already overlap where it barely does.
   const MAP_JOIN_SIDES = 8;
@@ -5674,7 +5798,7 @@ window.markFrameworkReady = markFrameworkReady;
   function mapShapePaint(paint) {
     if (!paint) return null;
     if (typeof paint === 'string') return { 'fill-color': paint, 'fill-antialias': false };
-    if (paint.pattern) return { 'fill-pattern': paint.pattern.id, 'fill-antialias': false };
+    if (paint.pattern) return mapTileFillPaint(paint.pattern);
     const color = paint.color || paint.ink;
     return color ? { 'fill-color': color, 'fill-antialias': false } : null;
   }
@@ -5887,9 +6011,10 @@ window.markFrameworkReady = markFrameworkReady;
       if (budget <= 0) break;
       const kind = feature.properties && feature.properties.kind;
       // Whole device pixels: the spec's width is CSS pixels, the canvas is not.
-      // A casing adds one CSS pixel of contrast on each side.
+      // A casing adds its own width in CSS pixels of contrast on each side, one
+      // by default.
       const w = Math.max(1, Math.round(mapShapeWidth(spec, kind, zoom) * pr));
-      const ring = Math.max(1, Math.round(pr));
+      const ring = Math.max(1, Math.round((spec.casingWidth || 1) * pr));
       if (spec.kind === 'point') {
         for (const lngLat of mapPointCoordinates(feature.geometry)) {
           let p;
@@ -6217,6 +6342,21 @@ window.markFrameworkReady = markFrameworkReady;
     } catch (_) {}
   }
 
+  // Give the canvas the CSS size its own backing store covers, so one texel is one
+  // device pixel. MapLibre floors the store against the device ratio, which at a
+  // fractional one leaves it shorter than the box it paints into (on TRMNL X, 1279
+  // rows over 1279.8 device pixels), and the stretch that closes the gap smears a
+  // dither into bands. A whole ratio floors to the size it started from.
+  function snapMapCanvasToDevicePixels(map) {
+    try {
+      const canvas = map.getCanvas && map.getCanvas();
+      const ratio = (map.getPixelRatio && map.getPixelRatio()) || 1;
+      if (!canvas || !(ratio > 0) || !(canvas.width > 0) || !(canvas.height > 0)) return;
+      canvas.style.width = (canvas.width / ratio) + 'px';
+      canvas.style.height = (canvas.height / ratio) + 'px';
+    } catch (_) {}
+  }
+
   // Decode a registered tile image to ImageData and hand it to the map. Runs
   // from styleimagemissing (lazy) and from style.load (eager, for every pattern
   // the style names), tracked in the map's pending set so ready() waits for it.
@@ -6234,10 +6374,14 @@ window.markFrameworkReady = markFrameworkReady;
             const canvas = doc.createElement('canvas');
             canvas.width = tile.width;
             canvas.height = tile.height;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
             ctx.imageSmoothingEnabled = false;
             ctx.drawImage(img, 0, 0, tile.width, tile.height);
-            map.addImage(tile.id, ctx.getImageData(0, 0, tile.width, tile.height), { pixelRatio: tile.pixelRatio });
+            const art = ctx.getImageData(0, 0, tile.width, tile.height);
+            // The dither pass paints from this; a flattened fill never asks
+            // MapLibre for the image, so only a pattern layer needs addImage.
+            tile.art = art;
+            if (!tile.opaque) map.addImage(tile.id, art, { pixelRatio: tile.pixelRatio });
           }
         } catch (_) {}
         rec.pending.delete(job);
@@ -6252,6 +6396,73 @@ window.markFrameworkReady = markFrameworkReady;
     return job;
   }
 
+  // The viewport's world origin in device pixels: the anchor the dither pass
+  // shares with MapLibre's own pattern placement, whose texel coordinate at
+  // device pixel x is exactly originX + x. snapMapCenter has already put this
+  // on a whole device pixel, so the round is a formality.
+  function mapDeviceOrigin(map) {
+    try {
+      const zoom = map.getZoom();
+      if (!Number.isInteger(zoom)) return null;
+      const canvas = map.getCanvas && map.getCanvas();
+      const w = canvas ? canvas.clientWidth : 0;
+      const h = canvas ? canvas.clientHeight : 0;
+      const pr = (map.getPixelRatio && map.getPixelRatio()) || 1;
+      if (!(w > 0) || !(h > 0) || !(pr > 0)) return null;
+      const center = map.getCenter();
+      const p = mapProject(center.lng, center.lat, zoom);
+      return { x: Math.round((p.x - w / 2) * pr), y: Math.round((p.y - h / 2) * pr) };
+    } catch (_) { return null; }
+  }
+
+  // The canvas the dither pass paints into, over the map's own: same backing
+  // store and same CSS size, so it lands on the device grid exactly as the map
+  // canvas does.
+  function mapDitherLayer(rec, canvas) {
+    const doc = (rec.el && rec.el.ownerDocument) || document;
+    let layer = rec.ditherLayer;
+    if (!layer) {
+      layer = doc.createElement('canvas');
+      layer.className = 'map__dither';
+      layer.setAttribute('aria-hidden', 'true');
+      layer.style.position = 'absolute';
+      layer.style.top = '0';
+      layer.style.left = '0';
+      layer.style.pointerEvents = 'none';
+      rec.ditherLayer = layer;
+    }
+    if (layer.width !== canvas.width) layer.width = canvas.width;
+    if (layer.height !== canvas.height) layer.height = canvas.height;
+    // The map canvas' own CSS size, not its rounded clientWidth: the two differ at a
+    // fractional device ratio, and a layer that rounds would be the one stretched.
+    layer.style.width = canvas.style.width || (canvas.clientWidth + 'px');
+    layer.style.height = canvas.style.height || (canvas.clientHeight + 'px');
+    if (canvas.parentNode && layer.parentNode !== canvas.parentNode) canvas.parentNode.appendChild(layer);
+    return layer;
+  }
+
+  // Repaint the map's flat tile fills as dither art, after the shapes are
+  // widened on the same idle. The next render hides it again, so a stale pass
+  // can never reach a capture; ready() waits for an idle, so the pass that
+  // matters is the one a capture sees.
+  function ditherMap(rec) {
+    if (rec.removed) return;
+    try {
+      const canvas = rec.map.getCanvas && rec.map.getCanvas();
+      if (!canvas || !canvas.width) return;
+      const origin = mapDeviceOrigin(rec.map);
+      if (!origin) return;
+      const layer = mapDitherLayer(rec, canvas);
+      const painted = ditherCanvasKeys(canvas, layer, origin.x, origin.y);
+      layer.style.visibility = painted ? 'visible' : 'hidden';
+    } catch (_) {}
+  }
+
+  function hideMapDither(rec) {
+    const layer = rec.ditherLayer;
+    if (layer && layer.style.visibility !== 'hidden') layer.style.visibility = 'hidden';
+  }
+
   function preloadTileImages(rec) {
     let style = null;
     try { style = rec.map.getStyle(); } catch (_) {}
@@ -6263,6 +6474,13 @@ window.markFrameworkReady = markFrameworkReady;
         const id = paint[key];
         if (typeof id === 'string' && tileImagesById.has(id)) rasterizeTile(rec, tileImagesById.get(id));
       }
+    }
+    // A flattened fill names no pattern, so its art is found through the id list
+    // the style recorded at build time. Decoding here keeps it inside rec.pending,
+    // so ready() still waits for every tile the style needs before a capture.
+    const flatIds = (style && style.metadata && style.metadata['trmnl:tiles']) || [];
+    for (const id of flatIds) {
+      if (tileImagesById.has(id)) rasterizeTile(rec, tileImagesById.get(id));
     }
   }
 
@@ -6367,11 +6585,11 @@ window.markFrameworkReady = markFrameworkReady;
 
     /**
      * Plot a route: the coordinates become the polygon of a stroke `width`
-     * (default 3, through px()) filled with the paint of series `i` of `n`
-     * from the chart-series ramp, over a contrast casing, rasterized without
-     * anti-aliasing and re-widened for every camera. Call it once the map has
-     * loaded; `id` tells routes apart (default 'route'). {casing:false} drops
-     * the casing.
+     * (default 4, through px()) filled with the paint of series `i` of `n` from
+     * the chart-series ramp, over a two pixel contrast casing that carries it
+     * across any ground, rasterized without anti-aliasing and re-widened for
+     * every camera. Call it once the map has loaded; `id` tells routes apart
+     * (default 'route'). {casing:false} drops the casing.
      *
      * @param {object} map
      * @param {Array<Array<number>>} coords - [lng, lat] pairs
@@ -6389,21 +6607,23 @@ window.markFrameworkReady = markFrameworkReady;
         source: id,
         kind: 'line',
         features: [{ properties: {}, geometry: { type: 'LineString', coordinates: coords } }],
-        widths: mapPx(Number.isFinite(o.width) ? o.width : 3, el),
+        widths: mapPx(Number.isFinite(o.width) ? o.width : 4, el),
         zoomStep: false,
         minzoom: 0,
         dash: null,
         casing: o.casing === false || !halo ? null : id + '-casing',
+        casingWidth: mapPx(MAP_AUTHOR_CASING, el),
       };
       addMapShape(map, el, spec, TRMNLMaps.series(o.i || 0, o.n || 1, { el: el }), halo);
       return map;
     },
 
     /**
-     * Plot a dot: a disc of `radius` (default 4, through px()) in the paint of
-     * series `i` of `n`, ringed in the contrast color; {hollow:true} makes it
-     * a ring around a contrast core, so a start dot and an end ring read apart
-     * on one ink. Call it once the map has loaded; `id` tells dots apart.
+     * Plot a dot: a disc of `radius` (default 5, through px()) in the paint of
+     * series `i` of `n`, ringed in two pixels of the contrast color so it reads
+     * over any ground; {hollow:true} makes it a ring around a contrast core, so
+     * a start dot and an end ring read apart on one ink. Call it once the map
+     * has loaded; `id` tells dots apart.
      *
      * @param {object} map
      * @param {Array<number>} lngLat
@@ -6415,13 +6635,13 @@ window.markFrameworkReady = markFrameworkReady;
       const el = o.el;
       if (!map || !Array.isArray(lngLat)) return map;
       const id = 'trmnl-dot-' + (o.id != null ? String(o.id) : 'dot');
-      const radius = mapPx(Number.isFinite(o.radius) ? o.radius : 4, el);
+      const radius = mapPx(Number.isFinite(o.radius) ? o.radius : 5, el);
       const halo = mapHalo(el);
       const point = [{ properties: {}, geometry: { type: 'Point', coordinates: lngLat } }];
       const series = TRMNLMaps.series(o.i || 0, o.n || 1, { el: el });
       addMapShape(map, el, {
         id: id, source: id, kind: 'point', features: point, widths: radius, zoomStep: false, minzoom: 0, dash: null,
-        casing: halo ? id + '-casing' : null,
+        casing: halo ? id + '-casing' : null, casingWidth: mapPx(MAP_AUTHOR_CASING, el),
       }, series, halo);
       if (o.hollow && halo) {
         addMapShape(map, el, {
@@ -6484,8 +6704,10 @@ window.markFrameworkReady = markFrameworkReady;
       // Resolve every framework spec ONCE per call.
       const land = slot('map-land');
       const water = slot('map-water');
+      const forest = slot('map-forest');
       const green = slot('map-green');
       const farmland = slot('map-farmland');
+      const rock = slot('map-rock');
       const sand = slot('map-sand');
       const area = slot('map-area');
       const site = slot('map-site');
@@ -6527,7 +6749,12 @@ window.markFrameworkReady = markFrameworkReady;
       if (groups.area) push(mapFillLayer('land-area', 'land', mapKindFilter(MAP_AREA_KINDS), area));
       if (groups.farmland) push(mapFillLayer('land-farmland', 'land', mapKindFilter(MAP_FARMLAND_KINDS), farmland));
       if (groups.green) push(mapFillLayer('land-green', 'land', mapKindFilter(MAP_GREEN_KINDS), green));
+      // Woodland rides the green group and rock the sand group: each is a
+      // refinement of a cover the preset already asked for, not a tier a
+      // preset chooses.
+      if (groups.green) push(mapFillLayer('land-forest', 'land', mapKindFilter(MAP_FOREST_KINDS), forest));
       if (groups.sand) push(mapFillLayer('land-sand', 'land', mapKindFilter(MAP_SAND_KINDS), sand));
+      if (groups.sand) push(mapFillLayer('land-rock', 'land', mapKindFilter(MAP_ROCK_KINDS), rock));
       if (groups.sites) push(mapFillLayer('sites', 'sites', null, site, 14));
       if (groups.water) push(mapFillLayer('water', 'water_polygons', ['!=', ['get', 'kind'], 'glacier'], water));
       if (groups.waterLines) {
@@ -6599,6 +6826,12 @@ window.markFrameworkReady = markFrameworkReady;
             water: !!(groups.waterLabels && showMinorLabels),
           },
           'trmnl:shapes': shapeSpecs,
+          // The tiles this style paints flat. Collected here, where the key colors
+          // are still the strings we wrote, rather than read back out of
+          // getStyle(), which is free to re-serialize a color. preloadTileImages
+          // decodes exactly these, so readiness waits for the art this style needs
+          // and not for every tile any screen on the page has ever registered.
+          'trmnl:tiles': mapFlatKeyIds(layers),
         },
         sources: sources,
         layers: layers,
@@ -6709,8 +6942,10 @@ window.markFrameworkReady = markFrameworkReady;
       attachedMaps.add(map);
       let el = resolveEl(opts && opts.el);
       if (!el) { try { el = map.getContainer(); } catch (_) { el = null; } }
-      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0, shapes: [], shapeSignature: null, labelSignature: null };
+      const rec = { map: map, el: el, pending: new Set(), loading: new Map(), removed: false, idleCount: 0, shapes: [], shapeSignature: null, labelSignature: null, ditherLayer: null };
       liveMaps.set(map, rec);
+      // MapLibre has sized the canvas by now, and no frame has been drawn yet.
+      snapMapCanvasToDevicePixels(map);
       try {
         map.on('styleimagemissing', (event) => {
           const id = event && event.id;
@@ -6718,13 +6953,16 @@ window.markFrameworkReady = markFrameworkReady;
         });
         map.once('style.load', () => { preloadTileImages(rec); ensureAttribution(rec, opts && opts.attribution); });
         map.once('load', () => snapMapInPlace(map));
-        map.on('idle', () => { rec.idleCount += 1; paintShapes(rec); placeMapLabels(rec); });
+        map.on('render', () => hideMapDither(rec));
+        map.on('idle', () => { rec.idleCount += 1; paintShapes(rec); placeMapLabels(rec); ditherMap(rec); });
         map.once('remove', () => {
           rec.removed = true;
           liveMaps.delete(map);
           // The labels belong to this map's camera; a rebuild places its own.
           const overlay = rec.el && rec.el.querySelector && rec.el.querySelector('.map__labels');
           if (overlay) overlay.textContent = '';
+          if (rec.ditherLayer && rec.ditherLayer.parentNode) rec.ditherLayer.parentNode.removeChild(rec.ditherLayer);
+          rec.ditherLayer = null;
         });
       } catch (_) {}
       ensureAttribution(rec, opts && opts.attribution);
