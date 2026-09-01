@@ -942,14 +942,6 @@ $_limited-palette-paint-depth: 4;
         @include theme-slots.bg-slot('screen-backdrop', 'gray-75');
     }
 
-    // The map's residential field (map-area, gray-75 by default) is a sparse
-    // speckle on the 1-bit rail: texture over every built-up block with nothing
-    // to say on a panel that cannot print a light gray. So the 1-bit rail folds
-    // the slot into the canvas, the channel map-land already follows (and the
-    // inverse subtree flips with it), and the parks, water and buildings stay
-    // the tones that separate them from it. 2-bit and up keep the light field;
-    // themes restate the slot themselves.
-    //
     // Water takes the checkerboard on this rail. The area ramp asks for fifty
     // ink points between the canvas and the sea (base/_screen.scss) and the
     // rail's tokens step over fifty, from gray-45's 43.75% to gray-40's 56.25%;
@@ -957,8 +949,6 @@ $_limited-palette-paint-depth: 4;
     // so one statement covers the dark ground and the inverse subtree too.
     .screen.screen--1bit#{helpers.$theme-exempt},
     .screen.screen--1bit#{helpers.$theme-exempt} .inverse {
-        --framework-slot-map-area-bg-color: var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg));
-        --framework-slot-map-area-bg-image: var(--framework-semantic-canvas-bg-image, none);
         @include theme-slots.bg-slot('map-water', 'checker');
     }
 

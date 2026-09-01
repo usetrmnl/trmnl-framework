@@ -104,6 +104,11 @@
     @include theme-slots.bg-slot('map-green', 'gray-60');
     @include theme-slots.bg-slot('map-farmland', 'gray-70');
     @include theme-slots.bg-slot('map-rock', 'gray-70');
+    // Sand and the built-up field share the lightest tile even though a coastal
+    // town puts them side by side. Nothing lighter exists to separate them, and
+    // both alternatives are worse: the 1-bit rail folded the field into the
+    // canvas until a settlement read as missing content, and the next step up
+    // collides with farmland and a school site, which it meets far more often.
     @include theme-slots.bg-slot('map-sand', 'gray-75');
     @include theme-slots.bg-slot('map-area', 'gray-75');
     @include theme-slots.bg-slot('map-site', 'gray-70');

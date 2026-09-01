@@ -35,6 +35,11 @@ RSpec.describe 'Framework map slot contract' do
                             "expected #{property} to be #{value}"
   end
 
+  def expect_no_declaration(declarations, property)
+    expect(declarations).not_to include("#{property}:"),
+                                "expected #{property} not to be re-pointed here"
+  end
+
   let(:screen) { declarations_on(/\A\.trmnl \.screen\z/) }
   let(:inverse) { declarations_on(/\A\.trmnl \.screen:where\(:not\(\[class\*=screen--theme-\]\)\) \.inverse\z/) }
   let(:one_bit) { declarations_on(/\A\.trmnl \.screen\.screen--1bit:where/) }
@@ -70,11 +75,12 @@ RSpec.describe 'Framework map slot contract' do
       expect_declared(screen, '--framework-slot-map-road-minor-bg-color', 'var(--bg-gray-45-color, transparent)')
       expect_declared(screen, '--framework-slot-map-path-bg-color', 'var(--bg-gray-55-color, transparent)')
       expect_declared(screen, '--framework-slot-map-label-text-color', 'var(--framework-semantic-text-primary-text-color, var(--framework-text-primary))')
-      # The 1-bit rail folds the residential field into the canvas: a light
-      # gray is a sparse speckle there, texture over every built-up block.
+      # The residential field takes the lightest tile on every rail, the 1-bit
+      # one included: folding it into the canvas there left a settlement as bare
+      # white, which read as missing content next to the same map at 2-bit.
       expect_declared(screen, '--framework-slot-map-area-bg-color', 'var(--bg-gray-75-color, transparent)')
-      expect_declared(one_bit, '--framework-slot-map-area-bg-color', 'var(--framework-semantic-canvas-bg-color, var(--framework-canvas-bg))')
-      expect_declared(one_bit, '--framework-slot-map-area-bg-image', 'var(--framework-semantic-canvas-bg-image, none)')
+      expect_no_declaration(one_bit, '--framework-slot-map-area-bg-color')
+      expect_no_declaration(one_bit, '--framework-slot-map-area-bg-image')
       # The area ramp puts the sea fifty ink points off the canvas, and the
       # 1-bit rail steps over fifty: the checkerboard is its tone there.
       expect_declared(one_bit, '--framework-slot-map-water-bg-color', 'var(--bg-checker-color, transparent)')
