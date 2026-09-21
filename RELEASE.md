@@ -36,6 +36,11 @@ Under `public/css/<version>/` and `public/js/<version>/`:
 
 `public/css/latest/` and `public/js/latest/` are rebuilt as exact mirrors of the version
 directory. The zip, the release notes, and the resolved color manifest ship beside them.
+
+The tree carries only the current version and `latest`. Every published version is also
+in the `trmnl-framework-releases` bucket (core uploads it on deploy), and hosts mirror it
+with `rake framework:releases:fetch`; once the new version is in the bucket, the previous
+version's directories and zip can leave the tree.
 [docs/BUILD_AND_SERVING.md](docs/BUILD_AND_SERVING.md) covers what each artifact is for
 and how `Framework::Static` serves it.
 
@@ -137,8 +142,9 @@ gh release create v<version> public/framework/trmnl-framework--<version>.zip \
 
 ## Getting an old version back
 
-- **Use one:** `public/css/<version>/plugins.css` stays served forever, and the zip
-  hangs off the version's GitHub Release.
+- **Use one:** `/css/<version>/plugins.css` stays served forever, from the tree for the
+  current version and from the mirrored bucket for every older one; the zip also hangs
+  off the version's GitHub Release.
 - **Read or fork its source:** `git checkout v<version>`, or download the tag's
   source archive from the Releases page.
 - **Fix one after `main` has moved to the next major:** branch from the line's last

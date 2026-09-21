@@ -10,7 +10,8 @@ require 'zlib'
 # The build-free half of the release parity contract, checked on every rspec run: every
 # released version must publish the bundles a pinned plugin links, each committed archive
 # must carry its plaintext sibling's bytes, and public/{css,js}/latest must still be the
-# copy of the released version's directory that ReleaseTask makes.
+# copy of the released version's directory that ReleaseTask makes. Older releases live in
+# the mirror (rake framework:releases:fetch), so the tree only carries the current one.
 # bin/parity-check adds the half that needs a compile (a fresh build of the source against
 # these same committed bytes) and runs in CI when the bundles move. See RELEASE.md.
 RSpec.describe 'the committed release bundles' do
@@ -87,7 +88,7 @@ RSpec.describe 'the committed release bundles' do
         it "publishes the #{bundle_name} for #{number}" do
           url = Framework::Version.new(number).public_send(url_reader)
 
-          expect(root.join('public', URI.parse(url).path.delete_prefix('/'))).to exist
+          expect(Framework.released_file(URI.parse(url).path.delete_prefix('/'))).to be_present
         end
       end
     end
@@ -126,7 +127,7 @@ RSpec.describe 'the committed release bundles' do
     Framework::Version.version_numbers.each do |number|
       %w[plugins.css plugins.min.css].each do |file_name|
         it "keeps every selector reachable in #{number}/#{file_name}" do
-          counts = composed_paint_selector_counts(root.join('public/css', number, file_name).read)
+          counts = composed_paint_selector_counts(Framework.released_file("css/#{number}/#{file_name}").read)
           skip "#{number} was released before the rule existed" if counts.empty?
 
           expect(counts.max).to be <= max_selectors_per_rule
