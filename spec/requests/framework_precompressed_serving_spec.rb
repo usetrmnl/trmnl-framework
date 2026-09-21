@@ -231,8 +231,7 @@ RSpec.describe 'Precompressed asset serving' do
 
     it 'names the brotli variants but prices the frozen ones as absent' do
       get '/framework/releases'
-      entry = controller.send(:build_release_entry, frozen_version,
-                              Framework.public_root.join('css'), Framework.public_root.join('js'))
+      entry = controller.send(:build_release_entry, frozen_version)
       brotli = entry[:assets].select { |asset| asset[:name].end_with?('.br') }
 
       aggregate_failures do

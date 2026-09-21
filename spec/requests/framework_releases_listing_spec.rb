@@ -19,8 +19,7 @@ RSpec.describe 'the releases listing', type: :request do
   # build_release_entry is private, and the page is what calls it; asking the controller that
   # just rendered keeps the entry and the HTML below reading the same disk state.
   def entry_for(version, **options)
-    controller.send(:build_release_entry, version,
-                    Framework.public_root.join('css'), Framework.public_root.join('js'), options)
+    controller.send(:build_release_entry, version, options)
   end
 
   def variants(entry)

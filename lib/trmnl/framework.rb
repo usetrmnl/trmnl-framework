@@ -15,6 +15,25 @@ module Framework
 
   def self.release_public_root = public_root
 
+  # Released css/js/zips the gem tree no longer carries, mirrored from the releases bucket by
+  # `rake framework:releases:fetch`. Override via config.trmnl_framework.releases_root.
+  def self.releases_root
+    Pathname(Rails.application.config.trmnl_framework.releases_root.presence || Rails.root.join("storage/framework_releases"))
+  end
+
+  # Every tree a released file may live in, gem first.
+  def self.release_public_roots = [public_root, releases_root.join("public")]
+
+  # The on-disk copy of a release-relative path, or nil when no tree has it.
+  def self.released_file(relative) = release_public_roots.map { |root| root.join(relative) }.find(&:exist?)
+
+  # Semver directories under css/ or js/ across every tree.
+  def self.released_versions(kind)
+    release_public_roots.map { |root| root.join(kind) }.select(&:directory?)
+                        .flat_map { |dir| dir.children.map { |child| child.basename.to_s } }
+                        .grep(/\A\d+\.\d+\.\d+\z/).uniq
+  end
+
   # Local docs server (bin/dev). Not used in production hosts.
   def self.server_builds = Engine.root.join("server/app/assets/builds")
 

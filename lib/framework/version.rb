@@ -94,7 +94,7 @@ module Framework
     # Development mode returns the released URLs too: the live build symlinks carry
     # plugins.css and plugins.js only, never themes.
     def theme_css_urls
-      return {} unless Framework.public_root.join("css/#{@number}/themes").directory?
+      return {} unless Framework.released_file("css/#{@number}/themes")&.directory?
 
       Themes.ids.index_with { |id| "#{asset_host}/css/#{@number}/#{Themes.css_path(id)}" }
     end
