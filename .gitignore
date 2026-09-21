@@ -12,6 +12,8 @@
 /log/*
 !/log/.keep
 /storage/
+# rake framework:releases:fetch mirrors the released css/js here for the docs host and its specs.
+/server/storage/
 /public/assets/
 # rake framework:generate_markdown output: the docs Markdown twins and the LLM indexes,
 # regenerated on demand rather than committed.

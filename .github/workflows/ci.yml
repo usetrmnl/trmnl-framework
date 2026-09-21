@@ -169,6 +169,14 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      # Older releases live in the bucket, not the tree (docs/ENGINE_INTEGRATION.md). The mirror
+      # is cached on the bucket's index, so a new release is the only thing that refetches it.
+      - run: curl -fsSL https://trmnl-framework-releases.nyc3.digitaloceanspaces.com/index.json -o tmp/framework-releases-index.json
+      - uses: actions/cache@v4
+        with:
+          path: server/storage/framework_releases
+          key: framework-releases-${{ hashFiles('tmp/framework-releases-index.json') }}
+      - run: bundle exec rake framework:releases:fetch
       - run: bundle exec rspec ${{ matrix.args }}
 
   # The single check name branch protection points at. It is green only when every
@@ -215,6 +223,12 @@ jobs:
       # the @playwright/test version in the lockfile.
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: curl -fsSL https://trmnl-framework-releases.nyc3.digitaloceanspaces.com/index.json -o tmp/framework-releases-index.json
+      - uses: actions/cache@v4
+        with:
+          path: server/storage/framework_releases
+          key: framework-releases-${{ hashFiles('tmp/framework-releases-index.json') }}
+      - run: bundle exec rake framework:releases:fetch
       - run: npm run test:runtime
       - uses: actions/upload-artifact@v4
         if: failure()
@@ -245,6 +259,12 @@ jobs:
       # the @playwright/test version in the lockfile.
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: curl -fsSL https://trmnl-framework-releases.nyc3.digitaloceanspaces.com/index.json -o tmp/framework-releases-index.json
+      - uses: actions/cache@v4
+        with:
+          path: server/storage/framework_releases
+          key: framework-releases-${{ hashFiles('tmp/framework-releases-index.json') }}
+      - run: bundle exec rake framework:releases:fetch
       - run: npm run test:visual
       - uses: actions/upload-artifact@v4
         if: failure()
@@ -275,6 +295,12 @@ jobs:
       # the @playwright/test version in the lockfile.
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox
+      - run: curl -fsSL https://trmnl-framework-releases.nyc3.digitaloceanspaces.com/index.json -o tmp/framework-releases-index.json
+      - uses: actions/cache@v4
+        with:
+          path: server/storage/framework_releases
+          key: framework-releases-${{ hashFiles('tmp/framework-releases-index.json') }}
+      - run: bundle exec rake framework:releases:fetch
       - run: npm run test:release
       - uses: actions/upload-artifact@v4
         if: failure()

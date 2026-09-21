@@ -162,6 +162,12 @@ jobs:
       # suite's own web server recompiles the Sass afterwards, which leaves the
       # sources untouched and so keeps the freshness guard satisfied.
       - run: bundle exec rake framework:processed_bundle
+      - run: curl -fsSL https://trmnl-framework-releases.nyc3.digitaloceanspaces.com/index.json -o tmp/framework-releases-index.json
+      - uses: actions/cache@v4
+        with:
+          path: server/storage/framework_releases
+          key: framework-releases-${{ hashFiles('tmp/framework-releases-index.json') }}
+      - run: bundle exec rake framework:releases:fetch
       - run: npm run test:runtime:processed
       - uses: actions/upload-artifact@v4
         if: failure()
