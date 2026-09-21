@@ -123,10 +123,10 @@ module Framework
       file if file&.exist?
     end
 
-    def initialize(app, root = nil)
+    def initialize(app, root = nil, mirror = Framework.releases_root)
       @app = app
       @root = Pathname(root || Engine.root)
-      @file_server = ::Rack::Files.new(@root.join("public").to_s)
+      @file_servers = [@root, Pathname(mirror)].map { |dir| ::Rack::Files.new(dir.join("public").to_s) }
     end
 
     def call(env)
@@ -145,8 +145,12 @@ module Framework
       # twins of the docs pages; a page URL has no file behind it, so its lookup misses and
       # the request falls through to the docs routes.
       if serves_public_file?(path)
-        status, headers, body = serve_with_encoding(env, @file_server)
-        return with_cache_control([status, headers, body], path) if status < 400
+        @file_servers.each do |file_server|
+          status, headers, body = serve_with_encoding(env, file_server)
+          return with_cache_control([status, headers, body], path) if status < 400
+
+          body.close if body.respond_to?(:close)
+        end
       end
 
       @app.call(env)

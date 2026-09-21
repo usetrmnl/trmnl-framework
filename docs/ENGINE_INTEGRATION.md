@@ -105,6 +105,25 @@ No release ever published it, so the gem carries a built snapshot
 builds. `bin/rails framework:legacy_bundle` refreshes it, the release build runs
 that too, and rspec fails when the snapshot and `plugins_legacy.scss` disagree.
 
+### Released versions: the gem tree carries `latest`, the bucket carries history
+
+Every released `css/<v>/`, `js/<v>/` and `framework/trmnl-framework--<v>.zip` is also
+published to a public bucket, `https://trmnl-framework-releases.nyc3.digitaloceanspaces.com`,
+with an `index.json` listing its keys. The gem tree keeps `latest` and the current version;
+older releases come from the bucket:
+
+```bash
+bin/rails framework:releases:fetch   # downloads what this host lacks, anonymous HTTPS
+```
+
+They land under `Framework.releases_root` (default `storage/framework_releases/`, gitignored
+in a generated app; set `config.trmnl_framework.releases_root` to move it), and
+`Framework::Static` serves that tree behind the gem's own, with the same encoding
+negotiation and cache headers. The releases page and the versioned docs read both trees
+through `Framework.released_file` / `Framework.released_versions`. Run the task once on a
+fresh host and again after each gem bump; it is idempotent and only ever adds files. A host
+that mirrors the bucket elsewhere points `config.trmnl_framework.releases_url` at its copy.
+
 Because the middleware sits ahead of `ActionDispatch::Static`, the gem's file
 wins in-process wherever the host and the gem both have one. Keep gem-owned
 trees out of the host's `public/` entirely so the two orders (in-process and

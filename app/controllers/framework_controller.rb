@@ -384,12 +384,7 @@ class FrameworkController < Framework.parent_controller_class
 
   # Cheap fingerprint of the on-disk release dirs so the cached config rebuilds
   # the moment a framework release is published or removed.
-  def released_assets_signature
-    %w[css js].flat_map do |kind|
-      dir = Framework.public_root.join(kind)
-      Dir.exist?(dir) ? Dir.children(dir) : []
-    end.sort
-  end
+  def released_assets_signature = %w[css js].flat_map { |kind| Framework.released_versions(kind) }.sort
 
   def framework_fonts_config
     Framework::Fonts
@@ -647,7 +642,7 @@ class FrameworkController < Framework.parent_controller_class
     semver = docs_released_plugins_urls&.dig(:semver)
     candidates = [semver && "css/#{semver}/#{relative}"]
     candidates << "css/latest/#{relative}" if fallback_to_latest
-    released = candidates.compact.find { |rel| Framework.public_root.join(rel).exist? }
+    released = candidates.compact.find { |rel| Framework.released_file(rel) }
     "/#{released}" if released
   end
 
@@ -717,19 +712,14 @@ class FrameworkController < Framework.parent_controller_class
   end
 
   def build_releases_config
-    css_dir = Framework.public_root.join('css')
-    js_dir = Framework.public_root.join('js')
-
     versions_config = Framework::Version.config
     release_dates = versions_config['versions'].each_with_object({}) do |v, h|
       h[v['number']] = Date.parse(v['released_at']) if v['released_at']
     end
 
-    css_versions = Dir.children(css_dir).grep(SEMVER_PATTERN)
-    js_versions = Dir.children(js_dir).grep(SEMVER_PATTERN)
-    all_versions = (css_versions + js_versions).uniq
+    all_versions = (Framework.released_versions('css') + Framework.released_versions('js')).uniq
 
-    releases = all_versions.map { |v| build_release_entry(v, css_dir, js_dir, released_at: release_dates[v]) }
+    releases = all_versions.map { |v| build_release_entry(v, released_at: release_dates[v]) }
 
     releases
       .sort_by { |r| Gem::Version.new(r[:version]) }
@@ -739,7 +729,7 @@ class FrameworkController < Framework.parent_controller_class
       .to_h
   end
 
-  def build_release_entry(version, css_dir, js_dir, options = {})
+  def build_release_entry(version, options = {})
     released_at = options[:released_at]
     base = Framework.docs_base_url.to_s
     zip_name = "trmnl-framework--#{version}.zip"
@@ -748,10 +738,10 @@ class FrameworkController < Framework.parent_controller_class
     # none. Nothing special is needed for that: the listing already prices every asset by
     # whether its file is on disk, and the page renders only the ones that exist.
     bundle = BUNDLE_VARIANTS
-    asset_defs = bundle_asset_defs(version, css_dir, js_dir, bundle) +
-                 theme_asset_defs(version, css_dir) + [
+    asset_defs = bundle_asset_defs(version, bundle) +
+                 theme_asset_defs(version) + [
                    {
-                     path: Framework.public_root.join('framework', zip_name),
+                     path: Framework.released_file("framework/#{zip_name}"),
                      name: zip_name,
                      type: 'zip',
                      variant: 'Bundle',
@@ -770,7 +760,7 @@ class FrameworkController < Framework.parent_controller_class
                  ]
 
     assets = asset_defs.map do |file|
-      exists = File.exist?(file[:path])
+      exists = file[:path].present? && File.exist?(file[:path])
       relative = file[:url] || "/#{file[:type]}/#{version}/#{file[:name]}"
       {
         name: file[:name],
@@ -790,37 +780,37 @@ class FrameworkController < Framework.parent_controller_class
 
   # The release task publishes the resolved color manifest per version, so the
   # rolling "latest" card pins the same version its zip does.
-  def bundle_asset_defs(version, css_dir, js_dir, bundle)
+  def bundle_asset_defs(version, bundle)
     [
-      { path: css_dir.join(version, 'plugins.css'), name: 'plugins.css', type: 'css', variant: bundle[:primary], group: 'Stylesheet' },
-      { path: css_dir.join(version, 'plugins.css.gz'), name: 'plugins.css.gz', type: 'css', variant: 'Gzipped', group: 'Stylesheet' },
-      { path: css_dir.join(version, 'plugins.css.br'), name: 'plugins.css.br', type: 'css', variant: 'Brotli', group: 'Stylesheet' },
-      { path: css_dir.join(version, 'plugins.min.css'), name: 'plugins.min.css', type: 'css', variant: bundle[:alias], group: 'Stylesheet' },
-      { path: css_dir.join(version, 'plugins.min.css.gz'), name: 'plugins.min.css.gz', type: 'css', variant: "#{bundle[:alias]} + Gzipped", group: 'Stylesheet' },
-      { path: css_dir.join(version, 'plugins.min.css.br'), name: 'plugins.min.css.br', type: 'css', variant: "#{bundle[:alias]} + Brotli", group: 'Stylesheet' },
-      { path: js_dir.join(version, 'plugins.js'), name: 'plugins.js', type: 'js', variant: bundle[:primary], group: 'JavaScript' },
-      { path: js_dir.join(version, 'plugins.js.gz'), name: 'plugins.js.gz', type: 'js', variant: 'Gzipped', group: 'JavaScript' },
-      { path: js_dir.join(version, 'plugins.js.br'), name: 'plugins.js.br', type: 'js', variant: 'Brotli', group: 'JavaScript' },
-      { path: js_dir.join(version, 'plugins.min.js'), name: 'plugins.min.js', type: 'js', variant: bundle[:alias], group: 'JavaScript' },
-      { path: js_dir.join(version, 'plugins.min.js.gz'), name: 'plugins.min.js.gz', type: 'js', variant: "#{bundle[:alias]} + Gzipped", group: 'JavaScript' },
-      { path: js_dir.join(version, 'plugins.min.js.br'), name: 'plugins.min.js.br', type: 'js', variant: "#{bundle[:alias]} + Brotli", group: 'JavaScript' }
+      { path: Framework.released_file("css/#{version}/plugins.css"), name: 'plugins.css', type: 'css', variant: bundle[:primary], group: 'Stylesheet' },
+      { path: Framework.released_file("css/#{version}/plugins.css.gz"), name: 'plugins.css.gz', type: 'css', variant: 'Gzipped', group: 'Stylesheet' },
+      { path: Framework.released_file("css/#{version}/plugins.css.br"), name: 'plugins.css.br', type: 'css', variant: 'Brotli', group: 'Stylesheet' },
+      { path: Framework.released_file("css/#{version}/plugins.min.css"), name: 'plugins.min.css', type: 'css', variant: bundle[:alias], group: 'Stylesheet' },
+      { path: Framework.released_file("css/#{version}/plugins.min.css.gz"), name: 'plugins.min.css.gz', type: 'css', variant: "#{bundle[:alias]} + Gzipped", group: 'Stylesheet' },
+      { path: Framework.released_file("css/#{version}/plugins.min.css.br"), name: 'plugins.min.css.br', type: 'css', variant: "#{bundle[:alias]} + Brotli", group: 'Stylesheet' },
+      { path: Framework.released_file("js/#{version}/plugins.js"), name: 'plugins.js', type: 'js', variant: bundle[:primary], group: 'JavaScript' },
+      { path: Framework.released_file("js/#{version}/plugins.js.gz"), name: 'plugins.js.gz', type: 'js', variant: 'Gzipped', group: 'JavaScript' },
+      { path: Framework.released_file("js/#{version}/plugins.js.br"), name: 'plugins.js.br', type: 'js', variant: 'Brotli', group: 'JavaScript' },
+      { path: Framework.released_file("js/#{version}/plugins.min.js"), name: 'plugins.min.js', type: 'js', variant: bundle[:alias], group: 'JavaScript' },
+      { path: Framework.released_file("js/#{version}/plugins.min.js.gz"), name: 'plugins.min.js.gz', type: 'js', variant: "#{bundle[:alias]} + Gzipped", group: 'JavaScript' },
+      { path: Framework.released_file("js/#{version}/plugins.min.js.br"), name: 'plugins.min.js.br', type: 'js', variant: "#{bundle[:alias]} + Brotli", group: 'JavaScript' }
     ]
   end
 
-  def theme_asset_defs(version, css_dir)
+  def theme_asset_defs(version)
     Framework::Themes.ids.flat_map do |theme_id|
       theme_name = Framework::Themes::NAMES_BY_ID.fetch(theme_id)
       [
-        { path: css_dir.join(version, 'themes', "#{theme_id}-theme.css"), name: "themes/#{theme_id}-theme.css", type: 'css', variant: "#{theme_name} Theme", group: 'Themes' },
-        { path: css_dir.join(version, 'themes', "#{theme_id}-theme.css.gz"), name: "themes/#{theme_id}-theme.css.gz", type: 'css', variant: "#{theme_name} Theme (Gzipped)", group: 'Themes' },
-        { path: css_dir.join(version, 'themes', "#{theme_id}-theme.css.br"), name: "themes/#{theme_id}-theme.css.br", type: 'css', variant: "#{theme_name} Theme (Brotli)", group: 'Themes' }
+        { path: Framework.released_file("css/#{version}/themes/#{theme_id}-theme.css"), name: "themes/#{theme_id}-theme.css", type: 'css', variant: "#{theme_name} Theme", group: 'Themes' },
+        { path: Framework.released_file("css/#{version}/themes/#{theme_id}-theme.css.gz"), name: "themes/#{theme_id}-theme.css.gz", type: 'css', variant: "#{theme_name} Theme (Gzipped)", group: 'Themes' },
+        { path: Framework.released_file("css/#{version}/themes/#{theme_id}-theme.css.br"), name: "themes/#{theme_id}-theme.css.br", type: 'css', variant: "#{theme_name} Theme (Brotli)", group: 'Themes' }
       ]
     end
   end
 
   def color_manifest_asset_def(version)
     {
-      path: Framework.public_root.join('framework', 'colors', version, COLOR_MANIFEST_NAME),
+      path: Framework.released_file("framework/colors/#{version}/#{COLOR_MANIFEST_NAME}"),
       name: COLOR_MANIFEST_NAME,
       type: 'json',
       variant: 'Color Manifest',
