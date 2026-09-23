@@ -216,6 +216,263 @@ test('modern and legacy table counter attributes produce equivalent, idempotent 
   expectNoUnexpectedErrors(browserSignals, state);
 });
 
+for (const maxHeightAttribute of ['', 'data-table-max-height="120"']) {
+  test(`table overflow uses logical heights under screen scaling with ${maxHeightAttribute || 'automatic height'}`, async ({ page }) => {
+    const browserSignals = await openRuntimePage(page);
+    await mountFixture(page, {
+      html: `
+        <div class="runtime-scaled-table-parent">
+          <table class="table runtime-table" data-table-limit="true" ${maxHeightAttribute}>
+            <thead><tr><th>Heading</th></tr></thead>
+            <tbody>
+              ${Array.from({ length: 6 }, (_, index) => `<tr id="scaled-row-${index + 1}"><td>Row ${index + 1}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `,
+      css: `${overflowCss}
+        .runtime-scaled-table-parent {
+          box-sizing: border-box;
+          width: 240px;
+          height: 120px;
+        }
+      `,
+      screenClasses: ['screen--v2', 'screen--scale-xxlarge'],
+    });
+
+    await runTerminalize(page);
+    const result = await page.evaluate(() => {
+      const parent = document.querySelector('.runtime-scaled-table-parent');
+      const table = parent.querySelector('table');
+      const rows = Array.from(table.querySelectorAll('tbody > tr[id]'));
+      const labels = Array.from(table.querySelectorAll('tbody > [data-table-overflow-label="true"]'));
+
+      return {
+        parentClientHeight: parent.clientHeight,
+        parentRenderedHeight: parent.getBoundingClientRect().height,
+        tableFitsParent: table.getBoundingClientRect().height <= parent.getBoundingClientRect().height + 0.01,
+        visibleIds: rows.filter((row) => getComputedStyle(row).display !== 'none').map((row) => row.id),
+        hiddenIds: rows.filter((row) => getComputedStyle(row).display === 'none').map((row) => row.id),
+        labels: labels.map((row) => row.textContent.trim()),
+      };
+    });
+
+    expect(result).toEqual({
+      parentClientHeight: 120,
+      parentRenderedHeight: 216,
+      tableFitsParent: true,
+      visibleIds: ['scaled-row-1', 'scaled-row-2'],
+      hiddenIds: ['scaled-row-3', 'scaled-row-4', 'scaled-row-5', 'scaled-row-6'],
+      labels: ['and 4 more'],
+    });
+
+    const state = await runtimeSignals(page);
+    expectStatsConsistent(state);
+    expectNoUnexpectedErrors(browserSignals, state);
+  });
+}
+
+for (const { description, budget, fixtureCss, visibleCount } of [
+  {
+    description: 'fractional rows',
+    budget: 120,
+    fixtureCss: `
+      .runtime-height-table-parent tr,
+      .runtime-height-table-parent th,
+      .runtime-height-table-parent td {
+        height: 24.4px;
+      }
+    `,
+    visibleCount: 2,
+  },
+  {
+    description: 'bordered content-box rows',
+    budget: 128,
+    fixtureCss: `
+      .runtime-height-table-parent tr {
+        box-sizing: content-box;
+        height: 24px;
+        border: 4px solid;
+      }
+
+      .runtime-height-table-parent th,
+      .runtime-height-table-parent td {
+        box-sizing: border-box;
+        height: 16px;
+        line-height: 16px;
+      }
+    `,
+    visibleCount: { 1: 3, 1.8: 2 },
+  },
+]) {
+  for (const { scale, screenClasses } of [
+    { scale: 1, screenClasses: [] },
+    { scale: 1.8, screenClasses: ['screen--v2', 'screen--scale-xxlarge'] },
+  ]) {
+    for (const budgetMode of ['automatic', 'explicit']) {
+      test(`${description} fit the ${budgetMode} height budget at ${scale} scale`, async ({ page }) => {
+        const browserSignals = await openRuntimePage(page);
+        const maxHeightAttribute = budgetMode === 'explicit' ? `data-table-max-height="${budget}"` : '';
+        await mountFixture(page, {
+          html: `
+            <div class="runtime-height-table-parent">
+              <table class="table runtime-table" data-table-limit="true" ${maxHeightAttribute}>
+                <thead><tr><th>Heading</th></tr></thead>
+                <tbody>
+                  ${Array.from({ length: 6 }, (_, index) => `<tr id="height-row-${index + 1}"><td>Row ${index + 1}</td></tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          `,
+          css: `${overflowCss}
+            .runtime-height-table-parent {
+              box-sizing: border-box;
+              width: 240px;
+              height: ${budget}px;
+            }
+
+            ${fixtureCss}
+          `,
+          screenClasses,
+        });
+
+        await runTerminalize(page);
+        const result = await page.evaluate(() => {
+          const parent = document.querySelector('.runtime-height-table-parent');
+          const table = parent.querySelector('table');
+          const rows = Array.from(table.querySelectorAll('tbody > tr[id]'));
+          const labels = Array.from(table.querySelectorAll('tbody > [data-table-overflow-label="true"]'));
+
+          return {
+            tableFitsParent: table.getBoundingClientRect().height <= parent.getBoundingClientRect().height + 0.01,
+            visibleIds: rows.filter((row) => getComputedStyle(row).display !== 'none').map((row) => row.id),
+            hiddenIds: rows.filter((row) => getComputedStyle(row).display === 'none').map((row) => row.id),
+            labels: labels.map((row) => row.textContent.trim()),
+          };
+        });
+
+        const rowIds = Array.from({ length: 6 }, (_, index) => `height-row-${index + 1}`);
+        const expectedVisibleCount = typeof visibleCount === 'number' ? visibleCount : visibleCount[scale];
+        expect(result).toEqual({
+          tableFitsParent: true,
+          visibleIds: rowIds.slice(0, expectedVisibleCount),
+          hiddenIds: rowIds.slice(expectedVisibleCount),
+          labels: [`and ${6 - expectedVisibleCount} more`],
+        });
+
+        const state = await runtimeSignals(page);
+        expectStatsConsistent(state);
+        expectNoUnexpectedErrors(browserSignals, state);
+      });
+    }
+  }
+}
+
+for (const { description, budget, firstRowHeight, counterHeight, visibleIds, hiddenIds, labels } of [
+  {
+    description: 'a tall first row and a shorter counter',
+    budget: 125,
+    firstRowHeight: 60,
+    counterHeight: 20,
+    visibleIds: ['counter-row-1', 'counter-row-2'],
+    hiddenIds: ['counter-row-3', 'counter-row-4'],
+    labels: ['and 2 more'],
+  },
+  {
+    description: 'a counter that cannot fit beside the first row',
+    budget: 100,
+    firstRowHeight: 80,
+    counterHeight: 20,
+    visibleIds: ['counter-row-1'],
+    hiddenIds: ['counter-row-2', 'counter-row-3', 'counter-row-4'],
+    labels: [],
+  },
+  {
+    description: 'a hidden first row and an oversized counter',
+    budget: 60,
+    firstRowHeight: 120,
+    counterHeight: 30,
+    visibleIds: ['counter-row-2'],
+    hiddenIds: ['counter-row-1', 'counter-row-3', 'counter-row-4'],
+    labels: [],
+  },
+]) {
+  test(`table overflow handles ${description} across repeated passes`, async ({ page }) => {
+    const browserSignals = await openRuntimePage(page);
+    await mountFixture(page, {
+      html: `
+        <div class="runtime-counter-table-parent">
+          <table class="table runtime-table" data-table-limit="true">
+            <thead><tr><th>Heading</th></tr></thead>
+            <tbody>
+              ${Array.from({ length: 4 }, (_, index) => `<tr id="counter-row-${index + 1}"><td>Row ${index + 1}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `,
+      css: `${overflowCss}
+        .runtime-counter-table-parent {
+          box-sizing: border-box;
+          width: 240px;
+          height: ${budget}px;
+        }
+
+        .runtime-counter-table-parent tr,
+        .runtime-counter-table-parent th,
+        .runtime-counter-table-parent td {
+          height: 20px;
+          line-height: 20px;
+        }
+
+        .runtime-counter-table-parent tbody > tr:first-child,
+        .runtime-counter-table-parent tbody > tr:first-child td {
+          height: ${firstRowHeight}px;
+        }
+
+        .runtime-counter-table-parent [data-table-overflow-label] .label {
+          font-size: 12px;
+          line-height: ${counterHeight}px;
+        }
+
+        .runtime-counter-table-parent [data-table-overflow-label] td {
+          height: ${counterHeight}px;
+          line-height: ${counterHeight}px;
+        }
+      `,
+    });
+    await page.evaluate(() => {
+      window.__TRMNL_COUNTER_REFS__ = Array.from(document.querySelectorAll('.runtime-counter-table-parent tbody > tr[id]'));
+    });
+
+    const snapshot = () => page.evaluate(() => {
+      const parent = document.querySelector('.runtime-counter-table-parent');
+      const table = parent.querySelector('table');
+      const rows = Array.from(table.querySelectorAll('tbody > tr[id]'));
+      const labelRows = Array.from(table.querySelectorAll('tbody > [data-table-overflow-label="true"]'));
+
+      return {
+        tableFitsParent: table.getBoundingClientRect().height <= parent.getBoundingClientRect().height + 0.01,
+        visibleIds: rows.filter((row) => getComputedStyle(row).display !== 'none').map((row) => row.id),
+        hiddenIds: rows.filter((row) => getComputedStyle(row).display === 'none').map((row) => row.id),
+        labels: labelRows.map((row) => row.textContent.trim()),
+        sameReferences: window.__TRMNL_COUNTER_REFS__.every((row) => document.getElementById(row.id) === row),
+      };
+    });
+
+    await runTerminalize(page);
+    const first = await snapshot();
+    await runTerminalize(page);
+    const second = await snapshot();
+
+    expect(first).toEqual({ tableFitsParent: true, visibleIds, hiddenIds, labels, sameReferences: true });
+    expect(second).toEqual(first);
+
+    const state = await runtimeSignals(page);
+    expectStatsConsistent(state);
+    expectNoUnexpectedErrors(browserSignals, state);
+  });
+}
+
 test('a zero-height overflow budget hides but never removes authored nodes', async ({ page }) => {
   const browserSignals = await openRuntimePage(page);
   await mountFixture(page, {
