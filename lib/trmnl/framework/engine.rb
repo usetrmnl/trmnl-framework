@@ -45,6 +45,10 @@ module Framework
       )
     end
 
+    initializer "trmnl_framework.preload_data_files" do |app|
+      app.config.after_initialize { Framework.preload_data_files }
+    end
+
     # One line at boot naming the asset set the docs will link and why, so a page that
     # ignores a Sass edit is diagnosable without reading the controller. Development
     # only: nowhere else can serve anything but the releases.
