@@ -308,7 +308,7 @@ RSpec.describe 'Framework docs serving mode', type: :request do
   # serving they have today.
   describe 'outside development' do
     it 'serves released assets for every supported version' do
-      expected = { '3.3' => latest_release, '3.1' => '3.1.8', '3.0' => '3.0.5', '2.3' => '2.3.7', '1.2' => '1.2.0' }
+      expected = { current_version => latest_release, '3.1' => '3.1.8', '3.0' => '3.0.5', '2.3' => '2.3.7', '1.2' => '1.2.0' }
 
       aggregate_failures do
         expected.each do |version, semver|

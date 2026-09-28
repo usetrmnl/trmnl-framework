@@ -9,6 +9,33 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
+          <%= framework_heading(3, 'Theme Fonts and JavaScript') %>
+          <p class="<%= framework_section_description_classes %>">
+            Framework 3.4 adds the Sass <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code>
+            mixin to define a theme's font. The existing JavaScript typography APIs read the resulting computed CSS,
+            including the chosen font and the device's sizes. See <%= render DocsRef.new(page: :theme_slots) %> for the Sass example.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A theme switch changes the screen's CSS class. Previously returned specs and copied inline styles are snapshots:
+            read and apply them again after the switch, and update chart options from a fresh
+            <code class="<%= framework_section_code_classes %>">TRMNLCharts.textStyle()</code> result.
+            See <%= render DocsRef.new(page: :paint_charts) %> for chart integration.
+          </p>
+          <%= render CodeExampleComponent.new(demo_code: '// Both theme stylesheets are already loaded.
+const screen = document.querySelector(".screen");
+screen.classList.replace("screen--theme-example", "screen--theme-alternate");
+const node = document.getElementById("custom-label");
+const spec = TRMNLPaint.type("label", { el: screen });
+TRMNLPaint.applyType(node, spec);', language: 'javascript') %>
+          <p class="<%= framework_section_description_classes %>">
+            For canvas or chart layout that measures text, wait for <code class="<%= framework_section_code_classes %>">document.fonts.ready</code>
+            after applying the font. The existing APIs cover custom typefaces; no separate JavaScript typeface setter is required.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-8">
+        <div class="space-y-4">
           <%= framework_heading(3, 'Typography') %>
           <p class="<%= framework_section_description_classes %>">
             Every function takes an optional <code class="<%= framework_section_code_classes %>">{ el }</code>: the id
@@ -45,7 +72,7 @@
             <code class="<%= framework_section_code_classes %>">'description'</code> to their own classes. Any other
             string passes through as a literal class list (e.g.
             <code class="<%= framework_section_code_classes %>">'value value--xxlarge'</code>). Font family, size,
-            weight, and line-height are measured live, so they always match the active font bundle and density.
+            weight, and line-height are measured live, so they match the active font bundle, custom theme font, and density.
           </p>
         </div>
 

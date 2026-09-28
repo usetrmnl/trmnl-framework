@@ -10,6 +10,7 @@
 @use 'sass:meta';
 @use 'sass:string';
 @use '../config/tokens' as tokens;
+@use '../config/variables_overrides' as device-vars;
 @use 'border-levels';
 
 // How many chart-series slots the ramp publishes. The same constant emits the
@@ -74,7 +75,14 @@ $chart-series-slots: 16;
 // The art vars are published on .item, and a var() inside a custom property
 // resolves on the element that declares it, so the slot is set there too.
 @mixin item-border($art) {
-    .item { --framework-slot-item-border-art: #{$art}; }
+    .item {
+        --framework-slot-item-border-art: #{$art};
+        @each $style in outline, corner-brackets {
+            @if $art == string.unquote('var(--framework-item-border-art-#{$style})') {
+                --framework-slot-item-border-radius: var(--framework-item-border-radius-#{$style});
+            }
+        }
+    }
 }
 
 // Structure factors: unitless multipliers over the unthemed geometry. Each
@@ -85,6 +93,11 @@ $chart-series-slots: 16;
     @if $corners != null { --framework-layout-corner-factor: #{$corners}; }
     @if $title-bar-height != null { --framework-layout-title-bar-height-factor: #{$title-bar-height}; }
     @if $progress != null { --framework-layout-progress-factor: #{$progress}; }
+}
+
+// Use vector typography with a self-hosted face and the built-in fallback.
+@mixin typeface($family) {
+    @include device-vars.vector-font-face-variables(list.join($family, ('Inter Variable', Inter), comma));
 }
 
 // One signed shift over every vector-face role weight, clamped to renderable

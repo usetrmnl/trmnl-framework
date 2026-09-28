@@ -38,12 +38,11 @@ RSpec.describe 'Framework text paint scope' do
 
   # Selector list of every rule whose body carries the text paint block. Gates
   # collapse their screen scopes into :is(), whose commas rule out splitting on
-  # commas, so each rule stays one string. The body is a lookahead so the rule's
-  # closing brace stays available as the next rule's anchor.
+  # commas, so each rule stays one string.
   def paint_rules
-    @paint_rules ||= css.scan(
-      /(?:[{}]|\A)([^{}]*)\{(?=[^{}]*#{Regexp.escape(paint_head)}[^{}]*\})/
-    ).flatten
+    @paint_rules ||= css.split(/([{}])/).each_cons(4).filter_map do |selectors, opening, body, closing|
+      selectors if opening == '{' && closing == '}' && body.include?(paint_head)
+    end
   end
 
   # Rules that paint text on their own. The composed bg+text rule is excluded:
