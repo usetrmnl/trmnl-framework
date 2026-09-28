@@ -9,6 +9,14 @@ module Framework
   # Source of truth for YAML data, Sass, and the release archive.
   def self.data_root = Engine.root
 
+  # Called at boot: a deploy's `bundle clean` can delete data_root under a process that is still serving.
+  def self.preload_data_files
+    Version.config
+    ColorData.load
+    Fonts.config
+    Devices.manifest
+  end
+
   # Always the gem archive. Hosts serve these URLs via Framework::Static;
   # they never copy public/css|js into the app tree.
   def self.public_root = Engine.root.join("public")
