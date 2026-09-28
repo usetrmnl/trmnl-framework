@@ -1,0 +1,12 @@
+// ============================================
+// TRMNL Framework - Typography Mixins
+// ============================================
+
+@use 'sass:list';
+@use '../config/variables_overrides' as device-vars;
+
+// Put a font family ahead of Inter on every text role. Weights follow the vector
+// face; sizes and line heights stay with the active bundle.
+@mixin typeface($family) {
+    @include device-vars.vector-font-face-variables(list.join($family, ('Inter Variable', Inter), comma));
+}

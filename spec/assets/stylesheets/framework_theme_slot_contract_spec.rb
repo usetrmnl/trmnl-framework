@@ -24,6 +24,7 @@ module ThemeSlotContract
   PROBES = <<~SCSS.freeze
     @use 'framework/mixins/theme-slots' as theme-slots;
     @use 'framework/config/variables_overrides' as device-vars;
+    @use 'framework/mixins/typography';
 
     .level-remap { @include theme-slots.utility-border-token(65, h, 'red-60'); }
     .token-slot { @include theme-slots.border-token-slot('label-underline', 'red-75'); }
@@ -41,6 +42,7 @@ module ThemeSlotContract
     .card-brackets { @include theme-slots.item-border(var(--framework-item-border-art-corner-brackets)); }
     .custom-typeface { @include theme-slots.typeface('Example Sans'); }
     .typeface-list { @include theme-slots.typeface(('Example Sans', 'Example Serif')); }
+    .general-typeface { @include typography.typeface('Example Sans'); }
     .vector-typeface { @include device-vars.vector-font-face-variables; }
     .weight-shift { @include theme-slots.font-weight-shift(-100); }
   SCSS
@@ -106,6 +108,10 @@ RSpec.describe 'Framework theme slot contract' do
 
     it 'leaves device sizes and line heights unchanged' do
       expect(custom.keys.grep(/font-size|line-height/)).to be_empty
+    end
+
+    it 'emits the theme typeface from the general typography mixin' do
+      expect(probe.rule('.general-typeface')).to eq(custom)
     end
   end
 

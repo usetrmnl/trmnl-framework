@@ -65,7 +65,7 @@ RSpec.describe 'the processed bundle contract' do
   let(:rename_map) { JSON.parse(rename_map_path.read) }
 
   it 'keeps the documented token names a plugin author writes' do
-    expect(names).to include('--gray-20', '--title-font-size')
+    expect(names).to include('--gray-20', '--title-font-size', '--framework-typeface')
   end
 
   it 'keeps every custom property the published themes name' do

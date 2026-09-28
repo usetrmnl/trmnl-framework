@@ -10,8 +10,10 @@
 @use 'sass:meta';
 @use 'sass:string';
 @use '../config/tokens' as tokens;
-@use '../config/variables_overrides' as device-vars;
 @use 'border-levels';
+
+// A theme's font: the general typography mixin, under the theme-slots name.
+@forward 'typography' show typeface;
 
 // How many chart-series slots the ramp publishes. The same constant emits the
 // slots and the --framework-chart-series-count var TRMNLPaint.ramp() and
@@ -93,11 +95,6 @@ $chart-series-slots: 16;
     @if $corners != null { --framework-layout-corner-factor: #{$corners}; }
     @if $title-bar-height != null { --framework-layout-title-bar-height-factor: #{$title-bar-height}; }
     @if $progress != null { --framework-layout-progress-factor: #{$progress}; }
-}
-
-// Use vector typography with a self-hosted face and the built-in fallback.
-@mixin typeface($family) {
-    @include device-vars.vector-font-face-variables(list.join($family, ('Inter Variable', Inter), comma));
 }
 
 // One signed shift over every vector-face role weight, clamped to renderable
