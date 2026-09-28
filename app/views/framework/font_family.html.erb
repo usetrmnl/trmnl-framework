@@ -6,6 +6,15 @@
   <div class="<%= layout_framework_content_classes %>">
     <%= render_framework_intro_paragraph(:font_family) %>
 
+    <% if current_docs_version == FrameworkController::CURRENT_DOCS_VERSION %>
+      <p class="<%= framework_section_description_classes %>">
+        To use your own font, define a theme with the Framework 3.4
+        <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code> mixin.
+        See <%= render DocsRef.new(page: :theme_slots) %> for font files, fallbacks, and activation,
+        and <%= render DocsRef.new(page: :paint_typography) %> to use the same typography from JavaScript.
+      </p>
+    <% end %>
+
     <div class="space-y-16">
 
       <%

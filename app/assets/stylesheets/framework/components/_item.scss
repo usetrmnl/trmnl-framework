@@ -44,6 +44,8 @@ $_corner-bracket-thickness: vars.ui-scaled(2px);
 
         // Values, not paint: a theme points the border slot at one of these.
         @include mixins.outline-dots($property: '--framework-item-border-art-outline');
+        --framework-item-border-radius-outline: 0px;
+        --framework-item-border-radius-corner-brackets: 0px;
         --framework-item-border-art-corner-brackets:
             linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 0 / #{$_corner-bracket-length} #{$_corner-bracket-thickness} no-repeat,
             linear-gradient(#{$_border-art-paint}, #{$_border-art-paint}) 0 0 / #{$_corner-bracket-thickness} #{$_corner-bracket-length} no-repeat,
@@ -70,7 +72,7 @@ $_corner-bracket-thickness: vars.ui-scaled(2px);
             pointer-events: none;
             background: var(--framework-slot-item-border-art, none);
             border: var(--framework-slot-item-border-art, none);
-            border-radius: vars.corner-scaled(7px);
+            border-radius: var(--framework-slot-item-border-radius, vars.corner-scaled(7px));
         }
 
         &--shrink {
@@ -174,6 +176,7 @@ $_corner-bracket-thickness: vars.ui-scaled(2px);
     @include mixins.for-screen-modifier('2bit', '4bit', 'color-full') {
         .item {
             --framework-item-border-art-outline: 1px solid #{$_border-art-paint};
+            --framework-item-border-radius-outline: #{vars.corner-scaled(7px)};
         }
     }
 

@@ -294,8 +294,8 @@ RSpec.describe 'Framework extended theming contract' do
       expect(overlay).to include('border:var(--framework-slot-item-border-art, none)')
     end
 
-    it 'rounds the overlay with the theme corner factor' do
-      expect(overlay).to include('border-radius:calc(7px*var(--ui-scale, 1)*var(--framework-layout-corner-factor, 1))')
+    it 'uses the border radius slot with the theme corner factor as fallback' do
+      expect(overlay).to include('border-radius:var(--framework-slot-item-border-radius, calc(7px * var(--ui-scale, 1) * var(--framework-layout-corner-factor, 1)))')
     end
 
     it 'publishes the dotted outline art as the exact stack the .outline utility draws' do

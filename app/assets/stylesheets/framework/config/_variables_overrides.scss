@@ -202,61 +202,61 @@ $progress-size-vars: (
 
 // Vector font face: families, smoothing, and the Inter-tuned weights; sizes and
 // line heights stay with the caller (the active bundle, or the density metrics below).
-@mixin vector-font-face-variables {
+@mixin vector-font-face-variables($family: ("Inter Variable", Inter)) {
     // The shift only reaches faces with a weight axis, so the bundles publish
     // whether it applies: a consumer can disable the control instead of
     // offering one that does nothing.
     --framework-font-weight-shift-applies: 1;
-    --title-bar-font-family: "Inter Variable", Inter;
+    --title-bar-font-family: #{meta.inspect($family)};
     --title-bar-font-smoothing: auto;
     --title-bar-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
     --title-bar-padding-top: 0px;
-    --label-font-family: "Inter Variable", Inter;
+    --label-font-family: #{meta.inspect($family)};
     --label-font-smoothing: auto;
     --label-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --label-small-font-family: "Inter Variable", Inter;
+    --label-small-font-family: #{meta.inspect($family)};
     --label-small-font-smoothing: auto;
     --label-small-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --label-large-font-family: "Inter Variable", Inter;
+    --label-large-font-family: #{meta.inspect($family)};
     --label-large-font-smoothing: auto;
     --label-large-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --label-xlarge-font-family: "Inter Variable", Inter;
+    --label-xlarge-font-family: #{meta.inspect($family)};
     --label-xlarge-font-smoothing: auto;
     --label-xlarge-font-weight: clamp(100, calc(475 + var(--framework-font-weight-shift, 0)), 900);
-    --label-xxlarge-font-family: "Inter Variable", Inter;
+    --label-xxlarge-font-family: #{meta.inspect($family)};
     --label-xxlarge-font-smoothing: auto;
     --label-xxlarge-font-weight: clamp(100, calc(450 + var(--framework-font-weight-shift, 0)), 900);
-    --description-font-family: "Inter Variable", Inter;
+    --description-font-family: #{meta.inspect($family)};
     --description-font-smoothing: auto;
     --description-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
-    --description-large-font-family: "Inter Variable", Inter;
+    --description-large-font-family: #{meta.inspect($family)};
     --description-large-font-smoothing: auto;
     --description-large-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
-    --description-xlarge-font-family: "Inter Variable", Inter;
+    --description-xlarge-font-family: #{meta.inspect($family)};
     --description-xlarge-font-smoothing: auto;
     --description-xlarge-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --description-xxlarge-font-family: "Inter Variable", Inter;
+    --description-xxlarge-font-family: #{meta.inspect($family)};
     --description-xxlarge-font-smoothing: auto;
     --description-xxlarge-font-weight: clamp(100, calc(475 + var(--framework-font-weight-shift, 0)), 900);
-    --title-font-family: "Inter Variable", Inter;
+    --title-font-family: #{meta.inspect($family)};
     --title-font-smoothing: auto;
     --title-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
-    --title-small-font-family: "Inter Variable", Inter;
+    --title-small-font-family: #{meta.inspect($family)};
     --title-small-font-smoothing: auto;
     --title-small-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
-    --title-large-font-family: "Inter Variable", Inter;
+    --title-large-font-family: #{meta.inspect($family)};
     --title-large-font-smoothing: auto;
     --title-large-font-weight: clamp(100, calc(425 + var(--framework-font-weight-shift, 0)), 900);
-    --title-xlarge-font-family: "Inter Variable", Inter;
+    --title-xlarge-font-family: #{meta.inspect($family)};
     --title-xlarge-font-smoothing: auto;
     --title-xlarge-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
-    --title-xxlarge-font-family: "Inter Variable", Inter;
+    --title-xxlarge-font-family: #{meta.inspect($family)};
     --title-xxlarge-font-smoothing: auto;
     --title-xxlarge-font-weight: clamp(100, calc(375 + var(--framework-font-weight-shift, 0)), 900);
-    --value-font-family: "Inter Variable", Inter;
+    --value-font-family: #{meta.inspect($family)};
     --value-font-weight: clamp(100, calc(450 + var(--framework-font-weight-shift, 0)), 900);
     --value-font-smoothing: auto;
-    --value-xxsmall-font-family: "Inter Variable", Inter;
+    --value-xxsmall-font-family: #{meta.inspect($family)};
     --value-xxsmall-font-weight: clamp(100, calc(700 + var(--framework-font-weight-shift, 0)), 900);
     --value-xxsmall-font-smoothing: auto;
     --value-xsmall-font-weight: clamp(100, calc(600 + var(--framework-font-weight-shift, 0)), 900);
@@ -269,32 +269,32 @@ $progress-size-vars: (
     --value-giga-font-weight: clamp(100, calc(250 + var(--framework-font-weight-shift, 0)), 900);
     --value-tera-font-weight: clamp(100, calc(225 + var(--framework-font-weight-shift, 0)), 900);
     --value-peta-font-weight: clamp(100, calc(200 + var(--framework-font-weight-shift, 0)), 900);
-    --richtext-font-family: "Inter Variable", Inter;
+    --richtext-font-family: #{meta.inspect($family)};
     --richtext-font-smoothing: auto;
     --richtext-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --richtext-large-font-family: "Inter Variable", Inter;
+    --richtext-large-font-family: #{meta.inspect($family)};
     --richtext-large-font-smoothing: auto;
     --richtext-large-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --richtext-small-font-family: "Inter Variable", Inter;
+    --richtext-small-font-family: #{meta.inspect($family)};
     --richtext-small-font-smoothing: auto;
     --richtext-small-font-weight: clamp(100, calc(500 + var(--framework-font-weight-shift, 0)), 900);
-    --richtext-xlarge-font-family: "Inter Variable", Inter;
+    --richtext-xlarge-font-family: #{meta.inspect($family)};
     --richtext-xlarge-font-smoothing: auto;
     --richtext-xlarge-font-weight: clamp(100, calc(425 + var(--framework-font-weight-shift, 0)), 900);
-    --richtext-xxlarge-font-family: "Inter Variable", Inter;
+    --richtext-xxlarge-font-family: #{meta.inspect($family)};
     --richtext-xxlarge-font-smoothing: auto;
     --richtext-xxlarge-font-weight: clamp(100, calc(400 + var(--framework-font-weight-shift, 0)), 900);
-    --richtext-xxxlarge-font-family: "Inter Variable", Inter;
+    --richtext-xxxlarge-font-family: #{meta.inspect($family)};
     --richtext-xxxlarge-font-smoothing: auto;
     --richtext-xxxlarge-font-weight: clamp(100, calc(375 + var(--framework-font-weight-shift, 0)), 900);
-    --item-index-font-family: "Inter Variable", Inter;
+    --item-index-font-family: #{meta.inspect($family)};
     --item-index-font-smoothing: auto;
     --item-index-font-weight: clamp(100, calc(600 + var(--framework-font-weight-shift, 0)), 900);
-    --font-small-font-family: "Inter Variable", Inter;
+    --font-small-font-family: #{meta.inspect($family)};
     --font-small-font-smoothing: auto;
-    --font-base-font-family: "Inter Variable", Inter;
+    --font-base-font-family: #{meta.inspect($family)};
     --font-base-font-smoothing: auto;
-    --font-large-font-family: "Inter Variable", Inter;
+    --font-large-font-family: #{meta.inspect($family)};
     --font-large-font-smoothing: auto;
 }
 

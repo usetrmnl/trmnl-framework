@@ -23,6 +23,7 @@ module ThemeSlotContract
 
   PROBES = <<~SCSS.freeze
     @use 'framework/mixins/theme-slots' as theme-slots;
+    @use 'framework/config/variables_overrides' as device-vars;
 
     .level-remap { @include theme-slots.utility-border-token(65, h, 'red-60'); }
     .token-slot { @include theme-slots.border-token-slot('label-underline', 'red-75'); }
@@ -36,6 +37,11 @@ module ThemeSlotContract
     .stroke-slot { @include theme-slots.stroke-slot('title-bar', 'black'); }
     .layout-factors { @include theme-slots.layout-factors($whitespace: 1.35, $corners: 0, $title-bar-height: 1.2, $progress: 1.5); }
     .layout-partial { @include theme-slots.layout-factors($corners: 1.6); }
+    .card-outline { @include theme-slots.item-border(var(--framework-item-border-art-outline)); }
+    .card-brackets { @include theme-slots.item-border(var(--framework-item-border-art-corner-brackets)); }
+    .custom-typeface { @include theme-slots.typeface('Example Sans'); }
+    .typeface-list { @include theme-slots.typeface(('Example Sans', 'Example Serif')); }
+    .vector-typeface { @include device-vars.vector-font-face-variables; }
     .weight-shift { @include theme-slots.font-weight-shift(-100); }
   SCSS
 
@@ -72,6 +78,36 @@ end
 
 RSpec.describe 'Framework theme slot contract' do
   let(:probe) { ThemeSlotContract }
+
+  %w[outline corner-brackets].each do |art|
+    it "exports the matching radius for #{art} card borders" do
+      selector = art == 'outline' ? '.card-outline .item' : '.card-brackets .item'
+      expect(probe.rule(selector)['--framework-slot-item-border-radius']).to eq("var(--framework-item-border-radius-#{art})")
+    end
+  end
+
+  describe 'custom typefaces' do
+    let(:custom) { probe.rule('.custom-typeface') }
+    let(:vector) { probe.rule('.vector-typeface') }
+
+    it 'sets every vector font family with the built-in fallback' do
+      families = vector.keys.grep(/-font-family$/)
+      expect(custom.slice(*families)).to eq(families.index_with('"Example Sans", "Inter Variable", Inter'))
+    end
+
+    it 'preserves the order of custom fallback families' do
+      expect(probe.rule('.typeface-list')['--title-font-family']).to eq('"Example Sans", "Example Serif", "Inter Variable", Inter')
+    end
+
+    it 'reuses the vector weights, smoothing and padding' do
+      expect(custom.reject { |property, _| property.end_with?('-font-family') })
+        .to eq(vector.reject { |property, _| property.end_with?('-font-family') })
+    end
+
+    it 'leaves device sizes and line heights unchanged' do
+      expect(custom.keys.grep(/font-size|line-height/)).to be_empty
+    end
+  end
 
   describe 'border renderer companions' do
     it 'repoints the renderer program when utility-border-token repoints a level' do

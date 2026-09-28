@@ -34,17 +34,17 @@ class FrameworkController < Framework.parent_controller_class
 
   layout -> { params[:_raw].present? ? false : 'framework' }
 
-  CURRENT_DOCS_VERSION = '3.3'.freeze
-  SUPPORTED_DOCS_VERSIONS = %w[1.2 2.3 3.0 3.1 3.3].freeze
-  # 3.2 never had a docs generation of its own: its pages moved to 3.3 with the release,
-  # so every 3.2 URL redirects to its 3.3 twin the way the v1/v2/v3 aliases do.
+  CURRENT_DOCS_VERSION = '3.4'.freeze
+  SUPPORTED_DOCS_VERSIONS = %w[1.2 2.3 3.0 3.1 3.4].freeze
+  # The 3.2 and 3.3 pages share the current templates, so their URLs redirect to the current track.
   LEGACY_DOCS_VERSION_ALIASES = {
     'v1' => '1.2',
     'v2' => '2.3',
     'v3' => CURRENT_DOCS_VERSION,
-    '3.2' => CURRENT_DOCS_VERSION
+    '3.2' => CURRENT_DOCS_VERSION,
+    '3.3' => CURRENT_DOCS_VERSION
   }.freeze
-  DOCS_VERSION_MENU = %w[3.3 3.1 3.0 2.3 1.2].freeze
+  DOCS_VERSION_MENU = %w[3.4 3.1 3.0 2.3 1.2].freeze
   CACHED_PAGE_TTL = 12.hours
 
   V3_DOC_GROUPS = {

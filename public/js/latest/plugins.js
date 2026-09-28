@@ -7189,6 +7189,6 @@ window.markFrameworkReady = markFrameworkReady;
 // the minified bundle), so every published /js/<ver>/plugins.js reports its own
 // version and a pinned or cached file is identifiable. A working checkout ships
 // 'source': read window.__TRMNL_BUILD__ when an edit does not show up.
-window.__TRMNL_BUILD__ = 'plugins.js v3.3.2';
+window.__TRMNL_BUILD__ = 'plugins.js v3.4.0';
 debugLog('[TRMNL] Build:', window.__TRMNL_BUILD__);
 })();

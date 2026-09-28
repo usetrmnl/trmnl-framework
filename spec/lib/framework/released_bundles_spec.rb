@@ -40,10 +40,10 @@ RSpec.describe 'the committed release bundles' do
   # are found by their selectors rather than their declarations because the minified bundles
   # rename the custom properties.
   def composed_paint_selector_counts(css)
-    css.enum_for(:scan, /[^{}]*bg--[^{}]*text--[^{}]*\{/).filter_map do
-      list_end = Regexp.last_match.end(0) - 1
-      list_start = [css.rindex('}', list_end), css.rindex('{', list_end - 1)].compact.max
-      selectors = split_selectors(css[(list_start + 1)...list_end])
+    css.split(/([{}])/).each_cons(2).filter_map do |list, delimiter|
+      next unless delimiter == '{' && list.include?('bg--') && list.include?('text--')
+
+      selectors = split_selectors(list)
 
       selectors.count if selectors.any? { |selector| selector.include?('bg--') && selector.include?('text--') }
     end
