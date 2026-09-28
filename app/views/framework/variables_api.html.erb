@@ -78,11 +78,12 @@ var gap = TRMNLPaint.cssVar("--gap", { el: "my-chart" });', language: 'javascrip
             <li><strong>Chart ramp:</strong> <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-color</code> and <code class="<%= framework_section_code_classes %>">--framework-chart-series-{i}-image</code> for series indexes 0 to 15, plus <code class="<%= framework_section_code_classes %>">--framework-chart-series-span</code> for the number of entries JavaScript spreads series across. See <%= render DocsRef.new(page: :paint_charts) %>.</li>
             <li><strong>Border render contract:</strong> <code class="<%= framework_section_code_classes %>">--framework-border-render-*</code> (<code class="<%= framework_section_code_classes %>">width</code>, <code class="<%= framework_section_code_classes %>">height</code>, <code class="<%= framework_section_code_classes %>">view-box</code>, <code class="<%= framework_section_code_classes %>">stroke</code>, <code class="<%= framework_section_code_classes %>">path-1</code>, <code class="<%= framework_section_code_classes %>">path-2</code>, <code class="<%= framework_section_code_classes %>">color-1</code>, <code class="<%= framework_section_code_classes %>">color-2</code>): the SVG drawing instructions the framework declares for each border, which the Paint API copies into charts. See <%= render DocsRef.new(page: :paint_borders) %>.</li>
             <li><strong>Icon source:</strong> <code class="<%= framework_section_code_classes %>">--framework-icon-src</code> holds the URL an <code class="<%= framework_section_code_classes %>">image--adaptive</code> element is masked with. The runtime writes it as an inline style, and markup can set it directly. See <%= render DocsRef.new(page: :image) %>.</li>
+            <li><strong>Typeface:</strong> <code class="<%= framework_section_code_classes %>">--framework-typeface</code> names the font a <code class="<%= framework_section_code_classes %>">typeface</code> container puts on its text. Markup sets it. See <%= render DocsRef.new(page: :custom_typefaces) %>.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Themes write these through the slot mixins, where one call fills a whole channel or slot. Setting a single
             name by hand leaves the rest of its group behind, so plugin markup sets only
-            <code class="<%= framework_section_code_classes %>">--framework-icon-src</code>.
+            <code class="<%= framework_section_code_classes %>">--framework-icon-src</code> and <code class="<%= framework_section_code_classes %>">--framework-typeface</code>.
           </p>
         </div>
       </section>

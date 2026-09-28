@@ -87,7 +87,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Public and Internal Surface') %>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
-            <li><strong>Public:</strong> the <code class="<%= framework_section_code_classes %>">$custom-devices</code> configuration, the three supported <code class="<%= framework_section_code_classes %>">framework/mixins</code> families (screen targeting, scale functions, theme slots) named on <%= render DocsRef.new(page: :sass_mixins) %>, the compiled CSS classes, and the public <code class="<%= framework_section_code_classes %>">--*</code> variables listed on <%= render DocsRef.new(page: :tokens) %>.</li>
+            <li><strong>Public:</strong> the <code class="<%= framework_section_code_classes %>">$custom-devices</code> configuration, the four supported <code class="<%= framework_section_code_classes %>">framework/mixins</code> families (screen targeting, scale functions, typography, theme slots) named on <%= render DocsRef.new(page: :sass_mixins) %>, the compiled CSS classes, and the public <code class="<%= framework_section_code_classes %>">--*</code> variables listed on <%= render DocsRef.new(page: :tokens) %>.</li>
             <li><strong>Internal:</strong> members whose names start with <code class="<%= framework_section_code_classes %>">-</code> or <code class="<%= framework_section_code_classes %>">_</code> (private to their module), every other mixin and function that <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards, and the paint variables (<code class="<%= framework_section_code_classes %>">--bg-*</code>, <code class="<%= framework_section_code_classes %>">--text-*</code>, <code class="<%= framework_section_code_classes %>">--border-*</code>) the framework's rendering owns. Internal members can change without notice.</li>
             <li><strong>Generated:</strong> files with a DO NOT EDIT header (the device map, the color maps) regenerate from <code class="<%= framework_section_code_classes %>">db/data/</code> via rake tasks. Configure or extend them; do not hand-edit them.</li>
           </ul>
@@ -95,9 +95,9 @@
             Theme stylesheets have their own authoring contract built on the theme-slot mixins; it is documented on
             <%= render DocsRef.new(page: :theme_authoring) %> and enforced by
             <code class="<%= framework_section_code_classes %>">rake framework:themes:lint</code>.
-            Framework 3.4 adds the public <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code> mixin
-            for custom theme fonts; see <%= render DocsRef.new(page: :theme_slots) %> for usage and
-            <%= render DocsRef.new(page: :paint_typography) %> for the existing JavaScript readers.
+            Custom fonts use <code class="<%= framework_section_code_classes %>">typography.typeface($family)</code>, or
+            <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code> in a theme (Framework 3.4 or later);
+            see <%= render DocsRef.new(page: :custom_typefaces) %>.
           </p>
         </div>
       </section>

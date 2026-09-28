@@ -9,11 +9,14 @@
     <div class="space-y-16">
       <section class="space-y-8">
         <div class="space-y-4">
-          <%= framework_heading(3, 'Theme Fonts and JavaScript') %>
+          <%= framework_heading(3, 'Custom Fonts and JavaScript') %>
           <p class="<%= framework_section_description_classes %>">
-            Framework 3.4 adds the Sass <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code>
-            mixin to define a theme's font. The existing JavaScript typography APIs read the resulting computed CSS,
-            including the chosen font and the device's sizes. See <%= render DocsRef.new(page: :theme_slots) %> for the Sass example.
+            From Framework 3.4 a theme or a plugin can use its own font. The JavaScript typography APIs read the computed CSS,
+            so they return that font with the device's sizes. See <%= render DocsRef.new(page: :custom_typefaces) %>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            A plugin's font applies inside its <code class="<%= framework_section_code_classes %>">typeface</code> container, so pass an
+            <code class="<%= framework_section_code_classes %>">el</code> inside that container to read it.
           </p>
           <p class="<%= framework_section_description_classes %>">
             A theme switch changes the screen's CSS class. Previously returned specs and copied inline styles are snapshots:

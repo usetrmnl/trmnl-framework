@@ -157,14 +157,17 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Build Your Own Theme') %>
           <p class="<%= framework_section_description_classes %>">
-            A theme changes colors and nothing else: layout, spacing, and markup stay as they are. The two
-            pages below cover the workflow and every part a theme can recolor.
+            A theme never changes your markup. The pages below cover the workflow, custom fonts, and every part a theme can recolor.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <%= render FrameworkDocCardComponent.new(icon: :edit, title: 'Authoring Themes', docs_page: :theme_authoring) do %>
             <p class="<%= framework_subsection_description_classes %>">The workflow: start from the boilerplate, point each part of the screen at new colors, register the id, and lint.</p>
+          <% end %>
+
+          <%= render FrameworkDocCardComponent.new(icon: :font_family, title: 'Custom Typefaces', docs_page: :custom_typefaces) do %>
+            <p class="<%= framework_subsection_description_classes %>">Use your own font in a theme, or in one plugin on any screen.</p>
           <% end %>
 
           <%= render FrameworkDocCardComponent.new(icon: :bounding_box, title: 'Theme Slots', docs_page: :theme_slots) do %>

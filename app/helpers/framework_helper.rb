@@ -42,6 +42,7 @@ module FrameworkHelper
     'text_scale' => 'Text Scale',
     'font_weight' => 'Font Weight',
     'font_family' => 'Font Family',
+    'custom_typefaces' => 'Custom Typefaces',
     'font_glyphs' => 'Font Glyphs',
     'text_color' => 'Text Color',
     'text_alignment' => 'Text Alignment',
@@ -144,6 +145,7 @@ module FrameworkHelper
     'text_scale' => 'Scale all framework typography independently of interface geometry',
     'font_weight' => 'Toggle between regular and bold font weight independently of size',
     'font_family' => 'Switch between Classic and TRMNL font bundles per device',
+    'custom_typefaces' => 'Use your own font for the framework text, in a plugin or a theme',
     'font_glyphs' => 'Browse every glyph available in each Framework font bundle',
     'text_color' => 'Apply grayscale and chromatic color shades to text elements',
     'text_alignment' => 'Control text alignment with responsive breakpoint, orientation, and bit-depth variants',
@@ -339,6 +341,9 @@ module FrameworkHelper
     'responsive' => [
       { page: :sass_mixins, partial: 'sass_mixins' }
     ],
+    'font_family' => [
+      { page: :custom_typefaces, inline: true }
+    ],
     'framework_runtime' => [
       { page: :paint_api, partial: 'paint_api_runtime' }
     ]
@@ -433,6 +438,7 @@ module FrameworkHelper
       'open_source' => 'The TRMNL Framework is open source as of version 3.2. It is the design system TRMNL plugin screens are built with, tuned for 1-bit, 2-bit, 4-bit, and limited-color ePaper displays. This repository holds the CSS, the JavaScript runtime, the design tokens, and the documentation site you are reading.',
       'contributing' => 'Everything you need to make your first contribution to the TRMNL Framework: run it locally, find your way around the code, run the test suites, and open a pull request that lands. Start here, then read CONTRIBUTING.md for the fine print.',
       'font_family' => 'The Framework ships two pixel font bundles: Classic (NicoPups, NicoClean, BlockKie) and TRMNL (TRMNL12, TRMNL16, TRMNL21). Low-density displays use the selected bundle; high-density displays use Inter Variable for legibility.',
+      'custom_typefaces' => 'Use your own font for the framework text. Load the font, name it on any container, and every title, label, value, and description inside switches to it.',
       'text_size' => 'Utility classes for controlling text size. Each class sets the correct font family, size, line-height, and smoothing for the active density tier: pixel bundle on low-density displays, Inter Variable on high-density displays.',
       'font_weight' => 'Utility classes for controlling font weight independently of size. Classic ships in a single weight, so <code>text--bold</code> is a no-op on low-density Classic; on low-density TRMNL it picks the bundled bold variant; on high-density displays it sets the Inter Variable weight.',
       'font_glyphs' => 'Browse every glyph available in each Framework font. Switch between the Classic and TRMNL bundles to view their full character inventory.'
@@ -658,6 +664,7 @@ module FrameworkHelper
     'paint_maps' => 'map',
     'paint_borders' => 'border',
     'paint_typography' => 'text',
+    'custom_typefaces' => 'font_family',
     'sass_api' => 'curly_brackets',
     'sass_build' => 'cog',
     'sass_devices' => 'devices',

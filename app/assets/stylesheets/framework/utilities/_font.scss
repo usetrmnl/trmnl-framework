@@ -4,6 +4,7 @@
 
 @use '../mixins' as mixins;
 @use '../mixins/responsive' as responsive;
+@use '../mixins/typography';
 
 @mixin font-size-small {
     font-family: var(--font-small-font-family);
@@ -169,6 +170,12 @@
         @include responsive.with-all-variants {
             @include font-weight-bold;
         }
+    }
+
+    // A font of the markup's own on any container, above a theme's and the
+    // device's. Without --framework-typeface the text falls back to Inter.
+    .typeface {
+        @include typography.typeface(var(--framework-typeface, "Inter Variable"));
     }
 
     // Deprecated aliases, removed in 4.0 (use text--* instead)

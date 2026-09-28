@@ -233,67 +233,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Custom Typefaces') %>
           <p class="<%= framework_section_description_classes %>">
-            Framework 3.4 adds <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code>
-            to set a theme's font across the framework text roles at Sass compile time.
-            Host the font files beside the stylesheet and use relative URLs so the theme can run on another host.
-          </p>
-          <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
-            <li>
-              <code class="<%= framework_section_code_classes %>">typeface($family)</code> sets all vector font roles,
-              weights and smoothing, with Inter Variable and Inter as fallbacks. Pass a quoted family name or a comma-separated list.
-            </li>
-          </ul>
-          <p class="<%= framework_section_description_classes %>">
-            Device font sizes, line heights and reader scaling still apply.
-            Declare the weights your font supplies and include its license with the files you distribute.
-          </p>
-        </div>
-        <div class="mt-4">
-          <%= render CodeExampleComponent.new(
-            demo_code: '@use "../config/layers";
-@use "../mixins/theme-slots";
-
-@include layers.order;
-
-@font-face {
-    font-family: "Example Sans";
-    font-weight: 100 900;
-    font-style: normal;
-    src: url("./fonts/example-sans.woff2") format("woff2");
-}
-
-@layer tn--themes {
-    .trmnl .screen--theme-example {
-        @include theme-slots.typeface("Example Sans");
-    }
-}',
-            language: 'scss'
-          ) %>
-        </div>
-      </section>
-
-      <section class="space-y-8">
-        <div class="space-y-4">
-          <%= framework_heading(3, 'Use a Custom Typeface') %>
-          <p class="<%= framework_section_description_classes %>">
-            Compile the example to <code class="<%= framework_section_code_classes %>">example.css</code>,
-            load it alongside Framework 3.4 or later, and add its theme class to the screen.
-            The theme class activates the font; the browser loads the files from the stylesheet's relative URLs.
-          </p>
-          <%= render CodeExampleComponent.new(demo_code: '<link rel="stylesheet" href="/css/3.4.0/plugins.min.css">
-<link rel="stylesheet" href="/themes/example.css">
-<body class="trmnl">
-  <div class="screen screen--theme-example">
-    <div class="view view--full">
-      <div class="layout"><span class="title">Today at a glance</span></div>
-    </div>
-  </div>
-</body>', language: 'html') %>
-          <p class="<%= framework_section_description_classes %>">
-            Standard HTML text follows the theme through CSS. JavaScript reads the same font through the existing
-            <code class="<%= framework_section_code_classes %>">TRMNLPaint.type()</code> API;
-            see <%= render DocsRef.new(page: :paint_typography) %> for reading, applying, and refreshing typography.
-            See <%= render DocsRef.new(page: :theme_authoring) %> for distributing the stylesheet and fonts together.
+            A theme can also give the screen its own font with <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code>.
+            See <%= render DocsRef.new(page: :custom_typefaces) %>.
           </p>
         </div>
       </section>

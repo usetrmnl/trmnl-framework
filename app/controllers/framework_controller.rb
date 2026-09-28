@@ -88,6 +88,9 @@ class FrameworkController < Framework.parent_controller_class
   #
   # :arrangement gains Position behind Spacing: the position keywords, offsets and
   # stacking levels are 3.3 utilities, and offsets ride the spacing scale.
+  #
+  # :typography gains Custom Typefaces behind Font Family: the typeface class and
+  # mixins are 3.4 API, so the page is current-only.
   CURRENT_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
     case group
     when :guides
@@ -105,7 +108,8 @@ class FrameworkController < Framework.parent_controller_class
       groups[:styling] = (pages - %w[colors tokens]) + %w[inverse]
     when :typography
       text_size_index = pages.index('text_size') || -1
-      groups[:typography] = pages.dup.insert(text_size_index + 1, 'text_scale')
+      font_family_index = pages.index('font_family') || -1
+      groups[:typography] = pages.dup.insert(text_size_index + 1, 'text_scale').insert(font_family_index + 1, 'custom_typefaces')
     when :modulations
       groups[:runtime] = %w[framework_runtime] + (pages - %w[framework_runtime])
       groups[:paint] = %w[paint_api paint_colors paint_charts paint_maps paint_borders paint_typography]
@@ -277,6 +281,7 @@ class FrameworkController < Framework.parent_controller_class
   def open_source; end
   def contributing; end
   def font_family; end
+  def custom_typefaces; end
   def font_glyphs; end
 
   def layout_examples; end
