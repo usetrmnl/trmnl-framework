@@ -110,7 +110,7 @@ class FrameworkController < Framework.parent_controller_class
       groups[:runtime] = %w[framework_runtime] + (pages - %w[framework_runtime])
       groups[:paint] = %w[paint_api paint_colors paint_charts paint_maps paint_borders paint_typography]
       groups[:sass] = %w[sass_api sass_build sass_devices sass_mixins]
-      groups[:themes] = %w[themes theme_authoring theme_slots]
+      groups[:themes] = %w[themes theme_authoring theme_typefaces theme_slots]
       groups[:variables] = %w[variables_api colors color_palettes tokens]
     else
       groups[group] = pages
@@ -215,6 +215,7 @@ class FrameworkController < Framework.parent_controller_class
   def sass_devices; end
   def sass_mixins; end
   def theme_authoring; end
+  def theme_typefaces; end
   def theme_slots; end
   def variables_api; end
   def background; end

@@ -23,6 +23,7 @@ module FrameworkHelper
     'sass_devices' => 'Custom Devices',
     'sass_mixins' => 'Sass Mixins',
     'theme_authoring' => 'Authoring Themes',
+    'theme_typefaces' => 'Custom Typefaces',
     'theme_slots' => 'Theme Slots',
     'variables_api' => 'CSS Variables',
     'border' => 'Border',
@@ -125,6 +126,7 @@ module FrameworkHelper
     'sass_devices' => 'Device profiles and the $custom-devices configuration for custom builds',
     'sass_mixins' => 'Screen-targeting mixins and scale functions for authoring device-aware SCSS',
     'theme_authoring' => 'How to build your own theme: start from the boilerplate, map the slots, register the id, and lint',
+    'theme_typefaces' => 'Give a theme its own font, loaded from files you host beside the stylesheet',
     'theme_slots' => 'Every part of a screen a theme can recolor, from whole-screen colors down to single components, utilities, borders, and chart series',
     'variables_api' => 'The CSS variable contract: which families are public, which are internal, and who reads, changes, and generates them',
     'border' => 'Draw horizontal and vertical rules on the same shade scale as backgrounds',
@@ -339,6 +341,9 @@ module FrameworkHelper
     'responsive' => [
       { page: :sass_mixins, partial: 'sass_mixins' }
     ],
+    'font_family' => [
+      { page: :theme_typefaces, inline: true }
+    ],
     'framework_runtime' => [
       { page: :paint_api, partial: 'paint_api_runtime' }
     ]
@@ -367,6 +372,7 @@ module FrameworkHelper
       'sass_devices' => 'Every device the compile knows about becomes a screen--{name} class, with its dimensions, density, and color depth baked in. Add your own panels through $custom-devices without touching framework source.',
       'sass_mixins' => 'The screen mixins let your own SCSS target the same conditions the responsive utilities do: device size, orientation, and bit depth. The scale functions wrap pixel values so your CSS scales with the device the way framework CSS does.',
       'theme_authoring' => 'Build your own theme by filling in slots: named parts of the screen, like the background, the text, or the title bar, that you point at new colors. This page walks through the workflow: start from the boilerplate, map your slots, register the id, and lint.',
+      'theme_typefaces' => 'Give a theme its own font. Host the font files beside the theme stylesheet, and the framework text classes use them.',
       'theme_slots' => 'This page lists every slot: each part of a screen a theme can recolor, and the mixin that sets it. A slot takes a framework token, not a raw color, so whatever you map still renders correctly on every device.',
       'variables_api' => 'Some framework CSS variables are yours to use; the rest are internal and can change at any time. This page draws that line, family by family. It also shows how the Paint API, themes, and the Sass source each use the public ones.',
       'background' => "Use the color palette defined in #{link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline'}. Apply these shades with bg--{token} for backgrounds. On 1-bit displays, grayscale uses dither patterns; on 2-bit and 4-bit+, solid colors render.",
@@ -664,6 +670,7 @@ module FrameworkHelper
     'sass_mixins' => 'responsive',
     'themes' => 'magic',
     'theme_authoring' => 'edit',
+    'theme_typefaces' => 'font_family',
     'theme_slots' => 'bounding_box',
     'variables_api' => 'curly_brackets'
   }.freeze
