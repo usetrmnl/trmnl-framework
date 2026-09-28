@@ -8,8 +8,9 @@
 
     <% if current_docs_version == FrameworkController::CURRENT_DOCS_VERSION %>
       <p class="<%= framework_section_description_classes %>">
-        To use your own font, give a theme its own typeface (Framework 3.4 or later).
-        See <%= render DocsRef.new(page: :theme_typefaces) %>.
+        To use your own font, add the <code class="<%= framework_section_code_classes %>">typeface</code> class to any container
+        and name the font in <code class="<%= framework_section_code_classes %>">--framework-typeface</code> (Framework 3.4 or later).
+        See <%= render DocsRef.new(page: :custom_typefaces) %>.
       </p>
     <% end %>
 

@@ -118,7 +118,7 @@
           <%= framework_heading(3, 'Public Surface') %>
           <p class="<%= framework_section_description_classes %>">
             <code class="<%= framework_section_code_classes %>">framework/mixins</code> forwards every module the
-            framework compiles itself with, which is far more than it supports. Three families are public: their
+            framework compiles itself with, which is far more than it supports. Four families are public: their
             names and signatures hold from one release to the next, and the docs cover them page by page.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -133,11 +133,15 @@
               <code class="<%= framework_section_code_classes %>">text-ui-scaled()</code>.
             </li>
             <li>
+              <strong>Typography:</strong> the <code class="<%= framework_section_code_classes %>">framework/mixins/typography</code> module.
+              <code class="<%= framework_section_code_classes %>">typography.typeface($family)</code> puts your own font on every text role, keeping device sizes and line heights (Framework 3.4 or later).
+              See <%= render DocsRef.new(page: :custom_typefaces) %>.
+            </li>
+            <li>
               <strong>Theme slots:</strong> the <code class="<%= framework_section_code_classes %>">framework/mixins/theme-slots</code>
               module, documented on <%= render DocsRef.new(page: :theme_slots) %> with the authoring contract on
               <%= render DocsRef.new(page: :theme_authoring) %>.
-              In Framework 3.4, <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code>
-              adds a custom font to a theme while preserving device sizes and line heights. See <%= render DocsRef.new(page: :theme_typefaces) %>.
+              <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code> is the same typeface mixin for a theme.
             </li>
           </ul>
           <p class="<%= framework_section_description_classes %>">

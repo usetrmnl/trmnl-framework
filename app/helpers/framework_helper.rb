@@ -23,7 +23,6 @@ module FrameworkHelper
     'sass_devices' => 'Custom Devices',
     'sass_mixins' => 'Sass Mixins',
     'theme_authoring' => 'Authoring Themes',
-    'theme_typefaces' => 'Custom Typefaces',
     'theme_slots' => 'Theme Slots',
     'variables_api' => 'CSS Variables',
     'border' => 'Border',
@@ -43,6 +42,7 @@ module FrameworkHelper
     'text_scale' => 'Text Scale',
     'font_weight' => 'Font Weight',
     'font_family' => 'Font Family',
+    'custom_typefaces' => 'Custom Typefaces',
     'font_glyphs' => 'Font Glyphs',
     'text_color' => 'Text Color',
     'text_alignment' => 'Text Alignment',
@@ -126,7 +126,6 @@ module FrameworkHelper
     'sass_devices' => 'Device profiles and the $custom-devices configuration for custom builds',
     'sass_mixins' => 'Screen-targeting mixins and scale functions for authoring device-aware SCSS',
     'theme_authoring' => 'How to build your own theme: start from the boilerplate, map the slots, register the id, and lint',
-    'theme_typefaces' => 'Give a theme its own font, loaded from files you host beside the stylesheet',
     'theme_slots' => 'Every part of a screen a theme can recolor, from whole-screen colors down to single components, utilities, borders, and chart series',
     'variables_api' => 'The CSS variable contract: which families are public, which are internal, and who reads, changes, and generates them',
     'border' => 'Draw horizontal and vertical rules on the same shade scale as backgrounds',
@@ -146,6 +145,7 @@ module FrameworkHelper
     'text_scale' => 'Scale all framework typography independently of interface geometry',
     'font_weight' => 'Toggle between regular and bold font weight independently of size',
     'font_family' => 'Switch between Classic and TRMNL font bundles per device',
+    'custom_typefaces' => 'Use your own font for the framework text, in a plugin or a theme',
     'font_glyphs' => 'Browse every glyph available in each Framework font bundle',
     'text_color' => 'Apply grayscale and chromatic color shades to text elements',
     'text_alignment' => 'Control text alignment with responsive breakpoint, orientation, and bit-depth variants',
@@ -342,7 +342,7 @@ module FrameworkHelper
       { page: :sass_mixins, partial: 'sass_mixins' }
     ],
     'font_family' => [
-      { page: :theme_typefaces, inline: true }
+      { page: :custom_typefaces, inline: true }
     ],
     'framework_runtime' => [
       { page: :paint_api, partial: 'paint_api_runtime' }
@@ -372,7 +372,6 @@ module FrameworkHelper
       'sass_devices' => 'Every device the compile knows about becomes a screen--{name} class, with its dimensions, density, and color depth baked in. Add your own panels through $custom-devices without touching framework source.',
       'sass_mixins' => 'The screen mixins let your own SCSS target the same conditions the responsive utilities do: device size, orientation, and bit depth. The scale functions wrap pixel values so your CSS scales with the device the way framework CSS does.',
       'theme_authoring' => 'Build your own theme by filling in slots: named parts of the screen, like the background, the text, or the title bar, that you point at new colors. This page walks through the workflow: start from the boilerplate, map your slots, register the id, and lint.',
-      'theme_typefaces' => 'Give a theme its own font. Host the font files beside the theme stylesheet, and the framework text classes use them.',
       'theme_slots' => 'This page lists every slot: each part of a screen a theme can recolor, and the mixin that sets it. A slot takes a framework token, not a raw color, so whatever you map still renders correctly on every device.',
       'variables_api' => 'Some framework CSS variables are yours to use; the rest are internal and can change at any time. This page draws that line, family by family. It also shows how the Paint API, themes, and the Sass source each use the public ones.',
       'background' => "Use the color palette defined in #{link_to 'Colors', framework_docs_colors_path, class: 'font-medium hover:underline'}. Apply these shades with bg--{token} for backgrounds. On 1-bit displays, grayscale uses dither patterns; on 2-bit and 4-bit+, solid colors render.",
@@ -439,6 +438,7 @@ module FrameworkHelper
       'open_source' => 'The TRMNL Framework is open source as of version 3.2. It is the design system TRMNL plugin screens are built with, tuned for 1-bit, 2-bit, 4-bit, and limited-color ePaper displays. This repository holds the CSS, the JavaScript runtime, the design tokens, and the documentation site you are reading.',
       'contributing' => 'Everything you need to make your first contribution to the TRMNL Framework: run it locally, find your way around the code, run the test suites, and open a pull request that lands. Start here, then read CONTRIBUTING.md for the fine print.',
       'font_family' => 'The Framework ships two pixel font bundles: Classic (NicoPups, NicoClean, BlockKie) and TRMNL (TRMNL12, TRMNL16, TRMNL21). Low-density displays use the selected bundle; high-density displays use Inter Variable for legibility.',
+      'custom_typefaces' => 'Use your own font for the framework text. Load the font, name it on any container, and every title, label, value, and description inside switches to it.',
       'text_size' => 'Utility classes for controlling text size. Each class sets the correct font family, size, line-height, and smoothing for the active density tier: pixel bundle on low-density displays, Inter Variable on high-density displays.',
       'font_weight' => 'Utility classes for controlling font weight independently of size. Classic ships in a single weight, so <code>text--bold</code> is a no-op on low-density Classic; on low-density TRMNL it picks the bundled bold variant; on high-density displays it sets the Inter Variable weight.',
       'font_glyphs' => 'Browse every glyph available in each Framework font. Switch between the Classic and TRMNL bundles to view their full character inventory.'
@@ -664,13 +664,13 @@ module FrameworkHelper
     'paint_maps' => 'map',
     'paint_borders' => 'border',
     'paint_typography' => 'text',
+    'custom_typefaces' => 'font_family',
     'sass_api' => 'curly_brackets',
     'sass_build' => 'cog',
     'sass_devices' => 'devices',
     'sass_mixins' => 'responsive',
     'themes' => 'magic',
     'theme_authoring' => 'edit',
-    'theme_typefaces' => 'font_family',
     'theme_slots' => 'bounding_box',
     'variables_api' => 'curly_brackets'
   }.freeze

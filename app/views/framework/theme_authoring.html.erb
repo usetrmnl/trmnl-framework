@@ -23,7 +23,7 @@
             <li>Pick the colors charts draw their series with: <code class="<%= framework_section_code_classes %>">theme-slots.chart-series-ramp</code>.</li>
             <li>Pair the title bar's field with its own inks: <code class="<%= framework_section_code_classes %>">theme-slots.ink-slot/icon-slot/stroke-slot</code>.</li>
             <li>Shape the screen's structure with factors, and its vector weight with one shift: <code class="<%= framework_section_code_classes %>">theme-slots.layout-factors</code> and <code class="<%= framework_section_code_classes %>">theme-slots.font-weight-shift</code>.</li>
-            <li>Set a custom font with <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code> (Framework 3.4 or later). See <%= render DocsRef.new(page: :theme_typefaces) %>.</li>
+            <li>Set a custom font with <code class="<%= framework_section_code_classes %>">theme-slots.typeface($family)</code> (Framework 3.4 or later). See <%= render DocsRef.new(page: :custom_typefaces) %>.</li>
             <li>Declare nothing outside the contract namespaces (<code class="<%= framework_section_code_classes %>">--framework-*</code>, <code class="<%= framework_section_code_classes %>">--theme-*</code>, <code class="<%= framework_section_code_classes %>">--tn-text-stroke-*</code>). Raw paint, the root palette, geometry, and font metrics are engine- or device-owned; the linter rejects them all.</li>
           </ul>
           <p class="<%= framework_section_description_classes %>">
@@ -127,7 +127,7 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Portable Theme Exports') %>
           <p class="<%= framework_section_description_classes %>">
-            Core's theme builder offers a ZIP download after you save a theme. Extract the whole ZIP into one directory
+            The TRMNL theme builder offers a ZIP download after you save a theme. Extract the whole ZIP into one directory
             on your host, load its compiled CSS alongside Framework, and add the manifest's theme class to your screen.
           </p>
           <ul class="<%= framework_section_description_classes %> list-disc pl-6 space-y-2">
@@ -138,7 +138,7 @@
           </ul>
           <p class="<%= framework_section_description_classes %>">
             Keep the font directory beside the stylesheet so relative URLs resolve. The theme class activates the selected
-            font, and the exported files work independently of Core. The SCSS-only download requires you to supply the font files separately.
+            font, and the exported files work without TRMNL. The SCSS-only download requires you to supply the font files separately.
           </p>
         </div>
       </section>
