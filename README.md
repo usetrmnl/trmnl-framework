@@ -184,7 +184,7 @@ test/visual/             Playwright CSS visual specs and platform-specific PNG b
 public/css, public/js    the published release archive: ALL versions, 0.0.1 → latest
 public/framework/        release zips, release notes, per-release resolved color manifests,
                          example_fixtures/ (captured plugin examples); docs/ and examples/
-                         hold the generated markdown twins, untracked
+                         hold the generated markdown twins, llms*.txt the LLM indexes
 public/fonts, public/images  static assets the framework CSS references by absolute path
 docs/                    reference docs (color system, paint rule traceability, engine
                          integration, build and serving, the deferred 4.0 removals)
@@ -287,17 +287,14 @@ Upgrade flow: land changes on `main` here → in core `bundle update trmnl-frame
   multi-version test bench; in this repo the 3.2 pages serve the live build instead. The
   resolution rules are in [docs/BUILD_AND_SERVING.md](docs/BUILD_AND_SERVING.md).
 - `rake framework:generate_markdown` regenerates the `.md` twins of every docs page plus
-  `/llms.txt` and `/llms-full.txt`. Absolute links use `APP_URL` (default
-  `https://trmnl.com`).
+  `/framework/llms.txt` and `/framework/llms-full.txt`. Absolute links use `APP_URL`
+  (default `https://trmnl.com`).
 - The twins land in this repo's `public/` (`public/framework/docs/<version>/`,
-  `public/framework/examples/`, `public/llms*.txt`), which is where `Framework::Static`
-  serves them from, so a page's Markdown URL resolves in any host that mounts the engine.
-- That output is untracked: run the task when you want it locally. trmnl.com serves its
-  own generation from core, which stays the production generator until docs cutover.
-- `INTERCOM_TOKEN` (optional, maintainers) lets `generate_markdown` fetch the public
-  help-center articles and fold them into `/llms.txt` and `/llms-full.txt`. Without it
-  the step is skipped and the outputs stay framework-docs-only. The full guide (where
-  the token lives, scope, run command) is in [docs/README.md](docs/README.md).
+  `public/framework/examples/`, `public/framework/llms*.txt`), which is where
+  `Framework::Static` serves them from, so a page's Markdown URL resolves in any host that
+  mounts the engine.
+- The output is committed. Every release task runs the generator, so a release ships the
+  Markdown that matches it. The host owns `/llms.txt` and folds the framework index into it.
 - `DOCS_BASE_URL` sets the absolute base for docs anchor links and release download
   links. The standalone docs server defaults it to `http://localhost:3001`
   (`server/config/application.rb`, which assigns `config.x.docs_base_url`); a host app

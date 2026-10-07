@@ -29,8 +29,6 @@ RSpec.describe Framework::Package do
   it 'rejects generated build output that only a dirty tree would show' do
     generated = [
       'public/assets/application-abc123.css',
-      'public/framework/docs/3.2/screen.md',
-      'public/llms.txt',
       'vendor/bundle/ruby/4.0.0/gems/rake-13.0.0/lib/rake.rb'
     ]
 
@@ -43,6 +41,13 @@ RSpec.describe Framework::Package do
   # see the junk macOS and Windows drop into any directory a Finder or Explorer window opens.
   # git ignores those, so without this filter a tarball build would pack files a repo build
   # never sees.
+  it 'packages the Markdown docs and the framework llms indexes' do
+    aggregate_failures do
+      expect(described_class).to be_packaged('public/framework/docs/3.4/screen.md')
+      expect(described_class).to be_packaged('public/framework/llms.txt')
+    end
+  end
+
   it 'rejects OS droppings the glob branch would otherwise sweep in' do
     junk = [
       'public/.DS_Store',

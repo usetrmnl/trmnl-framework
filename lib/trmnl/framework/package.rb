@@ -47,15 +47,11 @@ module Framework
     # that tooling: repo-only, like everything else EXCLUDED_PREFIXES drops.
     EXCLUDED_SUFFIXES = %w[.test.cjs].freeze
 
-    # Build output that lands inside a packaged subtree and is gitignored: compiled
-    # bundles, `rake framework:generate_markdown` output, a local bundle path. The git
-    # branch never sees these; naming them keeps the glob branch from sweeping them in.
+    # Build output that lands inside a packaged subtree and is gitignored: compiled bundles
+    # and a local bundle path. The git branch never sees these; naming them keeps the glob
+    # branch from sweeping them in.
     GENERATED_PATHS = %w[
       public/assets/
-      public/framework/docs/
-      public/framework/examples/
-      public/llms.txt
-      public/llms-full.txt
       vendor/bundle/
       vendor/cache/
     ].freeze

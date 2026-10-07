@@ -78,7 +78,7 @@ def html_to_markdown(html)
 end
 
 namespace :framework do
-  desc "Generate prebuilt Markdown docs, /llms.txt, and /llms-full.txt"
+  desc "Generate prebuilt Markdown docs, /framework/llms.txt, and /framework/llms-full.txt"
   task generate_markdown: :environment do
     require_markdown_gems!
 
@@ -104,8 +104,8 @@ namespace :framework do
       FileUtils.rm_f(Dir.glob(docs_base_dir.join(version, "*.md")))
     end
     FileUtils.rm_f(Dir.glob(examples_dir.join("*.md")))
-    FileUtils.rm_f(public_dir.join("llms.txt"))
-    FileUtils.rm_f(public_dir.join("llms-full.txt"))
+    FileUtils.rm_f(public_dir.join("framework/llms.txt"))
+    FileUtils.rm_f(public_dir.join("framework/llms-full.txt"))
     FileUtils.mkdir_p(examples_dir)
 
     app = ActionDispatch::Integration::Session.new(Rails.application)
@@ -134,44 +134,7 @@ namespace :framework do
       print "."
     end
 
-    # Fetch the public Intercom help-center articles to enrich the llms
-    # outputs. The token is needed only for this fetch; without it (community
-    # checkouts) the step is skipped and the outputs build from the framework
-    # docs alone.
-    help_articles = {}
-    intercom_token = ENV["INTERCOM_TOKEN"].to_s.strip
-    if intercom_token.empty?
-      puts "\nSkipping Intercom help articles (INTERCOM_TOKEN not set)"
-    else
-      require "net/http"
-
-      help_page = 1
-      loop do
-        uri = URI("https://api.intercom.io/articles?per_page=50&page=#{help_page}")
-        request = Net::HTTP::Get.new(uri)
-        request["Authorization"] = "Bearer #{intercom_token}"
-        request["Accept"] = "application/json"
-        response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(request) }
-        raise "Intercom articles fetch failed: HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
-
-        payload = JSON.parse(response.body)
-        payload["data"]&.each do |article|
-          help_articles[article["id"]] = {
-            "title" => article["title"],
-            "description" => article["description"],
-            "url" => article["url"],
-            "body" => article["body"]
-          }
-        end
-        total_pages = payload.dig("pages", "total_pages") || 1
-        break if help_page >= total_pages
-
-        help_page += 1
-      end
-      puts "\nFetched #{help_articles.length} help articles"
-    end
-
-    # Build /llms.txt (references current version)
+    # Build /framework/llms.txt (references current version)
     current_version = FrameworkController::CURRENT_DOCS_VERSION
     current_docs_dir = docs_base_dir.join(current_version)
     titles = FrameworkController.helpers.page_titles
@@ -196,20 +159,6 @@ namespace :framework do
       lines << ""
     end
 
-    # Help articles
-    if help_articles.any?
-      lines << "## Help Articles"
-      lines << ""
-      help_articles.each_value do |article|
-        next if article["title"].blank? || article["title"] == "Untitled public article"
-
-        url = article["url"] || "#"
-        desc = article["description"].presence || ""
-        lines << "- [#{article['title']}](#{url}): #{desc}".strip
-      end
-      lines << ""
-    end
-
     # Instructions section
     lines << "## Instructions"
     lines << ""
@@ -224,21 +173,12 @@ namespace :framework do
     lines << "- The framework runtime automatically adapts layouts to device bit-depth and orientation."
     lines << ""
 
-    File.write(public_dir.join("llms.txt"), lines.join("\n"))
+    File.write(public_dir.join("framework/llms.txt"), lines.join("\n"))
 
-    # Build /llms-full.txt from current version docs
+    # Build /framework/llms-full.txt from current version docs
     current_pages = FrameworkController::DOC_GROUPS_BY_VERSION.fetch(current_version).values.flatten
     full_content = current_pages.map { |page| File.read(current_docs_dir.join("#{page}.md")) }
-
-    help_articles.each_value do |article|
-      next if article["title"].blank? || article["title"] == "Untitled public article"
-
-      markdown = ReverseMarkdown.convert(article["body"] || "", unknown_tags: :bypass, github_flavored: true)
-      markdown = markdown.gsub(/!\[.*?\]\(.*?\)/, "")
-      full_content << "# #{article['title']}\n\n#{markdown}"
-    end
-
-    File.write(public_dir.join("llms-full.txt"), full_content.join("\n\n---\n\n"))
+    File.write(public_dir.join("framework/llms-full.txt"), full_content.join("\n\n---\n\n"))
 
     puts "\nGenerated #{total_docs} docs + #{example_keys.length} examples + llms.txt + llms-full.txt in #{public_dir}"
   end

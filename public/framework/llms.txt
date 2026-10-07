@@ -1,0 +1,131 @@
+# TRMNL
+
+> ePaper display platform with customizable content. Build custom layouts for TRMNL devices using the Framework UI.
+
+TRMNL is a platform for building and displaying content on ePaper screens. The Framework UI provides HTML/CSS utilities, layout primitives, and components purpose-built for 1-bit and 2-bit ePaper rendering.
+
+## Guides
+
+- [V3.4 Overview](https://trmnl.com/framework/docs/3.4/v3_overview.md): Framework 3.4 adds custom theme fonts and fixes clipped card borders. It keeps the adaptive maps, position utilities, and themes introduced in 3.3. Existing plugin markup continues to work.
+- [V3.4 Upgrade Guide](https://trmnl.com/framework/docs/3.4/v3_upgrade_guide.md): Framework 3.4 is fully backward compatible with 3.0 through 3.3. Existing class names render unchanged, and every new feature (themes, the paint API, adaptive charts, maps, and icons) is opt-in. This guide lists the few things worth reviewing when you upgrade.
+- [V3.4 Enhancement Guide](https://trmnl.com/framework/docs/3.4/v3_enhancement_guide.md): Framework 3.4 lets an existing plugin follow themes and device modes everywhere: in markup, in charts, in icons, and in outlined text and images. This guide walks through the enhancements one at a time; adopt them in any order.
+- [TRMNL X Guide](https://trmnl.com/framework/docs/3.4/trmnl_x_guide.md): TRMNL X is a larger, 4-bit ePaper display. This guide covers what changed in the Framework to support it: new size modifiers, container query units, responsive overflow columns, and layout improvements. Existing plugins keep working; adopt these features to use the larger screen, portrait orientation, and expanded grayscale.
+- [Open Source](https://trmnl.com/framework/docs/3.4/open_source.md): The TRMNL Framework is open source as of version 3.2. It is the design system TRMNL plugin screens are built with, tuned for 1-bit, 2-bit, 4-bit, and limited-color ePaper displays. This repository holds the CSS, the JavaScript runtime, the design tokens, and the documentation site you are reading.
+- [Contributing](https://trmnl.com/framework/docs/3.4/contributing.md): Everything you need to make your first contribution to the TRMNL Framework: run it locally, find your way around the code, run the test suites, and open a pull request that lands. Start here, then read CONTRIBUTING.md for the fine print.
+
+## Arrangement
+
+- [Size](https://trmnl.com/framework/docs/3.4/size.md): Utility classes for width and height. Fixed sizes, arbitrary values, dynamic sizes, and container query units, each also available as a min or max constraint and with responsive variants.
+- [Spacing](https://trmnl.com/framework/docs/3.4/spacing.md): Utility classes for margin and padding. Fixed steps plus decimal values for the cases where a whole step is too coarse.
+- [Position](https://trmnl.com/framework/docs/3.4/position.md): Use Position to put one element over another instead of beside it. Offsets on the spacing scale hold it a set distance from the edges of its container, and a short stacking scale says which of two overlapping elements is drawn on top.
+- [Gap](https://trmnl.com/framework/docs/3.4/gap.md): Utility classes for the space between the children of a flex, grid, or column container. Predefined sizes, arbitrary values, distribution modifiers, and responsive variants.
+- [Flex](https://trmnl.com/framework/docs/3.4/flex.md): Utility classes for Flexbox layouts. Row and column directions with alignment, centering, and stretching modifiers.
+- [Grid](https://trmnl.com/framework/docs/3.4/grid.md): Utility classes for column-based and row-based grids. Set the column count, span cells across columns, and change either at a breakpoint.
+- [Aspect Ratio](https://trmnl.com/framework/docs/3.4/aspect_ratio.md): Hold an element to a fixed width-to-height ratio. The utilities set the native CSS aspect-ratio property, so images, charts, and containers keep their proportions at any screen size.
+
+## Responsive Utilities
+
+- [Responsive](https://trmnl.com/framework/docs/3.4/responsive.md): The Responsive system adapts a layout to the device it renders on. **Size-based** breakpoints follow the size class each device carries, and **Bit-depth** variants follow its color capabilities. Combine them to control how your content appears across TRMNL's range of devices.
+- [Responsive Test](https://trmnl.com/framework/docs/3.4/responsive_test.md): This page tests responsive utilities by comparing SCSS mixins with CSS classes across different screen conditions. Each test row shows an element styled with SCSS mixins alongside the same element styled with CSS utility classes. Both columns should look identical when the conditions are met, demonstrating that mixins and classes produce equivalent results.
+- [Visibility](https://trmnl.com/framework/docs/3.4/visibility.md): Show or hide an element and set its display type. Hidden and visible controls plus display helpers like flex, grid, and inline, each with responsive and bit-depth variants for device-specific layouts.
+
+## Styling
+
+- [Background](https://trmnl.com/framework/docs/3.4/background.md): Use the color palette defined in [Colors](/framework/docs/3.4/colors). Apply these shades with bg--{token} for backgrounds. On 1-bit displays, grayscale uses dither patterns; on 2-bit and 4-bit+, solid colors render.
+- [Border](https://trmnl.com/framework/docs/3.4/border.md): Draw a horizontal or vertical rule on any element with the border--h and border--v utilities, named on the same 10 to 75 shade scale as backgrounds. On 1-bit displays a step renders as a dither pattern of black and white pixels, so a rule can read as gray. 4-bit and full-color screens draw all 14 steps; everywhere else two neighboring steps share a line.
+- [Rounded](https://trmnl.com/framework/docs/3.4/rounded.md): Utility classes for corner radius. Predefined sizes, per-corner control, and arbitrary pixel values.
+- [Outline](https://trmnl.com/framework/docs/3.4/outline.md): The Outline utility draws a pixel-perfect dotted rounded border on any element. On 1-bit displays it places single-pixel dots at exact integer coordinates with pure CSS gradients; on 2-bit, 4-bit, and full-color displays it draws a standard CSS border with border-radius instead.
+- [Image](https://trmnl.com/framework/docs/3.4/image.md): Place images on a screen and control their size, object fit, and inversion. On 1-bit displays, dithering arranges black and white pixels so an image still reads as shades of gray.
+- [Image Stroke](https://trmnl.com/framework/docs/3.4/image_stroke.md): Outline a vector or transparent raster image so it stays legible on a shaded background. Set the stroke width and color with the image stroke utilities.
+- [Scale](https://trmnl.com/framework/docs/3.4/scale.md): Scale the whole interface from one screen modifier by changing the UI scale factor. Use it to match content density to viewing distance or user preference.
+- [Inverse](https://trmnl.com/framework/docs/3.4/inverse.md): The Inverse utility flips one element and its children to the opposite color scheme: light content on a dark surface, or the reverse. Use it to make one element stand out, an active item or a selected row, without touching its siblings.
+
+## Typography
+
+- [Font Family](https://trmnl.com/framework/docs/3.4/font_family.md): The Framework ships two pixel font bundles: Classic (NicoPups, NicoClean, BlockKie) and TRMNL (TRMNL12, TRMNL16, TRMNL21). Low-density displays use the selected bundle; high-density displays use Inter Variable for legibility.
+- [Custom Typefaces](https://trmnl.com/framework/docs/3.4/custom_typefaces.md): Use your own font for the framework text. Load the font, name it on any container, and every title, label, value, and description inside switches to it.
+- [Font Weight](https://trmnl.com/framework/docs/3.4/font_weight.md): Utility classes for controlling font weight independently of size. Classic ships in a single weight, so `text--bold` is a no-op on low-density Classic; on low-density TRMNL it picks the bundled bold variant; on high-density displays it sets the Inter Variable weight.
+- [Font Glyphs](https://trmnl.com/framework/docs/3.4/font_glyphs.md): Browse every glyph available in each Framework font. Switch between the Classic and TRMNL bundles to view their full character inventory.
+- [Text Size](https://trmnl.com/framework/docs/3.4/text_size.md): Utility classes for controlling text size. Each class sets the correct font family, size, line-height, and smoothing for the active density tier: pixel bundle on low-density displays, Inter Variable on high-density displays.
+- [Text Scale](https://trmnl.com/framework/docs/3.4/text_scale.md): Text Scale adjusts every framework font size and pixel line height from one screen modifier. It composes with Scale, so you can change text readability without applying the same factor to interface geometry or text strokes.
+- [Text Alignment](https://trmnl.com/framework/docs/3.4/text_alignment.md): Utility classes for horizontal text alignment. Left, center, right, and justify, with responsive variants for breakpoints, orientation, and bit-depth.
+- [Text Color](https://trmnl.com/framework/docs/3.4/text_color.md): Set text color with the text--{token} utilities, on the same scale as the [Colors](/framework/docs/3.4/colors) palette. On 1-bit displays a grayscale token renders as a dither pattern of black and white pixels, so text can read as any shade of gray.
+- [Text Stroke](https://trmnl.com/framework/docs/3.4/text_stroke.md): Outline text so it stays legible on a shaded background. Set the stroke width and color with the text stroke utilities.
+
+## Runtime
+
+- [Framework Runtime](https://trmnl.com/framework/docs/3.4/framework_runtime.md): Different devices have different, fixed amounts of screen space. The Framework Runtime fills that space when a plugin layout renders, doing the heavy, repetitive measuring and fitting for you. Expand the "Framework Runtime" panel under any example on this site to see the stats for that render.
+- [Overflow](https://trmnl.com/framework/docs/3.4/overflow.md): The Overflow engine automatically lays out items into up to N columns and adds an "and X more" label when content exceeds the available height. It also applies text clamping per-column width and handles grouped headers without leaving orphaned headings.
+- [Table Overflow](https://trmnl.com/framework/docs/3.4/table_overflow.md): When a table has more rows than can fit within the available vertical space, it constrains its height and appends a trailing "and X more" row to indicate the hidden entries.
+- [Clamp](https://trmnl.com/framework/docs/3.4/clamp.md): The Clamp engine truncates text to a specified number of lines using word-based ellipsis. It preserves the original text, measures available width, and re-applies clamping whenever layouts change.
+- [Format Value](https://trmnl.com/framework/docs/3.4/format_value.md): Format numbers so they fit their container and stay readable. Abbreviations (K, M, B), precision that adjusts to the space, and currency values with the symbol in the right place.
+- [Fit Value](https://trmnl.com/framework/docs/3.4/fit_value.md): Fit text to its container by adjusting font size, weight, and line height. Use it where the space available changes between devices, orientations, or view sizes.
+- [Content Limiter](https://trmnl.com/framework/docs/3.4/content_limiter.md): Content areas are capped in height by the view type they sit in. Past that threshold the limiter steps typography down and the Clamp engine truncates the first block that still overflows.
+- [Pixel Perfect](https://trmnl.com/framework/docs/3.4/pixel_perfect.md): Pixel Perfect aligns text to the pixel grid so it renders with crisp edges. It uses pixel fonts designed for specific sizes, so text stays sharp instead of turning blurry or unevenly bold when a layout is converted to 1-bit for ePaper displays.
+
+## Paint
+
+- [Paint API](https://trmnl.com/framework/docs/3.4/paint_api.md): TRMNLPaint is the framework's JavaScript API for its paint: colors, border lines, and text styles. Ask it for any framework color and it returns what CSS would actually paint right now, with the device and the active theme already applied. Use it wherever JavaScript draws: charts, maps, canvases, or your own rendering.
+- [Painting Colors](https://trmnl.com/framework/docs/3.4/paint_colors.md): These functions tell you the exact color a CSS class paints right now: a background, a text color, a stroke, or a semantic color like error. Use them when something you draw in JavaScript has to match.
+- [Painting Charts](https://trmnl.com/framework/docs/3.4/paint_charts.md): These functions pick the colors for a chart. Ask for series 2 of 5 and you get its paint, correct for the current device, mode, and theme. Adapters then turn each answer into the exact option Highcharts expects.
+- [Painting Maps](https://trmnl.com/framework/docs/3.4/paint_maps.md): These functions give you the color of every part of a map: land, water, roads, parks, buildings, and labels, correct for the current device, mode, and theme. Adapters turn each answer into a MapLibre GL JS paint property, and TRMNLMaps assembles whole map styles out of them.
+- [Painting Borders](https://trmnl.com/framework/docs/3.4/paint_borders.md): These functions tell you exactly how the framework draws a border line. Use them so lines you draw yourself, or Highcharts axes and grid lines, match the borders around them.
+- [Painting Typography](https://trmnl.com/framework/docs/3.4/paint_typography.md): These functions read everything a text class sets: font, size, weight, color, and optional stroke. Apply the result to text you draw yourself, or convert it for Highcharts labels.
+
+## Sass
+
+- [Sass API](https://trmnl.com/framework/docs/3.4/sass_api.md): The Sass API is the framework's SCSS source, open since 3.2. These pages cover the build-your-own path: compiling from source, adding device profiles, and using the mixins in your own SCSS. A custom stack can also skip the build entirely and serve an official released build, which is what the TRMNL Platform always does.
+- [Compiling the Framework](https://trmnl.com/framework/docs/3.4/sass_build.md): Compile the framework from source with Dart Sass: one entrypoint, one load path, plus a stylesheet per theme. The result is the same plugins.css the release pipeline produces. You only need a source build when a released one is not enough, for modified source or custom device profiles.
+- [Custom Devices](https://trmnl.com/framework/docs/3.4/sass_devices.md): Every device the compile knows about becomes a screen--{name} class, with its dimensions, density, and color depth baked in. Add your own panels through $custom-devices without touching framework source.
+- [Sass Mixins](https://trmnl.com/framework/docs/3.4/sass_mixins.md): The screen mixins let your own SCSS target the same conditions the responsive utilities do: device size, orientation, and bit depth. The scale functions wrap pixel values so your CSS scales with the device the way framework CSS does.
+
+## Themes
+
+- [Themes](https://trmnl.com/framework/docs/3.4/themes.md): Themes are a simple way to visually customize any TRMNL plugin. A theme adjusts the framework's colors (backgrounds, text, borders, chart colors) without touching plugin markup, and gracefully adapts to every supported device, from 1-bit ePaper to full color.
+- [Authoring Themes](https://trmnl.com/framework/docs/3.4/theme_authoring.md): Build your own theme by filling in slots: named parts of the screen, like the background, the text, or the title bar, that you point at new colors. This page walks through the workflow: start from the boilerplate, map your slots, register the id, and lint.
+- [Theme Slots](https://trmnl.com/framework/docs/3.4/theme_slots.md): This page lists every slot: each part of a screen a theme can recolor, and the mixin that sets it. A slot takes a framework token, not a raw color, so whatever you map still renders correctly on every device.
+
+## Variables
+
+- [CSS Variables](https://trmnl.com/framework/docs/3.4/variables_api.md): Some framework CSS variables are yours to use; the rest are internal and can change at any time. This page draws that line, family by family. It also shows how the Paint API, themes, and the Sass source each use the public ones.
+- [Colors](https://trmnl.com/framework/docs/3.4/colors.md): The Colors system defines the complete palette for the framework: grayscale, chromatic hues, and semantic roles (primary, success, error, warning). Use these tokens with bg--, text--, and other utilities. See Background and Text Color for usage examples.
+- [Color Palettes](https://trmnl.com/framework/docs/3.4/color_palettes.md): A palette tells a screen which inks its panel can print. Grayscale panels pick from four grayscale palettes, and five limited color palettes dither every framework color down to the panel's fixed inks. On 12-bit and 24-bit panels, screen--color-full paints every color exactly as defined.
+- [Tokens](https://trmnl.com/framework/docs/3.4/tokens.md): The Tokens reference lists every Framework CSS variable from `_variables_root.scss` and display overrides in `_variables_overrides.scss`. Use it to understand defaults, 2-bit visual/layout behavior, high-density typography, and 4-bit-and-up scaling.
+
+## Foundation
+
+- [Structure](https://trmnl.com/framework/docs/3.4/structure.md): Screen, View, Layout, Title Bar, Columns, and Mashup form the fixed hierarchy that defines the display environment. Plugins render their content inside Views. Follow the exact div setup; deviating causes layout and rendering issues.
+- [Screen](https://trmnl.com/framework/docs/3.4/screen.md): The Screen component is the outermost container that defines the device dimensions and provides global settings for your content.
+- [Devices](https://trmnl.com/framework/docs/3.4/devices.md): A device profile makes a screen render true to one panel: its exact dimensions, pixel density, and interface scale. Add one class, screen--{keyname}, and a screen renders with all of it. The profiles come from TRMNL's own device list, so each class matches a real panel.
+- [Rendering Modes](https://trmnl.com/framework/docs/3.4/rendering_modes.md): A rendering mode is the class that tells a screen what its panel can print. Grayscale panels pick one of three bit-depth classes; color panels pick the class for their palette. Everything else follows that one class, from the dither patterns to the colors JavaScript reads.
+- [View](https://trmnl.com/framework/docs/3.4/view.md): A View holds content (e.g. a plugin instance). Single views use `view--full` inside the Screen; multiple views go inside a Mashup, where the view modifier sets each view's share of space and the Mashup modifier sets the arrangement. View and Layout receive calculated dimensions from the device and orientation.
+- [Layout](https://trmnl.com/framework/docs/3.4/layout.md): The Layout is the content container inside a View, exactly one `layout` per `view`. It arranges content horizontally (`layout--row`) or vertically (`layout--col`), with alignment and stretch modifiers.
+- [Title Bar](https://trmnl.com/framework/docs/3.4/title_bar.md): A header strip for a View, holding an icon, a title, and an optional instance label. Place it as a sibling of the Layout, not inside it.
+- [Columns](https://trmnl.com/framework/docs/3.4/columns.md): The Columns system handles lots of same-type data. You provide the items; it distributes them into columns and manages overflow, so you can display as few or as many items as there are in any given situation. For other layout needs, use Grid or Flex.
+- [Mashup](https://trmnl.com/framework/docs/3.4/mashup.md): A Mashup arranges multiple plugin views within a single screen. A fixed mashup modifier (e.g. `mashup--1Lx1R`, `mashup--2x2`) positions the views, while each view's own modifier sets how much space it occupies. Fluid Mashups use the `mashup--3x3` layout and cell placement modifiers for custom tilings.
+
+## Elements
+
+- [Title](https://trmnl.com/framework/docs/3.4/title.md): Headings for a plugin screen. Five size variants from small to xxlarge, each with responsive prefixes for breakpoints and orientation.
+- [Value](https://trmnl.com/framework/docs/3.4/value.md): Figures and readouts on a plugin screen. Twelve size variants from xxsmall to peta, plus value--tnums for tabular numbers that keep columns aligned.
+- [Label](https://trmnl.com/framework/docs/3.4/label.md): Short captions and status chips for a plugin screen. Five sizes plus style variants (filled, outline, underline, inverted) and semantic variants such as label--success and label--error.
+- [Description](https://trmnl.com/framework/docs/3.4/description.md): Supporting body text, sized to sit under a Title or a Value rather than compete with it. Four size variants from base to xxlarge, with wrapping or line clamping for longer copy.
+- [Divider](https://trmnl.com/framework/docs/3.4/divider.md): The Divider element provides a simple, standalone shorthand for horizontal and vertical separators. It draws the same line as the border utilities at level 6, the line the steps 60 and 65 draw.
+
+## Components
+
+- [Rich Text](https://trmnl.com/framework/docs/3.4/rich_text.md): A container for long-form text: paragraphs, headings, lists, and quotes. The framework styles the children of the content block, so text from a feed renders in the framework font without a class on every tag.
+- [Item](https://trmnl.com/framework/docs/3.4/item.md): A row for lists, schedules, and other repeating content, with optional meta text, an index, or an icon. Stack items in a Layout and let the Overflow engine handle the ones that do not fit.
+- [Table](https://trmnl.com/framework/docs/3.4/table.md): Tabular data with optional row indexes. Five size variants, and the Overflow and Clamp engines drop rows and truncate cells that do not fit the space available.
+- [Chart](https://trmnl.com/framework/docs/3.4/chart.md): Plugins can draw charts with any JavaScript charting library. The TRMNLCharts helper supplies the framework's colors, so a chart adapts to the device and themes like the rest of the screen.
+- [Map](https://trmnl.com/framework/docs/3.4/map.md): Maps render OpenStreetMap vector tiles through MapLibre GL JS, with every layer painted by the framework. The TRMNLMaps helper composes the map style from the live screen, so a map adapts to the device and themes like the rest of the screen. Maps are plotted, never satellite, and never interactive.
+- [Progress](https://trmnl.com/framework/docs/3.4/progress.md): Progress bars and step dots for completion state. The fill renders as a bitmap pattern on 1-bit displays and as a solid color on 4-bit+ displays.
+
+## Instructions
+
+- Use Framework 3.4 (current). Framework 1.2, 2.3, 3.0, and 3.1 are available for compatibility.
+- All framework CSS classes use the `--` separator (e.g., `w--full`, `bg--black`, `gap--md`).
+- Framework is designed for ePaper displays: 1-bit (black/white) and 2-bit (4 shades of gray).
+- Layouts are built with `view`, `layout`, `title_bar`, and `columns` primitives.
+- Use the Overflow and Clamp engines for handling content that exceeds available space.
+- The framework runtime automatically adapts layouts to device bit-depth and orientation.
