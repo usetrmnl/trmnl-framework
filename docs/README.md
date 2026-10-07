@@ -158,7 +158,7 @@ bundle paints the same art from generated gradients and data URIs instead.
 
 ### Overview
 
-Framework documentation tooling renders the live framework docs into prebuilt Markdown and generates `llms.txt` and `llms-full.txt`.
+Framework documentation tooling renders the live framework docs into prebuilt Markdown and generates `framework/llms.txt` and `framework/llms-full.txt`.
 
 ### Documentation Commands
 
@@ -171,28 +171,10 @@ Framework documentation tooling renders the live framework docs into prebuilt Ma
 
 - `generate_markdown` renders docs and examples for all versions using internal requests with `_raw=1`, then converts HTML to Markdown.
 - Output goes to this repo's `public/`, the directory `Framework::Static` serves, so every page's `.md` twin and both `llms*.txt` files resolve in any host that mounts the engine.
-- The generated files are untracked. Run the task when you want them locally; core generates and serves the production copies until docs cutover.
-- `APP_URL` controls the base URL used in `public/llms.txt` links (defaults to `https://trmnl.com`).
-- `INTERCOM_TOKEN` (optional) enables the Intercom help-article fetch. See "Intercom Help Articles (Maintainers)" below for where the token lives and how to run it.
+- The generated files are committed. `rake framework:release:*` runs the task, so each release ships its own Markdown.
+- `APP_URL` controls the base URL used in `public/framework/llms.txt` links (defaults to `https://trmnl.com`).
+- The host owns `/llms.txt`. trmnl.com folds the framework index into it with its API and help-center links.
 - `llms.txt` indexes the current version's docs pages by category and appends an Instructions section. `llms-full.txt` concatenates the current version's docs Markdown.
-
-### Intercom Help Articles (Maintainers)
-
-`generate_markdown` can enrich `llms.txt` and `llms-full.txt` with TRMNL's public help-center articles. The step is optional: it runs only when a token is present.
-
-**Where the token lives: nowhere in this repo.** The fetch needs an Intercom API access token. It stays in the maintainers' password manager, is passed to one command as an environment variable, and is never committed, written to a file, or needed by contributors.
-
-**Getting a token.** Create it in the Intercom workspace under Settings > Integrations > Developer Hub > your app > Authentication. Scope it read-only to Articles; the task only ever calls `GET https://api.intercom.io/articles`.
-
-**Running the enriched generation:**
-
-```bash
-INTERCOM_TOKEN=<paste from the password manager> bundle exec rake framework:generate_markdown
-```
-
-**Without the token** the task prints `Skipping Intercom help articles (INTERCOM_TOKEN not set)` and builds both outputs from the framework docs alone. This is the normal path for community checkouts and CI.
-
-**What the token changes.** `llms.txt` gains a `## Help Articles` index and `llms-full.txt` appends each article's Markdown body. The articles themselves are public on the help center; the token only authorizes the API listing at generation time.
 
 ### Documentation Outputs
 
@@ -200,8 +182,8 @@ INTERCOM_TOKEN=<paste from the password manager> bundle exec rake framework:gene
 | ----------------------------------------- | ------------------------------------ |
 | `public/framework/docs/{version}/*.md`    | Prebuilt Markdown for docs pages     |
 | `public/framework/examples/*.md`          | Prebuilt Markdown for examples pages |
-| `public/llms.txt`                         | Index of the current version's docs pages |
-| `public/llms-full.txt`                    | Full concatenated docs content for the current version |
+| `public/framework/llms.txt`               | Index of the current version's docs pages |
+| `public/framework/llms-full.txt`          | Full concatenated docs content for the current version |
 
 ### Documentation Key Files
 

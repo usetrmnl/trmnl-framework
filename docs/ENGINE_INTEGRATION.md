@@ -254,30 +254,13 @@ Setting either config key is enough. A host that sets neither gets the last defa
 
 ## Markdown docs and llms.txt
 
-Every docs page has a Markdown twin at its own URL plus `.md`, and `/llms.txt` and
-`/llms-full.txt` sit at the host root. `Framework::Static` serves all of them out of the
-gem's `public/`, so they resolve wherever the engine is mounted.
+Every docs page has a Markdown twin at its own URL plus `.md`, beside the framework LLM
+indexes at `/framework/llms.txt` and `/framework/llms-full.txt`. `Framework::Static`
+serves all of them out of the gem's `public/`, so they resolve wherever the engine is
+mounted.
 
-They are generated, not committed. Run this once per deploy of a new gem version:
-
-```bash
-bundle exec rake framework:generate_markdown
-```
-
-It writes into `Framework.public_root` (the gem's own `public/`), which means the gem has
-to sit somewhere writable; the task aborts with that message if it does not. Until it
-runs, the `.md` URLs 404 and the docs chrome's "Copy as Markdown" reports the page as
-unavailable rather than copying the error page.
-
-The generator parses and converts HTML, which mounting the engine does not need, so those
-two gems are yours to add:
-
-```ruby
-gem "nokogiri", require: false
-gem "reverse_markdown", "~> 3.0", require: false
-```
-
-The task names whichever one is missing and stops before it writes anything.
+They ship in the gem: every release runs `rake framework:generate_markdown` and commits the
+output, so a host has nothing to generate. `/llms.txt` at the root is left to the host.
 
 ## What the engine claims in your app
 
@@ -314,8 +297,7 @@ before mounting:
   bare is safe to share. `plugin-render/*`, `plugin_legacy` and `framework_iframe_bridge`
   stay bare on purpose: those match the names core already pins.
 - **URL prefixes**: `/css/`, `/js/`, `/fonts/`, `/images/`, `/framework/`,
-  `/framework-docs/`, `/framework-dev/`, plus `llms.txt` and
-  `llms-full.txt` at the root. `Framework::Static` is unshifted ahead of
+  `/framework-docs/` and `/framework-dev/`. `Framework::Static` is unshifted ahead of
   `ActionDispatch::Static`, so the gem's file wins in-process wherever both have one.
 
 Framework CSS references `/fonts/` and `/images/` by root-relative URL in every released

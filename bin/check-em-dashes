@@ -34,6 +34,9 @@ ALLOWED_PATHS=(
     'public/fonts'
     # Vendored third-party libraries (Prism, jQuery), shipped verbatim.
     'vendor'
+    # Markdown generated from the docs views by rake framework:generate_markdown. The
+    # views are checked here; the copy carries the frozen tracks' em-dashes along.
+    'public/framework/docs'
     # Frozen docs tracks. Each documents the released bundle of its own version and is
     # not edited after that version ships.
     'app/views/framework_v1'

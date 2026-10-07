@@ -719,22 +719,22 @@ namespace :framework do
     end
 
     desc 'Re-release the current version of the Framework (update assets only)'
-    task current: [:environment, :verify_current, :build] do
+    task current: [:environment, :verify_current, :build, "framework:generate_markdown"] do
       Framework::ReleaseTask.new('current').call
     end
 
     desc 'Release a new major version of the Framework (X.0.0)'
-    task major: [:environment, :verify_major, :build] do
+    task major: [:environment, :verify_major, :build, "framework:generate_markdown"] do
       Framework::ReleaseTask.new('major').call
     end
 
     desc 'Release a new minor version of the Framework (x.X.0)'
-    task minor: [:environment, :verify_minor, :build] do
+    task minor: [:environment, :verify_minor, :build, "framework:generate_markdown"] do
       Framework::ReleaseTask.new('minor').call
     end
 
     desc 'Release a new patch version of the Framework (x.x.X)'
-    task patch: [:environment, :verify_patch, :build] do
+    task patch: [:environment, :verify_patch, :build, "framework:generate_markdown"] do
       Framework::ReleaseTask.new('patch').call
     end
 
