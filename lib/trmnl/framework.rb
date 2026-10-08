@@ -15,6 +15,7 @@ module Framework
     ColorData.load
     Fonts.config
     Devices.manifest
+    Colors.manifest
   end
 
   # Always the gem archive. Hosts serve these URLs via Framework::Static;
