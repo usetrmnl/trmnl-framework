@@ -14,6 +14,7 @@
 @use 'config/tokens' as vars;
 @use 'config/devices' as devices;
 @use 'config/fonts';
+@use 'config/font_fallbacks';
 @use 'config/environment';
 @use 'config/layers' as layers;
 @use 'mixins' as mixins;

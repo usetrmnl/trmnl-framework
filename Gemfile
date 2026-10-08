@@ -40,6 +40,8 @@ group :development, :test do
   gem "reverse_markdown", "~> 3.0", require: false
   gem "rubyzip", "~> 2.4.1", require: false
   gem "tailwindcss-rails", "~> 4.4"
+  # Reads the pixel fonts' character maps for rake framework:font_fallbacks.
+  gem "ttfunk", "~> 1.8", require: false
 end
 
 group :development do
