@@ -21,22 +21,28 @@ module Framework
       'TRMNL21' => { files: { 'normal' => 'TRMNL21-Regular.ttf', 'bold' => 'TRMNL21-Bold.ttf' }, size_adjust: 95 }
     }.freeze
 
-    # Fonts installed on the render boxes, by local() full name then PostScript name. Each is the
-    # font Firefox renders the script in today, except DejaVu Sans, which replaces Firefox's serif
-    # default. A script with no bold font keeps its regular glyphs in bold text.
+    # Fonts installed on the render boxes, by local() full name then PostScript name: Firefox's current
+    # pick, DejaVu Sans where Firefox fell back to serif, and Noto Sans where the pick had no bold or no
+    # font existed. Tibetan has no bold font, so its bold text keeps regular glyphs.
     SCRIPTS = {
       'kana' => { ranges: [0x3040..0x30FF, 0x31F0..0x31FF], regular: ['Noto Sans CJK JP', 'NotoSansCJKjp-Regular'], bold: ['Noto Sans CJK JP Bold', 'NotoSansCJKjp-Bold'] },
       'han' => { ranges: [0x3000..0x303F, 0x3400..0x4DBF, 0x4E00..0x9FFF, 0xF900..0xFAFF, 0xFF00..0xFFEF], regular: ['Noto Sans CJK SC', 'NotoSansCJKsc-Regular'], bold: ['Noto Sans CJK SC Bold', 'NotoSansCJKsc-Bold'] },
       'hangul' => { ranges: [0x1100..0x11FF, 0x3130..0x318F, 0xAC00..0xD7AF], regular: ['Noto Sans CJK KR', 'NotoSansCJKkr-Regular'], bold: ['Noto Sans CJK KR Bold', 'NotoSansCJKkr-Bold'] },
       'thai' => { ranges: [0x0E00..0x0E7F], regular: ['Loma'], bold: ['Loma Bold', 'Loma-Bold'] },
-      'devanagari' => { ranges: [0x0900..0x097F], regular: ['Lohit Devanagari', 'Lohit-Devanagari'] },
+      'devanagari' => { ranges: [0x0900..0x097F], regular: ['Noto Sans Devanagari Regular', 'NotoSansDevanagari-Regular'], bold: ['Noto Sans Devanagari Bold', 'NotoSansDevanagari-Bold'] },
       'bengali' => { ranges: [0x0980..0x09FF], regular: ['Mukti'], bold: ['Mukti Bold', 'muktibold'] },
-      'gurmukhi' => { ranges: [0x0A00..0x0A7F], regular: ['Lohit Gurmukhi', 'Lohit-Gurmukhi'] },
-      'oriya' => { ranges: [0x0B00..0x0B7F], regular: ['ori1Uni Medium', 'utkal'] },
-      'tamil' => { ranges: [0x0B80..0x0BFF], regular: ['Lohit Tamil', 'Lohit-Tamil'] },
-      'telugu' => { ranges: [0x0C00..0x0C7F], regular: ['Lohit Telugu', 'Lohit-Telugu'] },
-      'kannada' => { ranges: [0x0C80..0x0CFF], regular: ['Lohit Kannada', 'Lohit-Kannada'] },
+      'gurmukhi' => { ranges: [0x0A00..0x0A7F], regular: ['Noto Sans Gurmukhi Regular', 'NotoSansGurmukhi-Regular'], bold: ['Noto Sans Gurmukhi Bold', 'NotoSansGurmukhi-Bold'] },
+      'oriya' => { ranges: [0x0B00..0x0B7F], regular: ['Noto Sans Oriya Regular', 'NotoSansOriya-Regular'], bold: ['Noto Sans Oriya Bold', 'NotoSansOriya-Bold'] },
+      'tamil' => { ranges: [0x0B80..0x0BFF], regular: ['Noto Sans Tamil Regular', 'NotoSansTamil-Regular'], bold: ['Noto Sans Tamil Bold', 'NotoSansTamil-Bold'] },
+      'telugu' => { ranges: [0x0C00..0x0C7F], regular: ['Noto Sans Telugu Regular', 'NotoSansTelugu-Regular'], bold: ['Noto Sans Telugu Bold', 'NotoSansTelugu-Bold'] },
+      'kannada' => { ranges: [0x0C80..0x0CFF], regular: ['Noto Sans Kannada Regular', 'NotoSansKannada-Regular'], bold: ['Noto Sans Kannada Bold', 'NotoSansKannada-Bold'] },
       'malayalam' => { ranges: [0x0D00..0x0D7F], regular: ['Rachana', 'Rachana-Regular'], bold: ['Rachana-Bold'] },
+      'gujarati' => { ranges: [0x0A80..0x0AFF], regular: ['Noto Sans Gujarati Regular', 'NotoSansGujarati-Regular'], bold: ['Noto Sans Gujarati Bold', 'NotoSansGujarati-Bold'] },
+      'sinhala' => { ranges: [0x0D80..0x0DFF], regular: ['Noto Sans Sinhala Regular', 'NotoSansSinhala-Regular'], bold: ['Noto Sans Sinhala Bold', 'NotoSansSinhala-Bold'] },
+      'myanmar' => { ranges: [0x1000..0x109F], regular: ['Noto Sans Myanmar Regular', 'NotoSansMyanmar-Regular'], bold: ['Noto Sans Myanmar Bold', 'NotoSansMyanmar-Bold'] },
+      'ethiopic' => { ranges: [0x1200..0x139F], regular: ['Noto Sans Ethiopic Regular', 'NotoSansEthiopic-Regular'], bold: ['Noto Sans Ethiopic Bold', 'NotoSansEthiopic-Bold'] },
+      'khmer' => { ranges: [0x1780..0x17FF, 0x19E0..0x19FF], regular: ['Noto Sans Khmer Regular', 'NotoSansKhmer-Regular'], bold: ['Noto Sans Khmer Bold', 'NotoSansKhmer-Bold'] },
+      'tibetan' => { ranges: [0x0F00..0x0FFF], regular: ['Tibetan Machine Uni', 'Tibetan_Machine_Uni'] },
       # Latin extensions (Vietnamese), Greek, Cyrillic, Armenian, Hebrew, Arabic, Lao, Georgian.
       'dejavu' => {
         ranges: [0x00A0..0x024F, 0x0370..0x06FF, 0x0750..0x077F, 0x0E80..0x0EFF, 0x10A0..0x10FF, 0x1E00..0x1EFF, 0xFB50..0xFDFF, 0xFE70..0xFEFF],
