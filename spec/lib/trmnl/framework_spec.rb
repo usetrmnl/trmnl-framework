@@ -6,7 +6,7 @@ RSpec.describe Framework do
   describe '.preload_data_files' do
     subject(:preload_data_files) { described_class.preload_data_files }
 
-    let(:readers) { [Framework::Version, Framework::ColorData, Framework::Fonts, Framework::Devices] }
+    let(:readers) { [Framework::Version, Framework::ColorData, Framework::Fonts, Framework::Devices, Framework::Colors] }
 
     before do
       readers.each(&:reload!)
@@ -22,6 +22,11 @@ RSpec.describe Framework do
       it('keeps the colors readable') { expect(Framework::ColorData.color_hues).not_to be_empty }
       it('keeps the fonts readable') { expect(Framework::Fonts.bundle_ids).not_to be_empty }
       it('keeps the devices readable') { expect(Framework::Devices.device_specs).not_to be_empty }
+
+      it 'keeps the color manifest readable' do
+        allow(Framework::Colors).to receive(:manifest_path).and_return(Pathname('/removed/framework_colors.resolved.json'))
+        expect(Framework::Colors.limited_palette_grayscale_1bit_ids).not_to be_empty
+      end
     end
   end
 end
