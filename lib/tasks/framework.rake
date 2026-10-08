@@ -563,8 +563,8 @@ namespace :framework do
     puts "Generated #{out_path} (#{File.size(out_path)} bytes)"
   end
 
-  # The stylesheet carries the fallbacks into a release; the unversioned copy in public/fonts lets a
-  # host add them to renders of every version already published.
+  # The stylesheet carries the fallbacks into a release; the unversioned copies in public/fonts let a
+  # host add them to renders of every version already published, with Japanese Han forms in the -ja one.
   desc 'Generate the font fallback faces from the pixel font files'
   task font_fallbacks: :environment do
     css = Framework::FontFallbacks.css
@@ -578,9 +578,9 @@ namespace :framework do
       // ============================================
 
     SCSS
-    css_path = File.join(Framework::FontFallbacks::FONTS_DIR, 'fallbacks.css')
-    File.write(css_path, css)
-    puts "Generated #{scss_path} and #{css_path}"
+    File.write(File.join(Framework::FontFallbacks::FONTS_DIR, 'fallbacks.css'), css)
+    File.write(File.join(Framework::FontFallbacks::FONTS_DIR, 'fallbacks-ja.css'), Framework::FontFallbacks.css(japanese: true))
+    puts "Generated #{scss_path} and public/fonts/fallbacks{,-ja}.css"
   end
 
   desc "Regenerate all framework color artifacts (tokens, CSS variables, dither ramps)"
