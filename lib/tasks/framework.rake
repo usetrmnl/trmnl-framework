@@ -9,6 +9,7 @@ require_relative '../framework/border_line_specs'
 require_relative '../framework/bayer_tiles'
 require_relative '../framework/dither_ramps'
 require_relative '../framework/themes'
+require_relative '../framework/font_fallbacks'
 
 # Standalone port of core's framework:colors tasks. The generator libs are
 # Rails-optional (they resolve db/data + tmp relative to the repo root when Rails
@@ -560,6 +561,26 @@ namespace :framework do
     out_path = File.join(STYLES_DIR, '_dither_ramps_generated.scss')
     File.write(out_path, generated)
     puts "Generated #{out_path} (#{File.size(out_path)} bytes)"
+  end
+
+  # The stylesheet carries the fallbacks into a release; the unversioned copy in public/fonts lets a
+  # host add them to renders of every version already published.
+  desc 'Generate the font fallback faces from the pixel font files'
+  task font_fallbacks: :environment do
+    css = Framework::FontFallbacks.css
+    scss_path = File.join(STYLES_DIR, '_font_fallbacks.scss')
+    File.write(scss_path, <<~SCSS + css)
+      // ============================================
+      // TRMNL Framework - Font fallbacks (GENERATED)
+      // ============================================
+      // Generated from lib/framework/font_fallbacks.rb
+      // Regenerate with: rake framework:font_fallbacks
+      // ============================================
+
+    SCSS
+    css_path = File.join(Framework::FontFallbacks::FONTS_DIR, 'fallbacks.css')
+    File.write(css_path, css)
+    puts "Generated #{scss_path} and #{css_path}"
   end
 
   desc "Regenerate all framework color artifacts (tokens, CSS variables, dither ramps)"
