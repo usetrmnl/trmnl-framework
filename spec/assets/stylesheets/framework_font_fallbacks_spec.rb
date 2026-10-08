@@ -6,6 +6,9 @@ RSpec.describe 'Framework font fallbacks' do
   subject(:fallbacks) { Framework::FontFallbacks }
 
   let(:root) { Framework::Engine.root }
+  let(:han) { fallbacks::SCRIPTS.fetch('han') }
+
+  def sources(names) = names.map { |name| "local('#{name}')" }.join(', ')
 
   it 'publishes the stylesheet the generator computes now' do
     expect(root.join('app/assets/stylesheets/framework/config/_font_fallbacks.scss').read).to end_with(fallbacks.css)
@@ -15,12 +18,17 @@ RSpec.describe 'Framework font fallbacks' do
     expect(root.join('public/fonts/fallbacks.css').read).to eq(fallbacks.css)
   end
 
-  it 'publishes the Japanese copy the generator computes now' do
-    expect(root.join('public/fonts/fallbacks-ja.css').read).to eq(fallbacks.css(japanese: true))
-  end
+  Framework::FontFallbacks.variants.each do |variant|
+    it "publishes the #{variant} copy the generator computes now" do
+      expect(root.join("public/fonts/fallbacks-#{variant}.css").read).to eq(fallbacks.css(variant:))
+    end
 
-  it 'swaps only the Han fonts for Japanese ones in the Japanese copy' do
-    expect(fallbacks.css(japanese: true)).to eq(fallbacks.css.gsub('CJK SC', 'CJK JP').gsub('CJKsc', 'CJKjp'))
+    it "swaps only the Han fonts in the #{variant} copy" do
+      fonts = han.dig(:variants, variant)
+      expected = fallbacks.css.gsub(sources(han[:bold]), sources(fonts[:bold])).gsub(sources(han[:regular]), sources(fonts[:regular]))
+
+      expect(fallbacks.css(variant:)).to eq(expected)
+    end
   end
 
   it 'sizes fallbacks for every font family' do
