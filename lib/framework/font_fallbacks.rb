@@ -18,7 +18,9 @@ module Framework
       'BlockKie' => { files: { 'normal' => 'BlockKie.ttf' }, size_adjust: 85 },
       'TRMNL12' => { files: { 'normal' => 'TRMNL12-Regular.ttf', 'bold' => 'TRMNL12-Bold.ttf' }, size_adjust: 85 },
       'TRMNL16' => { files: { 'normal' => 'TRMNL16-Regular.ttf', 'bold' => 'TRMNL16-Bold.ttf' }, size_adjust: 95 },
-      'TRMNL21' => { files: { 'normal' => 'TRMNL21-Regular.ttf', 'bold' => 'TRMNL21-Bold.ttf' }, size_adjust: 95 }
+      'TRMNL21' => { files: { 'normal' => 'TRMNL21-Regular.ttf', 'bold' => 'TRMNL21-Bold.ttf' }, size_adjust: 95 },
+      # One face spanning Inter's own weight range; a split range moves Chrome off Inter for Latin.
+      'Inter Variable' => { files: { '100 900' => 'Inter.ttf' }, size_adjust: 100 }
     }.freeze
 
     # Fonts installed on the render boxes, by local() full name then PostScript name: Firefox's current
@@ -26,7 +28,11 @@ module Framework
     # font existed. Tibetan has no bold font, so its bold text keeps regular glyphs.
     SCRIPTS = {
       'kana' => { ranges: [0x3040..0x30FF, 0x31F0..0x31FF], regular: ['Noto Sans CJK JP', 'NotoSansCJKjp-Regular'], bold: ['Noto Sans CJK JP Bold', 'NotoSansCJKjp-Bold'] },
-      'han' => { ranges: [0x3000..0x303F, 0x3400..0x4DBF, 0x4E00..0x9FFF, 0xF900..0xFAFF, 0xFF00..0xFFEF], regular: ['Noto Sans CJK SC', 'NotoSansCJKsc-Regular'], bold: ['Noto Sans CJK SC Bold', 'NotoSansCJKsc-Bold'] },
+      'han' => {
+        ranges: [0x3000..0x303F, 0x3400..0x4DBF, 0x4E00..0x9FFF, 0xF900..0xFAFF, 0xFF00..0xFFEF],
+        regular: ['Noto Sans CJK SC', 'NotoSansCJKsc-Regular'], bold: ['Noto Sans CJK SC Bold', 'NotoSansCJKsc-Bold'],
+        japanese: { regular: ['Noto Sans CJK JP', 'NotoSansCJKjp-Regular'], bold: ['Noto Sans CJK JP Bold', 'NotoSansCJKjp-Bold'] }
+      },
       'hangul' => { ranges: [0x1100..0x11FF, 0x3130..0x318F, 0xAC00..0xD7AF], regular: ['Noto Sans CJK KR', 'NotoSansCJKkr-Regular'], bold: ['Noto Sans CJK KR Bold', 'NotoSansCJKkr-Bold'] },
       'thai' => { ranges: [0x0E00..0x0E7F], regular: ['Loma'], bold: ['Loma Bold', 'Loma-Bold'] },
       'devanagari' => { ranges: [0x0900..0x097F], regular: ['Noto Sans Devanagari Regular', 'NotoSansDevanagari-Regular'], bold: ['Noto Sans Devanagari Bold', 'NotoSansDevanagari-Bold'] },
@@ -52,11 +58,11 @@ module Framework
 
     module_function
 
-    def css
+    def css(japanese: false)
       FAMILIES.flat_map do |family, config|
         config[:files].flat_map do |weight, file|
           missing = missing_codepoints(file)
-          SCRIPTS.each_value.filter_map { |script| font_face(family, weight, config[:size_adjust], script, missing) }
+          SCRIPTS.each_value.filter_map { |script| font_face(family, weight, config[:size_adjust], script.merge((japanese && script[:japanese]) || {}), missing) }
         end
       end.join("\n")
     end

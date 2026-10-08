@@ -15,10 +15,17 @@ RSpec.describe 'Framework font fallbacks' do
     expect(root.join('public/fonts/fallbacks.css').read).to eq(fallbacks.css)
   end
 
-  # Inter is an outline font at full size, so the browser's own fallbacks already match it.
-  it 'sizes fallbacks for every pixel family' do
+  it 'publishes the Japanese copy the generator computes now' do
+    expect(root.join('public/fonts/fallbacks-ja.css').read).to eq(fallbacks.css(japanese: true))
+  end
+
+  it 'swaps only the Han fonts for Japanese ones in the Japanese copy' do
+    expect(fallbacks.css(japanese: true)).to eq(fallbacks.css.gsub('CJK SC', 'CJK JP').gsub('CJKsc', 'CJKjp'))
+  end
+
+  it 'sizes fallbacks for every font family' do
     declared = root.join('app/assets/stylesheets/framework/config/_fonts.scss').read.scan(/font-family: '([^']+)'/).flatten.uniq
 
-    expect(declared - ['Inter Variable']).to match_array(fallbacks::FAMILIES.keys)
+    expect(declared).to match_array(fallbacks::FAMILIES.keys)
   end
 end
