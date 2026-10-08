@@ -1,0 +1,1511 @@
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 100%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 100%;
+  unicode-range: U+3001-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Loma');
+  size-adjust: 100%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Devanagari Regular'), local('NotoSansDevanagari-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Mukti');
+  size-adjust: 100%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 100%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'NicoClean';
+  font-weight: normal;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 100%;
+  unicode-range: U+00AD, U+0132-0133, U+0149, U+017F-018E, U+0190-0191, U+0193-019F, U+01A2-01AE, U+01B1-01C3, U+01CD-01E5, U+01E8-01E9, U+01EC-01F9, U+021C-0229, U+022E-022F, U+0234-0236, U+0238-024F, U+0370-0393, U+0395-03A8, U+03AA-03BF, U+03C1-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E07, U+1E0A-1E0B, U+1E10-1E13, U+1E18-1E1B, U+1E1E-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E39, U+1E3C-1E41, U+1E4A-1E4B, U+1E54-1E59, U+1E5C-1E5D, U+1E6A-1E6B, U+1E70-1E77, U+1E7C-1E7F, U+1E86-1E8D, U+1E90-1E91, U+1E94-1E96, U+1E98-1E9D, U+1E9F, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 80%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 80%;
+  unicode-range: U+3001-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 80%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Loma');
+  size-adjust: 80%;
+  unicode-range: U+0E00-0E7F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Devanagari Regular'), local('NotoSansDevanagari-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Mukti');
+  size-adjust: 80%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 80%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 80%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 80%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 80%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 80%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'NicoPups';
+  font-weight: normal;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 80%;
+  unicode-range: U+00AD, U+017F-0191, U+0193-019F, U+01A2-01AE, U+01B1-01CC, U+01DD-0217, U+021C-0236, U+0238-024F, U+0370-0393, U+0395-03A8, U+03AA-03BB, U+03BD-03BF, U+03C1-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E7F, U+1E86-1E9F, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 85%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 85%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00, U+FF5F-FFDF, U+FFE7-FFEF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Loma');
+  size-adjust: 85%;
+  unicode-range: U+0E00-0E7F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Mukti');
+  size-adjust: 85%;
+  unicode-range: U+0984, U+098D-098E, U+0991-0992, U+09A9, U+09B1, U+09B3-09B5, U+09BA-09BB, U+09C5-09C6, U+09C9-09CA, U+09CF-09D6, U+09D8-09DB, U+09DE, U+09E4-09E5, U+09FF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 85%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'BlockKie';
+  font-weight: normal;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 85%;
+  unicode-range: U+00A0, U+0378-0379, U+0380-0383, U+038B, U+038D, U+03A2, U+0530, U+0557-0558, U+058B-058C, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 85%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 85%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Loma');
+  size-adjust: 85%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Devanagari Regular'), local('NotoSansDevanagari-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Mukti');
+  size-adjust: 85%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 85%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 85%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 85%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: normal;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 85%;
+  unicode-range: U+00A8, U+00AF, U+00B2-00B4, U+00B8-00B9, U+0149, U+017F-0180, U+0182-0185, U+018B-018D, U+0195, U+019A-019C, U+019E-01A3, U+01A6-01A8, U+01AA-01AB, U+01AF-01B0, U+01B5-01B6, U+01B8-01CC, U+01D3-01DC, U+01E0-01E3, U+01EA-01ED, U+01F0-01F9, U+0200-0202, U+0204-0217, U+021C-0227, U+022C-0236, U+0238-0241, U+0246-024A, U+024D-024F, U+0370-0392, U+0395-03A8, U+03AA-03B2, U+03B5-03BF, U+03C1-03C8, U+03CA-058E, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E03, U+1E06-1E0B, U+1E10-1E11, U+1E14-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E3B, U+1E40-1E43, U+1E48-1E49, U+1E4E-1E4F, U+1E54-1E59, U+1E5B, U+1E5D-1E61, U+1E64-1E6B, U+1E70, U+1E72-1E7F, U+1E86-1E91, U+1E94-1E9D, U+1E9F-1EA0, U+1EA2-1EAB, U+1EAE-1EB7, U+1EBA-1EBB, U+1EBE-1EC5, U+1EC8-1EC9, U+1ECE-1ED7, U+1EDA-1EE3, U+1EE6-1EF1, U+1EF4-1EF7, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFE;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans CJK JP Bold'), local('NotoSansCJKjp-Bold');
+  size-adjust: 85%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans CJK TC Bold'), local('NotoSansCJKtc-Bold');
+  size-adjust: 85%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans CJK KR Bold'), local('NotoSansCJKkr-Bold');
+  size-adjust: 85%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Loma Bold'), local('Loma-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Devanagari Bold'), local('NotoSansDevanagari-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Mukti Bold'), local('muktibold');
+  size-adjust: 85%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Gurmukhi Bold'), local('NotoSansGurmukhi-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Oriya Bold'), local('NotoSansOriya-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Tamil Bold'), local('NotoSansTamil-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Telugu Bold'), local('NotoSansTelugu-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Kannada Bold'), local('NotoSansKannada-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Rachana-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Gujarati Bold'), local('NotoSansGujarati-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Sinhala Bold'), local('NotoSansSinhala-Bold');
+  size-adjust: 85%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Myanmar Bold'), local('NotoSansMyanmar-Bold');
+  size-adjust: 85%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Ethiopic Bold'), local('NotoSansEthiopic-Bold');
+  size-adjust: 85%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Noto Sans Khmer Bold'), local('NotoSansKhmer-Bold');
+  size-adjust: 85%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 85%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'TRMNL12';
+  font-weight: bold;
+  src: local('DejaVu Sans Bold'), local('DejaVuSans-Bold');
+  size-adjust: 85%;
+  unicode-range: U+00A8, U+00AF, U+00B2-00B4, U+00B8-00B9, U+0149, U+017F-0180, U+0182-0185, U+018B-018D, U+0195, U+019A-019C, U+019E-01A3, U+01A6-01A8, U+01AA-01AB, U+01AF-01B0, U+01B5-01B6, U+01B8-01CC, U+01D3-01DC, U+01E0-01E3, U+01EA-01ED, U+01F0-01F9, U+0200-0202, U+0204-0217, U+021C-0227, U+022C-0236, U+0238-0241, U+0246-024A, U+024D-024F, U+0370-0392, U+0395-03A8, U+03AA-03B2, U+03B5-03BF, U+03C1-03C8, U+03CA-058E, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E03, U+1E06-1E0B, U+1E10-1E11, U+1E14-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E3B, U+1E40-1E43, U+1E48-1E49, U+1E4E-1E4F, U+1E54-1E59, U+1E5B, U+1E5D-1E61, U+1E64-1E6B, U+1E70, U+1E72-1E7F, U+1E86-1E91, U+1E94-1E9D, U+1E9F-1EA0, U+1EA2-1EAB, U+1EAE-1EB7, U+1EBA-1EBB, U+1EBE-1EC5, U+1EC8-1EC9, U+1ECE-1ED7, U+1EDA-1EE3, U+1EE6-1EF1, U+1EF4-1EF7, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFE;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 95%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 95%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Loma');
+  size-adjust: 95%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Devanagari Regular'), local('NotoSansDevanagari-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Mukti');
+  size-adjust: 95%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 95%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: normal;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 95%;
+  unicode-range: U+00A8, U+00AF, U+00B2-00B4, U+00B8-00B9, U+0149, U+017F-0180, U+0182-0185, U+018B-018D, U+0195, U+019A-019C, U+019E-01A3, U+01A6-01A8, U+01AA-01AB, U+01AF-01B0, U+01B5-01B6, U+01B8-01CC, U+01D3-01DC, U+01E0-01E3, U+01EA-01ED, U+01F0-01F9, U+0200-0202, U+0204-0217, U+021C-0227, U+022C-0236, U+0238-0241, U+0246-024A, U+024D-024F, U+0370-0392, U+0395-03A8, U+03AA-03B2, U+03B5-03BF, U+03C1-03C8, U+03CA-058E, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E03, U+1E06-1E0B, U+1E10-1E11, U+1E14-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E3B, U+1E40-1E43, U+1E48-1E49, U+1E4E-1E4F, U+1E54-1E59, U+1E5B, U+1E5D-1E61, U+1E64-1E6B, U+1E70, U+1E72-1E7F, U+1E86-1E91, U+1E94-1E9D, U+1E9F-1EA0, U+1EA2-1EAB, U+1EAE-1EB7, U+1EBA-1EBB, U+1EBE-1EC5, U+1EC8-1EC9, U+1ECE-1ED7, U+1EDA-1EE3, U+1EE6-1EF1, U+1EF4-1EF7, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFE;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans CJK JP Bold'), local('NotoSansCJKjp-Bold');
+  size-adjust: 95%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans CJK TC Bold'), local('NotoSansCJKtc-Bold');
+  size-adjust: 95%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans CJK KR Bold'), local('NotoSansCJKkr-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Loma Bold'), local('Loma-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Devanagari Bold'), local('NotoSansDevanagari-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Mukti Bold'), local('muktibold');
+  size-adjust: 95%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Gurmukhi Bold'), local('NotoSansGurmukhi-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Oriya Bold'), local('NotoSansOriya-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Tamil Bold'), local('NotoSansTamil-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Telugu Bold'), local('NotoSansTelugu-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Kannada Bold'), local('NotoSansKannada-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Rachana-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Gujarati Bold'), local('NotoSansGujarati-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Sinhala Bold'), local('NotoSansSinhala-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Myanmar Bold'), local('NotoSansMyanmar-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Ethiopic Bold'), local('NotoSansEthiopic-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Noto Sans Khmer Bold'), local('NotoSansKhmer-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 95%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'TRMNL16';
+  font-weight: bold;
+  src: local('DejaVu Sans Bold'), local('DejaVuSans-Bold');
+  size-adjust: 95%;
+  unicode-range: U+00A8, U+00AF, U+00B2-00B4, U+00B8-00B9, U+0149, U+017F-0180, U+0182-0185, U+018B-018D, U+0195, U+019A-019C, U+019E-01A3, U+01A6-01A8, U+01AA-01AB, U+01AF-01B0, U+01B5-01B6, U+01B8-01CC, U+01D3-01DC, U+01E0-01E3, U+01EA-01ED, U+01F0-01F9, U+0200-0202, U+0204-0217, U+021C-0227, U+022C-0236, U+0238-0241, U+0246-024A, U+024D-024F, U+0370-0392, U+0395-03A8, U+03AA-03B2, U+03B5-03BF, U+03C1-03C8, U+03CA-058E, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E03, U+1E06-1E0B, U+1E10-1E11, U+1E14-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E3B, U+1E40-1E43, U+1E48-1E49, U+1E4E-1E4F, U+1E54-1E59, U+1E5B, U+1E5D-1E61, U+1E64-1E6B, U+1E70, U+1E72-1E7F, U+1E86-1E91, U+1E94-1E9D, U+1E9F-1EA0, U+1EA2-1EAB, U+1EAE-1EB7, U+1EBA-1EBB, U+1EBE-1EC5, U+1EC8-1EC9, U+1ECE-1ED7, U+1EDA-1EE3, U+1EE6-1EF1, U+1EF4-1EF7, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFE;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 95%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 95%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Loma');
+  size-adjust: 95%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Devanagari Regular'), local('NotoSansDevanagari-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Mukti');
+  size-adjust: 95%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 95%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 95%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 95%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: normal;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 95%;
+  unicode-range: U+00A8, U+00AF, U+00B2-00B4, U+00B8-00B9, U+0149, U+017F-0180, U+0182-0185, U+018B-018D, U+0195, U+019A-019C, U+019E-01A3, U+01A6-01A8, U+01AA-01AB, U+01AF-01B0, U+01B5-01B6, U+01B8-01CC, U+01D3-01DC, U+01E0-01E3, U+01EA-01ED, U+01F0-01F9, U+0200-0202, U+0204-0217, U+021C-0227, U+022C-0236, U+0238-0241, U+0246-024A, U+024D-024F, U+0370-0392, U+0395-03A8, U+03AA-03B2, U+03B5-03BF, U+03C1-03C8, U+03CA-058E, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E03, U+1E06-1E0B, U+1E10-1E11, U+1E14-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E3B, U+1E40-1E43, U+1E48-1E49, U+1E4E-1E4F, U+1E54-1E59, U+1E5B, U+1E5D-1E61, U+1E64-1E6B, U+1E70, U+1E72-1E7F, U+1E86-1E91, U+1E94-1E9D, U+1E9F-1EA0, U+1EA2-1EAB, U+1EAE-1EB7, U+1EBA-1EBB, U+1EBE-1EC5, U+1EC8-1EC9, U+1ECE-1ED7, U+1EDA-1EE3, U+1EE6-1EF1, U+1EF4-1EF7, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFE;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans CJK JP Bold'), local('NotoSansCJKjp-Bold');
+  size-adjust: 95%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans CJK TC Bold'), local('NotoSansCJKtc-Bold');
+  size-adjust: 95%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans CJK KR Bold'), local('NotoSansCJKkr-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Loma Bold'), local('Loma-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Devanagari Bold'), local('NotoSansDevanagari-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Mukti Bold'), local('muktibold');
+  size-adjust: 95%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Gurmukhi Bold'), local('NotoSansGurmukhi-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Oriya Bold'), local('NotoSansOriya-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Tamil Bold'), local('NotoSansTamil-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Telugu Bold'), local('NotoSansTelugu-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Kannada Bold'), local('NotoSansKannada-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Rachana-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Gujarati Bold'), local('NotoSansGujarati-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Sinhala Bold'), local('NotoSansSinhala-Bold');
+  size-adjust: 95%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Myanmar Bold'), local('NotoSansMyanmar-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Ethiopic Bold'), local('NotoSansEthiopic-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Noto Sans Khmer Bold'), local('NotoSansKhmer-Bold');
+  size-adjust: 95%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 95%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'TRMNL21';
+  font-weight: bold;
+  src: local('DejaVu Sans Bold'), local('DejaVuSans-Bold');
+  size-adjust: 95%;
+  unicode-range: U+00A8, U+00AF, U+00B2-00B4, U+00B8-00B9, U+0149, U+017F-0180, U+0182-0185, U+018B-018D, U+0195, U+019A-019C, U+019E-01A3, U+01A6-01A8, U+01AA-01AB, U+01AF-01B0, U+01B5-01B6, U+01B8-01CC, U+01D3-01DC, U+01E0-01E3, U+01EA-01ED, U+01F0-01F9, U+0200-0202, U+0204-0217, U+021C-0227, U+022C-0236, U+0238-0241, U+0246-024A, U+024D-024F, U+0370-0392, U+0395-03A8, U+03AA-03B2, U+03B5-03BF, U+03C1-03C8, U+03CA-058E, U+0590-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E00-1E03, U+1E06-1E0B, U+1E10-1E11, U+1E14-1E1F, U+1E22-1E23, U+1E26-1E29, U+1E2C-1E2D, U+1E30-1E35, U+1E38-1E3B, U+1E40-1E43, U+1E48-1E49, U+1E4E-1E4F, U+1E54-1E59, U+1E5B, U+1E5D-1E61, U+1E64-1E6B, U+1E70, U+1E72-1E7F, U+1E86-1E91, U+1E94-1E9D, U+1E9F-1EA0, U+1EA2-1EAB, U+1EAE-1EB7, U+1EBA-1EBB, U+1EBE-1EC5, U+1EC8-1EC9, U+1ECE-1ED7, U+1EDA-1EE3, U+1EE6-1EF1, U+1EF4-1EF7, U+1EFA-1EFF, U+FB50-FDFF, U+FE70-FEFE;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular');
+  size-adjust: 100%;
+  unicode-range: U+3040-30FF, U+31F0-31FF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans CJK TC'), local('NotoSansCJKtc-Regular');
+  size-adjust: 100%;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans CJK KR'), local('NotoSansCJKkr-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1100-11FF, U+3130-318F, U+AC00-D7AF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Loma');
+  size-adjust: 100%;
+  unicode-range: U+0E00-0E3E, U+0E40-0E7F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Devanagari Regular'), local('NotoSansDevanagari-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0900-097F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Mukti');
+  size-adjust: 100%;
+  unicode-range: U+0980-09FF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Gurmukhi Regular'), local('NotoSansGurmukhi-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0A00-0A7F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Oriya Regular'), local('NotoSansOriya-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0B00-0B7F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Tamil Regular'), local('NotoSansTamil-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0B80-0BFF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Telugu Regular'), local('NotoSansTelugu-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0C00-0C7F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Kannada Regular'), local('NotoSansKannada-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0C80-0CFF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Rachana'), local('Rachana-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0D00-0D7F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Gujarati Regular'), local('NotoSansGujarati-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0A80-0AFF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Sinhala Regular'), local('NotoSansSinhala-Regular');
+  size-adjust: 100%;
+  unicode-range: U+0D80-0DFF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Myanmar Regular'), local('NotoSansMyanmar-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1000-109F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Ethiopic Regular'), local('NotoSansEthiopic-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1200-139F;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Noto Sans Khmer Regular'), local('NotoSansKhmer-Regular');
+  size-adjust: 100%;
+  unicode-range: U+1780-17FF, U+19E0-19FF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('Tibetan Machine Uni'), local('Tibetan_Machine_Uni');
+  size-adjust: 100%;
+  unicode-range: U+0F00-0FFF;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-weight: 100 900;
+  src: local('DejaVu Sans'), local('DejaVuSans');
+  size-adjust: 100%;
+  unicode-range: U+00AD, U+0149, U+01C4, U+0370-0373, U+0377-0379, U+0380-0383, U+038B, U+038D, U+03A2, U+03D8-03DB, U+03DE-03EF, U+03F7-03F8, U+03FB, U+047A-047F, U+049E-049F, U+0500-052E, U+0530-06FF, U+0750-077F, U+0E80-0EFF, U+10A0-10FF, U+1E9C, U+FB50-FDFF, U+FE70-FEFE;
+}

@@ -31,7 +31,11 @@ module Framework
       'han' => {
         ranges: [0x3000..0x303F, 0x3400..0x4DBF, 0x4E00..0x9FFF, 0xF900..0xFAFF, 0xFF00..0xFFEF],
         regular: ['Noto Sans CJK SC', 'NotoSansCJKsc-Regular'], bold: ['Noto Sans CJK SC Bold', 'NotoSansCJKsc-Bold'],
-        japanese: { regular: ['Noto Sans CJK JP', 'NotoSansCJKjp-Regular'], bold: ['Noto Sans CJK JP Bold', 'NotoSansCJKjp-Bold'] }
+        variants: {
+          'ja' => { regular: ['Noto Sans CJK JP', 'NotoSansCJKjp-Regular'], bold: ['Noto Sans CJK JP Bold', 'NotoSansCJKjp-Bold'] },
+          'zh-tw' => { regular: ['Noto Sans CJK TC', 'NotoSansCJKtc-Regular'], bold: ['Noto Sans CJK TC Bold', 'NotoSansCJKtc-Bold'] },
+          'zh-hk' => { regular: ['Noto Sans CJK HK', 'NotoSansCJKhk-Regular'], bold: ['Noto Sans CJK HK Bold', 'NotoSansCJKhk-Bold'] }
+        }
       },
       'hangul' => { ranges: [0x1100..0x11FF, 0x3130..0x318F, 0xAC00..0xD7AF], regular: ['Noto Sans CJK KR', 'NotoSansCJKkr-Regular'], bold: ['Noto Sans CJK KR Bold', 'NotoSansCJKkr-Bold'] },
       'thai' => { ranges: [0x0E00..0x0E7F], regular: ['Loma'], bold: ['Loma Bold', 'Loma-Bold'] },
@@ -58,11 +62,13 @@ module Framework
 
     module_function
 
-    def css(japanese: false)
+    def variants = SCRIPTS.fetch('han').fetch(:variants).keys
+
+    def css(variant: nil)
       FAMILIES.flat_map do |family, config|
         config[:files].flat_map do |weight, file|
           missing = missing_codepoints(file)
-          SCRIPTS.each_value.filter_map { |script| font_face(family, weight, config[:size_adjust], script.merge((japanese && script[:japanese]) || {}), missing) }
+          SCRIPTS.each_value.filter_map { |script| font_face(family, weight, config[:size_adjust], script.merge(script.dig(:variants, variant) || {}), missing) }
         end
       end.join("\n")
     end
