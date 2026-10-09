@@ -91,6 +91,8 @@ class FrameworkController < Framework.parent_controller_class
   #
   # :typography gains Custom Typefaces behind Font Family: the typeface class and
   # mixins are 3.4 API, so the page is current-only.
+  #
+  # :elements opens with Element Sizes, the one-page grid of every text size class.
   CURRENT_DOC_GROUPS = V3_DOC_GROUPS.each_with_object({}) do |(group, pages), groups|
     case group
     when :guides
@@ -101,6 +103,8 @@ class FrameworkController < Framework.parent_controller_class
     when :foundation
       screen_index = pages.index('screen') || -1
       groups[:foundation] = pages.dup.insert(screen_index + 1, 'devices', 'rendering_modes')
+    when :elements
+      groups[:elements] = %w[element_sizes] + pages
     when :components
       chart_index = pages.index('chart') || -1
       groups[:components] = pages.dup.insert(chart_index + 1, 'map')
@@ -234,6 +238,7 @@ class FrameworkController < Framework.parent_controller_class
   def grid; end
   def title; end
   def description; end
+  def element_sizes; end
   def label; end
   def value; end
   def divider; end

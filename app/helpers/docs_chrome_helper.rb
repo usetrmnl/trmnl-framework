@@ -258,6 +258,7 @@ module DocsChromeHelper
   INLINE_FRAMEWORK_DEMO_PAGES = {
     'colors' => nil,
     'size' => nil,
+    'element_sizes' => nil,
     'background' => %w[2.3]
   }.freeze
 
