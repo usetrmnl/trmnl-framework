@@ -1,0 +1,89 @@
+<div class="<%= layout_framework_classes %>">
+  <div class="<%= layout_framework_title_classes %>">
+    <%= render 'framework/page_header', page_name: :element_sizes %>
+  </div>
+
+  <div class="<%= layout_framework_content_classes %>">
+    <%= render_framework_intro_paragraph(:element_sizes) %>
+
+    <div class="space-y-16">
+      <section class="space-y-8">
+        <div class="space-y-4">
+          <%= framework_heading(3, 'Size Grid') %>
+          <p class="<%= framework_section_description_classes %>">
+            Each row is one element and each column is one size name, from smallest to largest.
+            Add the size class next to the element class, as in
+            <code class="<%= framework_section_code_classes %>">value value--large</code>.
+          </p>
+          <p class="<%= framework_section_description_classes %>">
+            The same size name is a different size on each element:
+            <code class="<%= framework_section_code_classes %>">value--xlarge</code> is much larger than
+            <code class="<%= framework_section_code_classes %>">title--xlarge</code>.
+          </p>
+        </div>
+
+        <%
+          sizes = %w[xxsmall xsmall small base large xlarge xxlarge xxxlarge mega giga tera peta]
+          rows = [
+            { chip: render(DocsRef.new(page: :title)),       class_name: 'title',       sizes: %w[small base large xlarge xxlarge] },
+            { chip: render(DocsRef.new(page: :value)),       class_name: 'value',       sizes: sizes },
+            { chip: render(DocsRef.new(page: :label)),       class_name: 'label',       sizes: %w[small base large xlarge xxlarge] },
+            { chip: render(DocsRef.new(page: :description)), class_name: 'description', sizes: %w[base large xlarge xxlarge] },
+            { chip: render(DocsRef.new(page: :rich_text)),   class_name: 'content',     sizes: %w[small base large xlarge xxlarge xxxlarge] },
+            { chip: render(DocsRef.new(page: :text_size)),   class_name: nil, size_prefix: 'text', sizes: %w[small base large xlarge xxlarge xxxlarge mega giga tera peta] }
+          ]
+        %>
+
+        <div class="trmnl framework-inline-demo">
+          <div class="screen p-0 bg-transparent h--auto w--auto">
+            <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-x-auto">
+              <table class="<%= framework_docs_table_classes %>">
+                <thead>
+                  <tr>
+                    <th class="<%= framework_docs_table_header_cell_classes %> !sticky !top-0 !left-0 z-20">Element</th>
+                    <% sizes.each do |size| %>
+                      <th class="<%= framework_docs_table_header_cell_classes %> !top-0"><%= size %></th>
+                    <% end %>
+                  </tr>
+                </thead>
+                <tbody class="<%= framework_docs_table_body_classes %>">
+                  <% rows.each do |row| %>
+                    <% size_prefix = row[:size_prefix] || row[:class_name] %>
+                    <tr>
+                      <td class="!sticky left-0 z-10 bg-inherit whitespace-nowrap text-sm">
+                        <%= row[:chip] %>
+                      </td>
+                      <% sizes.each do |size| %>
+                        <% size_class = "#{size_prefix}--#{size}" %>
+                        <td class="whitespace-nowrap">
+                          <% if row[:sizes].include?(size) %>
+                            <div class="flex flex-col items-start gap-2">
+                              <span class="<%= [row[:class_name], size_class].compact.join(' ') %>" data-size-class="<%= size_class %>">Aa</span>
+                              <code class="text-xs font-mono text-syntax-string"><%= size_class %></code>
+                            </div>
+                          <% else %>
+                            <span class="text-xs italic text-gray-400 dark:text-gray-500" data-missing-size-class="<%= size_class %>">Not available</span>
+                          <% end %>
+                        </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <p class="<%= framework_section_description_classes %>">
+          Every size class also takes the <code class="<%= framework_section_code_classes %>">lg:</code>,
+          <code class="<%= framework_section_code_classes %>">portrait:</code>, and
+          <code class="<%= framework_section_code_classes %>">lg:portrait:</code> prefixes, for example
+          <code class="<%= framework_section_code_classes %>">lg:portrait:value--xlarge</code>.
+          See <%= render DocsRef.new(page: :responsive) %>.
+        </p>
+      </section>
+
+      <%= render 'framework/page_navigation' %>
+    </div>
+  </div>
+</div>
