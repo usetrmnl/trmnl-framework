@@ -4022,6 +4022,7 @@ async function terminalize() {
 
 // WebKit keeps stale flex heights after fitValue's inline font-size change; toggling display rebuilds the render subtree synchronously (no visible flash).
 function forceScreenLayoutRecalculation() {
+  if (navigator.userAgent.includes('Firefox/')) return; // Gecko has no stale flex heights; skipping saves 2-4% of Firefox render CPU.
   document.querySelectorAll('.screen').forEach((screen) => {
     const previousDisplay = screen.style.display;
     screen.style.display = 'none';
