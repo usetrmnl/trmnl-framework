@@ -3732,6 +3732,18 @@ async function runTerminalizePass() {
     const t0 = performance.now();
     const tables = Array.from(document.querySelectorAll('table[data-table-limit="true"]'));
     let hiddenRowsTotal = 0;
+    const layoutHeight = (element) => {
+      const style = getComputedStyle(element);
+      const height = Number.parseFloat(style.height);
+      if (!Number.isFinite(height)) return element.offsetHeight;
+      if (style.boxSizing === 'border-box') return height;
+
+      return height
+        + Number.parseFloat(style.paddingTop)
+        + Number.parseFloat(style.paddingBottom)
+        + Number.parseFloat(style.borderTopWidth)
+        + Number.parseFloat(style.borderBottomWidth);
+    };
     tables.forEach((table) => {
       // Per table, so one unusual table cannot abandon the rest, and a failure is
       // recorded in stats.errors instead of reporting hiddenRows: 0 as success.
@@ -3750,7 +3762,7 @@ async function runTerminalizePass() {
         let heightBudget = 0;
         if (maxHAttr === 'auto' || maxHAttr == null) {
           const parent = table.parentElement;
-          heightBudget = Math.floor(parent ? (parent.clientHeight || parent.getBoundingClientRect().height) : 0);
+          heightBudget = parent ? parent.clientHeight : 0;
         } else {
           const n = parseInt(maxHAttr, 10);
           heightBudget = (Number.isFinite(n) && n > 0) ? n : 0;
@@ -3758,28 +3770,26 @@ async function runTerminalizePass() {
         if (heightBudget <= 0) return;
 
         const thead = table.querySelector('thead');
-        const headH = thead ? Math.ceil(thead.getBoundingClientRect().height) : 0;
+        const headH = thead ? layoutHeight(thead) : 0;
         const budgetForBody = Math.max(0, heightBudget - headH);
 
         // Measure and hide rows beyond budget
         const rows = Array.from(tbody.querySelectorAll(':scope > tr'));
         let acc = 0;
-        let lastVisibleIndex = -1;
-        rows.forEach((row, idx) => {
+        rows.forEach((row) => {
           if (row.getAttribute('data-table-overflow-label') === 'true') return;
           row.style.display = '';
-          const rect = row.getBoundingClientRect();
-          const h = Math.ceil(rect.height || 0);
+          const h = layoutHeight(row);
           if (acc + h <= budgetForBody) {
             acc += h;
-            lastVisibleIndex = idx;
           } else {
             row.style.display = 'none';
             row.setAttribute('data-hidden-by-table-overflow', 'true');
           }
         });
 
-        let hiddenRows = rows.filter((r) => r.getAttribute('data-hidden-by-table-overflow') === 'true').length;
+        const visibleRows = rows.filter((row) => row.getAttribute('data-hidden-by-table-overflow') !== 'true');
+        let hiddenRows = rows.length - visibleRows.length;
 
         // Decide whether to show the trailing label row
         const showLabel = (function () {
@@ -3793,38 +3803,12 @@ async function runTerminalizePass() {
         }());
 
         if (hiddenRows > 0 && showLabel) {
-          // Reserve space for the trailing label row so we don't overflow the budget
-          // Estimate row height from the first body row (rows were measured with display='')
-          const sampleRow = rows[0];
-          const estimatedLabelHeight = Math.ceil((sampleRow?.getBoundingClientRect().height) || 0);
-
-          // If the label won't fit, hide additional visible rows from the bottom until it fits
-          while ((acc + estimatedLabelHeight) > budgetForBody && lastVisibleIndex >= 0) {
-            const victim = rows[lastVisibleIndex];
-            if (victim && victim.getAttribute('data-table-overflow-label') !== 'true' && victim.getAttribute('data-hidden-by-table-overflow') !== 'true') {
-              const victimH = Math.ceil((victim.getBoundingClientRect().height) || estimatedLabelHeight);
-              victim.style.display = 'none';
-              victim.setAttribute('data-hidden-by-table-overflow', 'true');
-              acc = Math.max(0, acc - victimH);
-              hiddenRows += 1;
-            }
-            lastVisibleIndex -= 1;
-          }
-
-          // Ensure at least one row is visible
-          if (lastVisibleIndex < 0 && rows.length > 0) {
+          if (visibleRows.length === 0) {
             const first = rows[0];
             first.style.display = '';
             first.removeAttribute('data-hidden-by-table-overflow');
-            lastVisibleIndex = 0;
-            // Adjust acc to include one row to avoid empty body when label appears
-            try { const h = Math.ceil((first.getBoundingClientRect().height) || 0); acc += h; } catch (_) {}
-          }
-
-          // Final guard: if even with adjustments the label does not fit, skip the label to avoid overflow
-          if ((acc + estimatedLabelHeight) > budgetForBody) {
-            hiddenRowsTotal += hiddenRows;
-            return;
+            visibleRows.push(first);
+            hiddenRows -= 1;
           }
 
           // Compute column span from thead or first row
@@ -3839,6 +3823,9 @@ async function runTerminalizePass() {
           // Append trailing label row
           const tr = document.createElement('tr');
           tr.setAttribute('data-table-overflow-label', 'true');
+          const span = document.createElement('span');
+          span.className = labelClass;
+          span.textContent = window.I18n?.andXMore?.(hiddenRows) ?? `and ${hiddenRows} more`;
           const isIndexed = table.classList.contains('table--indexed');
           if (isIndexed && colCount > 1) {
             // For indexed tables, insert an empty first cell so the label aligns with the data column
@@ -3847,24 +3834,27 @@ async function runTerminalizePass() {
 
             const td = document.createElement('td');
             td.setAttribute('colspan', String(colCount - 1));
-            const span = document.createElement('span');
-            span.className = labelClass;
-            span.textContent = window.I18n?.andXMore?.(hiddenRows) ?? `and ${hiddenRows} more`;
             td.appendChild(span);
             tr.appendChild(td);
           } else {
             const td = document.createElement('td');
             td.setAttribute('colspan', String(colCount));
-            const span = document.createElement('span');
-            span.className = labelClass;
-            span.textContent = window.I18n?.andXMore?.(hiddenRows) ?? `and ${hiddenRows} more`;
             td.appendChild(span);
             tr.appendChild(td);
           }
           tbody.appendChild(tr);
+
+          while (layoutHeight(table) > heightBudget && visibleRows.length > 1) {
+            const victim = visibleRows.pop();
+            victim.style.display = 'none';
+            victim.setAttribute('data-hidden-by-table-overflow', 'true');
+            hiddenRows += 1;
+            span.textContent = window.I18n?.andXMore?.(hiddenRows) ?? `and ${hiddenRows} more`;
+          }
+
+          if (layoutHeight(table) > heightBudget) tr.remove();
         }
 
-        // Track totals after any adjustments for label reservation
         hiddenRowsTotal += hiddenRows;
       });
     });
