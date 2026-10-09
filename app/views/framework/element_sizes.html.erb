@@ -37,7 +37,8 @@
         <div class="trmnl framework-inline-demo">
           <div class="screen p-0 bg-transparent h--auto w--auto">
             <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-x-auto">
-              <table class="<%= framework_docs_table_classes %>">
+              <%# Title, value, label and description paint this black by default, unreadable in dark mode. %>
+              <table class="<%= framework_docs_table_classes %>" style="--framework-semantic-text-primary-text-color: currentColor">
                 <thead>
                   <tr>
                     <th class="<%= framework_docs_table_header_cell_classes %> !sticky !top-0 !left-0 z-20">Element</th>
