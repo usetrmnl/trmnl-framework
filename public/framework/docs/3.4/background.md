@@ -126,10 +126,12 @@ Use `bg--{hue}-{step}` and `text--{hue}-{step}` for color backgrounds and text.
 
 Use `bg--{role}` and `text--{role}` for intent-based colors. Roles: primary, success, error, warning. See [Colors](/framework/docs/3.4/colors) for the full mapping.
 
+Text inside a `bg--*` background is black or white, whichever reads better on the color the screen paints. A `text--*` class still wins, and 1-bit screens leave the text color as it is.
+
 ```
-<div class="bg--primary text--white">Primary</div>
-<div class="bg--success text--white">Success</div>
-<div class="bg--error text--white">Error</div>
+<div class="bg--primary">Primary</div>
+<div class="bg--success">Success</div>
+<div class="bg--error">Error</div>
 <div class="text--warning">Warning text</div>
 ```
 

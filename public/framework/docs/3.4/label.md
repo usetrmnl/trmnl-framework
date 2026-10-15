@@ -109,7 +109,9 @@ Label
 
 #### Semantic variants
 
-Use `label--primary`, `label--success`, `label--error`, `label--warning` for intent-based colors. `label--filled` uses black (darkest), success and warning use black text, and warning uses a yellow background. See [Colors](/framework/docs/3.4/colors) for the semantic mapping.
+Use `label--primary`, `label--success`, `label--error`, `label--warning` for intent-based colors. `label--filled` uses black (darkest), and warning uses a yellow background. See [Colors](/framework/docs/3.4/colors) for the semantic mapping.
+
+Each role's text is black or white, whichever reads better on the color the screen paints. 1-bit screens keep white text on primary and error, and black on success and warning.
 
 FilledPrimarySuccessErrorWarning
 
