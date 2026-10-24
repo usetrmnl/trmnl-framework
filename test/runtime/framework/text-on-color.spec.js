@@ -17,6 +17,11 @@ const HUES = colors.match(/^color_hues:\n((?: {2}- \w+\n)+)/m)[1].match(/\w+/g);
 const ROLES = [...new Set([...bundle.matchAll(/--color-([a-z]+):\s*var\(--[a-z]+\)/g)].map((m) => m[1]))];
 const THEMES = [null, ...themeFiles.filter((f) => f.endsWith('-theme.css')).map((f) => f.replace('-theme.css', ''))];
 const MODES = ['light', 'dark'];
+// Palette id -> { drawn hex: hex the panel shows }, from panel_appearance.
+const PANEL_APPEARANCE = Object.fromEntries(
+  [...(colors.match(/^panel_appearance:\n((?: .*\n)+)/m)?.[1] ?? '').matchAll(/^ {2}(color-\w+):\n((?: {4}.*\n)+)/gm)]
+    .map(([, palette, body]) => [palette, Object.fromEntries([...body.matchAll(/"(#\w{6})": "(#\w{6})"/g)].map((m) => m.slice(1, 3)))]),
+);
 const BACKGROUNDS = [...HUES, ...ROLES];
 
 // A dither pattern averages slightly off the color it stands for, so a tie
@@ -32,9 +37,13 @@ function luminance([r, g, b]) {
 }
 
 function contrast(a, b) {
-  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  const [light, dark] = [a, b].sort((x, y) => y - x);
   return (light + 0.05) / (dark + 0.05);
 }
+
+const hex = (rgb) => `#${rgb.map((c) => Math.round(c).toString(16).padStart(2, '0')).join('')}`.toUpperCase();
+const rgbOf = (value) => value.match(/\w\w/g).map((pair) => parseInt(pair, 16));
+const shownLuminance = (rgb, appearance) => luminance(appearance?.[hex(rgb)] ? rgbOf(appearance[hex(rgb)]) : rgb);
 
 async function routeStylesheets(page) {
   await page.route('**/__text-on-color__/plugins.css', (route) => route.fulfill({ body: bundle, contentType: 'text/css' }));
@@ -62,7 +71,7 @@ const NEST_IN = [...BACKGROUNDS, 'black'];
 const NESTED = ['bg--white', ...Object.keys(OWN_GROUND)];
 const nestedMarkup = (name, probe) => (OWN_GROUND[name] ? OWN_GROUND[name](probe) : `<div ${probe} class="${name}">Aa</div>`);
 
-async function render(page, screenClasses, theme) {
+async function render(page, screenClasses, theme, appearance) {
   const themeLink = theme ? `<link rel="stylesheet" href="/__text-on-color__/${theme}-theme.css">` : '';
   const box = 'style="display:inline-block;width:30px;height:20px;margin:1px;font-size:12px;line-height:20px"';
   await page.setContent(`<!DOCTYPE html><html><head><meta charset="utf-8">
@@ -97,12 +106,22 @@ async function render(page, screenClasses, theme) {
     context.drawImage(image, 0, 0);
     return rects.map(({ x, y, width, height }) => {
       const pixels = context.getImageData(x, y, width, height).data;
-      const sum = [0, 0, 0];
-      for (let i = 0; i < pixels.length; i += 4) for (let c = 0; c < 3; c += 1) sum[c] += pixels[i + c];
-      return sum.map((total) => total / (pixels.length / 4));
+      const counts = {};
+      for (let i = 0; i < pixels.length; i += 4) {
+        const rgb = `${pixels[i]},${pixels[i + 1]},${pixels[i + 2]}`;
+        counts[rgb] = (counts[rgb] || 0) + 1;
+      }
+      return Object.entries(counts).map(([rgb, count]) => [rgb.split(',').map(Number), count / (pixels.length / 4)]);
     });
   }, { data: png, rects: probes.map(({ rect }) => rect) });
-  probes.forEach((probe, index) => { probe.ground = grounds[index]; });
+  probes.forEach((probe, index) => {
+    const shares = grounds[index];
+    // A measured panel reflects each dot's own light, so the ground averages in linear light.
+    probe.ground = appearance
+      ? shares.reduce((sum, [rgb, share]) => sum + share * shownLuminance(rgb, appearance), 0)
+      : luminance([0, 1, 2].map((c) => shares.reduce((sum, [rgb, share]) => sum + share * rgb[c], 0)));
+    probe.textLuminance = shownLuminance(probe.text, appearance);
+  });
   return probes;
 }
 
@@ -118,15 +137,17 @@ test.describe('text on color', () => {
         const classes = [paletteClass, mode === 'dark' && 'screen--dark-mode', theme && `screen--theme-${theme}`].filter(Boolean).join(' ');
 
         test(`picks the readable ink on ${classes}`, async ({ page }) => {
-          const probes = await render(page, classes, theme);
+          const appearance = PANEL_APPEARANCE[paletteClass.replace('screen--', '')];
+          const probes = await render(page, classes, theme, appearance);
+          const [black, white] = ['#000000', '#FFFFFF'].map((value) => shownLuminance(rgbOf(value), appearance));
           const ownText = Object.fromEntries(probes.filter(({ name }) => OWN_GROUND[name]).map(({ name, text }) => [name, text.join(',')]));
-          const wrong = probes.filter(({ name, text, ground }) => {
+          const wrong = probes.filter(({ name, text, textLuminance, ground }) => {
             if (OWN_GROUND[name]) return false;
             const part = Object.keys(OWN_GROUND).find((key) => name.startsWith(`${key} in `));
             if (part) return text.join(',') !== ownText[part];
-            const best = Math.max(contrast([0, 0, 0], ground), contrast([255, 255, 255], ground));
-            return contrast(text, ground) < best * CONTRAST_TOLERANCE;
-          }).map(({ name, text, ground }) => `${name}: text ${text.join(',')} on ${ground.map(Math.round).join(',')}`);
+            const best = Math.max(contrast(black, ground), contrast(white, ground));
+            return contrast(textLuminance, ground) < best * CONTRAST_TOLERANCE;
+          }).map(({ name, text, ground }) => `${name}: text ${text.join(',')} on luminance ${ground.toFixed(3)}`);
 
           expect(wrong).toEqual([]);
         });

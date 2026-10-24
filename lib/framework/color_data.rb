@@ -35,6 +35,10 @@ module Framework
       load['hue_to_accents'] || {}
     end
 
+    def self.panel_appearance
+      load['panel_appearance'] || {}
+    end
+
     def self.preview_color_map
       load['preview_color_map'] || {
         'red' => '#A02020',

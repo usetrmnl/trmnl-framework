@@ -17,7 +17,7 @@ RSpec.describe Framework::ColorManifest do
         'color_palette', 'color_hues', 'color_shade_steps',
         'color_palette_limited_ids', 'limited_palette_grayscale_1bit_ids',
         'color_to_gray_fallback', 'limited_palettes',
-        'hue_to_accents', 'preview_color_map',
+        'hue_to_accents', 'panel_appearance', 'preview_color_map',
         'preview_palette_ids', 'preview_limited_palette_white_hex'
       )
     end

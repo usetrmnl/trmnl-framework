@@ -76,30 +76,56 @@
     @return $sum;
 }
 
-// Black or white, whichever has the higher contrast on $hex.
-// (L + 0.05) / 0.05 against black beats 1.05 / (L + 0.05) against white
-// exactly when (L + 0.05)^2 > 0.0525.
-@mixin _bg-ink($token, $hex) {
-    @if $hex {
-        $luminance: _relative-luminance($hex);
-        --bg-#{$token}-ink: var(--#{if(math.pow($luminance + 0.05, 2) > 0.0525, 'black', 'white')});
+// Luminance of $hex as the panel shows it, from $appearance (drawn hex -> shown hex).
+@function _shown-luminance($hex, $appearance) {
+    @return _relative-luminance(if(map.has-key($appearance, $hex), map.get($appearance, $hex), $hex));
+}
+
+// With measured panel colors, reflected light adds up: a tile's luminance is its
+// inks' and field's by share. Without them, the tile keeps its sRGB-mixed color.
+@function _tile-luminance($spec, $appearance) {
+    $kind: list.nth($spec, 1);
+    @if $kind == 'solid' {
+        @return _shown-luminance(list.nth($spec, 2), $appearance);
+    }
+    $inks: map.get(vars.$dither-tile-inks, list.nth($spec, 2));
+    $field: if($kind == 'tile', list.nth($spec, 3), null);
+    @if list.length($appearance) == 0 {
+        @return _relative-luminance(_srgb-mix($inks, $field));
+    }
+    $luminance: 0;
+    $covered: 0;
+    @each $hex, $share in $inks {
+        $luminance: $luminance + $share * _shown-luminance($hex, $appearance);
+        $covered: $covered + $share;
+    }
+    @if $field {
+        $luminance: $luminance + (1 - $covered) * _shown-luminance($field, $appearance);
+    }
+    @return $luminance;
+}
+
+@function _srgb-mix($inks, $field) {
+    $mixed: null;
+    $covered: 0;
+    @each $hex, $share in $inks {
+        $mixed: if($mixed, color.mix($hex, $mixed, math.div($share, $covered + $share) * 100%), $hex);
+        $covered: $covered + $share;
+    }
+    @return if($field, color.mix($mixed, $field, $covered * 100%), $mixed);
+}
+
+// Black or white, whichever the panel shows with the higher contrast on $luminance.
+// (L + 0.05) / (Lblack + 0.05) beats (Lwhite + 0.05) / (L + 0.05) exactly when
+// (L + 0.05)^2 > (Lblack + 0.05) * (Lwhite + 0.05).
+@mixin _bg-ink($token, $luminance, $appearance: ()) {
+    @if $luminance {
+        $black: _shown-luminance(#000000, $appearance) + 0.05;
+        $white: _shown-luminance(#FFFFFF, $appearance) + 0.05;
+        --bg-#{$token}-ink: var(--#{if(math.pow($luminance + 0.05, 2) > $black * $white, 'black', 'white')});
     } @else {
         --bg-#{$token}-ink: initial;
     }
-}
-
-// The color a tile paints: its ink mixed with the field tone at the share
-// of the tile the ink covers.
-@function _tile-painted-hex($spec) {
-    $kind: list.nth($spec, 1);
-    @if $kind == 'solid' {
-        @return list.nth($spec, 2);
-    }
-    $ink: map.get(vars.$dither-tile-inks, list.nth($spec, 2));
-    @if $kind == 'baked' {
-        @return list.nth($ink, 1);
-    }
-    @return color.mix(list.nth($ink, 1), list.nth($spec, 3), list.nth($ink, 2) * 100%);
 }
 
 // --bg-*-solid preserves what the slot border token chains' color position
@@ -111,9 +137,9 @@
 // cascades onto the same element, so leaving it unset can't fall through.
 // A 1-bit rail leaves the ink unset ($ink: false): text over its dither art
 // keeps its own color, since an average color says little about 1-bit text.
-@mixin _bg-tile($token, $spec, $ink: true) {
+@mixin _bg-tile($token, $spec, $ink: true, $appearance: ()) {
     $kind: list.nth($spec, 1);
-    @include _bg-ink($token, if($ink, _tile-painted-hex($spec), null));
+    @include _bg-ink($token, if($ink, _tile-luminance($spec, $appearance), null), $appearance);
     @if $kind == 'solid' {
         --bg-#{$token}-image: none;
         --bg-#{$token}-color: #{list.nth($spec, 2)};
@@ -149,14 +175,15 @@
 }
 
 @mixin _bg-solid($token, $css-var) {
-    @include _bg-ink($token, _token-hex($css-var));
+    $hex: _token-hex($css-var);
+    @include _bg-ink($token, if($hex, _relative-luminance($hex), null));
     --bg-#{$token}-image: none;
     --bg-#{$token}-color: var(--#{$css-var});
     --bg-#{$token}-solid: var(--#{$css-var});
 }
 
 @mixin _bg-hex($token, $hex) {
-    @include _bg-ink($token, $hex);
+    @include _bg-ink($token, _relative-luminance($hex));
     --bg-#{$token}-image: none;
     --bg-#{$token}-color: #{$hex};
     --bg-#{$token}-solid: #{$hex};
@@ -746,23 +773,24 @@ $_two-bit-tile-families: ('grayscale--2bit', 'grayscale-preview--2bit');
 @mixin _palette-bg-vars($palette-id, $preview: false, $dark: false) {
     $suffix: if($preview, '-preview', '');
     $specs: map.get(vars.$bg-tile-specs, 'color-#{$palette-id}#{$suffix}');
+    $appearance: map.get(vars.$panel-appearance, 'color-#{$palette-id}#{$suffix}') or ();
 
     @each $shade in vars.$one-bit-shades {
         $img-shade: if($dark, bg.dark-remap-token($shade), $shade);
-        @include _bg-tile($shade, map.get($specs, $img-shade));
+        @include _bg-tile($shade, map.get($specs, $img-shade), $appearance: $appearance);
     }
 
     @if list.index(vars.$limited-palette-grayscale-1bit-ids, $palette-id) {
         @each $legacy, $_ in vars.$deprecated-to-enhanced-mapping {
             $img-shade: if($dark, bg.dark-remap-token($legacy), $legacy);
-            @include _bg-tile($legacy, map.get($specs, $img-shade));
+            @include _bg-tile($legacy, map.get($specs, $img-shade), $appearance: $appearance);
         }
         @include _checker-bg-var($specs);
     }
 
     @each $token, $_ in vars.$color-palette-framework {
         $img-token: if($dark, bg.dark-remap-token($token), $token);
-        @include _bg-tile($token, map.get($specs, $img-token));
+        @include _bg-tile($token, map.get($specs, $img-token), $appearance: $appearance);
     }
 }
 
