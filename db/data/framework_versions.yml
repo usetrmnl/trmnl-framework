@@ -1,5 +1,5 @@
 # This file is auto-generated. Do not edit manually. Use rake framework:release:{current,major,minor,patch}
-latest: 3.4.3
+latest: 3.4.4
 versions:
 - number: 0.0.1
   released_at: '2024-06-22'
@@ -99,3 +99,5 @@ versions:
   released_at: '2026-10-14'
 - number: 3.4.3
   released_at: '2026-10-15'
+- number: 3.4.4
+  released_at: '2026-10-24'

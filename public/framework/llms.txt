@@ -16,7 +16,7 @@ TRMNL is a platform for building and displaying content on ePaper screens. The F
 ## Arrangement
 
 - [Size](https://trmnl.com/framework/docs/3.4/size.md): Utility classes for width and height. Fixed sizes, arbitrary values, dynamic sizes, and container query units, each also available as a min or max constraint and with responsive variants.
-- [Spacing](https://trmnl.com/framework/docs/3.4/spacing.md): Utility classes for margin and padding. Fixed steps plus decimal values for the cases where a whole step is too coarse.
+- [Spacing](https://trmnl.com/framework/docs/3.4/spacing.md): Utility classes for margin and padding. They take the Fixed Sizes from the Size page, including decimal steps like 0.5 and 2.5 for the cases where a whole step is too coarse. Arbitrary pixel values and dynamic sizes are not supported.
 - [Position](https://trmnl.com/framework/docs/3.4/position.md): Use Position to put one element over another instead of beside it. Offsets on the spacing scale hold it a set distance from the edges of its container, and a short stacking scale says which of two overlapping elements is drawn on top.
 - [Gap](https://trmnl.com/framework/docs/3.4/gap.md): Utility classes for the space between the children of a flex, grid, or column container. Predefined sizes, arbitrary values, distribution modifiers, and responsive variants.
 - [Flex](https://trmnl.com/framework/docs/3.4/flex.md): Utility classes for Flexbox layouts. Row and column directions with alignment, centering, and stretching modifiers.

@@ -1,14 +1,14 @@
 # Spacing
 
-The Spacing system provides utility classes for controlling margins and padding. It includes both fixed sizes and decimal values to handle precise spacing needs.
+The Spacing system provides utility classes for controlling margins and padding. It includes both fixed sizes and decimal values to handle precise spacing needs. Arbitrary pixel values are not supported.
 
-Available spacing sizes and their pixel values
+Spacing uses the Fixed Sizes scale and its pixel values
 
-[View Size Documentation](/framework/docs/1.2/size)
+[View Fixed Sizes](/framework/docs/1.2/size#fixed-sizes)
 
 ### Margin Utilities
 
-Control element margins using these utility classes. Each class follows the pattern `{property}--{size}`.
+Control element margins using these utility classes. Each class follows the pattern `{property}--{size}`. Use a Fixed Size for `{size}`. Any other value, such as `m--[8px]` or `mx--auto`, does nothing and the element keeps the margin it already had.
 
 `m--{size}`All sides margin
 
@@ -26,7 +26,7 @@ Control element margins using these utility classes. Each class follows the patt
 
 ### Padding Utilities
 
-Control element padding using these utility classes. Each class follows the pattern `{property}--{size}`.
+Control element padding using these utility classes. Each class follows the pattern `{property}--{size}`. Use a Fixed Size for `{size}`. Any other value, such as `pl--[8px]` or `p--full`, does nothing and the element keeps the padding it already had.
 
 `p--{size}`All sides padding
 
