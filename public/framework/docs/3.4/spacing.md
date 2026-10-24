@@ -1,14 +1,14 @@
 # Spacing
 
-Utility classes for margin and padding. Fixed steps plus decimal values for the cases where a whole step is too coarse.
+Utility classes for margin and padding. They take the Fixed Sizes from the Size page, including decimal steps like 0.5 and 2.5 for the cases where a whole step is too coarse. Arbitrary pixel values and dynamic sizes are not supported.
 
-Available spacing sizes and their pixel values
+Spacing uses the Fixed Sizes scale and its pixel values
 
-[View Size Documentation](/framework/docs/3.4/size)
+[View Fixed Sizes](/framework/docs/3.4/size#fixed-sizes)
 
 ### Margin Utilities
 
-Control element margins using these utility classes. Each class follows the pattern `{property}--{size}` and supports responsive modifiers for **Size** [Size](/framework/docs/3.4/size) , **Orientation** , and **Size + Orientation** [Responsive](/framework/docs/3.4/responsive) . Margins take a scale token, so an arbitrary `m--[Npx]` value does nothing and the element keeps the margin it already had.
+Control element margins with `{property}--{size}`, where `{size}` is a Fixed Size. Each class supports responsive modifiers for **Size** [Size](/framework/docs/3.4/size) , **Orientation** , and **Size + Orientation** [Responsive](/framework/docs/3.4/responsive) . Any other value, such as `m--[Npx]` or `mx--auto`, does nothing and the element keeps the margin it already had.
 
 `m--{size}`All sides margin
 
@@ -32,7 +32,7 @@ Control element margins using these utility classes. Each class follows the patt
 
 ### Padding Utilities
 
-Control element padding using these utility classes. Each class follows the pattern `{property}--{size}`. See [Size](/framework/docs/3.4/size) for sizing tokens, the only values padding takes.
+Control element padding with `{property}--{size}`, where `{size}` is a Fixed Size. Responsive modifiers work the same as for margin. Any other value, such as `pl--[Npx]` or `p--full`, does nothing and the element keeps the padding it already had.
 
 `p--{size}`All sides padding
 
