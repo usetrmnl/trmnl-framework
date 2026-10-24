@@ -395,7 +395,7 @@ module FrameworkHelper
       'item' => 'A row for lists, schedules, and other repeating content, with optional meta text, an index, or an icon. Stack items in a Layout and let the Overflow engine handle the ones that do not fit.',
       'progress' => 'Progress bars and step dots for completion state. The fill renders as a bitmap pattern on 1-bit displays and as a solid color on 4-bit+ displays.',
       'flex' => 'Utility classes for Flexbox layouts. Row and column directions with alignment, centering, and stretching modifiers.',
-      'spacing' => 'Utility classes for margin and padding. Fixed steps plus decimal values for the cases where a whole step is too coarse.',
+      'spacing' => 'Utility classes for margin and padding. They take the Fixed Sizes from the Size page, including decimal steps like 0.5 and 2.5 for the cases where a whole step is too coarse. Arbitrary pixel values and dynamic sizes are not supported.',
       'position' => 'Use Position to put one element over another instead of beside it. Offsets on the spacing scale hold it a set distance from the edges of its container, and a short stacking scale says which of two overlapping elements is drawn on top.',
       'pixel_perfect' => 'Pixel Perfect aligns text to the pixel grid so it renders with crisp edges. It uses pixel fonts designed for specific sizes, so text stays sharp instead of turning blurry or unevenly bold when a layout is converted to 1-bit for ePaper displays.',
       'grid' => 'Utility classes for column-based and row-based grids. Set the column count, span cells across columns, and change either at a breakpoint.',

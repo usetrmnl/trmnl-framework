@@ -7,6 +7,7 @@
     <p class="text-gray-600 dark:text-gray-400">
       The Spacing system provides utility classes for controlling margins and padding.
       It includes both fixed sizes and decimal values to handle precise spacing needs.
+      Arbitrary pixel values are not supported.
     </p>
 
     <div class="<%= message_sage_classes %>">
@@ -16,11 +17,11 @@
         </div>
         <div class="w-full flex items-center justify-between ml-3">
           <p class="leading-none text-sm font-medium">
-            Available spacing sizes and their pixel values
+            Spacing uses the Fixed Sizes scale and its pixel values
           </p>
           <p class="text-sm md:mt-0 md:ml-6">
-            <%= link_to framework_page_path(:size, version: '1.2'), class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
-              View Size Documentation
+            <%= link_to "#{framework_page_path(:size, version: '1.2')}#fixed-sizes", class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
+              View Fixed Sizes
               <%= render 'shared/icons/arrow_right' %>
             <% end %>
           </p>
@@ -34,6 +35,7 @@
           <%= framework_heading(3, 'Margin Utilities') %>
           <p class="<%= framework_section_description_classes %>">
             Control element margins using these utility classes. Each class follows the pattern <code class="<%= framework_section_code_classes %>">{property}--{size}</code>.
+            Use a Fixed Size for <code class="<%= framework_section_code_classes %>">{size}</code>. Any other value, such as <code class="<%= framework_section_code_classes %>">m--[8px]</code> or <code class="<%= framework_section_code_classes %>">mx--auto</code>, does nothing and the element keeps the margin it already had.
           </p>
         </div>
 
@@ -76,6 +78,7 @@
           <%= framework_heading(3, 'Padding Utilities') %>
           <p class="<%= framework_section_description_classes %>">
             Control element padding using these utility classes. Each class follows the pattern <code class="<%= framework_section_code_classes %>">{property}--{size}</code>.
+            Use a Fixed Size for <code class="<%= framework_section_code_classes %>">{size}</code>. Any other value, such as <code class="<%= framework_section_code_classes %>">pl--[8px]</code> or <code class="<%= framework_section_code_classes %>">p--full</code>, does nothing and the element keeps the padding it already had.
           </p>
         </div>
 

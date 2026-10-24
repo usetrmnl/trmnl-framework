@@ -13,11 +13,11 @@
         </div>
         <div class="w-full flex items-center justify-between ml-3">
           <p class="leading-none text-sm font-medium">
-            Available spacing sizes and their pixel values
+            Spacing uses the Fixed Sizes scale and its pixel values
           </p>
           <p class="text-sm md:mt-0 md:ml-6">
-            <%= link_to framework_docs_size_path, class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
-              View Size Documentation
+            <%= link_to "#{framework_page_path(:size)}#fixed-sizes", class: "#{button_small_classes} #{button_sage_solid_classes}", target: :_blank do %>
+              View Fixed Sizes
               <%= render 'shared/icons/arrow_right' %>
             <% end %>
           </p>
@@ -30,8 +30,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Margin Utilities') %>
           <p class="<%= framework_section_description_classes %>">
-            Control element margins using these utility classes. Each class follows the pattern <code class="<%= framework_section_code_classes %>">{property}--{size}</code> and supports responsive modifiers for <strong>Size</strong> <%= render DocsRef.new(page: :size) %>, <strong>Orientation</strong>, and <strong>Size + Orientation</strong> <%= render DocsRef.new(page: :responsive) %>.
-            Margins take a scale token, so an arbitrary <code class="<%= framework_section_code_classes %>">m--[Npx]</code> value does nothing and the element keeps the margin it already had.
+            Control element margins with <code class="<%= framework_section_code_classes %>">{property}--{size}</code>, where <code class="<%= framework_section_code_classes %>">{size}</code> is a Fixed Size. Each class supports responsive modifiers for <strong>Size</strong> <%= render DocsRef.new(page: :size) %>, <strong>Orientation</strong>, and <strong>Size + Orientation</strong> <%= render DocsRef.new(page: :responsive) %>.
+            Any other value, such as <code class="<%= framework_section_code_classes %>">m--[Npx]</code> or <code class="<%= framework_section_code_classes %>">mx--auto</code>, does nothing and the element keeps the margin it already had.
           </p>
         </div>
 
@@ -85,7 +85,8 @@
         <div class="space-y-4">
           <%= framework_heading(3, 'Padding Utilities') %>
           <p class="<%= framework_section_description_classes %>">
-            Control element padding using these utility classes. Each class follows the pattern <code class="<%= framework_section_code_classes %>">{property}--{size}</code>. See <%= render DocsRef.new(page: :size) %> for sizing tokens, the only values padding takes.
+            Control element padding with <code class="<%= framework_section_code_classes %>">{property}--{size}</code>, where <code class="<%= framework_section_code_classes %>">{size}</code> is a Fixed Size. Responsive modifiers work the same as for margin.
+            Any other value, such as <code class="<%= framework_section_code_classes %>">pl--[Npx]</code> or <code class="<%= framework_section_code_classes %>">p--full</code>, does nothing and the element keeps the padding it already had.
           </p>
         </div>
 
