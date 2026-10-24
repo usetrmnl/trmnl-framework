@@ -192,8 +192,7 @@ namespace :framework do
     end
 
     tile_assets = {}
-    # Each asset's mean ink color and the share of the tile it covers; the rest
-    # is the field tone, so the painted color is the two mixed at that share.
+    # The share of each asset each ink covers; the field tone covers the rest.
     tile_inks = {}
     register_tile = lambda do |name, grid|
       uri = tile_svg_uri.call(grid)
@@ -201,9 +200,8 @@ namespace :framework do
 
       tile_assets[name] = uri
       pixels = grid.flatten
-      ink = pixels.reject { |pixel| pixel == tile_field_marker }.map { |hex| hex_channels.call(hex) }
-      mean = ink.transpose.map { |channel| (channel.sum.to_f / ink.size).round }
-      tile_inks[name] = "(#{channels_hex.call(mean)}, #{ink.size.fdiv(pixels.size).round(4)})"
+      shares = pixels.reject { |pixel| pixel == tile_field_marker }.tally.map { |hex, count| "#{hex.upcase}: #{count.fdiv(pixels.size).round(4)}" }
+      tile_inks[name] = "(#{shares.join(', ')})"
       name
     end
 
@@ -350,6 +348,14 @@ namespace :framework do
     end.join(",\n  ")
     dither_tile_assets_scss = tile_assets.map { |name, uri| "'#{name}': \"#{uri}\"" }.join(",\n  ")
     dither_tile_inks_scss = tile_inks.map { |name, ink| "'#{name}': #{ink}" }.join(",\n  ")
+    panel_appearance_scss = (manifest['panel_appearance'] || {}).flat_map do |palette_id, inks|
+      shown = inks.to_h { |drawn, appearance| [drawn.upcase, appearance.upcase] }
+      preview_drawn = preview_palette_ids.include?(palette_id) ? shown.transform_keys { |drawn| preview_hex_remap.fetch(drawn, drawn) } : shown
+      preview_shown = preview_drawn.merge(preview_limited_white_hex => shown.fetch('#FFFFFF'))
+      { palette_id => shown, "#{palette_id}-preview" => preview_shown }.map do |family, map|
+        "'#{family}': (#{map.map { |drawn, appearance| "#{drawn}: #{appearance}" }.join(', ')})"
+      end
+    end.join(",\n  ")
 
     preview_palette_entries = (manifest['preview_color_map'] || {}).except('white').flat_map do |hue, preview_hex|
       raw_base = hex_channels.call(manifest['color_palette'].fetch(hue))
@@ -447,6 +453,10 @@ namespace :framework do
 
       $dither-tile-inks: (
         #{dither_tile_inks_scss}
+      );
+
+      $panel-appearance: (
+        #{panel_appearance_scss}
       );
     SCSS
 

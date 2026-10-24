@@ -26,6 +26,7 @@ module Framework
         # Limited-palette fields ride in the same manifest so every consumer reads one structure.
         'limited_palettes' => Framework::ColorData.limited_palettes,
         'hue_to_accents' => Framework::ColorData.hue_to_accents,
+        'panel_appearance' => Framework::ColorData.panel_appearance,
         'preview_color_map' => Framework::ColorData.preview_color_map,
         'preview_palette_ids' => Framework::ColorData.preview_palette_ids,
         'preview_limited_palette_white_hex' => Framework::ColorData.preview_limited_palette_white_hex

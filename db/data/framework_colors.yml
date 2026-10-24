@@ -256,6 +256,33 @@ limited_palettes:
     - "#FFFF00"
     - "#FFA500"
 
+# The sRGB a panel actually shows for each limited palette ink. Used only to
+# choose black or white text, never to paint. Sources:
+#   color-4bwry: GoodDisplay GDEM075F52 datasheet (TRMNL OG 4-color panel), typical L*a*b* at 20-29 °C
+#   color-6a:    GoodDisplay GDEP133C02 datasheet (Spectra 6), typical L*a*b*
+#   color-7a:    EPDOptimize ACeP measurements, white-normalized
+panel_appearance:
+  color-4bwry:
+    "#000000": "#191919"
+    "#FFFFFF": "#989995"
+    "#FF0000": "#72130D"
+    "#FFFF00": "#9B7F00"
+  color-6a:
+    "#000000": "#211D2F"
+    "#FFFFFF": "#9AA4A2"
+    "#FF0000": "#7B1913"
+    "#FFFF00": "#A19903"
+    "#00FF00": "#345B3A"
+    "#0000FF": "#18528B"
+  color-7a:
+    "#000000": "#191E21"
+    "#FFFFFF": "#F1F1F1"
+    "#FF0000": "#D20E13"
+    "#FFFF00": "#F3CF11"
+    "#00FF00": "#53A428"
+    "#0000FF": "#31318F"
+    "#FFA500": "#B85E1C"
+
 # Hue -> [single_hex] or [colorA, colorB] for 2-accent hues (per limited palette)
 hue_to_accents:
   color-3bwr:
