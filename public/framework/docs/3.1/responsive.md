@@ -113,7 +113,7 @@ The framework supports three bit-depth variants corresponding to TRMNL's display
 
 ### How It Works
 
-Orientation variants adapt styles based on whether the screen is in landscape or portrait mode. Since landscape is the default, only `portrait:` variants are provided to avoid redundancy.
+Orientation variants adapt styles based on whether the screen is in landscape or portrait mode. Landscape is the default, so most styles need no prefix. Use `portrait:` for a style that applies only in portrait, and `landscape:` for one that applies only in landscape and must not reach portrait screens.
 
 Portrait variants are particularly useful for layout utilities like Flexbox, where you might want different flex directions or alignments when the screen is rotated.
 

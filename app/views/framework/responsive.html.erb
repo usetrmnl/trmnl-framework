@@ -937,8 +937,9 @@
             <%= framework_heading(3, 'How It Works') %>
             <p class="<%= framework_section_description_classes %>">
               Orientation variants adapt styles based on whether the screen is in landscape or portrait mode.
-              Since landscape is the default, only <code class="<%= framework_section_code_classes %>">portrait:</code> 
-              variants are provided to avoid redundancy.
+              Landscape is the default, so most styles need no prefix. Use <code class="<%= framework_section_code_classes %>">portrait:</code>
+              for a style that applies only in portrait, and <code class="<%= framework_section_code_classes %>">landscape:</code> for one
+              that applies only in landscape and must not reach portrait screens.
             </p>
             <div class="<%= message_sage_classes %>">
               <div class="flex items-center w-full">
