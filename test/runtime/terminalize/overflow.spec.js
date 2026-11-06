@@ -173,6 +173,37 @@ test('keeps the overflow height budget stable and maintains one accurate counter
   expectNoUnexpectedErrors(browserSignals, state);
 });
 
+test('keeps the counter visible when it must displace an item in a full column', async ({ page }) => {
+  const browserSignals = await openRuntimePage(page);
+  await mountFixture(page, {
+    html: `
+      <div class="columns runtime-overflow" data-overflow-cols="1"
+        data-overflow-counter="true" data-overflow-max-height="72">
+        <div class="column">${itemMarkup(10)}</div>
+      </div>
+    `,
+    css: `${overflowCss}
+      /* The final DOM can need more room than the staging measurement. */
+      .runtime-overflow [data-overflow-label="true"] {
+        flex-basis: 48px;
+        min-height: 48px;
+        height: 48px;
+      }
+    `,
+  });
+  await retainAuthoredItemReferences(page);
+  for (let pass = 0; pass < 3; pass += 1) {
+    await runTerminalize(page);
+    const snapshot = await overflowSnapshot(page);
+    expect(snapshot.hiddenIds.length).toBeGreaterThan(0);
+    expect(snapshot.counterCount).toBe(1);
+    await expect(page.locator('[data-overflow-label="true"]')).toBeVisible();
+    expect(snapshot.counterText).toEqual([`and ${snapshot.hiddenIds.length} more`]);
+    expect(snapshot.sameReferences).toBe(true);
+  }
+  expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
+});
+
 test('keeps authored dividers only between visible adjacent items in one column', async ({ page }) => {
   const browserSignals = await openRuntimePage(page);
   const blocks = Array.from({ length: 8 }, (_, index) => {

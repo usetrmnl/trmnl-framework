@@ -1722,7 +1722,7 @@ function enforceRealColumnsFit(columnsEl) {
   // Ensure label fits; if not, hide more trailing blocks
     let safety = 50;
     while (Math.floor(lastCol.scrollHeight || lastCol.getBoundingClientRect().height) > Math.floor(heightBudget) && safety-- > 0) {
-      const candidates = Array.from(lastCol.children).filter((c) => c.classList && (c.classList.contains('label') || c.classList.contains('item')) && c.style.display !== 'none');
+      const candidates = Array.from(lastCol.children).filter((c) => c !== label && c.classList && (c.classList.contains('label') || c.classList.contains('item')) && c.style.display !== 'none');
       if (candidates.length === 0) break;
       const visibleItems = candidates.filter((c) => c.classList.contains('item'));
       const sample = visibleItems.slice(-3);
