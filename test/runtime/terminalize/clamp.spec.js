@@ -68,6 +68,31 @@ test('keeps a one-line clamp within its available width', async ({ page }) => {
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
 });
 
+test('keeps a one-line clamp within its label when the grid cell also holds a .meta bar and padding', async ({ page }) => {
+  await openRuntimePage(page);
+  await mountFixture(page, {
+    html: `<div class="view view--half_vertical"><div class="layout"><div class="grid grid--cols-2">
+      <div class="item"><div class="meta"></div><div class="content">
+        <span class="value value--xsmall">TSM</span>
+        <span id="name" class="label" data-clamp="1">Taiwan Semiconductor Manufacturing Company Limited</span>
+      </div></div>
+      <div class="item"><div class="meta"></div><div class="content"><span class="value value--xsmall">+1.2%</span></div></div>
+    </div></div></div>`,
+  });
+  await runTerminalize(page);
+
+  const result = await page.locator('#name').evaluate((label) => ({
+    text: label.textContent,
+    clientWidth: label.clientWidth,
+    scrollWidth: label.scrollWidth,
+    labelRight: label.getBoundingClientRect().right,
+    contentRight: label.parentElement.getBoundingClientRect().right,
+  }));
+  expect(result.text).toMatch(/\.\.\.$/);
+  expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
+  expect(result.labelRight).toBeLessThanOrEqual(result.contentRight);
+});
+
 test('counts padding and borders once around a two-line clamp', async ({ page }) => {
   const browserSignals = await openRuntimePage(page);
   await mountFixture(page, {

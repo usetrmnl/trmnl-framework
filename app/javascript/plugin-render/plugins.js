@@ -316,11 +316,14 @@ function heightBeforeScreenScale(element) {
   return ((element.getBoundingClientRect()?.height) || 0) / screenTransformScale(element);
 }
 
-// Determine available content width for clamping. Works in any layout: grid, flex, or block.
-// When inside a .grid or .flex, use the width of the direct child of that container (the
-// "cell" or "flex item"). The framework sets min-width: 0 on those children so they
-// shrink to their track; this width is then accurate. Otherwise we use the element's
-// own width or walk up to find a parent with a usable width.
+function parentContentWidth(element) {
+  const parent = element.parentElement;
+  const style = getComputedStyle(parent);
+  return Math.max(0, Math.floor(parent.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)));
+}
+
+// Width for clamping: in a .grid or .flex, the cell's width capped by the text's parent content box;
+// otherwise the element's own width or the nearest ancestor with a width.
 function getAvailableWidthForClamp(element) {
   if (!element) return 0;
   let node = element;
@@ -331,7 +334,7 @@ function getAvailableWidthForClamp(element) {
     const isFlex = p.classList && p.classList.contains('flex');
     if (isGrid || isFlex) {
       const itemW = Math.round(widthBeforeScreenScale(node));
-      if (itemW > 0) return itemW;
+      if (itemW > 0) return Math.min(itemW, parentContentWidth(element) || itemW);
       if (isGrid) {
         let gridW = Math.round(widthBeforeScreenScale(p));
         if (gridW === 0) {
