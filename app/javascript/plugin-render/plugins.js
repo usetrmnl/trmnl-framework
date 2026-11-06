@@ -2684,8 +2684,9 @@ function fitValue(minFontSize = 8, step = 1) {
     const container = element.parentElement;
     if (!container) return;
 
+    // A max height taller than the layout (a quadrant markup in a smaller mashup cell) is capped to the layout.
     const explicitMaxHeight = element.dataset.valueFitMaxHeight
-      ? parseFloat(element.dataset.valueFitMaxHeight)
+      ? Math.min(parseFloat(element.dataset.valueFitMaxHeight), computeAvailableHeight(element) || Infinity)
       : null;
     const hasExplicitMaxHeight = explicitMaxHeight != null && Number.isFinite(explicitMaxHeight);
 
