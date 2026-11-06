@@ -145,3 +145,19 @@ test('takes the sign from the parsed number, not from a hyphen anywhere in the v
   expect(rendered['trailing-currency']).toBe('-$1,234.56');
   expectNoUnexpectedErrors(browserSignals, await runtimeSignals(page));
 });
+
+test('keeps a fitted value inside a layout shorter than its max height', async ({ page }) => {
+  await openRuntimePage(page);
+  await mountFixture(page, {
+    html: `<div class="view view--quadrant" style="height: 120px;"><div class="layout"><div class="columns"><div class="column"><div class="richtext">
+      <span id="phrase" class="value value--xxxlarge" data-value-fit="true" data-value-fit-max-height="160" style="display: block;">Every meal you eat is a chance to choose something that makes tomorrow a little easier than today</span>
+    </div></div></div></div></div>`,
+  });
+  await runTerminalize(page);
+
+  const result = await page.locator('#phrase').evaluate((phrase) => ({
+    phraseBottom: phrase.getBoundingClientRect().bottom,
+    layoutBottom: phrase.closest('.layout').getBoundingClientRect().bottom,
+  }));
+  expect(result.phraseBottom).toBeLessThanOrEqual(result.layoutBottom);
+});
