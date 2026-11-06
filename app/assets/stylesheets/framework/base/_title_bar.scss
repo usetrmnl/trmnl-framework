@@ -135,6 +135,8 @@
             overflow: hidden;
             padding: calc(var(--title-bar-padding-top) + var(--title-bar-text-stroke-width)) var(--title-bar-text-stroke-width) var(--title-bar-text-stroke-width);
             margin: calc(var(--title-bar-text-stroke-width) * -1);
+            // Clips the whole instance when less than 1em of text space is left, else the outline padding shows a sliver of a letter.
+            clip-path: inset(0 0 0 clamp(0px, (var(--title-bar-text-stroke-width) * 2 + 1em - 100%) * 1000, 100%));
         }
     }
 

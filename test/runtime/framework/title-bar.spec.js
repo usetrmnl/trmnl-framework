@@ -60,4 +60,13 @@ test.describe('long title bar text', () => {
     expect(result.title.truncated).toBe(true);
     expect(result.title.right).toBeLessThanOrEqual(result.barRight);
   });
+
+  test('paints no part of the instance when the title fills the bar', async ({ page }) => {
+    await mount(page, `${LONG} ${LONG}`, 'Work');
+    const bar = page.locator('.title_bar');
+    const withInstance = await bar.screenshot();
+    await page.locator('.title_bar .instance').evaluate((instance) => { instance.textContent = ''; });
+
+    expect(await bar.screenshot()).toEqual(withInstance);
+  });
 });
